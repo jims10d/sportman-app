@@ -1,0 +1,101 @@
+<ion-view view-title="Line Up" title-center cache-view="true">
+<!-- Back Button -->
+<ion-nav-buttons side="left">
+<button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="backToHome()" style="font-size:25px"></button>
+</ion-nav-buttons>
+<ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color: #ececec; z-index:0; margin-top:12px;">
+<!-- for refresh -->
+<ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()" refreshing-text="Fetching ..." refreshing-icon="ion-loading-b"></ion-refresher>
+
+<!-- Line up  -->
+<div class="card" style="margin-bottom:10px;">
+  <div class="item item-divider" style="padding:0px;border-bottom: 1px solid #d0cece;">
+    <div class="row" style="padding:0px;margin:0px;">
+      <div class="col" style="padding-left:10px;font-weight:bold;color:#ffffff;text-align:center;margin-top:-4px;background-color: grey;">Arsenal vs Chelsea</div>
+    </div>  
+  </div>
+  <div class="item item-text-wrap" style="padding:0px;">
+    <div class="row" style="margin:0px;">
+      <div class="col col-10"><i class="ion-calendar" style="font-size:21px;color:#11c1f3;"></i></div>
+      <div class="col col-70" style="margin-left: 4px;">18 Agustus 2017</div>
+      <div class="col col-20" style="margin-left: 4px;text-align: right;">@10:30</div>
+    </div>
+    <div class="row" style="margin:0px;">
+      <div class="col col-10"><i class="ion-location" style="font-size:21px;color:#f36f64;"></i></div>
+      <div class="col col-90" style="margin-left: 4px;">Planet Futsal</div>
+    </div>
+    <div class="row" style="margin:0px;">
+      <div class="col" style="margin-top: -20px;text-align: right;color:#4db6ac;">Sporto Cup</div>
+    </div>
+  </div>
+    <div ng-show="registeredTeamLength[data.id] === data.comp_numOfTeam" class="row" style="border-top: #ebebeb 1px solid;border-bottom: #ebebeb 1px solid;margin:0px;padding:0px;">
+      <div class="col cursor" style="background-color:#ffffff;text-align:center;font-weight:bold;color:#4DB6AC;padding:10px;" ng-click="chooseLineup()"> Choose Line up </div>
+    </div>
+</div>
+<div class="card" style="margin-bottom:10px;">
+  <div class="item item-divider" style="padding:0px;border-bottom: 1px solid #d0cece;">
+    <div class="row" style="padding:0px;margin:0px;">
+      <div class="col" style="padding-left:10px;font-weight:bold;color:#ffffff;text-align:center;margin-top:-4px;background-color: grey;">Arsenal vs Chelsea</div>
+    </div>  
+  </div>
+  <div class="item item-text-wrap" style="padding:0px;">
+    <div class="row" style="margin:0px;">
+      <div class="col col-10"><i class="ion-calendar" style="font-size:21px;color:#11c1f3;"></i></div>
+      <div class="col col-70" style="margin-left: 4px;">18 Agustus 2017</div>
+      <div class="col col-20" style="margin-left: 4px;text-align: right;">@10:30</div>
+    </div>
+    <div class="row" style="margin:0px;">
+      <div class="col col-10"><i class="ion-location" style="font-size:21px;color:#f36f64;"></i></div>
+      <div class="col col-90" style="margin-left: 4px;">Planet Futsal</div>
+    </div>
+    <div class="row" style="margin:0px;">
+      <div class="col" style="margin-top: -20px;text-align: right;color:#4db6ac;">Sporto Cup</div>
+    </div>
+  </div>
+    <div ng-show="registeredTeamLength[data.id] === data.comp_numOfTeam" class="row" style="border-top: #ebebeb 1px solid;border-bottom: #ebebeb 1px solid;margin:0px;padding:0px;">
+      <div class="col cursor" style="background-color:#ffffff;text-align:center;font-weight:bold;color:#4DB6AC;padding:10px;" ng-click="chooseLineup()"> Choose Line up </div>
+    </div>
+</div>
+<!-- Line up -->
+
+<!-- All Competition -->
+<div class="card" style="margin-bottom:10px;" ng-repeat="competition in allCompetition">
+  <div class="item item-divider" style="padding:0px;border-bottom: 1px solid #d0cece;">
+    <div class="row" style="padding:0px;margin:0px;">
+      <div class="col" style="padding-left:10px;font-weight:bold;color:#7c857e;text-align:left;margin-top:-4px;"> {{competition.comp_name}} </div>
+      <div class="col" style="padding-right:10px;font-weight:bold;color:#7c857e;text-align:right;margin-top:-4px;"> {{registeredTeamLength[competition.id]}}/{{competition.comp_numOfTeam}} Teams </div>
+    </div>  
+  </div>
+  <div class="item item-text-wrap" style="padding:0px;">
+    <div class="row" style="margin:0px;">
+      <div class="col col-10"><i class="ion-calendar" style="font-size:21px;color:#11c1f3;"></i></div>
+      <div class="col col-90" style="margin-left: 4px;">{{competition.comp_start | date:'dd MMM yy'}} - {{competition.comp_finish | date:'dd MMM yy'}}</div>
+    </div>
+    <div class="row" style="margin:0px;">
+      <div class="col col-10"><i class="ion-location" style="font-size:21px;color:#f36f64;"></i></div>
+      <div class="col col-90" style="margin-left: 4px;">{{competition.comp_location}}</div>
+    </div>
+    <div class="row" style="margin:0px;">
+      <div class="col col-10"><i class="ion-cash" style="font-size:21px;color:#28a54c;"></i></div>
+      <div class="col col-90" style="margin-left: 4px;">Rp. {{competition.comp_fee}}/Team</div>
+    </div>
+    <div class="row">
+      <div class="col" style="margin-left: 4px;text-align: right;color: #0cafdd;" ng-click="more('{{competition.id}}')">See more</div>
+    </div>
+  </div>
+    <div class="row" style="border-top: #ebebeb 1px solid;margin:0px;padding:0px;">
+      <div ng-model="registered[competition.id]" ng-hide="registered[competition.id] || competition.schedule_status === 'On Progress'" ng-show="registered[competition.id]==false"class="col cursor" style="background-color:  #6c6b6b;text-align:center;font-weight:bold;color:#ffffff;padding:10px;" ng-click="registerCompetition('{{competition.id}}')"> Register </div>
+      <div ng-model="registered[competition.id]" ng-show="registered[competition.id]" ng-hide="registered[competition.id]==false || competition.registeredTeam == null || competition.schedule_status === 'On Progress'"class="col cursor" style="background-color:  #28a54c;text-align:center;font-weight:bold;color:#ffffff;padding:10px;"> Registered </div>
+</div>
+<!--All Competition -->
+
+<!-- White Space -->
+<div style="height:55px;background:transparent" ng-show="searchbutton"></div>
+<div style="height:200px;background:transparent" ng-show="filterbutton"></div>
+<!--List Posting-->
+</ion-content>
+<!--Create Post Button-->
+<ion-buttons start id="floating-button" ng-show="menuProfile.role == 'Organizer'" style="margin-right:10px; background-color:#4DB6AC;padding-top: 6px" ng-click="createCompetition()">
+<i class="icon mdi mdi-plus" style="font-size:40px;"></i>
+</ion-buttons>
+</ion-view>

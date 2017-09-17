@@ -1,0 +1,80 @@
+<ion-view view-title="Leaderboard" cache-view="true">
+<!-- Back Button -->
+<ion-nav-buttons side="left">
+<button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="back()" style="font-size:25px"></button>
+</ion-nav-buttons>
+<!-- Shadow space -->
+<div class="bar item-input-inset" style="border:none;box-shadow: 0 1px 2px #aaa"></div>
+<ion-content overflow-scroll=true scroll-sista="tabs" style="background-color: white;" ng-class="{'margin':myLeaderboardend == true}" >
+<div style="background-image: url('img/background-leaderboard.png'); height:220px;padding-top:10px;background-size: 100% 100%;background-repeat: no-repeat;">
+	<div class="row" style="margin-top:13px;">
+		<div class="col" style="margin-top:20px;" ng-click="userDetail(pemenangKedua.username)">
+			<center>
+			<img src="img/profile3.png" src="{{pemenangKedua.photo}}" style="width:80px;height:80px;background-size:cover;border-radius:50%;">
+			<div style="color:white;background-color:#24afe5;border-radius:50%;width:20px;height:20px;font-size:12px;margin:-20px 0px 0px 50px;position:relative">2</div>
+			<p style="color:white; font-size:16px; margin-top:10px;text-align:center;">{{pemenangKedua.name}}Jims</p>
+			<p style="color:rgb(225, 225, 225); font-size:12px; margin-top:-8px;text-align:center;">{{pemenangKedua.poin}} 77 points</p>
+			</center>
+		</div>
+		<div class="col" style="margin-bottom:10px;" ng-click="userDetail(pemenangPertama.username)">
+			<center>
+			<img src="img/profile3.png" src="{{pemenangPertama.photo}}" style="width:80px;height:80px;background-size:cover;border-radius:50%;">
+			<div style="color:white;background-color:#24afe5;border-radius:50%;width:20px;height:20px;font-size:12px;margin:-20px 0px 0px 50px;position:relative">1</div>
+			<p style="color:white; font-size:16px; margin-top:10px;text-align:center;">{{pemenangPertama.name}} Roger</p>
+			<p style="color:rgb(225, 225, 225); font-size:12px; margin-top:-8px;text-align:center;">{{pemenangPertama.poin}} 1000 points</p>
+			</center>
+		</div>
+		<div class="col" style="margin-top:20px;" ng-click="userDetail(pemenangKetiga.username)">
+			<center>
+			<img src="img/profile3.png" src="{{pemenangKetiga.photo}}" style="width:80px;height:80px;background-size:cover;border-radius:50%;">
+			<div style="color:white;background-color:#24afe5;border-radius:50%;width:20px;height:20px;font-size:12px;margin:-20px 0px 0px 50px;position:relative">3</div>
+			<p style="color:white; font-size:16px; margin-top:10px;text-align: center;">{{pemenangKetiga.name}} Holmes</p>
+			<p style="color:rgb(225, 225, 225); font-size:12px; margin-top:-8px;text-align:center;">{{pemenangKetiga.poin}} 65 points</p>
+			</center>
+		</div>
+	</div>
+</div>
+<div class="list" ng-class="{'blue':menuProfile.username == data.username}" style="padding:2px 0px 15px 0px;margin:0;border-bottom: 1px solid #f8f8f8;">
+	<h4 style="margin-bottom:-20px; font-size:17px; margin-top:30px; font-weight:unset; padding-bottom:30px; margin-bottom:-78px;padding-left:20px;">{{$index+4}}</h4>
+	<a class="item item-avatar" style="padding-bottom:0px; margin-bottom:-29px; margin-top:-45px; margin-left:20px;" ng-click="userDetail('{{data.username}}')">
+		<img src="img/profile3.png" ng-src="{{data.photo}}" style="margin-left:20px;">
+		<h2 style="margin-bottom:6px;">{{data.name}} Shanks</h2>
+		<div class="item item-text-wrap" style="padding:0px;">
+			<p style="padding-right:16px;">{{data.poin}} 20 points</p>
+		</div>
+	</a>
+</div>
+<div class="list" ng-class="{'blue':menuProfile.username == data.username}" style="padding:2px 0px 15px 0px;margin:0;border-bottom: 1px solid #f8f8f8;">
+	<h4 style="margin-bottom:-20px; font-size:17px; margin-top:30px; font-weight:unset; padding-bottom:30px; margin-bottom:-78px;padding-left:20px;">{{$index+5}}</h4>
+	<a class="item item-avatar" style="padding-bottom:0px; margin-bottom:-29px; margin-top:-45px; margin-left:20px;" ng-click="userDetail('{{data.username}}')">
+		<img src="img/profile3.png" ng-src="{{data.photo}}" style="margin-left:20px;">
+		<h2 style="margin-bottom:6px;">{{data.name}} Vinsmoke</h2>
+		<div class="item item-text-wrap" style="padding:0px;">
+			<p style="padding-right:16px;">{{data.poin}} 18 points</p>
+		</div>
+	</a>
+</div>
+<div class="list" ng-class="{'blue':menuProfile.username == data.username}" style="padding:2px 0px 15px 0px;margin:0;border-bottom: 1px solid #f8f8f8;">
+	<h4 style="margin-bottom:-20px; font-size:17px; margin-top:30px; font-weight:unset; padding-bottom:30px; margin-bottom:-78px;padding-left:20px;">{{$index+6}}</h4>
+	<a class="item item-avatar" style="padding-bottom:0px; margin-bottom:-29px; margin-top:-45px; margin-left:20px;" ng-click="userDetail('{{data.username}}')">
+		<img src="img/profile3.png" ng-src="{{data.photo}}" style="margin-left:20px;">
+		<h2 style="margin-bottom:6px;">{{data.name}} Shanks</h2>
+		<div class="item item-text-wrap" style="padding:0px;">
+			<p style="padding-right:16px;">{{data.poin}} 20 points</p>
+		</div>
+	</a>
+</div>
+</ion-content>
+<div ng-show="myLeaderboardend == true" class="list blue-fixed">
+	<div class="list blue-fixed">
+		<h4 style="margin-bottom:-20px; font-size:17px; margin-top:30px; font-weight:unset; padding-bottom:30px; margin-bottom:-78px;padding-left:20px;">{{myLeaderboard.position}}</h4>
+		<a class="item item-avatar" style="padding-bottom:0px; margin-bottom:-29px; margin-top:-45px; margin-left:20px;">
+			<img src="img/profile3.png" ng-src="{{myLeaderboard.photo}}" style="margin-left:20px;" ng-click="userDetail(myLeaderboard.username)">
+			<h2 style="margin-bottom:6px;">{{myLeaderboard.name}}</h2>
+			<div class="item item-text-wrap" style="padding:0px;">
+				<p style="padding-right:16px;">{{myLeaderboard.poin}} points • {{myLeaderboard.badgeCount}} badges</p>
+			</div>
+		</a>
+	</div>
+</div>
+</ion-view>

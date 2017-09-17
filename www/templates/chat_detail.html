@@ -1,0 +1,25 @@
+<ion-view view-title="{{otherProfile.username}}" cache-view="false" style="margin-bottom:110px;">
+<ion-nav-buttons side="left">
+<button class="button button-clear icon-button mdi mdi-arrow-left" ng-click="back()"></button>
+</ion-nav-buttons>
+<ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color: #F1F5F8;padding-bottom: 70px">
+<div id="scrollToBottom" class="scroll" style="margin-bottom:70px;border:none;" scroll-glue="glued">
+  <div class="div-left" ng-repeat="data in chatData track by $index" ng-class="{'div-right':profile.username === data.sender}">
+    <div ng-class="profile.username === data.sender? 'bubble-right' : 'bubble-left'">
+      <div ng-cloak class="content-msg"><!-- <span ng-bind="data.content"></span> -->{{::data.content}}</div>
+      <sub>{{::data.date | date:'yyyy-MM-dd, h:mm a'}}</sub>
+    </div>
+    <p ng-if="data.content!==null" ng-class="profile.username === data.sender? 'read-right' : 'read-left'" ng-show="data.read != 'false'" ng-if="data.sender == profile.username" style="padding-top:4px;">read</p>
+<!--     <p ng-class="profile.username === data.sender? 'read-right' : 'read-left'" ng-show="data.readStatus == 'true'" ng-if="data.sender == profile.username" style="padding-top:4px;">read</p> -->
+  </div>
+</div>
+</ion-content>
+<!-- Message input box -->
+<div class="bar bar-footer bar-balanced" style="position:fixed; height:50px;background-color: #fff !important;border: none !important">
+  <textarea id="comment" ng-model="dataMessage.content" placeholder="Type your message..." style="width:100%; height:50px;padding:10px;"></textarea>
+  <!-- button disable -->
+  <ion-button ng-hide="dataMessage.content.length > 0 && dataMessage.content != undefined" class="icon mdi mdi-send pull-right" style="font-size: 25px; padding: 13px 0 0 15px; background-color:#4DB6AC; color:white;height:50px; width:60px; opacity: 0.7;"></ion-button>   
+  <!-- button enable -->
+  <ion-button  ng-show="dataMessage.content.length > 0 && dataMessage.content != undefined" ng-click="addMessage()" class="icon mdi mdi-send pull-right" style="font-size: 25px;background-color:#4DB6AC; color:white;height:50px; width:60px;padding: 13px 0 0 15px;"></ion-button>
+</div>
+</ion-view>

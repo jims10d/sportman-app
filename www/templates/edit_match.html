@@ -1,0 +1,57 @@
+<ion-view view-title="Match Detail" title-center cache-view="true">
+<!-- Back Button -->
+<ion-nav-buttons side="left">
+<button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="backToFixture('{{fixtureId}}')" style="font-size:25px"></button>
+</ion-nav-buttons>
+<!-- Right button -->
+<ion-nav-buttons side="right">
+<!-- Filter button -->
+<button class="button button-clear icon-button mdi mdi-send" ng-click="editMatchById()" style="min-height:44px;font-size:20px;margin-top:2px;"></button>
+</ion-nav-buttons>
+<!-- Fake button -->
+<button ng-click="searchbutton = !searchbutton; filterbutton = false" id="searchbutton" style="display:none"></button>
+<button ng-click="filterbutton = !filterbutton; searchbutton = false" id="filterbutton" style="display:none"></button>
+<!-- Search bar -->
+<div class="bar item-input-inset" style="border:none;margin-top:58px;margin-bottom:100px;position: fixed" ng-show="searchbutton">
+  <i class="icon ion-ios-search placeholder-icon" style="background:white; height:56px; padding-top:16px; padding-left:11px;"></i><input id="search" type="text" placeholder=" Search..." ng-model="search" style="width:100%; height:60px;" />
+</div>
+<!-- Shadow space -->
+<div class="bar item-input-inset" style="border:none;box-shadow: 0 1px 2px #aaa"></div>
+<ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color: #ececec; z-index:0; margin-top:12px;">
+<!-- for refresh -->
+<ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()" refreshing-text="Fetching ..." refreshing-icon="ion-loading-b"></ion-refresher>
+<div class="card" style="margin-bottom:0px;background-color:#26A69A;">
+  <div class="item item-text-wrap" style="padding:0px;">
+    <div class="row" style="margin:0px;" onclick="location.href='#/app/match_detail'">
+      <div class="col" style="text-align:right;color:white;">{{matchData.match_homeTeam}}</div>
+      <div class="col" style="text-align:center;color:#4DB6AC;font-size:16px;color:white;">VS</div>
+      <div class="col" style="text-align:left;color:white;">{{matchData.match_awayTeam}}</div>
+    </div>
+  </div>
+</div>
+<!-- Form post -->
+<form method="post" enctype="text/plain" style="background: white;margin:8px;height: 540px;margin-top: 2px;">
+  <label class="item item-input content-border" style="padding:0;border: none;">
+      <!-- <input type="text" id="compName" style="font-size:16px;resize:none;margin-top:2px;padding-left:16px;padding-right:16px;background-color: white;" placeholder="Match Date" ng-model="match.match_date"> -->
+       <div class="input-label" style="font-weight:unset; padding-left:15px;">Match Date :  </div>
+       <input type="date" id="compStart" style="margin-right:-20px;padding-left:16px;" ng-model="match.match_date">
+  </label>
+  <label class="item item-input content-border" style="padding:0;border-left: none;border-right: none;">
+      <input type="text" id="compName" style="font-size:16px;resize:none;margin-top:2px;padding-left:16px;padding-right:16px;background-color: white;" placeholder="Match Time (ex: 14:00)" value="{{matchData.match_time}}"  ng-model="match.match_time">
+  </label>
+  <label class="item item-input content-border" style="padding:0;border-left: none;border-right: none;">
+      <input type="text" id="compName" style="font-size:16px;resize:none;margin-top:2px;padding-left:16px;padding-right:16px;background-color: white;" placeholder="Match Length (in minutes)" value="{{matchData.match_Length}}"  ng-model="match.match_length">
+  </label>
+  <label class="item item-input content-border" style="padding:0;border-left: none;border-right: none;">
+      <input type="text" id="compName" style="font-size:16px;resize:none;margin-top:2px;padding-left:16px;padding-right:16px;background-color: white;" placeholder="Match Venue" ng-model="match.match_venue">
+  </label>
+  <label class="item item-input content-border" style="padding:0;border-left: none;border-right: none;">
+      <input type="text" id="compName" style="font-size:16px;resize:none;margin-top:2px;padding-left:16px;padding-right:16px;background-color: white;" placeholder="Referee" ng-model="match.match_referee">
+  </label>
+</form>
+<!-- White Space -->
+<div style="height:55px;background:transparent" ng-show="searchbutton"></div>
+<div style="height:200px;background:transparent" ng-show="filterbutton"></div>
+<!--List Posting-->
+</ion-content>
+</ion-view>

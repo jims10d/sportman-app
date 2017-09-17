@@ -1,0 +1,45 @@
+<ion-view view-title="Match Detail" title-center cache-view="true">
+<ion-nav-buttons side="left">
+<button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="back()" style="font-size:25px"></button>
+</ion-nav-buttons>
+<ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color: #ececec; z-index:0; margin-top:12px;">
+<!-- for refresh -->
+<ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()" refreshing-text="Fetching ..." refreshing-icon="ion-loading-b"></ion-refresher>
+<div class="card" style="margin-bottom:10px;background-color:#26A69A;">
+  <div class="item item-text-wrap" style="padding:0px;">
+    <div class="row" style="margin:0px;">
+      <div ng-if="match.timer_status == 'halftime'" class="col" style="text-align:center;margin:0px;font-size:13px;color:white;">HT</div>
+      <div ng-if="match.timer_status == 'fulltime'" class="col" style="text-align:center;margin:0px;font-size:13px;color:white;">FT</div>
+      <div ng-if="match.timer_status == null || match.timer_status == 'started'" class="col" style="text-align:center;margin:0px;font-size:13px;color:white;">{{match.timer}}'</div>
+    </div>
+    <div class="row" style="margin:0px;">
+      <div class="col" style="text-align:center;color:white;">{{match.match_homeTeam}}</div>
+      <div class="col col-10" style="text-align:center;color:#4DB6AC;font-size:20px;color:white;">{{match.match_homeScore}}</div>
+      <div class="col col-10" style="text-align:center;color:#4DB6AC;font-size:20px;color:white;">-</div>
+      <div class="col col-10" style="text-align:center;color:#4DB6AC;font-size:20px;color:white;">{{match.match_awayScore}}</div>
+      <div class="col" style="text-align:center;color:white;">{{match.match_awayTeam}}</div>
+    </div>
+    <div class="row" style="margin:0px;">
+      <div class="col" style="text-align:center;margin:0px;font-size:13px;color:white;">(HT 2 - 0)</div>
+    </div>
+  </div>
+</div>
+<p style="text-align:center;font-weight:bold;color:grey;">KEY EVENTS</p>
+<div class="card" style="margin-bottom:10px;margin-top:-5px;">
+  <div class="item item-text-wrap" style="padding:0px;">
+    <div class="row" style="margin:0px;">
+      <div class="col" style="text-align:center;margin:0px;font-size:12px;"><center><img src="img/whistle.png" style="width:16px;height:16px;"></center>Kick Off</div>
+    </div>
+     <div class="row" style="margin:0px;" ng-repeat="data in goalsArr">
+      <div class="col scorer-right" ng-class="{'scorer-right':data.status == 'away'}"><p ng-show="data.status == 'home'" style="font-size:11px;">'{{data.time}}</p><p ng-show="data.status == 'home'" style="font-size:13px;">'{{data.scorer}}</p></div>
+      <div class="col col-20" style="text-align:center;color:#4DB6AC;font-size:15px;"><p>{{data.goalh}} - {{data.goala}}</p><i class="ion-ios-football"></i></div>
+      <div class="col scorer-left" ng-class="{'scorer-left':data.status == 'away'}"><p ng-show="data.status == 'away'" style="font-size:11px;">'{{data.time}}</p><p ng-show="data.status == 'away'" style="font-size:13px;">{{data.scorer}}</p></div>
+    </div>
+  </div>
+</div>
+<!-- White Space -->
+<div style="height:55px;background:transparent" ng-show="searchbutton"></div>
+<div style="height:200px;background:transparent" ng-show="filterbutton"></div>
+<!--List Posting-->
+</ion-content>
+</ion-view>

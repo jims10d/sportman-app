@@ -1,0 +1,11 @@
+{
+  "name": "sportman",
+  "app_id": "63677a55",
+  "browsers": [
+    {
+      "platform": "android",
+      "browser": "crosswalk",
+      "version": "12.41.296.5"
+    }
+  ]
+}

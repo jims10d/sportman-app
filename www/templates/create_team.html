@@ -1,0 +1,34 @@
+<ion-view view-title="Create Team" hide-back-button="true" text-center cache-view="false">
+<!-- Back button -->
+<ion-nav-buttons side="left">
+<button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="backToMyTeam()" style="font-size:25px"></button>
+</ion-nav-buttons>
+<!-- Upload Image and Post button -->
+<ion-nav-buttons side="right">
+<button class="button button-clear icon-button mdi mdi-camera" ng-click="uploadImage()" style="min-height:44px;font-size:20px;margin-top:2px;margin-right:-10px;"></button>
+<button class="button button-clear icon-button mdi mdi-send" ng-click="addTeam()" style="min-height:44px;font-size:20px;margin-top:2px;"></button>
+</ion-nav-buttons>
+<ion-content class="hideScroll" overflow-scroll=false scroll-sista="tabs" style="background-color:#fff;">
+<!-- Form post -->
+<form method="post" enctype="text/plain" style="padding-top: 10px">
+  <label class="item item-input content-border" style="padding:0">
+      <input type="text" id="compName" style="font-size:16px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="Team Name" ng-model="teamsData.team_name">
+  </label>
+  <label class="item item-input content-border" style="padding:0">
+      <input type="text" id="compName" style="font-size:16px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="Team Abbreviation Name" ng-model="teamsData.team_abrName">
+  </label>
+  <!-- <label class="item item-input content-border" style="padding:0">
+      <input type="text" id="compName" style="font-size:16px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="Coach" ng-model="teamsData.team_coach">
+  </label> -->
+   <label class="item item-input content-border" style="padding:0">
+      <input type="text" id="compName" style="font-size:16px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="Team Logo" ng-model="teamsData.team_coach">
+  </label>
+<!--    <label class="item item-input content-border" style="padding:0">
+      <input type="text" id="compName" style="font-size:16px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="Coach" ng-model="teamsData.team_coach">
+  </label>
+   <label class="item item-input content-border" style="padding:0">
+      <input type="text" id="compName" style="font-size:16px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="Member" ng-model="teamsData.team_coach">
+  </label> -->
+</form>
+</ion-content>
+</ion-view>

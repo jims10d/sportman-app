@@ -1,0 +1,59 @@
+<ion-view view-title="Match Info" title-center cache-view="true">
+<ion-nav-buttons side="left">
+<button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="back()" style="font-size:25px"></button>
+</ion-nav-buttons>
+<ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color: #ececec; z-index:0; margin-top:12px;">
+<!-- for refresh -->
+<ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()" refreshing-text="Fetching ..." refreshing-icon="ion-loading-b"></ion-refresher>
+<div class="card" style="margin-bottom:0px;background-color:#26A69A;border-bottom: 0px;box-shadow: none;padding: 10px;">
+  <div class="item item-text-wrap" style="padding:0px;">
+    <div class="row" style="margin:0px;">
+      <div class="col" style="text-align:center;color:#4DB6AC;font-size:15px;color:white;">Saturday</div>
+    </div>
+    <div class="row" style="margin:0px;">
+      <div class="col" style="text-align:center;color:white;margin-top: -20px;">{{match.match_homeTeam}}</div>
+      <div class="col col-30" style="text-align:center;color:#4DB6AC;font-size:15px;color:white;margin-top: -10px;">16 Sep</div>
+      <div class="col" style="text-align:center;color:white;margin-top: -20px;">{{match.match_awayTeam}}</div>
+    </div>
+  </div>
+</div>
+<div class="card" style="margin-bottom:10px;margin-top:-5px;">
+  <div class="item item-text-wrap" style="padding:0px;">
+    <div class="row" style="margin:0px;padding-bottom: 0px;">
+      <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 0px;"><i class="mdi mdi-trophy-variant" style="font-size:20px;"></i></div>
+    </div>
+    <div class="row" style="margin:0px;">
+      <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 10px;border-bottom: 1px solid #ddd;">Sporto League</div>
+    </div>
+  </div>
+  <div class="item item-text-wrap" style="padding:0px;">
+    <div class="row" style="margin:0px;padding-bottom: 0px;">
+      <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 0px;"><i class="mdi mdi-calendar" style="font-size:20px;"></i></div>
+    </div>
+    <div class="row" style="margin:0px;">
+      <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 10px;border-bottom: 1px solid #ddd;">16 September 2017, 10:00 </div>
+    </div>
+  </div>
+  <div class="item item-text-wrap" style="padding:0px;">
+    <div class="row" style="margin:0px;padding-bottom: 0px;">
+      <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 0px;"><i class="mdi mdi-home" style="font-size:20px;"></i></div>
+    </div>
+    <div class="row" style="margin:0px;">
+      <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 10px;border-bottom: 1px solid #ddd;">Grand Futsal</div>
+    </div>
+  </div>
+  <div class="item item-text-wrap" style="padding:0px;">
+    <div class="row" style="margin:0px;padding-bottom: 0px;">
+      <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 0px;"><i class="mdi mdi-account" style="font-size:20px;"></i></div>
+    </div>
+    <div class="row" style="margin:0px;">
+      <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 10px;">Mark Snowderlyn</div>
+    </div>
+  </div>
+</div>
+<!-- White Space -->
+<div style="height:55px;background:transparent" ng-show="searchbutton"></div>
+<div style="height:200px;background:transparent" ng-show="filterbutton"></div>
+<!--List Posting-->
+</ion-content>
+</ion-view>

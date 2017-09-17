@@ -1,0 +1,45 @@
+<ion-view view-title="Register" name="register-view" hide-nav-bar="
+true" class="login">
+<ion-content class="hideScroll" overflow-scroll=true  scroll-sista="tabs" class="padding" style="background: url(img/bg2.png) center; background-size: cover;">
+<center><img src="img\logo2.png" class="login-image" style="margin-top:10px;"></center>
+<p style="color:white;font-size:25px;font-weight:bold;text-align:center;margin-bottom:75px;">SportMan</p>
+<form method="post" enctype="text/plain">
+  <div class="list login-list" style="margin-top:-50px;">
+    <label class="item item-input register">
+      <input type="text" placeholder="Fullname" ng-model="data.fullname">
+    </label>
+    <label class="item item-input register">
+      <input type="text" placeholder="Username" ng-model="data.username">
+    </label>
+    <label class="item item-input register">
+      <input type="password" placeholder="Password" ng-model="data.password">
+    </label>
+    <label class="item item-input register">
+      <input type="email" placeholder="Email" ng-model="data.email">
+    </label>
+    <div class="list">
+      <label class="item item-input item-select">
+        <div class="input-label" style="font-weight:unset; padding-right:0px;">Role</div>
+        <select ng-model="data.role" style="background:transparent;padding:0px;margin-right:27px;">
+          <option value="Organizer" style="color:black">Organizer</option>
+          <option value="Manager" style="color:black">Manager</option>
+          <option value="Coach" style="color:black">Coach</option>
+          <option value="Player" style="color:black">Player</option>
+          <option value="Referee" style="color:black">Referee</option>
+        </select>
+      </label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <input type="submit" value="Register" class="button button-block button-calm-900 text-center" ng-click="register()" style="background-color:#1a6d65; border-radius:8px;"></input>
+    </div>
+  </div>
+</form>
+<div class="row">
+  <div class="col">
+    <p style="text-align:center; color:white;">Already have an account? Login <a style="color:white; font-weight:bold; text-decoration:none" ng-href="#/login">here</a></p>
+  </div>
+</div>
+</ion-content>
+</ion-view>

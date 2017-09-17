@@ -1,0 +1,34 @@
+<ion-view view-title="PES 2017" title-center cache-view="true">
+<!-- Back Button -->
+<ion-nav-buttons side="left">
+<button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="backToHome()" style="font-size:25px"></button>
+</ion-nav-buttons>
+<!-- Right button -->
+<ion-nav-buttons side="right">
+<!-- Filter button -->
+<a ng-href="#/app/search">
+  <button class="button button-clear icon-button mdi mdi-magnify button-search" style="min-height:0;font-size:25px"></button>
+</a>
+</ion-nav-buttons>
+<!-- Fake button -->
+<button ng-click="searchbutton = !searchbutton; filterbutton = false" id="searchbutton" style="display:none"></button>
+<button ng-click="filterbutton = !filterbutton; searchbutton = false" id="filterbutton" style="display:none"></button>
+<!-- Search bar -->
+<div class="bar item-input-inset" style="border:none;margin-top:58px;margin-bottom:100px;position: fixed" ng-show="searchbutton">
+  <i class="icon ion-ios-search placeholder-icon" style="background:white; height:56px; padding-top:16px; padding-left:11px;"></i><input id="search" type="text" placeholder=" Search..." ng-model="search" style="width:100%; height:60px;" />
+</div>
+<!-- Shadow space -->
+<div class="bar item-input-inset" style="border:none;box-shadow: 0 1px 2px #aaa"></div>
+<ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color: #ececec; z-index:0; margin-top:12px;">
+<!-- for refresh -->
+<ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()" refreshing-text="Fetching ..." refreshing-icon="ion-loading-b"></ion-refresher>
+
+<a class="item item-avatar" style="border-bottom:2px solid rgba(230, 223, 223, 0.82); background:white; padding-bottom: 0px; margin-bottom: 0px;">
+    <div style="padding-top: 10px">
+    <h2 style="margin-left: -80px;">Sporto Cup</h2>
+    <button class="button button-clear icon-button mdi mdi-chevron-right" ng-click="goToClassementDetail()" style="font-size:20px;color:#808a89;margin-top:-45px;margin-left:200px; padding: 0px;"></button>
+    </div>
+  </a>
+<!--List Posting-->
+</ion-content>
+</ion-view>

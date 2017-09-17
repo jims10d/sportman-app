@@ -1,0 +1,118 @@
+<ion-view view-title="PES 2017" title-center cache-view="true">
+<!-- Back Button -->
+<ion-nav-buttons side="left">
+<button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="backToClassement()" style="font-size:25px"></button>
+</ion-nav-buttons>
+<!-- Right button -->
+<ion-nav-buttons side="right">
+<!-- Filter button -->
+<a ng-href="#/app/search">
+  <button class="button button-clear icon-button mdi mdi-magnify button-search" style="min-height:0;font-size:25px"></button>
+</a>
+</ion-nav-buttons>
+<!-- Fake button -->
+<button ng-click="searchbutton = !searchbutton; filterbutton = false" id="searchbutton" style="display:none"></button>
+<button ng-click="filterbutton = !filterbutton; searchbutton = false" id="filterbutton" style="display:none"></button>
+<!-- Search bar -->
+<div class="bar item-input-inset" style="border:none;margin-top:58px;margin-bottom:100px;position: fixed" ng-show="searchbutton">
+  <i class="icon ion-ios-search placeholder-icon" style="background:white; height:56px; padding-top:16px; padding-left:11px;"></i><input id="search" type="text" placeholder=" Search..." ng-model="search" style="width:100%; height:60px;" />
+</div>
+<!-- Shadow space -->
+<div class="bar item-input-inset" style="border:none;box-shadow: 0 1px 2px #aaa"></div>
+<ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color: #ececec; z-index:0; margin-top:12px;">
+<!-- for refresh -->
+<ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()" refreshing-text="Fetching ..." refreshing-icon="ion-loading-b"></ion-refresher>
+
+<div class="card" style="margin-bottom:10px;height: auto;">
+  <div class="item item-divider" style="padding:0px;background-color: #4db6ac;">
+     <div class="row" style="color: white;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
+        <div class="col col-10" style="text-align:left;padding:0px;">Pos</div>
+        <div class="col col-30" style="text-align:center;padding:0px;">Team</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">P</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">W</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">D</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">L</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">+/-</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">PTS</div>
+     </div>
+  </div>
+  <div class="item item-divider" style="padding:0px;background-color: #ffffff;">
+     <div ng-click="goToTeamInfo()" class="row" style="color: #6a6969;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
+        <div class="col col-10" style="text-align:left;padding:0px;">1</div>
+        <div class="col col-30" style="text-align:center;padding:0px;">Arsenal</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">1</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">1</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">0</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">0</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">+3</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">3</div>
+     </div>
+  </div>
+    <div class="item item-divider" style="padding:0px;background-color: #ffffff;">
+     <div class="row" style="color: #6a6969;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
+        <div class="col col-10" style="text-align:left;padding:0px;">2</div>
+        <div class="col col-30" style="text-align:center;padding:0px;">Man City</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">1</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">1</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">0</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">0</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">+3</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">3</div>
+     </div>
+  </div>
+    <div class="item item-divider" style="padding:0px;background-color: #ffffff;">
+     <div class="row" style="color: #6a6969;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
+        <div class="col col-10" style="text-align:left;padding:0px;">3</div>
+        <div class="col col-30" style="text-align:center;padding:0px;">Tottenham</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">1</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">1</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">0</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">0</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">+3</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">3</div>
+     </div>
+  </div>
+    <div class="item item-divider" style="padding:0px;background-color: #ffffff;">
+     <div class="row" style="color: #6a6969;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
+        <div class="col col-10" style="text-align:left;padding:0px;">4</div>
+        <div class="col col-30" style="text-align:center;padding:0px;">Liverpool</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">1</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">1</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">0</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">0</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">+3</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">3</div>
+     </div>
+  </div>
+    <div class="item item-divider" style="padding:0px;background-color: #ffffff;">
+     <div class="row" style="color: #6a6969;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
+        <div class="col col-10" style="text-align:left;padding:0px;">5</div>
+        <div class="col col-30" style="text-align:center;padding:0px;">Man United</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">1</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">1</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">0</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">0</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">+3</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">3</div>
+     </div>
+  </div>
+    <div class="item item-divider" style="padding:0px;background-color: #ffffff;">
+     <div class="row" style="color: #6a6969;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
+        <div class="col col-10" style="text-align:left;padding:0px;">6</div>
+        <div class="col col-30" style="text-align:center;padding:0px;">Chelsea</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">1</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">1</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">0</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">0</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">+3</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">3</div>
+     </div>
+  </div>
+</div>
+
+<!-- White Space -->
+<div style="height:55px;background:transparent" ng-show="searchbutton"></div>
+<div style="height:200px;background:transparent" ng-show="filterbutton"></div>
+<!--List Posting-->
+</ion-content>
+</ion-view>

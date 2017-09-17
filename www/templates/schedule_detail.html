@@ -1,0 +1,177 @@
+<ion-view view-title="{{competition.comp_name}}" title-center cache-view="false">
+<!-- Back Button -->
+<ion-nav-buttons side="left">
+<button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="backToSchedule()" style="font-size:25px"></button>
+</ion-nav-buttons>
+<!-- Fake button -->
+<button ng-click="searchbutton = !searchbutton; filterbutton = false" id="searchbutton" style="display:none"></button>
+<button ng-click="filterbutton = !filterbutton; searchbutton = false" id="filterbutton" style="display:none"></button>
+<!-- Search bar -->
+<div class="bar item-input-inset" style="border:none;margin-top:58px;margin-bottom:100px;position: fixed" ng-show="searchbutton">
+  <i class="icon ion-ios-search placeholder-icon" style="background:white; height:56px; padding-top:16px; padding-left:11px;"></i><input id="search" type="text" placeholder=" Search..." ng-model="search" style="width:100%; height:60px;" />
+</div>
+<!-- Shadow space -->
+<div class="bar item-input-inset" style="border:none;box-shadow: 0 1px 2px #aaa"></div>
+<ion-content class="hideScroll" overflow-scroll=false scroll-sista="tabs" style="background-color: #f8f8f8; z-index:0; margin-top:12px;">
+<!-- for refresh -->
+<ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()" refreshing-text="Fetching ..." refreshing-icon="ion-loading-b"></ion-refresher>
+<!-- tab -->
+<div class="row" ng-init="showme = 1" style="padding:0px;">
+    <a class="col col-50" ng-click="showme=1" ng-class="{'activeTab':showme == 1}" style="text-align:center;font-size:13px;color:#ddd;padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;">Matches</a>
+    <a class="col col-50" ng-click="showme=2" ng-class="{'activeTab':showme == 2}" style="text-align:center;font-size:13px;color:#ddd;padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;">Standing</a>
+</div>
+<!-- tab -->
+
+<!-- tab -->
+<div ng-show="competition.comp_type == 'KnockoutSystem'" class="row" ng-init="showme = 1" style="padding:0px;">
+    <a class="col" ng-click="showme=1" ng-class="{'activeTab':showme == 1}" style="text-align:center;font-size:13px;color:#ddd;padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;">Matches</a>
+</div>
+<!-- tab -->
+
+<!-- List of members-->
+<div class="list" ng-show="showme==1">
+ <div class="item item-divider" style="padding:0px;margin:0px;border-bottom: 1px solid #e1e1e1;margin-bottom: 7px;">
+   <div class="row" style="margin:0px;padding: 0px;">
+      <div ng-click="prev()" class="col col-10" style="text-align:center;padding: 0px;margin: 0px;background-color: #ffffff;"><i class="icon ion-arrow-left-b placeholder-icon" style="color: #515151;font-size: 20px;"></i></div>
+      <div ng-hide="prevStatus==true" class="col col-10" style="text-align:center;padding: 0px;margin: 0px;background-color: #ffffff;"></div>
+      <div class="col col-80" style="text-align:center;padding: 0px;margin:0px;"><p style="padding-left:10px;font-weight:bold;color:#515151;text-align: center;margin:0px;padding: 0px;background-color: #ffffff;">Fixture {{fixtureNumber}}</p></div>
+      <div ng-click="next()" class="col col-10" style="text-align:center;padding: 0px;margin: 0px;background-color: #ffffff;"><i class="icon ion-arrow-right-b placeholder-icon" style="color: #515151;font-size: 20px;"></i></div>
+      <div ng-hide="nextStatus==true" class="col col-10" style="text-align:center;padding: 0px;margin: 0px;background-color: #ffffff;"></div>
+   </div>
+  </div>
+
+   <div ng-if="competition.comp_type == 'KnockoutSystem'" class="item item-divider" style="padding:0px;margin:0px;border-bottom: 1px solid #e1e1e1;margin-bottom: 7px;">
+   <div class="row" style="margin:0px;padding: 0px;">
+      <div ng-show="prevStatus==true" ng-click="knockoutPrev()" class="col col-10" style="text-align:center;padding: 0px;margin: 0px;background-color: #ffffff;"><i class="icon ion-arrow-left-b placeholder-icon" style="color: #515151;font-size: 20px;"></i></div>
+      <div ng-hide="prevStatus==true" class="col col-10" style="text-align:center;padding: 0px;margin: 0px;background-color: #ffffff;"></div>
+      <div class="col col-80" style="text-align:center;padding: 0px;margin:0px;"><p style="padding-left:10px;font-weight:bold;color:#515151;text-align: center;margin:0px;padding: 0px;background-color: #ffffff;">{{match_status}}</p></div>
+      <div ng-show="nextStatus==true" ng-click="knockoutNext()" class="col col-10" style="text-align:center;padding: 0px;margin: 0px;background-color: #ffffff;"><i class="icon ion-arrow-right-b placeholder-icon" style="color: #515151;font-size: 20px;"></i></div>
+      <div ng-hide="nextStatus==true" class="col col-10" style="text-align:center;padding: 0px;margin: 0px;background-color: #ffffff;"></div>
+   </div>
+  </div>
+
+<!-- <div class="card" style="margin-bottom:10px;margin: 0px;">
+  <p ng-show="day==25"style="text-align: center;padding-top: 250px;font-size:17px; height: -webkit-fill-available;">No Task Today</p>
+  <p ng-show="day==24" style="text-align: center;padding-top: 250px;font-size:17px; height: -webkit-fill-available;">ahahahahaahh</p>
+</div> -->
+  <!-- <p style="padding-left:10px;color:#a2a2a2;margin: 2px;">25 Aug 2017</p> -->
+  <div class="item item-text-wrap" style="padding:0px;width:auto;background-color:white;min-height:0px;border-bottom: #eeeeee 1px solid;margin-left: 8px;margin-right: 8px;">
+    <div class="row" style="border-bottom:#e8e3e3 1px solid;margin:0px;border-bottom: #eeeeee 1px solid;">
+     <div class="col col-20" style="text-align:left;color: #808080;font-size: 11px;">{{match.match_date | date:'d/MM'}}sdf</div>
+      <div class="col" style="text-align:right;">{{match.match_homeTeam}}sdf</div>
+      <div style="text-align:center;color:#4DB6AC;width: 70px;margin-top: 5px;">{{match.match_time}}</div>
+      <div class="col" style="text-align:left;">{{match.match_awayTeam}}</div>
+      <div class="col col-20" style="text-align:right;color: #808080;font-size: 11px;">{{data.match_time}}</div>
+    </div>
+  </div>
+
+  <div ng-if="kmLength != '0'" ng-show="competition.comp_type == 'KnockoutSystem'" ng-repeat="match in knockoutMatches" class="item item-text-wrap" style="padding:0px;width:auto;background-color:white;min-height:0px;border-bottom: #eeeeee 1px solid;margin-left: 8px;margin-right: 8px;">
+    <div class="row" style="border-bottom:#e8e3e3 1px solid;margin:0px;border-bottom: #eeeeee 1px solid;">
+     <div class="col col-20" style="text-align:left;color: #808080;font-size: 11px;">{{match.match_date | date:'d/MM'}}</div>
+      <div class="col" style="text-align:right;">{{match.match_homeTeam}}</div>
+      <div style="text-align:center;color:#4DB6AC;width: 70px;margin-top: 5px;">{{match.match_time}}</div>
+      <div class="col" style="text-align:left;">{{match.match_awayTeam}}</div>
+      <div class="col col-20" style="text-align:right;color: #808080;font-size: 11px;">{{data.match_time}}</div>
+    </div>
+  </div>
+
+  <div ng-if="kmLength == '0'" ng-show="competition.comp_type == 'KnockoutSystem'" class="item item-text-wrap" style="padding:0px;width:auto;background-color:white;min-height:0px;border-bottom: #eeeeee 1px solid;margin-left: 8px;margin-right: 8px;">
+    <div class="row" style="border-bottom:#e8e3e3 1px solid;margin:0px;border-bottom: #eeeeee 1px solid;">
+     <div class="col" style="text-align:center;color: #808080;font-size: 18px;height: -webkit-fill-available;margin-top: 200px;">No Match Yet</div>
+    </div>
+  </div>
+</div>
+
+<!-- List of schedules-->
+<div class="list" ng-show="showme==2">
+ 
+<div class="card" style="margin-bottom:10px;height: auto;">
+  <div class="item item-divider" style="padding:0px;background-color: #4db6ac;">
+     <div class="row" style="color: white;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
+        <div class="col col-10" style="text-align:left;padding:0px;">Pos</div>
+        <div class="col col-30" style="text-align:center;padding:0px;">Team</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">P</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">W</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">D</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">L</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">+/-</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">PTS</div>
+     </div>
+  </div>
+  <div class="item item-divider" style="padding:0px;background-color: #ffffff;">
+     <div ng-click="goToTeamInfo()" class="row" style="color: #6a6969;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
+        <div class="col col-10" style="text-align:left;padding:0px;">{{classements.position}}</div>
+        <div class="col col-30" style="text-align:center;padding:0px;">{{classements.team}}</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classements.play}}</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classements.win}}</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classements.draw}}</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classements.lose}}</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classements.goalDifference}}</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classements.point}}</div>
+     </div>
+  </div>
+    <div class="item item-divider" style="padding:0px;background-color: #ffffff;">
+     <div class="row" style="color: #6a6969;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
+        <div class="col col-10" style="text-align:left;padding:0px;">2</div>
+        <div class="col col-30" style="text-align:center;padding:0px;">Man City</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">1</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">1</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">0</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">0</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">+3</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">3</div>
+     </div>
+  </div>
+    <div class="item item-divider" style="padding:0px;background-color: #ffffff;">
+     <div class="row" style="color: #6a6969;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
+        <div class="col col-10" style="text-align:left;padding:0px;">3</div>
+        <div class="col col-30" style="text-align:center;padding:0px;">Tottenham</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">1</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">1</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">0</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">0</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">+3</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">3</div>
+     </div>
+  </div>
+    <div class="item item-divider" style="padding:0px;background-color: #ffffff;">
+     <div class="row" style="color: #6a6969;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
+        <div class="col col-10" style="text-align:left;padding:0px;">4</div>
+        <div class="col col-30" style="text-align:center;padding:0px;">Liverpool</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">1</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">1</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">0</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">0</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">+3</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">3</div>
+     </div>
+  </div>
+    <div class="item item-divider" style="padding:0px;background-color: #ffffff;">
+     <div class="row" style="color: #6a6969;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
+        <div class="col col-10" style="text-align:left;padding:0px;">5</div>
+        <div class="col col-30" style="text-align:center;padding:0px;">Man United</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">1</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">1</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">0</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">0</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">+3</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">3</div>
+     </div>
+  </div>
+    <div class="item item-divider" style="padding:0px;background-color: #ffffff;">
+     <div class="row" style="color: #6a6969;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
+        <div class="col col-10" style="text-align:left;padding:0px;">6</div>
+        <div class="col col-30" style="text-align:center;padding:0px;">Chelsea</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">1</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">1</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">0</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">0</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">+3</div>
+        <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">3</div>
+     </div>
+  </div>
+</div>
+</div>
+<!--List Posting-->
+</ion-content>
+</ion-view>

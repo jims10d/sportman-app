@@ -1,0 +1,74 @@
+<ion-view view-title="Complete Your Profile" hide-back-button="true" text-center cache-view="false">
+<!-- Back Button -->
+<ion-nav-buttons side="left">
+<button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="backToHome()" style="font-size:25px"></button>
+</ion-nav-buttons>
+<!-- Update Button -->
+<ion-nav-buttons side="right">
+<button class="button button-clear icon-button mdi mdi-check" ng-click="editProfile()" style="min-height:44;font-size:25px"></button>
+</ion-nav-buttons>
+<!-- Shadow space -->
+<div class="bar item-input-inset" style="border:none;box-shadow: 0 1px 2px #aaa"></div>
+<ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color:#fff;">
+<div style="background-image: url('img/background-leaderboard.png'); height:160px;padding-top:30px;">
+  <img ng-src={{profile.photo}} src="img/profile2.png" class="avatar" style="left:22px;top:26px;margin:15px auto;width:70px;height:70px;">
+  <img ng-src={{image}} class="avatar" style="left:22px;top:26px;margin:15px auto;width:70px;height:70px;" ng-show="changePhoto == true">
+  <input style="margin-left:125px; margin-top:25px; width:180px; color:#24afe5; background:white; font-weight:bold;" type="submit" id="upload" value="Add Photo" class="button button-block button-calm-900 text-center" ng-click="uploadImage(); changePhoto = true"></input>
+</div>
+<!-- Form post -->
+<form method="post" enctype="text/plain">
+   <label class="item item-input content-border" style="padding:0;border-right: none;">
+      <input type="text" id="compLocation" style="font-size:16px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="Full Name" ng-model="profile.address">
+  </label>
+  <label class="item item-input content-border" style="padding:0;border-right: none;">
+      <input type="text" id="compTeam" style="font-size:16px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="Username" ng-model="profile.hp">
+  </label>
+  <label class="item item-input content-border" style="padding:0;border-right: none;">
+      <input type="text" id="compLocation" style="font-size:16px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="Email" ng-model="profile.bio">
+  </label>
+  <label class="item item-input item-select" style="border-right: none;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">How old are you?</div>
+      <select ng-model="profile.age" style="padding-right:35px;font-size:16px;">
+        <option value="10" style="color:black;">10</option>
+        <option value="11" style="color:black;">11</option>
+        <option value="12" style="color:black;">12</option>
+        <option value="13" style="color:black;">13</option>
+        <option value="14" style="color:black;">14</option>
+        <option value="15" style="color:black;">15</option>
+        <option value="16" style="color:black;">16</option>
+        <option value="17" style="color:black;">17</option>
+        <option value="18" style="color:black;">18</option>
+        <option value="19" style="color:black;">19</option>
+        <option value="20" style="color:black;">20</option>
+        <option value="21" style="color:black;">21</option>
+        <option value="22" style="color:black;">22</option>
+        <option value="23" style="color:black;">23</option>
+        <option value="24" style="color:black;">24</option>
+        <option value="25" style="color:black;">25</option>
+        <option value="26" style="color:black;">26</option>
+        <option value="27" style="color:black;">27</option>
+        <option value="28" style="color:black;">28</option>
+        <option value="29" style="color:black;">29</option>
+        <option value="20" style="color:black;">30</option>
+      </select>
+  </label>
+  <label class="item item-input item-select" style="border-right: none;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">What position did you play?</div>
+      <select ng-model="profile.position" style="padding-right:35px;font-size:16px;">
+        <option value="GK" style="color:black;">GoalKeeper</option>
+        <option value="DF" style="color:black;">Defender</option>
+        <option value="AT" style="color:black;">Attacker</option>
+      </select>
+  </label>
+  <label class="item item-input content-border" style="padding:0;border-right: none;">
+      <input type="text" id="compLocation" style="font-size:16px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="Address" ng-model="profile.address">
+  </label>
+  <label class="item item-input content-border" style="padding:0;border-right: none;">
+      <input type="text" id="compTeam" style="font-size:16px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="HP" ng-model="profile.hp">
+  </label>
+  <label class="item item-input content-border" style="padding:0;border-right: none;">
+      <input type="text" id="compLocation" style="font-size:16px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="Bio" ng-model="profile.bio">
+  </label>
+</form>
+</ion-content>
+</ion-view>

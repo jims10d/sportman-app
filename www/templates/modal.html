@@ -1,0 +1,22 @@
+<ion-modal-view>
+  <!--  <ion-header-bar>
+      <h1 class = "title">Line Up</h1>
+   </ion-header-bar> -->
+	
+   <ion-content class="hideScroll">
+   		<div class="list">
+  <!-- White area -->
+  <div ng-hide="searchmessage"></div>
+  <!-- Data of chats -->
+  <a ng-repeat="data in squadDataArr track by $index" class="item item-avatar" style="border-bottom:2px solid #f0efef;">
+   <img src="img/profile3.png">
+    <div style="padding-top: 3px;height:40px;">
+    <h2 style="margin-left: -26px; width:100px;">{{data.username}}</h2>
+    <p style="margin-left: -26px; margin-top: -2px;">{{data.email}}</p>
+    </div>
+  </a>
+</div>
+      <button class = "button icon icon-left ion-ios-close-outline"
+         ng-click = "closeModal()" style="top: 400px;left: 90px;background-color: #77d677; color: white;position: fixed;">Cancel</button>
+   </ion-content>
+</ion-modal-view>

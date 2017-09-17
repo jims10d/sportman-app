@@ -1,0 +1,99 @@
+<ion-modal-view>
+  <!--  <ion-header-bar>
+      <h1 class = "title">Line Up</h1>
+   </ion-header-bar> -->
+	
+<ion-content class="hideScroll">
+  <div style="color: white;padding: 10px;padding-left: 14px;background-color: #77d677;font-size: 16px;">Scorer</div>
+  <ion-list ng-repeat="data in squadDataArr track by $index">
+    <ion-radio ng-model="scorer" value="{{data.username}}" name="scorer" style="border-bottom: 1px solid #eeeeee;">{{data.username}}</ion-radio>
+  </ion-list>
+   <div style="color: white;padding: 10px;padding-left: 14px;background-color: #77d677;font-size: 16px;">Assist</div>
+  <ion-list ng-repeat="data in squadDataArr track by $index">
+     <ion-radio ng-model="assist" value="{{data.username}}" name="assist" style="border-bottom: 1px solid #eeeeee;">{{data.username}}</ion-radio>
+  </ion-list>
+  <div class="list">
+  <!-- White area -->
+  <div ng-hide="searchmessage"></div>
+  <!-- Data of chats -->
+<!--   <a ng-if="status == 'goalHome'" ng-repeat="data in squadDataArr track by $index" class="item item-avatar" style="border-bottom:2px solid #f0efef;" ng-click="addScoreHome('{{data.username}}')">
+   <img src="img/profile3.png" ng-if="data !== null">
+    <div style="padding-top: 3px;height:40px;" ng-if="data !== null">
+    <h2 style="margin-left: -26px; width:100px;" ng-if="data !== null">{{data.username}}</h2>
+    <p style="margin-left: -26px; margin-top: -2px;" ng-if="data !== null">{{data.email}}</p>
+    </div>
+  </a> -->
+  <a ng-if="status == 'goalAway'" ng-repeat="data in squadDataArr track by $index" class="item item-avatar" style="border-bottom:2px solid #f0efef;" ng-click="addScoreAway('{{data.username}}')">
+   <img src="img/profile3.png" ng-if="data !== null">
+    <div style="padding-top: 3px;height:40px;" ng-if="data !== null">
+    <h2 style="margin-left: -26px; width:100px;" ng-if="data !== null">{{data.username}}</h2>
+    <p style="margin-left: -26px; margin-top: -2px;" ng-if="data !== null">{{data.email}}</p>
+    </div>
+  </a>
+
+  <a ng-if="status == 'assistHome'" ng-repeat="data in squadDataArr track by $index" class="item item-avatar" style="border-bottom:2px solid #f0efef;" ng-click="addAssistHome('{{data.username}}')">
+   <img src="img/profile3.png" ng-if="data !== null">
+    <div style="padding-top: 3px;height:40px;" ng-if="data !== null">
+    <h2 style="margin-left: -26px; width:100px;" ng-if="data !== null">{{data.username}}</h2>
+    <p style="margin-left: -26px; margin-top: -2px;" ng-if="data !== null">{{data.email}}</p>
+    </div>
+  </a>
+  <a ng-if="status == 'assistAway'" ng-repeat="data in squadDataArr track by $index" class="item item-avatar" style="border-bottom:2px solid #f0efef;" ng-click="addAssistAway('{{data.username}}')">
+   <img src="img/profile3.png" ng-if="data !== null">
+    <div style="padding-top: 3px;height:40px;" ng-if="data !== null">
+    <h2 style="margin-left: -26px; width:100px;" ng-if="data !== null">{{data.username}}</h2>
+    <p style="margin-left: -26px; margin-top: -2px;" ng-if="data !== null">{{data.email}}</p>
+    </div>
+  </a>
+
+  <a ng-if="status == 'yelCardHome'" ng-repeat="data in squadDataArr track by $index" class="item item-avatar" style="border-bottom:2px solid #f0efef;" ng-click="addYelCardHome('{{data.username}}')">
+   <img src="img/profile3.png" ng-if="data !== null">
+    <div style="padding-top: 3px;height:40px;" ng-if="data !== null">
+    <h2 style="margin-left: -26px; width:100px;" ng-if="data !== null">{{data.username}}</h2>
+    <p style="margin-left: -26px; margin-top: -2px;" ng-if="data !== null">{{data.email}}</p>
+    </div>
+  </a>
+  <a ng-if="status == 'yelCardAway'" ng-repeat="data in squadDataArr track by $index" class="item item-avatar" style="border-bottom:2px solid #f0efef;" ng-click="addYelCardAway('{{data.username}}')">
+   <img src="img/profile3.png" ng-if="data !== null">
+    <div style="padding-top: 3px;height:40px;" ng-if="data !== null">
+    <h2 style="margin-left: -26px; width:100px;" ng-if="data !== null">{{data.username}}</h2>
+    <p style="margin-left: -26px; margin-top: -2px;" ng-if="data !== null">{{data.email}}</p>
+    </div>
+  </a>
+
+  <a ng-if="status == 'redCardHome'" ng-repeat="data in squadDataArr track by $index" class="item item-avatar" style="border-bottom:2px solid #f0efef;" ng-click="addRedCardHome('{{data.username}}')">
+   <img src="img/profile3.png" ng-if="data !== null">
+    <div style="padding-top: 3px;height:40px;" ng-if="data !== null">
+    <h2 style="margin-left: -26px; width:100px;" ng-if="data !== null">{{data.username}}</h2>
+    <p style="margin-left: -26px; margin-top: -2px;" ng-if="data !== null">{{data.email}}</p>
+    </div>
+  </a>
+  <a ng-if="status == 'redCardAway'" ng-repeat="data in squadDataArr track by $index" class="item item-avatar" style="border-bottom:2px solid #f0efef;" ng-click="addRedCardAway('{{data.username}}')">
+   <img src="img/profile3.png" ng-if="data !== null">
+    <div style="padding-top: 3px;height:40px;" ng-if="data !== null">
+    <h2 style="margin-left: -26px; width:100px;" ng-if="data !== null">{{data.username}}</h2>
+    <p style="margin-left: -26px; margin-top: -2px;" ng-if="data !== null">{{data.email}}</p>
+    </div>
+  </a>
+
+  <a ng-if="status == 'subHome'" ng-repeat="data in squadDataArr track by $index" class="item item-avatar" style="border-bottom:2px solid #f0efef;" ng-click="addSubHome('{{data.username}}')">
+   <img src="img/profile3.png" ng-if="data !== null">
+    <div style="padding-top: 3px;height:40px;" ng-if="data !== null">
+    <h2 style="margin-left: -26px; width:100px;" ng-if="data !== null">{{data.username}}</h2>
+    <p style="margin-left: -26px; margin-top: -2px;" ng-if="data !== null">{{data.email}}</p>
+    </div>
+  </a>
+  <a ng-if="status == 'subAway'" ng-repeat="data in squadDataArr track by $index" class="item item-avatar" style="border-bottom:2px solid #f0efef;" ng-click="addSubAway('{{data.username}}')">
+   <img src="img/profile3.png" ng-if="data !== null">
+    <div style="padding-top: 3px;height:40px;" ng-if="data !== null">
+    <h2 style="margin-left: -26px; width:100px;" ng-if="data !== null">{{data.username}}</h2>
+    <p style="margin-left: -26px; margin-top: -2px;" ng-if="data !== null">{{data.email}}</p>
+    </div>
+  </a>
+</div>
+      <button class = "button"
+         ng-click = "addGoalHome()" style="top: 700px;left: 20px;background-color: #77d677; color: white;position: fixed;">Submit</button>
+      <button class = "button"
+         ng-click = "closeModalGoal()" style="top: 700px;right: 20px;background-color: #77d677; color: white;position: fixed;">Cancel</button>
+   </ion-content>
+</ion-modal-view>

@@ -1,0 +1,66 @@
+<ion-view view-title="Create Competition" hide-back-button="true" text-center cache-view="false">
+<!-- Back button -->
+<ion-nav-buttons side="left">
+<button ng-show="menuProfile.role == 'Player'" class="button button-clear icon-button mdi mdi-chevron-left" ng-click="backToCompetition()" style="font-size:25px"></button>
+<button ng-show="menuProfile.role == 'Organizer'" class="button button-clear icon-button mdi mdi-chevron-left" ng-click="backToHome()" style="font-size:25px"></button>
+</ion-nav-buttons>
+<!-- Upload Image and Post button -->
+<ion-nav-buttons side="right">
+<button class="button button-clear icon-button mdi mdi-camera" ng-click="uploadImage()" style="min-height:44px;font-size:20px;margin-top:2px;margin-right:-10px;"></button>
+<button class="button button-clear icon-button mdi mdi-send" ng-click="addCompetition()" style="min-height:44px;font-size:20px;margin-top:2px;"></button>
+</ion-nav-buttons>
+<ion-content class="hideScroll" overflow-scroll=false scroll-sista="tabs" style="background-color:#fff;">
+<!-- Form post -->
+<form method="post" enctype="text/plain" style="padding-top: 10px">
+  <label class="item item-input content-border" style="padding:0">
+      <input type="text" id="compName" style="font-size:16px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="Competition Name" ng-model="data.comp_name">
+  </label>
+  <label class="item item-input item-select">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Type</div>
+      <select id="mySelect" onchange="myFunction()" ng-model="data.comp_type" style="padding-right:35px;font-size:16px;">
+        <option value="GroupStage" style="color:black;">Group Stage</option>
+        <option value="KnockoutSystem" style="color:black;">Knockout System</option>
+      </select>
+  </label>
+  <label ng-show="status == 'GroupStage'" class="item item-input content-border" style="padding:0">
+      <input type="number" min="4" max="20" id="compTeam" style="font-size:16px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="Number of Teams" ng-model="data.comp_teams">
+  </label>
+  <label ng-show="status == 'KnockoutSystem'" class="item item-input item-select">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Number Of Teams</div>
+      <select ng-model="data.comp_numOfTeam" style="padding-right:35px;font-size:16px;">
+        <option value="32" style="color:black;">32</option>
+        <option value="16" style="color:black;">16</option>
+        <option value="8" style="color:black;">8</option>
+      </select>
+  </label>
+  <ion-toggle ng-model="fee" toggle-class="toggle-calm" style="font-size:16px;">Collect Registration Fee ?</ion-toggle>
+  <label class="item item-input" style="padding:0" ng-show="fee == true">
+      <input type="text" id="compFee" style="font-size:16px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="Set Registration Fee" ng-model="data.comp_fee">
+  </label>
+  <label class="item item-input content-border" style="padding:0">
+      <input type="text" id="compLocation" style="font-size:16px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="Competition Location" ng-model="data.comp_location">
+  </label>
+  <label class="item item-input content-border" style="padding:0">
+      <div class="input-label" style="font-weight:unset; padding-left:15px;">Start Date</div>
+      <input type="date" id="compStart" style="margin-right:-20px;padding-left:90px;" ng-model="data.comp_start">
+  </label>
+  <label class="item item-input content-border" style="padding:0">
+      <div class="input-label" style="font-weight:unset; padding-left:15px;">End Date</div>
+      <input type="date" id="compEnd" style="margin-right:-20px;padding-left:90px;" ng-model="data.comp_finish">
+  </label>
+  <label class="item item-input content-border" style="padding:13px;font-size: 15px;">Competition Rewards</label>
+  <label class="item item-input content-border" style="padding:0">
+      <input type="text" id="compLocation" style="font-size:16px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="First Place " ng-model="data.firstplace_reward">
+  </label>
+  <label class="item item-input content-border" style="padding:0">
+      <input type="text" id="compLocation" style="font-size:16px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="Second Place" ng-model="data.secondplace_reward">
+  </label>
+  <label class="item item-input content-border" style="padding:0">
+      <input type="text" id="compLocation" style="font-size:16px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="Third Place" ng-model="data.thirdplace_reward">
+  </label>
+  <label class="item item-input content-border" style="padding:0">
+      <textarea id="compRegulation" style="font-size:16px;height:150px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="Competition Regulation" ng-model="data.comp_regulation"></textarea>
+  </label>
+</form>
+</ion-content>
+</ion-view>

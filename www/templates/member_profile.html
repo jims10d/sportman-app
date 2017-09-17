@@ -1,0 +1,29 @@
+<ion-view view-title="Member Profile" cache-view="true">
+<ion-nav-buttons side="right">
+<a class="button button-clear" ng-href="#/app/edit_profile"><i class="mdi mdi-settings padding"></i></a>
+</ion-nav-buttons>
+<!-- Shadow space -->
+<div class="bar item-input-inset" style="border:none;box-shadow: 0 1px 2px #aaa"></div>
+<ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color: #ececec;">
+<div style="background-image: url('img/background-leaderboard.png');height:250px;padding-top:15px;background-repeat:no-repeat;">
+  <img src="img/profile2.png" ng-src={{profile.photo}} class="avatar" style="left:0px;right:0px;top:30px;margin:0px auto;width:80px;height:80px;">
+  <h1 style="color:white; margin-top:100px; text-align:center; font-size:18px;">Jims</h1>
+  <p style="color:#ececec; text-align:center; font-size:12px;">Coach</p>
+  <p style="color:#ececec; text-align:center; font-size:12px;">jims@gmail.com</p>
+</div>
+<div class="card" style="margin-left:30px; margin-right:30px; margin-top:-33px;">
+  <div class="item item-text-wrap" style="padding:0px;">
+    <div class="row">
+      <div class="col">
+        <p style="text-align:center;border-bottom:1px solid #e1dddd;padding-bottom:2px;color:#000000;">250 Games</p>
+      </div>
+    </div>
+    <div class="row" style="text-align:center;">
+      <div class="col">200 W</div>
+      <div class="col">40 D</div>
+      <div class="col">10 L</div>
+    </div>
+  </div>
+</div>
+</ion-content>
+</ion-view>
