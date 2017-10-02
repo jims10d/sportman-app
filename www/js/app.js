@@ -366,11 +366,20 @@ $stateProvider
 //     }
 //   }
 // })
-.state('app.search', {
-  url: '/search',
+.state('app.searchPlayer', {
+  url: '/searchPlayer',
   views: {
     'home': {
-      templateUrl: 'templates/search.html',
+      templateUrl: 'templates/searchPlayer.html',
+      controller: 'SearchCtrl'
+    }
+  }
+})
+.state('app.searchCoach', {
+  url: '/searchCoach',
+  views: {
+    'home': {
+      templateUrl: 'templates/searchCoach.html',
       controller: 'SearchCtrl'
     }
   }

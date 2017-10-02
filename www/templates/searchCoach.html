@@ -1,4 +1,4 @@
-<ion-view view-title="Add Member" cache-view="false">
+<ion-view view-title="Search Coach" cache-view="false">
 <!-- Back Button -->
 <ion-nav-buttons side="left">
 <button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="backToMyTeam()" style="font-size:25px"></button>
@@ -14,12 +14,11 @@
     <!-- button enable -->
     <ion-button type="submit" ng-show="search.nama.length > 0" ng-click="searchData()" class="icon mdi mdi-magnify pull-right" style="font-size: 25px; color:rgb(10, 176, 254);height:50px; width:60px;padding: 13px 0 0 15px;"></ion-button>
 </div>
-<!-- List of User-->
-<p style="text-align:center;margin-top:150px;color: darkgray;" ng-show="people == undefined">You haven't searched anything yet...</p>
+<!-- List of Search Data -->
+<p style="text-align:center;margin-top:150px;color: darkgray;" ng-show="coachArr == undefined">You haven't searched anything yet...</p>
+<p style="text-align:center;margin-top:150px;color: darkgray;" ng-show="coachArr.length == 0" ng-hide="coachArr.length != 0">Not Found</p>
 
-<p style="text-align:center;margin-top:150px;color: darkgray;" ng-show="people.length == 0" ng-hide="people.length != 0">Not Found</p>
-
-  <a ng-repeat="data in people" class="item item-avatar" ng-click="userDetail('{{data.username}}')" style="margin: 6px; background-color: #ffffff; width: auto; border:1px solid #e6e6e6;">
+  <a ng-repeat="data in coachArr" class="item item-avatar" ng-click="userDetail('{{data.username}}')" style="margin: 6px; background-color: #ffffff; width: auto; border:1px solid #e6e6e6;">
     <img ng-src="{{data.photo}}" src="img/profile2.png">
     <div class="col" style="margin-top: 3px">
       <h2 style="margin-left: -26px;">{{data.username}}</h2>

@@ -1,34 +1,51 @@
 <ion-view view-title="Create Team" hide-back-button="true" text-center cache-view="false">
-<!-- Back button -->
+<!-- Back Button -->
 <ion-nav-buttons side="left">
 <button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="backToMyTeam()" style="font-size:25px"></button>
 </ion-nav-buttons>
-<!-- Upload Image and Post button -->
+<!-- Update Button -->
 <ion-nav-buttons side="right">
-<button class="button button-clear icon-button mdi mdi-camera" ng-click="uploadImage()" style="min-height:44px;font-size:20px;margin-top:2px;margin-right:-10px;"></button>
-<button class="button button-clear icon-button mdi mdi-send" ng-click="addTeam()" style="min-height:44px;font-size:20px;margin-top:2px;"></button>
+<button class="button button-clear icon-button mdi mdi-send" ng-click="addTeam()" style="min-height:44;font-size:25px"></button>
 </ion-nav-buttons>
-<ion-content class="hideScroll" overflow-scroll=false scroll-sista="tabs" style="background-color:#fff;">
-<!-- Form post -->
-<form method="post" enctype="text/plain" style="padding-top: 10px">
-  <label class="item item-input content-border" style="padding:0">
-      <input type="text" id="compName" style="font-size:16px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="Team Name" ng-model="teamsData.team_name">
-  </label>
-  <label class="item item-input content-border" style="padding:0">
-      <input type="text" id="compName" style="font-size:16px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="Team Abbreviation Name" ng-model="teamsData.team_abrName">
-  </label>
-  <!-- <label class="item item-input content-border" style="padding:0">
-      <input type="text" id="compName" style="font-size:16px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="Coach" ng-model="teamsData.team_coach">
-  </label> -->
-   <label class="item item-input content-border" style="padding:0">
-      <input type="text" id="compName" style="font-size:16px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="Team Logo" ng-model="teamsData.team_coach">
-  </label>
-<!--    <label class="item item-input content-border" style="padding:0">
-      <input type="text" id="compName" style="font-size:16px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="Coach" ng-model="teamsData.team_coach">
-  </label>
-   <label class="item item-input content-border" style="padding:0">
-      <input type="text" id="compName" style="font-size:16px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="Member" ng-model="teamsData.team_coach">
-  </label> -->
+<!-- Shadow space -->
+<div class="bar item-input-inset" style="border:none;box-shadow: 0 1px 2px #aaa"></div>
+<ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color:#fff;">
+<div style="background-color:#4db6ac; height:150px;padding-top:15px;">
+	<img ng-src={{teamsData.team_logo}} class="avatar" style="left:22px;top:26px;margin:0px auto;width:70px;height:70px;background-color:#f8f8f8;">
+	<img ng-src={{image}} class="avatar" style="left:22px;top:26px;margin:0px auto;width:70px;height:70px;" ng-show="addLogo == true">
+	<input style="margin-left:120px; margin-top:25px; width:200px; color:#4db6ac; background:white; font-weight:bold;" type="submit" id="upload" value="Add Logo" class="button button-block button-calm-900 text-center" ng-click="uploadImage(); addLogo = true"></input>
+</div>
+<!-- Form Update -->
+<form method="post" enctype="text/plain">
+	<div class="list padding" style="padding-top:0px;">
+		<!-- Upload Image -->
+		<input ng-hide="true" type="file" onchange="angular.element(this).scope().showPreviewImage(this.files[0])" id="file-upload"/>
+		<label class="item item-input item-floating-label" style="padding:0px">
+			<span class="input-label"> Team Name</span>
+			<input id="title" type="text" placeholder="Team Name" ng-model="teamsData.team_name" style="color:black;">
+		</label>
+		<label class="item item-input item-floating-label" style="padding:0px">
+			<span class="input-label">Team Abreviation Name</span>
+			<input id="title" type="text" placeholder="Team Abreviation Name" ng-model="teamsData.team_abrName" style="color:black;">
+		</label>
+	 <!--  <label class="item item-input item-floating-label" style="padding:0px">
+			<span class="input-label">Nickname</span>
+			<input id="title" type="text" placeholder="Nickname" value="{{profile.email}}" ng-model="profile.email" style="color:black;">
+		</label>
+		<label class="item item-input item-floating-label" style="padding:0px">
+			<span class="input-label">Bio</span>
+			<input id="title" type="text" placeholder="Bio" value="{{profile.bio}}" ng-model="profile.bio" style="color:black;">
+		</label>
+		<label class="item item-input item-floating-label" style="padding:0px">
+			<span class="input-label">Link</span>
+			<input id="title" type="text" placeholder="link" value="{{profile.link}}" ng-model="profile.link" style="color:black;">
+		</label>
+		<label class="item item-input item-floating-label" style="padding:0px">
+			<span class="input-label">Status</span>
+			<input id="title" type="text" placeholder="Status" value="{{profile.status}}" ng-model="profile.status" style="color:black;">
+		</label> -->
+	</div>
+	<input type="submit" value="Save" class="button button-block button-calm-900 text-center"  id="updateprofile" style="margin:0px; background-color:#24afe5;display:none"></input>
 </form>
 </ion-content>
 </ion-view>

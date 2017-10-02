@@ -1,7 +1,7 @@
 <ion-view view-title="Search Team" cache-view="false">
 <!-- Back Button -->
 <ion-nav-buttons side="left">
-<button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="back()" style="font-size:25px"></button>
+<button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="backToMyTeam()" style="font-size:25px"></button>
 </ion-nav-buttons>
 
 <ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color: #F1F5F8;">
@@ -20,7 +20,7 @@
 <p style="text-align:center;margin-top:150px;color: darkgray;" ng-show="teamArr.length == 0" ng-hide="teamArr.length != 0">Not Found</p>
 
   <a ng-repeat="data in teamArr" class="item item-avatar" style="margin: 6px; background-color: #ffffff; width: auto; border:1px solid #e6e6e6;">
-    <img src="img/profile2.png">
+    <img src="img/icon.png">
     <div class="col" style="margin-top: 3px">
       <h2 style="margin-left: -26px;">{{data.team_name}}</h2>
       <p style="margin-left: -26px; margin-top: -2px">{{data.team_coach}}

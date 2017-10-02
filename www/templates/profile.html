@@ -11,7 +11,7 @@
 <ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color: #ececec;">
 <div ng-show="menuProfile.role != 'Referee'" style="background-image: url('img/background-leaderboard.png');padding-top:15px;background-repeat:no-repeat;">
   <img ng-if="loadCompleted == true" ng-hide="profile.photo != ''" src="img/profile3.png" class="avatar" style="left:0px;right:0px;top:30px;margin:0px auto;width:80px;height:80px;">
-  <img ng-if="loadCompleted == true" ng-show="profile.photo != ''" ng-src={{profile.photo}} class="avatar" style="left:0px;right:0px;top:30px;margin:0px auto;width:80px;height:80px;">
+  <img src="img/profile3.png" ng-src={{profile.photo}} class="avatar" style="left:0px;right:0px;top:30px;margin:0px auto;width:80px;height:80px;">
   <h1 style="color:white; margin-top:100px; text-align:center; font-size:18px;">{{profile.username}}</h1>
   <p style="color:#ececec; text-align:center; font-size:12px;">{{profile.email}}</p>
   <p style="color:#ececec; text-align:center; font-size:12px;">{{profile.role}}</p>  
@@ -65,8 +65,11 @@
         <p style="text-align:center;border-bottom:1px solid #e1dddd;padding-bottom:2px;color:#000000;">Current Team</p>
       </div>
     </div>
-    <div class="row" style="text-align:center;">
+    <div ng-hide="menuProfile.team === null" class="row" style="text-align:center;">
       <div class="col">Arsenal</div>
+    </div>
+    <div ng-show="menuProfile.team === null" class="row" style="text-align:center;">
+      <div class="col">-</div>
     </div>
   </div>
 </div>
@@ -77,8 +80,11 @@
         <p style="text-align:center;border-bottom:1px solid #e1dddd;padding-bottom:2px;color:#000000;">Last Managed Team</p>
       </div>
     </div>
-    <div class="row" style="text-align:center;">
+    <div ng-hide="menuProfile.team === null" class="row" style="text-align:center;">
       <div class="col">Chelsea, Liverpool, Monaco</div>
+    </div>
+    <div ng-show="menuProfile.team === null" class="row" style="text-align:center;">
+      <div class="col">-</div>
     </div>
   </div>
 </div>

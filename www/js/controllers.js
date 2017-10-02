@@ -54,7 +54,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 							$state.go('app.home');
 						}else if($scope.profile.role == "Manager"){
 							$state.go('app.home'); 
-							$ionicLoading.hide();
+							// $ionicLoading.hide();
 						}else if($scope.profile.role == "Coach"){
 							$state.go('app.home'); 
 							$ionicLoading.hide();
@@ -174,7 +174,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				console.log(localStorage.getItem("team"));
 				$scope.myTeam = {};
 				if(localStorage.getItem("role")=='Player' || localStorage.getItem("role")=='Coach' || localStorage.getItem("role")=='Manager'){
-					if(data.team !== null){
+					if(data.team !== ""){
 						TeamService.getTeamByName(data.team).success(function(data){
 							console.log(data);
 							$scope.myTeam = data;
@@ -216,9 +216,9 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$scope.isOrganizer = false;
 			$state.go('login'); // menampilkan halaman login
 		};
-		$scope.editMatch = function() { // kembali ke halaman home
-			$state.go('app.edit_match');
-		};
+		// $scope.editMatch = function() { // kembali ke halaman home
+		// 	$state.go('app.edit_match');
+		// };
 	})
 
 .controller('HomeCtrl', function($scope, $compile, $state, $stateParams, $ionicPopup, $ionicPlatform, $ionicLoading, TeamService, CompetitionService, MatchService, PostService, $cordovaSocialSharing, $window, $ionicModal) {
@@ -1436,8 +1436,8 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
                                     $scope.profile = data;
                                     $state.go('app.profile');
                                     $ionicLoading.hide();
-                    }).error(function(data) {
-                                }).error(function(data) {});
+                    			}).error(function(data) {})
+                            .error(function(data) {});
                             }).error(function(data2) {});
                         }).error(function(data) {});
                     }).error(function(data) {});
@@ -2986,12 +2986,11 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	})
 
 .controller('MyTeamCtrl', function(NgMap, $scope, $state, $stateParams, $ionicPopup, $ionicPlatform, $ionicLoading, TeamService, LoginService, MatchService, PostService, ProfileService, CompetitionService, ionicMaterialInk, ionicMaterialMotion, $cordovaSocialSharing) {
-	$ionicLoading.show({
-		content: 'Login...',
-		animation: 'fade-in',
-		showBackdrop: true,
-	});
-
+	// $ionicLoading.show({
+	// 	content: 'Login...',
+	// 	animation: 'fade-in',
+	// 	showBackdrop: true,
+	// });
 	$scope.userProfile = {};
 	// Get user profile data
 	ProfileService.getProfile(localStorage.getItem("userid"), localStorage.getItem("token")).success(function(data) {
@@ -2999,15 +2998,88 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		console.log($scope.userProfile);
 
 		if($scope.userProfile.role === 'Player' || $scope.userProfile.role === 'Coach'){
-		console.log("coasjafhgisg");
-		if($scope.userProfile.teamRequested === null || $scope.userProfile.teamRequested === ''){
-			console.log("dsfsdfsd");
-		}else{
-			console.log("ajsdlifkh flksh");
-			$scope.requestedTeamArr = $scope.userProfile.teamRequested.split(',');
-			console.log($scope.requestedTeamArr);
+			console.log("coasjafhgisg");
+			if($scope.userProfile.teamRequested === null || $scope.userProfile.teamRequested === ''){
+				console.log("dsfsdfsd");
+			}else{
+				console.log("ajsdlifkh flksh");
+				$scope.requestedTeamArr = $scope.userProfile.teamRequested.split(',');
+				console.log($scope.requestedTeamArr);
+
+				$scope.requestedTeamDataArr = [];
+				for(var t = 0; t < $scope.requestedTeamArr.length; t++){
+					TeamService.getTeamByName($scope.requestedTeamArr[t]).success(function(data){
+						console.log(data);
+						$scope.requestedTeamDataArr.push(data);
+					}).error(function(data) {});
+				}
+				console.log($scope.requestedTeamDataArr);
+			}
+
+			if($scope.userProfile.teamInvitation === null || $scope.userProfile.role === ''){
+				console.log("sdfsjdf ksfjsdf ");
+			}else{
+				console.log("ahlelele");
+				$scope.teamInvitationArr = $scope.userProfile.teamInvitation.split(',');
+				console.log($scope.teamInvitationArr);
+
+				$scope.teamInvitationDataArr = [];
+				for(var t = 0; t < $scope.teamInvitationArr.length; t++){
+					TeamService.getTeamByName($scope.teamInvitationArr[t]).success(function(data){
+						console.log(data);
+						if(data !== null){
+							$scope.teamInvitationDataArr.push(data);	
+						}
+					}).error(function(data) {});
+				}
+				console.log($scope.teamInvitationDataArr);
+			}	
 		}
-	}	
+		$scope.loadCompleted = false;
+		if($scope.userProfile.role === 'Manager'){
+			$scope.createdTeam = {};
+			$scope.invitedMember = [];
+			$scope.invitedMemberData = [];
+			if($scope.userProfile.team !== null){
+				TeamService.getTeamByName($scope.userProfile.team).success(function(data){
+					console.log(data);
+					$scope.createdTeam = data;
+					console.log("sussdksde");
+					console.log($scope.createdTeam);
+					if($scope.createdTeam.team_logo != null){
+						$scope.imgLoadCompleted = false;
+						objImg = new Image();
+						objImg.src = $scope.createdTeam.team_logo;
+						objImg.onload = function(){
+							console.log("alelele")
+						    $scope.myTeamLogo = objImg.src;
+						    $scope.imgLoadCompleted = true;
+						    $ionicLoading.hide();
+						};
+					}else{
+						$ionicLoading.hide();
+					}
+					
+					if($scope.createdTeam.invited_member !== null){
+						$scope.invitedMember = $scope.createdTeam.invited_member.split(',');
+						$scope.teamAbr = $scope.createdTeam.team_name.substring(0,1).toUpperCase();
+						console.log($scope.invitedMember);
+						for(var i = 0; i < $scope.invitedMember.length; i++){
+							LoginService.getUserByUsername($scope.invitedMember[i]).success(function(data){
+								console.log(data);
+								if(data !== null){
+									$scope.invitedMemberData.push(data);
+								}
+							}).error(function(data) {
+								// $ionicLoading.hide();
+							});
+						}
+						console.log($scope.invitedMemberData);
+						$scope.loadCompleted = true;
+					}
+				}).error(function(data) {});
+			}
+		}	
 	}).error(function(data) {});
 
 	console.log(localStorage.getItem("isCoach"));
@@ -3026,6 +3098,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	$scope.haveMember = false;
 	$scope.teamInvitation = [];
 	$scope.showme = 1;
+	$scope.coachTab = 1;
 	$scope.tab1 = function(){
 		$scope.showme = 1;
 	}
@@ -3035,34 +3108,40 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	$scope.tab3 = function(){
 		$scope.showme = 3;
 	}
+	$scope.coachTab1 = function(){
+		$scope.coachTab = 1;
+	}
+	$scope.coachTab2 = function(){
+		$scope.coachTab = 2;
+	}
 
 	console.log($scope.menuProfile.teamRequested);
 
 	$scope.myTeamData = {};
 	$scope.invited_member = [];
-	TeamService.getTeamByName($scope.userTeam).success(function(data){
-		console.log(data);
-		$scope.myTeamData = data;
-		if($scope.myTeamData.player_request !== null){
-			$scope.playerRequest = $scope.myTeamData.player_request.split(',');
-		}
-		if($scope.myTeamData.coach_request !== null){
-			$scope.coachRequest = $scope.myTeamData.coach_request.split(',');		
-		}
-		console.log($scope.playerRequest);
-		console.log($scope.coachRequest);
-		localStorage.setItem("myTeamId", $scope.myTeamData.id);
-		localStorage.setItem("myCompetitionId", $scope.myTeamData.competitionId);
+		// TeamService.getTeamByName($scope.userTeam).success(function(data){
+		// 	console.log(data);
+		// 	$scope.myTeamData = data;
+		// 	if($scope.myTeamData.player_request !== null){
+		// 		$scope.playerRequest = $scope.myTeamData.player_request.split(',');
+		// 	}
+		// 	if($scope.myTeamData.coach_request !== null){
+		// 		$scope.coachRequest = $scope.myTeamData.coach_request.split(',');		
+		// 	}
+		// 	console.log($scope.playerRequest);
+		// 	console.log($scope.coachRequest);
+		// 	localStorage.setItem("myTeamId", $scope.myTeamData.id);
+		// 	localStorage.setItem("myCompetitionId", $scope.myTeamData.competitionId);
 
-		if($scope.myTeamData.invited_member.length !== 0){
-			$scope.haveMember = true;
-			console.log("have member");
-		}
+		// 	if($scope.myTeamData.invited_member.length !== 0){
+		// 		$scope.haveMember = true;
+		// 		console.log("have member");
+		// 	}
 
-		$scope.invited_member = $scope.myTeamData.invited_member.split(',');
+		// 	$scope.invited_member = $scope.myTeamData.invited_member.split(',');
 
-	}).error(function(data) {
-	});
+		// }).error(function(data) {
+		// });
 	// if($scope.menuProfile.teamInvitation === '' || $scope.menuProfile.teamInvitation === null){
 	// 	$scope.NoInvitation = true;
 	// 	console.log("tidak ada undangan tim");
@@ -3094,10 +3173,16 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		console.log("not requested a team");
 	}
 
+	if($scope.menuProfile.teamInvitation !== '' || $scope.menuProfile.teamInvitation !== null){
+		$scope.teamInvited = true;
+	}else{
+		$scope.teamInvited = false;
+	}
+
 	TeamService.getTeam(localStorage.getItem("token")).success(function(data) {
 		console.log(data);
 		$scope.team = data;
-		$ionicLoading.hide();
+		// $ionicLoading.hide();
 		console.log(localStorage.getItem("userid"));
 		console.log($scope.team);
 		for(var i = 0; i < $scope.team.length; i++){
@@ -3127,16 +3212,18 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		}
 
 	$scope.teamSquadArr = [];
-	TeamService.getTeamSquad($scope.menuProfile.team).success(function(data){
-		console.log("sdfsdf dfsdfs dfsfdsdf");
-		$ionicLoading.hide();
-		$scope.teamSquadArr = data;
-		console.log($scope.teamSquadArr);
+	if($scope.menuProfile.team !== null){
+		TeamService.getTeamSquad($scope.menuProfile.team).success(function(data){
+			console.log("sdfsdf dfsdfs dfsfdsdf");
+			// $ionicLoading.hide();
+			$scope.teamSquadArr = data;
+			console.log($scope.teamSquadArr);
+		}).error(function(data) {
+			// $ionicLoading.hide();
+		});
+	}
 	}).error(function(data) {
-		$ionicLoading.hide();
-	});
-	}).error(function(data) {
-		$ionicLoading.hide();
+		// $ionicLoading.hide();
 	});
 
 	$scope.addUserToTeamSquad = function(teamName) {
@@ -3145,22 +3232,22 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		$scope.squadData.TeamName = teamName;
 
 		TeamService.addMemberByName($scope.squadData).success(function(data){
-			$ionicLoading.hide();
+			// $ionicLoading.hide();
 			console.log("sukses wuhuhuhu");
 			// $state.go('app.team');
 		}).error(function(data){
-			$ionicLoading.hide();
+			// $ionicLoading.hide();
 		});
 
 		$scope.userSquad = {};
 		$scope.userSquad.TeamName = teamName;
 		$scope.userSquad.UserId = $scope.menuProfile.id;
 		TeamService.addTeamToUser($scope.userSquad).success(function(data){
-			$ionicLoading.hide();
+			// $ionicLoading.hide();
 			console.log("sukses wahahah");
 			// $state.go('app.team');
 		}).error(function(data){
-			$ionicLoading.hide();
+			// $ionicLoading.hide();
 		});
 
 
@@ -3168,22 +3255,22 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		$scope.delInvitation.UserName = $scope.menuProfile.username;
 		$scope.delInvitation.teamInvite = teamName;
 		TeamService.delTeamInvitation($scope.delInvitation).success(function(data){
-			$ionicLoading.hide();
+			// $ionicLoading.hide();
 			console.log("sukses alelele");
 			// $state.go('app.team');
 		}).error(function(data){
-			$ionicLoading.hide();
+			// $ionicLoading.hide();
 		});
 
 		$scope.delInvitedMember = {};
 		$scope.delInvitedMember.TeamName = teamName;
 		$scope.delInvitedMember.userInvited = $scope.menuProfile.username;
 		TeamService.delInvitedMember($scope.delInvitedMember).success(function(data){
-			$ionicLoading.hide();
+			// $ionicLoading.hide();
 			console.log("sukses ulelele");
 			// $state.go('app.team');
 		}).error(function(data){
-			$ionicLoading.hide();
+			// $ionicLoading.hide();
 		});
 	};
 
@@ -3192,22 +3279,22 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		$scope.delInvitation.UserName = $scope.menuProfile.username;
 		$scope.delInvitation.teamInvite = teamName;
 		TeamService.delTeamInvitation($scope.delInvitation).success(function(data){
-			$ionicLoading.hide();
+			// $ionicLoading.hide();
 			console.log("sukses alelele");
 			// $state.go('app.team');
 		}).error(function(data){
-			$ionicLoading.hide();
+			// $ionicLoading.hide();
 		});
 
 		$scope.delInvitedMember = {};
 		$scope.delInvitedMember.TeamName = teamName;
 		$scope.delInvitedMember.userInvited = $scope.menuProfile.username;
 		TeamService.delInvitedMember($scope.delInvitedMember).success(function(data){
-			$ionicLoading.hide();
+			// $ionicLoading.hide();
 			console.log("sukses ulelele");
 			// $state.go('app.team');
 		}).error(function(data){
-			$ionicLoading.hide();
+			// $ionicLoading.hide();
 		});
 	};
 
@@ -3217,7 +3304,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 	CompetitionService.getCompetitionById($stateParams.competitionId,localStorage.getItem("token")).success(function(data) {
 		console.log(data);
-		$ionicLoading.hide();
+		// $ionicLoading.hide();
 		$scope.competition = data;
 	}).error(function(data) {});
 
@@ -3247,8 +3334,11 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	$scope.searchTeam = function() {
 		$state.go('app.searchTeam');
 	};
-	$scope.searchUser = function() {
-		$state.go('app.search');
+	$scope.searchCoach = function() {
+		$state.go('app.searchCoach');
+	};
+	$scope.searchPlayer = function() {
+		$state.go('app.searchPlayer');
 	};
 })
 
@@ -3382,7 +3472,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	};
 })
 
-.controller('TeamCtrl', function(NgMap, $scope, $state, $stateParams, $ionicPopup, $ionicPlatform, $ionicLoading, ProfileService, TeamService, ionicMaterialInk, ionicMaterialMotion, $cordovaSocialSharing) {
+.controller('TeamCtrl', function(NgMap, $scope, $state, $stateParams, $ionicPopup, $ionicPlatform, $ionicLoading, LoginService, ProfileService, TeamService, ionicMaterialInk, ionicMaterialMotion, $cordovaSocialSharing) {
 	$ionicLoading.show({
 		content: 'Login...',
 		animation: 'fade-in',
@@ -3392,35 +3482,83 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 	$scope.teamsData = {};
 	$scope.profile = {};
+
+	$scope.uploadImage = function() {
+		document.getElementById('file-upload').click();
+	};
+	$scope.showPreviewImage = function(x) {
+		var fReader = new FileReader();
+		fReader.readAsDataURL(x);
+		fReader.onload = function(event) {
+			var img = document.getElementById("file-upload");
+			$scope.image = event.target.result;
+			$scope.$apply();
+		};
+	};
+
 	$scope.addTeam = function() {
 		$scope.teamsData.team_manager = localStorage.getItem("username");
 		$scope.teamsData.team_squad = [];
 		$scope.profile.team = $scope.teamsData.team_name;
 		localStorage.setItem("team", $scope.teamsData.team_name);
 		ProfileService.editProfileById(localStorage.getItem("userid"), localStorage.getItem("token"), $scope.profile).success(function(data) {
-			// $scope.profile = data;
-			// $ionicLoading.hide();
-			// $state.go('app.home');
 			console.log("berhasil");
 		}).error(function(data) {
-			// $ionicLoading.hide();
 		});
 
-		TeamService.addTeam($scope.teamsData).success(function(data) {
-			$ionicLoading.hide();
-			var alertPopup = $ionicPopup.alert({
-				title: 'Success!',
-				template: 'Berhasil Membuat Tim'
+		// Image upload processing
+        var fileInput = document.getElementById('file-upload');
+        var file = fileInput.files[0];
+        if (file === undefined) {
+            $scope.teamsData.team_logo = '';
+            // Add data to database
+			TeamService.addTeam($scope.teamsData).success(function(data) {
+				$ionicLoading.hide();
+				var alertPopup = $ionicPopup.alert({
+					title: 'Success!',
+					template: 'Berhasil Membuat Tim'
+				});
+				$state.go('app.my_team');
+			}).error(function(data) {
+				$ionicLoading.hide();
+				var alertPopup = $ionicPopup.alert({
+					title: 'Post Data Failed!',
+					template: 'Gagal Membuat Tim'
+				});
 			});
-			$state.go('app.my_team');
-		}).error(function(data) {
-			$ionicLoading.hide();
-			var alertPopup = $ionicPopup.alert({
-				title: 'Post Data Failed!',
-				template: 'Gagal Membuat Tim'
-			});
-		});
-	};
+		} else {
+	        ProfileService.uploadImage(file, '/' + file.name).success(function(data) {
+	            var params = {
+	                "path": '/' + file.name
+	            };
+	            LoginService.uploadImage(file, '/' + file.name).success(function(data) {
+	                var params = {
+	                    "path": '/' + file.name
+	                };
+	                LoginService.getImageLink(params).success(function(data2) {
+	                    var temp = data2.url;
+	                    var url = temp.replace("?dl=0", "?dl=1");
+	                    $scope.teamsData.team_logo = url;
+	                    // Add data to database
+						TeamService.addTeam($scope.teamsData).success(function(data) {
+							$ionicLoading.hide();
+							var alertPopup = $ionicPopup.alert({
+								title: 'Success!',
+								template: 'Berhasil Membuat Tim'
+							});
+							$state.go('app.my_team');
+						}).error(function(data) {
+							$ionicLoading.hide();
+							var alertPopup = $ionicPopup.alert({
+								title: 'Post Data Failed!',
+								template: 'Gagal Membuat Tim'
+							});
+						});
+					}).error(function(data2) {});
+                }).error(function(data) {});
+            }).error(function(data) {});		
+	    };
+	};    
 	$ionicLoading.hide();
 	$scope.backToMyTeam = function() {
 		$state.go('app.my_team');
@@ -3472,14 +3610,33 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
             });
             TeamService.searchData($scope.search.nama).success(function(data) {
                 $scope.search = data;
-                $scope.people = [];
                 $scope.teamArr = [];
-                for (var item in $scope.search.member) {
-                    $scope.people.push($scope.search.member[item]);
-                   	$scope.formMember.Username = $scope.search.member[item].username;
-                   	$scope.formTeam.UserId = $scope.search.member[item].id;
+                $scope.playerArr = [];
+                $scope.coachArr = [];
+                for (var item in $scope.search.player) {
+                    $scope.playerArr.push($scope.search.player[item]);
+                   	$scope.formMember.Username = $scope.search.player[item].username;
+                   	$scope.formTeam.UserId = $scope.search.player[item].id;
 
-                   	TeamService.getTeamById(localStorage.getItem("teamId"),localStorage.getItem("token")).success(function(data) {
+                   	TeamService.getTeamById(localStorage.getItem("myTeamId"),localStorage.getItem("token")).success(function(data) {
+						console.log(data);
+						$ionicLoading.hide();
+						$scope.team = data;
+
+						$scope.formMember.TeamId = $scope.team.id;
+                   		$scope.formTeam.TeamName = $scope.team.team_name;
+
+					}).error(function(data) {
+						$ionicLoading.hide();
+					});
+                }
+
+                for (var item in $scope.search.coach) {
+                    $scope.coachArr.push($scope.search.coach[item]);
+                   	$scope.formMember.Username = $scope.search.coach[item].username;
+                   	$scope.formTeam.UserId = $scope.search.coach[item].id;
+
+                   	TeamService.getTeamById(localStorage.getItem("myTeamId"),localStorage.getItem("token")).success(function(data) {
 						console.log(data);
 						$ionicLoading.hide();
 						$scope.team = data;
@@ -3692,45 +3849,10 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
         $scope.profile = data;
         LoginService.getUserByUsername($stateParams.username).success(function(data) {
             $scope.otherProfile = data;
+            console.log($scope.otherProfile);
             console.log($scope.profile.username);
             console.log($stateParams.username);
 
-            $scope.getMessage = function() { 
-            	$scope.messageData = [];
-            	MessageService.getMessage($scope.profile.username, $scope.otherProfile.username).success(function(data) {
-	                $scope.Message = data;
-	                console.log($scope.Message);
-	                $ionicLoading.hide();
-	                for(m = 0; m < $scope.Message.length; m++){
-			        	$scope.messageData[m] = {};
-			        }
-	                data.sort(function(a, b) {
-	                    var dateA = new Date(a.date),
-	                        dateB = new Date(b.date);
-	                    return dateA - dateB;//sort by date ascending
-	                });
-	                $scope.newMessage = data;
-	                $scope.glued = !$scope.glued;
-
-	            for(var item in $scope.Message){
-                	if($scope.Message[item].receiver == $scope.menuProfile.username){
-	                	$scope.messageData[item].read = true;
-						console.log($scope.messageData[item].read);
-		               	MessageService.editMessageById($scope.Message[item].id,localStorage.getItem("token"),$scope.messageData[item]).success(function(data) {
-							console.log('qweqweqrer erwerwerrqwrqwrqwrqwr');
-							$scope.loadingCompleted = true;
-							$ionicLoading.hide();
-						}).error(function(data) {
-							$ionicLoading.hide();
-						});
-					}
-
-                }
-                $scope.chatData = $scope.Message;	
-            	}).error(function(data) {});
-            };
-            window.onload = $scope.getMessage;
-            $scope.myVar = setInterval($scope.getMessage, 1000);
             $scope.addMessage = function() {
                 $scope.newMessage.push($scope.dataMessage);
                 $scope.dataMessage.id = rndString;
@@ -3738,7 +3860,8 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
                 $scope.dataMessage.receiver = $scope.otherProfile.username;
                 $scope.dataMessage.sender_name = $scope.profile.username;
                 $scope.dataMessage.receiver_name = $scope.otherProfile.username;
-                $scope.dataMessage.photo = $scope.otherProfile.photo;
+           		$scope.dataMessage.sender_photo = $scope.profile.photo;
+                $scope.dataMessage.receiver_photo = $scope.otherProfile.photo;
                 $scope.dataMessage.date = moment().format();
                 $scope.dataMessage.read = "false";
                 console.log($scope.dataMessage);
@@ -3754,6 +3877,45 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
                     $ionicLoading.hide();
                 }).error(function(data) {});
             };
+            $scope.getMessage = function() { 
+            	$scope.messageData = [];
+            	MessageService.getMessage($scope.profile.username, $scope.otherProfile.username).success(function(data) {
+	                $scope.Message = data;
+
+	                console.log($scope.Message);
+	                $ionicLoading.hide();
+	                for(m = 0; m < $scope.Message.length; m++){
+			        	$scope.messageData[m] = {};
+			        }
+	                data.sort(function(a, b) {
+	                    var dateA = new Date(a.date),
+	                        dateB = new Date(b.date);
+	                    return dateA - dateB;//sort by date ascending
+	                });
+	                $scope.newMessage = data;
+	               
+
+	            for(var item in $scope.Message){
+	            	if($scope.Message[item].read == false){
+	                	if($scope.Message[item].receiver == $scope.menuProfile.username){
+		                	$scope.messageData[item].read = true;
+							console.log($scope.messageData[item].read);
+			               	MessageService.editMessageById($scope.Message[item].id,localStorage.getItem("token"),$scope.messageData[item]).success(function(data) {
+								console.log('qweqweqrer erwerwerrqwrqwrqwrqwr');
+								$scope.loadingCompleted = true;
+								$scope.glued = !$scope.glued;
+								$ionicLoading.hide();
+							}).error(function(data) {
+								$ionicLoading.hide();
+							});
+						}
+					}	
+                }
+                $scope.chatData = $scope.Message;
+            	}).error(function(data) {});
+            };
+            window.onload = $scope.getMessage;
+            $scope.myVar = setInterval($scope.getMessage, 1000);
         }).error(function(data) {});
     }).error(function(data) {});
     $scope.back = function() { // kembali ke halaman home
