@@ -23,10 +23,13 @@ angular.module('starter.services', [])
 				}).success(function(response) {
 					deferred.resolve(response);
 				}).error(function(response, error) {
-					if (error == 500) {
-						deferred.reject('Periksa kembali username dan password anda.');
+					if (error == 500 || error == 502 || error == 404) {
+						// deferred.reject('Harap coba kembali beberapa saat lagi.');
+						deferred.reject('Error 500');
+						// deferred.reject('There was an error. Please try again later...');
 					} else {
-						deferred.reject('Harap coba kembali beberapa saat lagi.');
+						deferred.reject('Please check again your username and password');
+						// deferred.reject('Periksa kembali username dan password anda.');
 					}
 				});
 				promise.success = function(fn) {
@@ -39,10 +42,40 @@ angular.module('starter.services', [])
 				};
 				return promise;
 			},
-			getUser: function(id, token) {
+			login: function(username, password) {
 				var deferred = $q.defer();
 				var promise = deferred.promise;
-				$http.get(BACKEND.URL + '/users/' + id + '?access_token=' + token).success(function(response) {
+				var data = "username=" + username + "&password=" + password;
+				$http.post(BACKEND.URL + 'users/loginUser', data, {
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				}).success(function(response) {
+					deferred.resolve(response);
+				}).error(function(response, error) {
+					if (error == 500 || error == 502 || error == 404) {
+						// deferred.reject('Harap coba kembali beberapa saat lagi.');
+						deferred.reject('Error 500');
+						// deferred.reject('There was an error. Please try again later...');
+					} else {
+						deferred.reject('Please check again your username and password');
+						// deferred.reject('Periksa kembali username dan password anda.');
+					}
+				});
+				promise.success = function(fn) {
+					promise.then(fn);
+					return promise;
+				};
+				promise.error = function(fn) {
+					promise.then(null, fn);
+					return promise;
+				};
+				return promise;
+			},
+			getUser: function(id) {
+				var deferred = $q.defer();
+				var promise = deferred.promise;
+				$http.get(BACKEND.URL + '/users/' + id).success(function(response) {
 					deferred.resolve(response);
 				}).error(function(response) {
 					deferred.reject(response);
@@ -61,6 +94,24 @@ angular.module('starter.services', [])
                 var deferred = $q.defer();
                 var promise = deferred.promise;
                 $http.get(BACKEND.URL + '/users/getUser?username=' + username).success(function(response) {
+                    deferred.resolve(response);
+                }).error(function(response) {
+                    deferred.reject(response);
+                });
+                promise.success = function(fn) {
+                    promise.then(fn);
+                    return promise;
+                };
+                promise.error = function(fn) {
+                    promise.then(null, fn);
+                    return promise;
+                };
+                return promise;
+            },
+            getUserById: function(userId) {
+                var deferred = $q.defer();
+                var promise = deferred.promise;
+                $http.get(BACKEND.URL + '/users/getUserById?userId=' + userId).success(function(response) {
                     deferred.resolve(response);
                 }).error(function(response) {
                     deferred.reject(response);
@@ -399,6 +450,33 @@ angular.module('starter.services', [])
 			};
 			return promise;
 		},
+		editTeamById: function(teamId, data) {
+			var deferred = $q.defer();
+			var promise = deferred.promise;
+			$http.put(BACKEND.URL + '/teams/' + teamId, data, {
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			}).success(function(response) {
+				deferred.resolve(response);
+			}).error(function(response, error) {
+				if (error == 500) {
+					deferred.reject(error);
+				} else {
+
+					deferred.reject(error);
+				}
+			});
+			promise.success = function(fn) {
+				promise.then(fn);
+				return promise;
+			};
+			promise.error = function(fn) {
+				promise.then(null, fn);
+				return promise;
+			};
+			return promise;
+		},
 		getTeam: function(token) {
 			var deferred = $q.defer();
 			var promise = deferred.promise;
@@ -471,10 +549,100 @@ angular.module('starter.services', [])
 			};
 			return promise;
 		},
+		getGoalkeeperByTeamName: function(team_name) {
+			var deferred = $q.defer();
+			var promise = deferred.promise;
+			$http.get(BACKEND.URL + 'users/getGoalKeeperByTeam?teamName=' + team_name).success(function(response) {
+				deferred.resolve(response);
+			}).error(function(response) {
+				deferred.reject(response);
+			});
+			promise.success = function(fn) {
+				promise.then(fn);
+				return promise;
+			};
+			promise.error = function(fn) {
+				promise.then(null, fn);
+				return promise;
+			};
+			return promise;
+		},
+		getDefenderByTeamName: function(team_name) {
+			var deferred = $q.defer();
+			var promise = deferred.promise;
+			$http.get(BACKEND.URL + 'users/getDefenderByTeam?teamName=' + team_name).success(function(response) {
+				deferred.resolve(response);
+			}).error(function(response) {
+				deferred.reject(response);
+			});
+			promise.success = function(fn) {
+				promise.then(fn);
+				return promise;
+			};
+			promise.error = function(fn) {
+				promise.then(null, fn);
+				return promise;
+			};
+			return promise;
+		},
+		getMidfielderByTeamName: function(team_name) {
+			var deferred = $q.defer();
+			var promise = deferred.promise;
+			$http.get(BACKEND.URL + 'users/getMidfielderByTeam?teamName=' + team_name).success(function(response) {
+				deferred.resolve(response);
+			}).error(function(response) {
+				deferred.reject(response);
+			});
+			promise.success = function(fn) {
+				promise.then(fn);
+				return promise;
+			};
+			promise.error = function(fn) {
+				promise.then(null, fn);
+				return promise;
+			};
+			return promise;
+		},
+		getAttackerByTeamName: function(team_name) {
+			var deferred = $q.defer();
+			var promise = deferred.promise;
+			$http.get(BACKEND.URL + 'users/getAttackerByTeam?teamName=' + team_name).success(function(response) {
+				deferred.resolve(response);
+			}).error(function(response) {
+				deferred.reject(response);
+			});
+			promise.success = function(fn) {
+				promise.then(fn);
+				return promise;
+			};
+			promise.error = function(fn) {
+				promise.then(null, fn);
+				return promise;
+			};
+			return promise;
+		},
 	    searchData: function(input) {
             var deferred = $q.defer();
             var promise = deferred.promise;
             $http.get(BACKEND.URL + '/teams/search?input=' + input).success(function(response) {
+                deferred.resolve(response);
+            }).error(function(response) {
+                deferred.reject(response);
+            });
+            promise.success = function(fn) {
+                promise.then(fn);
+                return promise;
+            };
+            promise.error = function(fn) {
+                promise.then(null, fn);
+                return promise;
+            };
+            return promise;
+        },
+        getPlayer: function() {
+            var deferred = $q.defer();
+            var promise = deferred.promise;
+            $http.get(BACKEND.URL + 'users/getTopPlayer').success(function(response) {
                 deferred.resolve(response);
             }).error(function(response) {
                 deferred.reject(response);
@@ -843,7 +1011,7 @@ angular.module('starter.services', [])
 		addCompetition: function(data) {
 				var deferred = $q.defer();
 				var promise = deferred.promise;
-				$http.put(BACKEND.URL + '/teams/addCompetition', data, {
+				$http.put(BACKEND.URL + 'teams/addCompetition', data, {
 					headers: {
 						'Content-Type': 'application/json'
 					}
@@ -925,7 +1093,7 @@ angular.module('starter.services', [])
 			getAllCompetition: function() {
 				var deferred = $q.defer();
 				var promise = deferred.promise;
-				$http.get(BACKEND.URL + 'competitions?filter=%7B%22order%22%3A%22comp_start%20ASC%22%7D').success(function(response) {
+				$http.get(BACKEND.URL + 'competitions?filter=%7B%22order%22%3A%22comp_start%20DESC%22%7D').success(function(response) {
 					deferred.resolve(response);
 				}).error(function(response) {
 					deferred.reject(response);
@@ -943,7 +1111,7 @@ angular.module('starter.services', [])
 			getCompetitionByOrganizer: function(organizer) {
 				var deferred = $q.defer();
 				var promise = deferred.promise;
-				$http.get(BACKEND.URL + 'competitions?filter=%7B%22where%22%3A%7B%22organizer%22%3A%22' + organizer + '%22%7D%2C%22order%22%3A%22comp_start%20ASC%22%7D').success(function(response) {
+				$http.get(BACKEND.URL + 'competitions?filter=%7B%22where%22%3A%7B%22organizer%22%3A%22' + organizer + '%22%7D%2C%22order%22%3A%22comp_start%20DESC%22%7D').success(function(response) {
 					deferred.resolve(response);
 				}).error(function(response) {
 					deferred.reject(response);
@@ -1152,7 +1320,7 @@ angular.module('starter.services', [])
 			addRegister: function(data) {
 				var deferred = $q.defer();
 				var promise = deferred.promise;
-				$http.put(BACKEND.URL + '/competitions/addRegister', data, {
+				$http.put(BACKEND.URL + 'competitions/addRegister', data, {
 					headers: {
 						'Content-Type': 'application/json'
 					}
@@ -1210,33 +1378,51 @@ angular.module('starter.services', [])
 			return promise;
 			},
 			getClassementsByCompetition: function(competitionId, token) {
-            var deferred = $q.defer();
-            var promise = deferred.promise;
-            $http.get(BACKEND.URL + '/competitions/' + competitionId + '/classements?filter=%7B%22order%22%3A%position%22%7D&access_token=' + token).success(function(response) {
-                deferred.resolve(response);
-            }).error(function(response) {
-                deferred.reject(response);
-            });
-            promise.success = function(fn) {
-                promise.then(fn);
-                return promise;
-            };
-            promise.error = function(fn) {
-                promise.then(null, fn);
-                return promise;
-            };
-            return promise;
+	            var deferred = $q.defer();
+	            var promise = deferred.promise;
+	            $http.get(BACKEND.URL + '/competitions/' + competitionId + '/classements?filter=%7B%22order%22%3A%position%22%7D&access_token=' + token).success(function(response) {
+	                deferred.resolve(response);
+	            }).error(function(response) {
+	                deferred.reject(response);
+	            });
+	            promise.success = function(fn) {
+	                promise.then(fn);
+	                return promise;
+	            };
+	            promise.error = function(fn) {
+	                promise.then(null, fn);
+	                return promise;
+	            };
+	            return promise;
+        	},
+        	getClassementsByCompetitionId: function(competitionId, token) {
+	            var deferred = $q.defer();
+	            var promise = deferred.promise;
+	            $http.get(BACKEND.URL + 'classements?filter=%7B%22where%22%3A%7B%22competition_id%22%3A%22' + competitionId + '%22%7D%7D&access_token=' + token).success(function(response) {
+	                deferred.resolve(response);
+	            }).error(function(response) {
+	                deferred.reject(response);
+	            });
+	            promise.success = function(fn) {
+	                promise.then(fn);
+	                return promise;
+	            };
+	            promise.error = function(fn) {
+	                promise.then(null, fn);
+	                return promise;
+	            };
+	            return promise;
         	}
 		};
 })
 
 .service('TrainingService', function($http, PARSE_CREDENTIALS, BACKEND, $q) {
 		return {
-			addClassement: function(data) {
+			addTraining: function(data) {
 			var deferred = $q.defer();
 			var promise = deferred.promise;
 
-			$http.post(BACKEND.URL + 'classements', data, {
+			$http.post(BACKEND.URL + 'trainings', data, {
 				headers: {
 					'Content-Type': 'application/json'
 				}
@@ -1259,10 +1445,10 @@ angular.module('starter.services', [])
 			};
 			return promise;
 			},
-			getClassementsByCompetition: function(competitionId, token) {
+			getTraining: function(team_id) {
             var deferred = $q.defer();
             var promise = deferred.promise;
-            $http.get(BACKEND.URL + '/competitions/' + competitionId + '/classements?filter=%7B%22order%22%3A%position%22%7D&access_token=' + token).success(function(response) {
+            $http.get(BACKEND.URL + 'trainings?filter=%7B%22where%22%3A%7B%22team_id%22%3A%22' + team_id + '%22%7D%2C%22order%22%3A%22training_date%20ASC%22%7D').success(function(response) {
                 deferred.resolve(response);
             }).error(function(response) {
                 deferred.reject(response);
@@ -1276,7 +1462,52 @@ angular.module('starter.services', [])
                 return promise;
             };
             return promise;
-        	}
+        	},
+        	getTrainingById: function(id) {
+				var deferred = $q.defer();
+				var promise = deferred.promise;
+				$http.get(BACKEND.URL + '/trainings/' + id).success(function(response) {
+					deferred.resolve(response);
+				}).error(function(response) {
+					deferred.reject(response);
+				});
+				promise.success = function(fn) {
+					promise.then(fn);
+					return promise;
+				};
+				promise.error = function(fn) {
+					promise.then(null, fn);
+					return promise;
+				};
+				return promise;
+			},
+			editTrainingById: function(trainingId, data) {
+				var deferred = $q.defer();
+				var promise = deferred.promise;
+				$http.put(BACKEND.URL + '/trainings/' + trainingId, data, {
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				}).success(function(response) {
+					deferred.resolve(response);
+				}).error(function(response, error) {
+					if (error == 500) {
+						deferred.reject(error);
+					} else {
+
+						deferred.reject(error);
+					}
+				});
+				promise.success = function(fn) {
+					promise.then(fn);
+					return promise;
+				};
+				promise.error = function(fn) {
+					promise.then(null, fn);
+					return promise;
+				};
+				return promise;
+			}
 		};
 })
 
@@ -1440,23 +1671,59 @@ angular.module('starter.services', [])
 				};
 				return promise;
 			},
-        	getMatchesByFixture: function(fixtureNumber) {
-            var deferred = $q.defer();
-            var promise = deferred.promise;
-            $http.get(BACKEND.URL + '/matches?filter=%7B%22where%22%3A%7B%22fixture_number%22%3A%22' + fixtureNumber + '%22%7D%7D').success(function(response) {
-                deferred.resolve(response);
-            }).error(function(response) {
-                deferred.reject(response);
-            });
-            promise.success = function(fn) {
-                promise.then(fn);
-                return promise;
-            };
-            promise.error = function(fn) {
-                promise.then(null, fn);
-                return promise;
-            };
-            return promise;
+			getMatchesByTeam: function(team, token) {
+				var deferred = $q.defer();
+				var promise = deferred.promise;
+				$http.get(BACKEND.URL + 'matches/getMatchByTeam?team=' + team).success(function(response) {
+					deferred.resolve(response);
+				}).error(function(response) {
+					deferred.reject(response);
+				});
+				promise.success = function(fn) {
+					promise.then(fn);
+					return promise;
+				};
+				promise.error = function(fn) {
+					promise.then(null, fn);
+					return promise;
+				};
+				return promise;
+			},
+			getMatchesByFixture: function(fixtureNumber) {
+		        var deferred = $q.defer();
+		        var promise = deferred.promise;
+		        $http.get(BACKEND.URL + '/matches?filter=%7B%22where%22%3A%7B%22fixture_number%22%3A%22' + fixtureNumber + '%22%2C%20%22').success(function(response) {
+		            deferred.resolve(response);
+		        }).error(function(response) {
+		            deferred.reject(response);
+		        });
+		        promise.success = function(fn) {
+		            promise.then(fn);
+		            return promise;
+		        };
+		        promise.error = function(fn) {
+		            promise.then(null, fn);
+		            return promise;
+		        };
+		        return promise;
+        	},
+        	getMatchesByCompetitionAndFixture: function(compId,fixtureNumber) {
+		        var deferred = $q.defer();
+		        var promise = deferred.promise;
+		        $http.get(BACKEND.URL + '/matches?filter=%7B%22where%22%3A%7B%22fixture_number%22%3A%22' + fixtureNumber + '%22%2C%20%22competition_id%22%3A%22' + compId + '%22%7D%7D').success(function(response) {
+		            deferred.resolve(response);
+		        }).error(function(response) {
+		            deferred.reject(response);
+		        });
+		        promise.success = function(fn) {
+		            promise.then(fn);
+		            return promise;
+		        };
+		        promise.error = function(fn) {
+		            promise.then(null, fn);
+		            return promise;
+		        };
+		        return promise;
         	},
         	getMatchesByReferee: function(referee, date) {
             var deferred = $q.defer();
@@ -1607,12 +1874,62 @@ angular.module('starter.services', [])
 		};
 })
 
+.service('RatingService', function($http, PARSE_CREDENTIALS, BACKEND, $q) {
+	return {
+		saveRefereeRating: function(data) {
+			var deferred = $q.defer();
+			var promise = deferred.promise;
+
+			$http.post(BACKEND.URL + 'ratings', data, {
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			}).success(function(response) {
+				deferred.resolve(response);
+			}).error(function(response, error) {
+				if (error == 500) {
+					deferred.reject(response);
+				} else {
+					deferred.reject(response);
+				}
+			});
+			promise.success = function(fn) {
+				promise.then(fn);
+				return promise;
+			};
+			promise.error = function(fn) {
+				promise.then(null, fn);
+				return promise;
+			};
+			return promise;
+		}
+	};
+})
+
 .service('MessageService', function($http, PARSE_CREDENTIALS, BACKEND, $q) {
     return {
         getMessage: function(sender, receiver) {
             var deferred = $q.defer();
             var promise = deferred.promise;
             $http.get(BACKEND.URL + '/messages/getMessage?sender=' + sender + '&receiver=' + receiver).success(function(response) {
+                deferred.resolve(response);
+            }).error(function(response) {
+                deferred.reject(response);
+            });
+            promise.success = function(fn) {
+                promise.then(fn);
+                return promise;
+            };
+            promise.error = function(fn) {
+                promise.then(null, fn);
+                return promise;
+            };
+            return promise;
+        },
+        getMessageBySenderAndReceiver: function(sender, receiver) {
+            var deferred = $q.defer();
+            var promise = deferred.promise;
+            $http.get(BACKEND.URL + 'messages?filter=%7B%22where%22%3A%7B%22or%22%3A%5B%7B%22sender%22%3A%22' + sender + '%22%2C%20%22receiver%22%3A%22' + receiver + '%22%7D%2C%20%7B%22sender%22%3A%22' + receiver + '%22%2C%20%22receiver%22%3A%22' + sender + '%22%7D%5D%7D%7D').success(function(response) {
                 deferred.resolve(response);
             }).error(function(response) {
                 deferred.reject(response);
@@ -1667,6 +1984,32 @@ angular.module('starter.services', [])
             var deferred = $q.defer();
             var promise = deferred.promise;
             $http.post(BACKEND.URL + '/messages/addMessage', data, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).success(function(response) {
+                deferred.resolve(response);
+            }).error(function(response, error) {
+                if (error == 500) {
+                    deferred.reject(error);
+                } else {
+                    deferred.reject(error);
+                }
+            });
+            promise.success = function(fn) {
+                promise.then(fn);
+                return promise;
+            };
+            promise.error = function(fn) {
+                promise.then(null, fn);
+                return promise;
+            };
+            return promise;
+        },
+        readMessage: function(receiver, sender, data) {
+            var deferred = $q.defer();
+            var promise = deferred.promise;
+            $http.post(BACKEND.URL + '/messages/update?where=%7B%22read%22%3A%22false%22%2C%20%22receiver%22%3A%22' + receiver + '%22%2C%20%22sender%22%3A%22' + sender + '%22%7D', data, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -1751,6 +2094,24 @@ angular.module('starter.services', [])
 	            return promise;
 	        };
 	        return promise;
-    	}
+    	},
+    	getNewMessageCounter: function(receiver, sender) {
+            var deferred = $q.defer();
+            var promise = deferred.promise;
+            $http.get(BACKEND.URL + '/messages/newMessageCounter?receiver=' + receiver + '&sender=' + sender).success(function(response) {
+                deferred.resolve(response);
+            }).error(function(response) {
+                deferred.reject(response);
+            });
+            promise.success = function(fn) {
+                promise.then(fn);
+                return promise;
+            };
+            promise.error = function(fn) {
+                promise.then(null, fn);
+                return promise;
+            };
+            return promise;
+        },
     };
 });

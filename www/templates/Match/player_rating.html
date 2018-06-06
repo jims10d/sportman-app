@@ -1,0 +1,299 @@
+<ion-view view-title="Player Performance" cache-view="false">
+<!-- Back Button -->
+<ion-nav-buttons side="left">
+<button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="back()" style="font-size:25px"></button>
+</ion-nav-buttons>
+<ion-nav-buttons side="right">
+<button class="button button-clear icon-button mdi mdi-check" ng-click="submitPlayerRating()" style="min-height:44;font-size:25px"></button>
+</ion-nav-buttons>
+</ion-nav-buttons>
+<!-- Shadow space -->
+<div class="bar item-input-inset" style="border:none;box-shadow: 0 1px 2px #aaa"></div>
+<ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color: #ffffff;">
+<!-- List of contacts-->
+<div class="list">
+  <!-- White area -->
+  <div style="margin-top: 11px;border-bottom: 1px solid #80808026;">
+    <p style="padding-top: 15px;padding-left: 15px;padding-right: 15px;">Give your player performance a rating from 1 (min) - 10 (max)</p>
+  </div>
+  
+  <!-- ng-repeat all players that play the match (lineup + sub in) -->
+  <div class="row" style="border-bottom: 1px solid #8080800d;margin-top:5px;">
+    <div class="col col-20">
+      <center><img src="img/profile3.png" ng-src={{data.photo}} style="width: 50px;height: 50px;"></center>
+    </div>
+    <div class="col col-40">
+      <p style="font-size: 16px;margin-bottom: 2px;margin-top: 5px;">{{data.username}}tester1</p>
+      <p>{{data.role}}defender</p>
+    </div>
+    <div class="col col-40" style="text-align: right;">
+      <select ng-model="playerRating.player1" style="font-size:16px;border:none;margin-top: 15px;">
+        <option value="1" style="color:black;">1</option>
+        <option value="2" style="color:black;">2</option>
+        <option value="3" style="color:black;">3</option>
+        <option value="4" style="color:black;">4</option>
+        <option value="5" style="color:black;">5</option>
+        <option value="6" style="color:black;">6</option>
+        <option value="7" style="color:black;">7</option>
+        <option value="8" style="color:black;">8</option>
+        <option value="9" style="color:black;">9</option>
+        <option value="10" style="color:black;">10</option>
+      </select>
+    </div>
+  </div>
+  <div class="row" style="border-bottom: 1px solid #8080800d;margin-top:5px;">
+    <div class="col col-20">
+      <center><img src="img/profile3.png" ng-src={{data.photo}} style="width: 50px;height: 50px;"></center>
+    </div>
+    <div class="col col-40">
+      <p style="font-size: 16px;margin-bottom: 2px;margin-top: 5px;">{{data.username}}tester2</p>
+      <p>{{data.role}}goalkeeper</p>
+    </div>
+    <div class="col col-40" style="text-align: right;">
+      <select ng-model="playerRating.player2"  style="font-size:16px;border:none;margin-top: 15px;">
+        <option value="1" style="color:black;">1</option>
+        <option value="2" style="color:black;">2</option>
+        <option value="3" style="color:black;">3</option>
+        <option value="4" style="color:black;">4</option>
+        <option value="5" style="color:black;">5</option>
+        <option value="6" style="color:black;">6</option>
+        <option value="7" style="color:black;">7</option>
+        <option value="8" style="color:black;">8</option>
+        <option value="9" style="color:black;">9</option>
+        <option value="10" style="color:black;">10</option>
+      </select>
+    </div>
+  </div>
+  <div class="row" style="border-bottom: 1px solid #8080800d;margin-top:5px;">
+    <div class="col col-20">
+      <center><img src="img/profile3.png" ng-src={{data.photo}} style="width: 50px;height: 50px;"></center>
+    </div>
+    <div class="col col-40">
+      <p style="font-size: 16px;margin-bottom: 2px;margin-top: 5px;">{{data.username}}tester3</p>
+      <p>{{data.role}}goalkeeper</p>
+    </div>
+    <div class="col col-40" style="text-align: right;">
+      <select ng-model="lineup.formation" style="font-size:16px;border:none;margin-top: 15px;">
+        <option value="1" style="color:black;">1</option>
+        <option value="2" style="color:black;">2</option>
+        <option value="3" style="color:black;">3</option>
+        <option value="4" style="color:black;">4</option>
+        <option value="5" style="color:black;">5</option>
+        <option value="6" style="color:black;">6</option>
+        <option value="7" style="color:black;">7</option>
+        <option value="8" style="color:black;">8</option>
+        <option value="9" style="color:black;">9</option>
+        <option value="10" style="color:black;">10</option>
+      </select>
+    </div>
+  </div>
+  <div class="row" style="border-bottom: 1px solid #8080800d;margin-top:5px;">
+    <div class="col col-20">
+      <center><img src="img/profile3.png" ng-src={{data.photo}} style="width: 50px;height: 50px;"></center>
+    </div>
+    <div class="col col-40">
+      <p style="font-size: 16px;margin-bottom: 2px;margin-top: 5px;">{{data.username}}tester4</p>
+      <p>{{data.role}}goalkeeper</p>
+    </div>
+    <div class="col col-40" style="text-align: right;">
+      <select ng-model="lineup.formation" style="font-size:16px;border:none;margin-top: 15px;">
+        <option value="1" style="color:black;">1</option>
+        <option value="2" style="color:black;">2</option>
+        <option value="3" style="color:black;">3</option>
+        <option value="4" style="color:black;">4</option>
+        <option value="5" style="color:black;">5</option>
+        <option value="6" style="color:black;">6</option>
+        <option value="7" style="color:black;">7</option>
+        <option value="8" style="color:black;">8</option>
+        <option value="9" style="color:black;">9</option>
+        <option value="10" style="color:black;">10</option>
+      </select>
+    </div>
+  </div>
+  <div class="row" style="border-bottom: 1px solid #8080800d;margin-top:5px;">
+    <div class="col col-20">
+      <center><img src="img/profile3.png" ng-src={{data.photo}} style="width: 50px;height: 50px;"></center>
+    </div>
+    <div class="col col-40">
+      <p style="font-size: 16px;margin-bottom: 2px;margin-top: 5px;">{{data.username}}tester1</p>
+      <p>{{data.role}}goalkeeper</p>
+    </div>
+    <div class="col col-40" style="text-align: right;">
+      <select ng-model="lineup.formation" style="font-size:16px;border:none;margin-top: 15px;">
+        <option value="1" style="color:black;">1</option>
+        <option value="2" style="color:black;">2</option>
+        <option value="3" style="color:black;">3</option>
+        <option value="4" style="color:black;">4</option>
+        <option value="5" style="color:black;">5</option>
+        <option value="6" style="color:black;">6</option>
+        <option value="7" style="color:black;">7</option>
+        <option value="8" style="color:black;">8</option>
+        <option value="9" style="color:black;">9</option>
+        <option value="10" style="color:black;">10</option>
+      </select>
+    </div>
+  </div>
+  <div class="row" style="border-bottom: 1px solid #8080800d;margin-top:5px;">
+    <div class="col col-20">
+      <center><img src="img/profile3.png" ng-src={{data.photo}} style="width: 50px;height: 50px;"></center>
+    </div>
+    <div class="col col-40">
+      <p style="font-size: 16px;margin-bottom: 2px;margin-top: 5px;">{{data.username}}tester1</p>
+      <p>{{data.role}}goalkeeper</p>
+    </div>
+    <div class="col col-40" style="text-align: right;">
+      <select ng-model="lineup.formation" style="font-size:16px;border:none;margin-top: 15px;">
+        <option value="1" style="color:black;">1</option>
+        <option value="2" style="color:black;">2</option>
+        <option value="3" style="color:black;">3</option>
+        <option value="4" style="color:black;">4</option>
+        <option value="5" style="color:black;">5</option>
+        <option value="6" style="color:black;">6</option>
+        <option value="7" style="color:black;">7</option>
+        <option value="8" style="color:black;">8</option>
+        <option value="9" style="color:black;">9</option>
+        <option value="10" style="color:black;">10</option>
+      </select>
+    </div>
+  </div>
+  <div class="row" style="border-bottom: 1px solid #8080800d;margin-top:5px;">
+    <div class="col col-20">
+      <center><img src="img/profile3.png" ng-src={{data.photo}} style="width: 50px;height: 50px;"></center>
+    </div>
+    <div class="col col-40">
+      <p style="font-size: 16px;margin-bottom: 2px;margin-top: 5px;">{{data.username}}tester1</p>
+      <p>{{data.role}}goalkeeper</p>
+    </div>
+    <div class="col col-40" style="text-align: right;">
+      <select ng-model="lineup.formation" style="font-size:16px;border:none;margin-top: 15px;">
+        <option value="1" style="color:black;">1</option>
+        <option value="2" style="color:black;">2</option>
+        <option value="3" style="color:black;">3</option>
+        <option value="4" style="color:black;">4</option>
+        <option value="5" style="color:black;">5</option>
+        <option value="6" style="color:black;">6</option>
+        <option value="7" style="color:black;">7</option>
+        <option value="8" style="color:black;">8</option>
+        <option value="9" style="color:black;">9</option>
+        <option value="10" style="color:black;">10</option>
+      </select>
+    </div>
+  </div>
+  <div class="row" style="border-bottom: 1px solid #8080800d;margin-top:5px;">
+    <div class="col col-20">
+      <center><img src="img/profile3.png" ng-src={{data.photo}} style="width: 50px;height: 50px;"></center>
+    </div>
+    <div class="col col-40">
+      <p style="font-size: 16px;margin-bottom: 2px;margin-top: 5px;">{{data.username}}tester1</p>
+      <p>{{data.role}}goalkeeper</p>
+    </div>
+    <div class="col col-40" style="text-align: right;">
+      <select ng-model="lineup.formation" style="font-size:16px;border:none;margin-top: 15px;">
+        <option value="1" style="color:black;">1</option>
+        <option value="2" style="color:black;">2</option>
+        <option value="3" style="color:black;">3</option>
+        <option value="4" style="color:black;">4</option>
+        <option value="5" style="color:black;">5</option>
+        <option value="6" style="color:black;">6</option>
+        <option value="7" style="color:black;">7</option>
+        <option value="8" style="color:black;">8</option>
+        <option value="9" style="color:black;">9</option>
+        <option value="10" style="color:black;">10</option>
+      </select>
+    </div>
+  </div>
+  <div class="row" style="border-bottom: 1px solid #8080800d;margin-top:5px;">
+    <div class="col col-20">
+      <center><img src="img/profile3.png" ng-src={{data.photo}} style="width: 50px;height: 50px;"></center>
+    </div>
+    <div class="col col-40">
+      <p style="font-size: 16px;margin-bottom: 2px;margin-top: 5px;">{{data.username}}tester1</p>
+      <p>{{data.role}}goalkeeper</p>
+    </div>
+    <div class="col col-40" style="text-align: right;">
+      <select ng-model="lineup.formation" style="font-size:16px;border:none;margin-top: 15px;">
+        <option value="1" style="color:black;">1</option>
+        <option value="2" style="color:black;">2</option>
+        <option value="3" style="color:black;">3</option>
+        <option value="4" style="color:black;">4</option>
+        <option value="5" style="color:black;">5</option>
+        <option value="6" style="color:black;">6</option>
+        <option value="7" style="color:black;">7</option>
+        <option value="8" style="color:black;">8</option>
+        <option value="9" style="color:black;">9</option>
+        <option value="10" style="color:black;">10</option>
+      </select>
+    </div>
+  </div>
+  <div class="row" style="border-bottom: 1px solid #8080800d;margin-top:5px;">
+    <div class="col col-20">
+      <center><img src="img/profile3.png" ng-src={{data.photo}} style="width: 50px;height: 50px;"></center>
+    </div>
+    <div class="col col-40">
+      <p style="font-size: 16px;margin-bottom: 2px;margin-top: 5px;">{{data.username}}tester1</p>
+      <p>{{data.role}}goalkeeper</p>
+    </div>
+    <div class="col col-40" style="text-align: right;">
+      <select ng-model="lineup.formation" style="font-size:16px;border:none;margin-top: 15px;">
+        <option value="1" style="color:black;">1</option>
+        <option value="2" style="color:black;">2</option>
+        <option value="3" style="color:black;">3</option>
+        <option value="4" style="color:black;">4</option>
+        <option value="5" style="color:black;">5</option>
+        <option value="6" style="color:black;">6</option>
+        <option value="7" style="color:black;">7</option>
+        <option value="8" style="color:black;">8</option>
+        <option value="9" style="color:black;">9</option>
+        <option value="10" style="color:black;">10</option>
+      </select>
+    </div>
+  </div>
+  <div class="row" style="border-bottom: 1px solid #8080800d;margin-top:5px;">
+    <div class="col col-20">
+      <center><img src="img/profile3.png" ng-src={{data.photo}} style="width: 50px;height: 50px;"></center>
+    </div>
+    <div class="col col-40">
+      <p style="font-size: 16px;margin-bottom: 2px;margin-top: 5px;">{{data.username}}tester1</p>
+      <p>{{data.role}}goalkeeper</p>
+    </div>
+    <div class="col col-40" style="text-align: right;">
+      <select ng-model="lineup.formation" style="font-size:16px;border:none;margin-top: 15px;">
+        <option value="1" style="color:black;">1</option>
+        <option value="2" style="color:black;">2</option>
+        <option value="3" style="color:black;">3</option>
+        <option value="4" style="color:black;">4</option>
+        <option value="5" style="color:black;">5</option>
+        <option value="6" style="color:black;">6</option>
+        <option value="7" style="color:black;">7</option>
+        <option value="8" style="color:black;">8</option>
+        <option value="9" style="color:black;">9</option>
+        <option value="10" style="color:black;">10</option>
+      </select>
+    </div>
+  </div>
+  <div class="row" style="border-bottom: 1px solid #8080800d;margin-top:5px;">
+    <div class="col col-20">
+      <center><img src="img/profile3.png" ng-src={{data.photo}} style="width: 50px;height: 50px;"></center>
+    </div>
+    <div class="col col-40">
+      <p style="font-size: 16px;margin-bottom: 2px;margin-top: 5px;">{{data.username}}tester1</p>
+      <p>{{data.role}}goalkeeper</p>
+    </div>
+    <div class="col col-40" style="text-align: right;">
+      <select ng-model="lineup.formation" style="font-size:16px;border:none;margin-top: 15px;">
+        <option value="1" style="color:black;">1</option>
+        <option value="2" style="color:black;">2</option>
+        <option value="3" style="color:black;">3</option>
+        <option value="4" style="color:black;">4</option>
+        <option value="5" style="color:black;">5</option>
+        <option value="6" style="color:black;">6</option>
+        <option value="7" style="color:black;">7</option>
+        <option value="8" style="color:black;">8</option>
+        <option value="9" style="color:black;">9</option>
+        <option value="10" style="color:black;">10</option>
+      </select>
+    </div>
+  </div>
+
+</ion-content>
+</ion-view>

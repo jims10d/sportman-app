@@ -1,0 +1,31 @@
+<ion-view view-title="{{otherProfile.username}}" cache-view="true" style="margin-bottom:110px;">
+
+  <ion-nav-buttons side="left">
+    <button class="button button-clear icon-button mdi mdi-arrow-left" ng-click="back()"></button>
+  </ion-nav-buttons>
+
+  <ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color: #F1F5F8;padding-bottom: 70px">
+    <div id="scrollToBottom" class="scroll" style="margin-bottom:70px;border:none;" scroll-glue="glued">
+      <div class="div-left" ng-repeat="data in chatData track by data.id" ng-class="{'div-right':profile.username === data.sender}">
+       <p ng-class="profile.username === data.sender? 'date-left' : 'date-right'" ng-model="todayDate[data.id]" ng-show="todayDate[data.id]==true">Today</p>
+       <p ng-class="profile.username === data.sender? 'date-left' : 'date-right'" ng-model="yesterdayDate[data.id]" ng-show="yesterdayDate[data.id]==true">Yesterday</p>
+       <p ng-class="profile.username === data.sender? 'date-left' : 'date-right'" ng-model="chatDate[data.id]" ng-show="chatDate[data.id]==true">{{dateofChat[data.id]}}</p>
+        <div ng-class="profile.username === data.sender? 'bubble-right' : 'bubble-left'">
+          <div class="content-msg" style="word-wrap: break-word;">{{::data.content}}</div>
+        </div>
+        <sub ng-class="profile.username === data.sender? 'time-right' : 'time-left'" style="font-size:11px;">{{::data.date | date:'h:mm a'}}</sub>
+        <p ng-if="(data.content !== null) && (data.sender == profile.username)" ng-class="profile.username === data.sender? 'read-right' : 'read-left'" ng-show="data.read != 'false'" style="padding-top:4px;font-size:13px;">read</p>
+      </div>
+    </div>
+  </ion-content>
+
+  <!-- Message input box -->
+  <div class="bar bar-footer bar-balanced" style="position:fixed; height:50px;background-color: #fff !important;border: none !important">
+    <textarea id="comment" ng-model="dataMessage.content" placeholder="Type your message..." style="width:100%; height:50px;padding:10px;"></textarea>
+    <!-- button disable -->
+    <ion-button ng-hide="dataMessage.content.length > 0 && dataMessage.content != undefined" class="icon mdi mdi-send pull-right" style="font-size: 25px; padding: 13px 0 0 15px; background-color:#4DB6AC; color:white;height:50px; width:60px; opacity: 0.7;"></ion-button>   
+    <!-- button enable -->
+    <ion-button  ng-show="dataMessage.content.length > 0 && dataMessage.content != undefined" ng-click="addMessage()" class="icon mdi mdi-send pull-right" style="font-size: 25px;background-color:#4DB6AC; color:white;height:50px; width:60px;padding: 13px 0 0 15px;"></ion-button>
+  </div>
+
+</ion-view>

@@ -1,0 +1,119 @@
+<ion-view view-title="Choose Lineup" hide-back-button="true" text-center cache-view="false">
+<!-- Back Button -->
+<ion-nav-buttons side="left">
+<button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="backToMyTeam()" style="font-size:25px"></button>
+</ion-nav-buttons>
+<!-- Update Button -->
+<!-- <ion-nav-buttons side="right">
+<button class="button button-clear icon-button mdi mdi-check" ng-click="editProfile()" style="min-height:44;font-size:25px"></button>
+</ion-nav-buttons> -->
+
+<ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color:#ffffff;">
+<div style="margin-top: 13px;"></div>
+
+<form method="post" enctype="text/plain" style="border:none;">
+  <label class="item item-input item-select" style="border:none;border-bottom: 1px solid #80808014;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Formation</div>
+      <select ng-model="lineup.formation" style="padding-right:35px;font-size:16px;border-bottom: 1px solid #80808014;">
+        <option value="1-2-1" style="color:black;">1-2-1</option>
+        <option value="1-1-2" style="color:black;">1-1-2</option>
+        <option value="2-1-1" style="color:black;">2-1-1</option>
+      </select>
+  </label>
+</form>
+
+<p style="padding-left: 16px;padding-top: 10px;font-size: 18px;font-weight: bold;background-color: #4db6ac;border: none;color: white;padding-bottom: 10px;" ng-show="lineup.formation !== ''">Line up</p>
+
+<!-- Form post -->
+<form method="post" enctype="text/plain" style="border:none;" ng-show="lineup.formation == '1-2-1'">
+  <label class="item item-input item-select" style="border:none;border-bottom: 1px solid #80808014;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Goal Keeper</div>
+    <select name="select121" style="color:black" ng-model="lineup121.goalkeeper" ng-init="lineup121.goalkeeper=goalkeeperData[0]" ng-options="goalkeeper.username for goalkeeper in goalkeeperData" ng-click="select()">
+    </select>
+  </label>
+  <label class="item item-input item-select" style="border:none;border-bottom: 1px solid #80808014;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Defender</div>
+    <select name="select121" style="color:black" ng-model="lineup121.defender" ng-init="lineup121.defender=defenderData[0]" ng-options="defender.username for defender in defenderData"></select>
+  </label>
+  <label class="item item-input item-select" style="border:none;border-bottom: 1px solid #80808014;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Left Midfielder</div>
+    <select name="select121" style="color:black" ng-model="lineup121.leftMidfielder" ng-init="lineup121.leftMidfielder=midfielderData[0]" ng-options="leftMidfielder.username for leftMidfielder in midfielderData"></select>
+  </label>
+  <label class="item item-input item-select" style="border:none;border-bottom: 1px solid #80808014;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Right Midfielder</div>
+    <select name="select121" style="color:black" ng-model="lineup121.rightMidfielder" ng-init="lineup121.rightMidfielder=midfielderData[0]" ng-options="rightMidfielder.username for rightMidfielder in midfielderData"></select>
+  </label>
+  <label class="item item-input item-select" style="border:none;border-bottom: 1px solid #80808014;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Attacker</div>
+    <select name="select121" style="color:black" ng-model="lineup121.attacker" ng-init="lineup121.attacker=attackerData[0]" ng-options="attacker.username for attacker in attackerData"></select>
+  </label>
+</form>
+
+<!-- Form post -->
+<form method="post" enctype="text/plain" style="border:none;" ng-show="lineup.formation == '1-1-2'">
+  <label class="item item-input item-select" style="border:none;border-bottom: 1px solid #80808014;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Goal Keeper</div>
+    <select name="select112" style="color:black" ng-model="lineup112.goalkeeper" ng-init="lineup112.goalkeeper=goalkeeperData[0]" ng-options="goalkeeper.username for goalkeeper in goalkeeperData">
+    </select>
+  </label>
+  <label class="item item-input item-select" style="border:none;border-bottom: 1px solid #80808014;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Defender</div>
+    <select name="select112" style="color:black" ng-model="lineup112.defender" ng-init="lineup112.defender=defenderData[0]" ng-options="defender.username for defender in defenderData"></select>
+  </label>
+  <label class="item item-input item-select" style="border:none;border-bottom: 1px solid #80808014;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Midfielder</div>
+    <select name="select112" style="color:black" ng-model="lineup112.midfielder" ng-init="lineup112.midfielder=midfielderData[0]" ng-options="midfielder.username for midfielder in midfielderData"></select>
+  </label>
+  <label class="item item-input item-select" style="border:none;border-bottom: 1px solid #80808014;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Left Attacker</div>
+    <select name="select112" style="color:black" ng-model="lineup112.leftAttacker" ng-init="lineup112.leftAttacker=attackerData[0]" ng-options="leftAttacker.username for leftAttacker in attackerData"></select>
+  </label>
+  <label class="item item-input item-select" style="border:none;border-bottom: 1px solid #80808014;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Right Attacker</div>
+    <select name="select112" style="color:black" ng-model="lineup112.rightAttacker" ng-init="lineup112.rightAttacker=attackerData[0]" ng-options="rightAttacker.username for rightAttacker in attackerData"></select>
+  </label>
+</form>
+
+<!-- Form post -->
+<form method="post" enctype="text/plain" style="border:none;" ng-show="lineup.formation == '2-1-1'">
+  <label class="item item-input item-select" style="border:none;border-bottom: 1px solid #80808014;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Goal Keeper</div>
+    <select name="select211" style="color:black" ng-model="lineup211.goalkeeper" ng-init="lineup211.goalkeeper=goalkeeperData[0]" ng-options="goalkeeper.username for goalkeeper in goalkeeperData">
+    </select>
+  </label>
+  <label class="item item-input item-select" style="border:none;border-bottom: 1px solid #80808014;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Left Defender</div>
+    <select name="select211" style="color:black" ng-model="lineup211.leftDefender" ng-init="lineup211.leftDefender=defenderData[0]" ng-options="leftDefender.username for leftDefender in defenderData"></select>
+  </label>
+  <label class="item item-input item-select" style="border:none;border-bottom: 1px solid #80808014;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Right Defender</div>
+    <select name="select211" style="color:black" ng-model="lineup211.rightDefender" ng-init="lineup211.rightDefender=defenderData[0]" ng-options="rightDefender.username for rightDefender in defenderData"></select>
+  </label>
+  <label class="item item-input item-select" style="border:none;border-bottom: 1px solid #80808014;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Midfielder</div>
+    <select name="select211" style="color:black" ng-model="lineup211.midfielder" ng-init="lineup211.midfielder=midfielderData[0]" ng-options="midfielder.username for midfielder in midfielderData"></select>
+  </label>
+  <label class="item item-input item-select" style="border:none;border-bottom: 1px solid #80808014;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Attacker</div>
+    <select name="select211" style="color:black" ng-model="lineup211.attacker" ng-init="lineup211.attacker=attackerData[0]" ng-options="attacker.username for attacker in attackerData"></select>
+  </label>
+</form>
+
+</ion-content>
+
+<div style="text-align: center;display: block;margin: auto 0;">
+  <button ng-if="lineup.formation === '1-2-1'" ng-show="lineup121.goalkeeper !== undefined && lineup121.defender !== undefined && lineup121.leftMidfielder !== undefined && lineup121.rightMidfielder !== undefined && lineup121.attacker !== undefined" start id="floating-button" style="background-color: #ffffff;height: 50px;box-shadow: none !important;color: #4db6ac;font-weight: bold;font-size: 16px;margin-top: 580px;position: relative;right: 0px;" ng-click="next()">Next
+  </button>
+</div>
+
+<div style="text-align: center;display: block;margin: auto 0;">
+  <button ng-if="lineup.formation === '1-1-2'" ng-show="lineup112.goalkeeper !== undefined && lineup112.defender !== undefined && lineup112.midfielder !== undefined && lineup112.leftAttacker !== undefined && lineup112.rightAttacker !== undefined" start id="floating-button" style="background-color: #ffffff;height: 50px;box-shadow: none !important;color: #4db6ac;font-weight: bold;font-size: 16px;margin-top: 580px;position: relative;right: 0px;" ng-click="next()">Next
+  </button>
+</div>
+
+<div style="text-align: center;display: block;margin: auto 0;">
+  <button ng-if="lineup.formation === '2-1-1'" ng-show="lineup211.goalkeeper !== undefined && lineup211.leftDefender !== undefined && lineup211.rightDefender !== undefined && lineup211.midfielder !== undefined && lineup211.attacker !== undefined" start id="floating-button" style="background-color: #ffffff;height: 50px;box-shadow: none !important;color: #4db6ac;font-weight: bold;font-size: 16px;margin-top: 580px;position: relative;right: 0px;" ng-click="next()">Next
+  </button>
+</div>
+
+</ion-view>

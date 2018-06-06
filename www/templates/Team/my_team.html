@@ -1,0 +1,644 @@
+<ion-view view-title="My Team" title-center cache-view="false">
+  <!-- Left Button -->
+  <ion-nav-buttons side="left">
+    <button class="button button-clear icon-button mdi mdi-chevron-left team-font-25" ng-click="back()">
+    </button>
+  </ion-nav-buttons>
+  <!-- Right button -->
+  <ion-nav-buttons side="right">
+    <!-- Search button (coach and player) -->
+    <a ng-if="menuProfile.role=='Player' || menuProfile.role=='Coach'" ng-href="#/app/searchTeam">
+      <button class="button button-clear icon-button mdi mdi-magnify button-search min-height-0 team-font-25">
+      </button>
+    </a>
+    <!-- Edit Button (manager) -->
+    <a ng-if="menuProfile.role=='Manager'" ng-show="menuProfile.team !== ''" ng-href="#/app/edit_team">
+      <button class="button button-clear icon-button mdi mdi-pencil button-search team-min-height-0 team-font-25">
+      </button>
+    </a>
+  </ion-nav-buttons>
+
+<ion-content class="hideScroll team-content" overflow-scroll=false scroll-sista="tabs" on-swipe-left="onGesture('Swipe Left')">
+
+<!-- Manager -->
+  <!-- Empty State -->
+  <div class="team-manager-es" ng-if="menuProfile.role === 'Manager'" ng-show="menuProfile.team === ''">
+    <p>No Team Yet</p>
+    <p>Click the + button to create team</p>
+  </div>
+  <!-- Empty State -->
+
+  <!-- Exist State -->
+    <div ng-if="(menuProfile.team !== '')" ng-show="menuProfile.role == 'Manager'">
+     <!--  <div class="team-bg">
+        <img class="avatar team_logo" ng-show="createdTeam.team_logo !== ''" ng-src={{createdTeam.team_logo}}>
+        <img class="avatar team_logo" ng-if="createdTeam.team_logo === ''" src="img/icon.png">
+        <center>
+          <div class="team-abr" ng-hide="createdTeam.team_logo !== ''">{{teamAbr}}</div>
+        </center>
+        <h1 class="team-name">{{createdTeam.team_name}}</h1>
+        <p class="team-user-profile">{{menuProfile.fullname}} ({{menuProfile.role}})</p>  
+        <center class="team-center-hire-coach">
+          <a class="team-btn-hire-coach" ng-if="menuProfile.role == 'Manager'" ng-click="searchCoach()">Hire Coach</a>
+        </center>
+      </div> -->
+
+      <div style="background-image: url('img/background-leaderboard.png');padding-top:15px;background-repeat:no-repeat;padding-bottom:10px;">
+        <img ng-show="createdTeam.team_logo !== ''" ng-src={{createdTeam.team_logo}} class="avatar" style="left:0px;right:0px;top:30px;margin:0px auto;width:72px;height:72px;">
+        <img ng-if="createdTeam.team_logo === ''" src="img/Logo Sportman V1.png"  class="avatar" style="left:0px;right:0px;top:30px;margin:0px auto;width:70px;height:70px;">
+        <center><div ng-hide="createdTeam.team_logo !== null"  style="color: #4db6ac;text-align: center;width: 70px;border-radius: 50%;background-color: #ffffff;padding: 20px;margin-bottom: -90px;margin-top: 16px;font-weight: bold;font-size: 20px;height: 70px;padding-top: 25px;">{{createdTeam.team_abrName}}</div></center>
+        <h1 style="color:white; margin-top:100px; text-align:center; font-size:18px;margin-bottom: 4px;">{{createdTeam.team_name}}</h1>
+        <p style="color:#ececec; text-align:center; font-size:12px;margin-bottom:0px;">{{menuProfile.fullname}} ({{menuProfile.role}})</p>  
+         <center class="team-center-hire-coach">
+          <a class="team-btn-hire-coach" ng-if="menuProfile.role == 'Manager'" ng-click="searchCoach()">Hire Coach</a>
+        </center>
+      </div>
+      <div ng-if="menuProfile.team !== null" class="row" style="padding:0px;" >
+          <button class="col team-tab-btn" ng-click="tab1()" ng-class="{'activeIcon':showme == 1}">Member</button>
+          <button class=" col team-tab-btn" ng-click="tab2()" ng-class="{'activeIcon':showme == 2}">Invited</button>
+          <button class=" col team-tab-btn" ng-click="tab3()" ng-class="{'activeIcon':showme == 3}">Request</button>
+      </div>
+    </div>
+    <!-- Tab 1 (Member) -->
+      <!-- Empty State -->
+        <div ng-if="(menuProfile.role === 'Manager') && (menuProfile.team !== '') && (showme==1)" ng-show="joinedMemberData.length === 0">
+          <p style="text-align: center;margin-top: 80px;">No Member yet</p>
+          <p style="text-align: center;">Click Hire Coach button above to add coach</p>
+          <p style="text-align: center;">Click + button below to add player</p>
+        </div>
+      <!-- Empty State -->
+
+      <!-- Exist State -->
+        <div ng-if="(menuProfile.role === 'Manager') && (menuProfile.team !== '')" class="list" ng-show="showme==1" style="background-color: white;">
+          <div ng-hide="joinedMemberData.length === 0">
+            <!-- untuk sementara pake joined member -->
+            <a overflow-scroll=false scroll-sista="tabs" ng-repeat="data in joinedMemberData" class="item item-avatar" style="border-bottom:1px solid #f8f8f8;">
+              <img src="img/profile3.png">
+              <div style="padding-top: 3px;height:40px;">
+                <h2 style="margin-left: -26px">{{data.username}}</h2>
+                <p style="margin-left: -26px; margin-top: -2px;">{{data.role}} ({{data.position}})</p>
+                <p style="font-size:14px;color:black;margin-top:-32px;margin-left:200px;">Joined</p>
+              </div>
+            </a>
+            <a overflow-scroll=false scroll-sista="tabs" ng-repeat="data in goalkeeperData" class="item item-avatar" style="border-bottom:1px solid #ddd9;">
+              <img src="img/profile3.png">
+              <div style="padding-top: 3px;height:40px;">
+                <h2 style="margin-left: -26px">{{data.username}}</h2>
+                <p style="margin-left: -26px; margin-top: -2px;">{{data.role}} ({{data.position}})</p>
+                <p style="font-size:14px;color:black;margin-top:-32px;margin-left:200px;">Joined</p>
+              </div>
+            </a>
+            <a overflow-scroll=false scroll-sista="tabs" ng-repeat="data in defenderData" class="item item-avatar" style="border-bottom:1px solid #f8f8f8;">
+              <img src="img/profile3.png">
+              <div style="padding-top: 3px;height:40px;">
+                <h2 style="margin-left: -26px">{{data.username}}</h2>
+                <p style="margin-left: -26px; margin-top: -2px;">{{data.role}} ({{data.position}})</p>
+                <p style="font-size:14px;color:black;margin-top:-32px;margin-left:200px;">Joined</p>
+              </div>
+            </a>
+            <a overflow-scroll=false scroll-sista="tabs" ng-repeat="data in midfielderData" class="item item-avatar" style="border-bottom:1px solid #f8f8f8;">
+              <img src="img/profile3.png">
+              <div style="padding-top: 3px;height:40px;">
+                <h2 style="margin-left: -26px">{{data.username}}</h2>
+                <p style="margin-left: -26px; margin-top: -2px;">{{data.role}} ({{data.position}})</p>
+                <p style="font-size:14px;color:black;margin-top:-32px;margin-left:200px;">Joined</p>
+              </div>
+            </a>
+            <a overflow-scroll=false scroll-sista="tabs" ng-repeat="data in attackerData" class="item item-avatar" style="border-bottom:1px solid #f8f8f8;">
+              <img src="img/profile3.png">
+              <div style="padding-top: 3px;height:40px;">
+                <h2 style="margin-left: -26px">{{data.username}}</h2>
+                <p style="margin-left: -26px; margin-top: -2px;">{{data.role}} ({{data.position}})</p>
+                <p style="font-size:14px;color:black;margin-top:-32px;margin-left:200px;">Joined</p>
+              </div>
+            </a>   
+          </div>
+          <div style="margin-bottom: 30px;"></div>
+        </div>
+      <!-- Exist State -->
+    <!-- Tab 1 (Member) -->
+
+    <!-- Tab 2 (Invited) -->
+      <!-- Empty State -->
+        <div ng-if="(showme==2)" ng-show="invitedMemberData.length === 0">
+          <p style="text-align: center;margin-top: 80px;">No Member Invited</p>
+          <p style="text-align: center;">Invited coach or player will appear here</p>
+        </div>
+      <!-- Empty State -->
+      
+      <!-- Exist State -->
+        <div ng-if="menuProfile.role == 'Manager'" class="list" ng-show="showme==2" ng-if="(haveMember=true) && (invitedMemberLoaded = true)">
+          <div>
+            <a overflow-scroll=false scroll-sista="tabs" ng-repeat="data in invitedMemberData" class="item item-avatar" style="border-bottom:1px solid #f8f8f8;">
+              <img src="img/profile3.png">
+              <div style="padding-top: 3px;height:40px;">
+                <h2 style="margin-left: -26px">{{data.username}}</h2>
+                <p style="margin-left: -26px; margin-top: -2px;">{{data.role}}</p>
+                <p style="font-size:14px;color:black;margin-top:-32px;margin-left:150px;">waiting respond</p>
+              </div>
+            </a>
+          </div>
+        </div>
+      <!-- Exist State -->
+    <!-- Tab 2 (Invited) -->
+
+    <!-- Tab 3 (Request) -->
+      <!-- Empty State -->
+        <div ng-if="(showme==3)" ng-show="userRequestData.length === 0">
+          <p style="text-align: center;margin-top: 80px;">No Request</p>
+          <p style="text-align: center;">Request from coach or player will appear here</p>
+        </div>
+      <!-- Empty State -->
+      
+      <!-- Exist State -->
+        <div ng-if="menuProfile.role === 'Manager'" class="list" ng-show="showme==3">
+          <div ng-hide="userRequestData.length === 0">
+            <a ng-hide="userRequestData == undefined" ng-repeat="data in userRequestData" class="item item-avatar" style="border-bottom:1px solid #f0efef;">
+              <img src="img/profile3.png">
+              <div style="padding-top: 3px;height:40px;">
+                <h2 style="margin-left: -26px; width:100px;">{{data.username}}</h2>
+                <p style="margin-left: -26px; margin-top: -2px;">{{data.role}}</p>
+                <p style="margin-left: 140px; margin-top: -40px;" ng-click="addCoachToTeam('{{data.username}}')">Accept</p>
+                <p style="margin-left: 190px; margin-top: -23px;">|</p>
+                <p ng-click="delCoachRequest('{{data.username}}')" style="margin-left: 200px; margin-top: -21px;">Decline</p>
+              </div>
+            </a>
+          </div>
+        </div>
+      <!-- Exist State -->
+    <!-- Tab 3 (Request) -->
+  <!-- Exist State -->
+<!-- Manager -->
+
+<!-- Coach -->
+  <!-- Empty State -->
+    <!-- Tab 1 -->
+      <div ng-if="(menuProfile.role == 'Coach') && (menuProfile.team === '')" ng-show="coachTab == 1">
+        <p style="text-align:center;margin-top:200px;">You are not managing any team yet</p>
+        <p style="text-align:center;">Click the search button above and find a team to manage</p>
+      </div>
+    <!-- Tab 1 -->
+     
+    <!-- Tab 2 -->
+      <div ng-if="(menuProfile.role == 'Coach') && (requestedTeamStatus == false)" ng-show="coachTab == 2">
+        <p style="text-align: center;margin-top:200px;">No Request Yet</p>
+        <p style="text-align: center;">All request you make will appear here</p>
+      </div>
+    <!-- Tab 2 -->
+
+    <!-- Tab 3 -->
+      <div ng-if="(menuProfile.role == 'Coach') && (teamInvitationStatus == false) && (teamInvitationData.length == 0)" ng-show="coachTab == 3">
+        <p style="text-align:center;margin-top:200px;">No Team Invitation Yet</p>
+        <p style="text-align:center;">All Team Invitation Will Appear Here</p>
+      </div>
+    <!-- Tab 3 -->
+  <!-- Empty State -->
+
+  <!-- Have Team -->
+    <!-- Tab 1 (Team) -->
+    <div ng-if="(menuProfile.team !== '') && (menuProfile.role == 'Coach')" ng-show="coachTab==1">
+      <div ng-hide="imgLoadCompleted == true" style="background-image: url('img/background-leaderboard.png');padding-top:15px;background-repeat:no-repeat;padding-bottom:10px;">
+        <img ng-show="myTeamData.team_logo !== null" ng-src={{myTeamData.team_logo}} class="avatar" style="left:0px;right:0px;top:30px;margin:0px auto;width:72px;height:72px;">
+        <img ng-if="myTeamData.team_logo === ''" src="img/Logo Sportman V1.png"  class="avatar" style="left:0px;right:0px;top:30px;margin:0px auto;width:70px;height:70px;">
+        <center><div ng-hide="myTeamData.team_logo !== null"  style="color: #4db6ac;text-align: center;width: 70px;border-radius: 50%;background-color: #ffffff;padding: 20px;margin-bottom: -90px;margin-top: 16px;font-weight: bold;font-size: 20px;height: 70px;padding-top: 25px;">{{myTeamData.team_abrName}}</div></center>
+        <h1 style="color:white; margin-top:100px; text-align:center; font-size:18px;margin-bottom: 4px;">{{myTeamData.team_name}}</h1>
+        <p style="color:#ececec; text-align:center; font-size:12px;margin-bottom:0px;">{{menuProfile.fullname}} ({{menuProfile.role}})</p>  
+      </div>
+      
+      <div ng-if="menuProfile.team !== null" ng-hide="imgLoadCompleted == true" class="row" style="padding:0px;" >
+          <button class="col" ng-click="tab1()" ng-class="{'activeIcon':showme == 1}"style="color:#897777;padding:10px;background-color:white;border:none;border-bottom:1px solid #e0dfdf;">Member</button>
+          <button class=" col" ng-click="tab2()" ng-class="{'activeIcon':showme == 2}"style="color:#897777;padding:10px;background-color:white;border:none;border-bottom:1px solid #e0dfdf;">Training</button>
+          <button class=" col" ng-click="tab3()" ng-class="{'activeIcon':showme == 3}"style="color:#897777;padding:10px;background-color:white;border:none;border-bottom:1px solid #e0dfdf;">Lineup</button>
+      </div>
+    </div> 
+
+      <!-- Sub Tab 1 (Member) -->
+        <!-- Empty State -->
+          <div ng-if="(menuProfile.role === 'Coach') && (menuProfile.team !== '') && (coachTab==1) && (joinedMemberData.length === 0)" ng-show="showme==1">
+            <p style="text-align: center;margin-top: 80px;">No Member yet</p>
+          </div>
+        <!-- Empty State -->
+
+        <!-- Exist State -->
+          <div ng-if="(menuProfile.role === 'Coach') && (menuProfile.team !== '') && (coachTab==1)" class="list" ng-show="showme==1" style="background-color: white;">
+            <div ng-hide="joinedMemberData.length === 0">
+              <!-- Data of members -->
+              <a overflow-scroll=false scroll-sista="tabs" ng-repeat="data in joinedMemberData" class="item item-avatar" style="border-bottom:1px solid #f1f1f1;">
+                <img src="img/profile3.png">
+                <div style="padding-top: 3px;height:40px;">
+                <h2 style="margin-left: -26px">{{data.username}}</h2>
+                <p style="margin-left: -26px; margin-top: -2px;">{{data.role}}</p>
+                <p style="font-size:14px;color:black;margin-top:-32px;margin-left:200px;">Joined</p>
+                </div>
+              </a>
+            </div>
+            <div style="margin-bottom: 30px;"></div>
+          </div>
+        <!-- Exist State -->
+      <!-- Sub Tab 1 (Member) -->
+
+      <!-- Sub Tab 2 (Training) -->
+        <!-- Empty State -->
+          <div ng-if="(menuProfile.role === 'Coach') && (menuProfile.team !== '') && (coachTab==1) && (trainingDataArr.length === 0)" ng-show="showme==2">
+            <p style="text-align: center;margin-top: 80px;">No Training Schedule yet</p>
+            <p style="text-align: center;margin-top: 10px;">Click the + button below to create training schedule</p>
+          </div>
+        <!-- Empty State -->
+
+        <!-- Exist State -->
+        <div ng-if="(menuProfile.role === 'Coach') && (menuProfile.team !== '') && (coachTab==1) && (trainingDataArr.length !== 0)" ng-show="showme==2" style="padding: 6px;">
+            <!-- Data of members -->
+              <a overflow-scroll=false scroll-sista="tabs" ng-repeat="data in trainingDataArr" class="item item-avatar" style="padding: 0px; margin: 0px; background-color: #ffffff;box-shadow: 0 1px 0px 0 #1111112b;margin-bottom: 8px;">
+                <div class="row" style="margin: 0px;padding: 0px;">
+                  <div class="col-30" style="border-right: 1px solid #8080803d;background-color: grey;" ng-click="showModalTraining(data.id)">
+                    <p style="font-size: 18px;font-weight: 400;color: #ffffff;padding:10px;margin-top: 30px;padding-right: 14px;">{{data.training_date | date:'dd MMM yy'}}</p>
+                    <p style="font-size: 18px;font-weight: 400;color: #ffffff;padding:10px;margin-top: -15px;">@ {{data.training_time}}</p>
+                  </div>
+                  <div class="col-70">
+                    <div class="row" ng-click="showModalTraining(data.id)">
+                      <p style="font-size: 17px;font-weight: 500;color: #000000ad;padding-left:10px;margin-top: 5px;margin-bottom: -4px;">{{data.training_name}}</p>
+                    </div>
+                    <div class="row" style="margin-top: 8px;" ng-click="showModalTraining(data.id)">
+                      <div class="col col-10" style="margin-top: -5px;">
+                        <i class="ion-location" style="font-size:18px;color:#f36f64;padding-left: 5px;"></i>
+                      </div>
+                      <div class="col col-90" style="margin-top: -3px;">
+                        <p style="font-size: 15px;font-weight: 400;color: #000000b5;padding-left:10px;">{{data.training_location}}</p>
+                      </div>
+                    </div>
+                    <div class="row" style="margin-top: 2px;">
+                      <div class="col" style="padding-left: 10px;padding-right: 10px;" ng-click="showComingDetail(data.id)">
+                        <p>Coming</p>
+                        <p style="text-align: center;font-size: 16px;font-weight: 400;color: #4db6ac;">{{comingCounter[data.id]}}</p>
+                      </div>
+                      <div class="col" style="padding-left: 10px;padding-right: 10px;" ng-click="showNotComingDetail(data.id)">
+                        <p>Not Coming</p>
+                         <p style="text-align: center;font-size: 16px;font-weight: 400;color: #ef473a;">{{notComingCounter[data.id]}}</p>
+                      </div>
+                      <div class="col" style="padding-left: 10px;padding-right: 10px;" ng-click="showUnconfirmedDetail(data.id)">
+                        <p>Unconfirmed</p>
+                         <p style="text-align: center;font-size: 16px;font-weight: 400;color: #ffc900;">{{unconfirmedCounter[data.id]}}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </a>
+              <div style="margin-bottom: 30px;"></div>
+          </div>
+        <!-- Exist State -->
+      <!-- Sub Tab 2 (Training) -->
+
+      <!-- Sub Tab 3 (Lineup) -->
+        <!-- Empty State -->
+          <div ng-if="(menuProfile.role === 'Coach') && (menuProfile.team !== '') && (coachTab==1) && (lineupData.length === 0)" ng-show="showme==3">
+            <p style="text-align: center;margin-top: 80px;">No Match Yet</p>
+            <p style="text-align: center;margin-top: 10px;">You have to join competition first</p>
+            <p style="text-align: center;margin-top: 10px;">Click the + button to search a competition to join</p>
+          </div>
+        <!-- Empty State -->
+
+        <!-- Exist State -->
+ <!--        <div class="row" ng-if="(menuProfile.role === 'Coach') && (menuProfile.team !== '') && (coachTab==1) && (lineupData.length !== 0)" ng-show="showme==3" style="border-bottom: 1px solid #8080802e;">
+           <div class="col col-80" style="margin-left: 10px;">
+             <p style="font-weight: 400;font-size: 17px;">Arsenal FC vs Chelsea FC</p>
+             <p style="font-weight: 300;font-size: 16px;">29/03/2018</p>
+             <p style="font-weight: 300;font-size: 16px;">Planet Futsal</p>
+             <p style="font-weight: lighter;font-size: 14px;">Sportman League</p>
+           </div>
+           <div class="col col-20" style="font-weight: 400;font-size: 17px;margin-left: -10px;margin-top: 30px;color: #4db6ac;text-align: center;">
+             <p>Choose Lineup</p>
+           </div>
+        </div> -->
+        
+        <div class="card" style="margin-bottom:10px;" ng-if="(menuProfile.role === 'Coach') && (menuProfile.team !== '') && (coachTab==1) && (lineupData.length !== 0)" ng-show="showme==3" ng-repeat="data in lineupData">
+          <div class="item item-divider" style="padding:0px;border-bottom: 1px solid #d0cece;">
+            <div class="row" style="padding:0px;margin:0px;">
+              <div class="col" style="padding-left:10px;font-weight:bold;color:#ffffff;text-align:center;margin-top:-4px;background-color: grey;">{{data.match_homeTeam}} vs {{data.match_awayTeam}}</div>
+            </div>  
+          </div>
+          <div class="item item-text-wrap" style="padding:0px;">
+            <div class="row" style="margin:0px;">
+              <div class="col col-10"><i class="ion-calendar" style="font-size:21px;color:#11c1f3;"></i></div>
+              <div class="col col-70" style="margin-left: 4px;">{{data.match_date}}</div>
+              <div class="col col-20" style="margin-left: 4px;text-align: right;">{{data.match_time}}</div>
+            </div>
+            <div class="row" style="margin:0px;">
+              <div class="col col-10"><i class="ion-location" style="font-size:21px;color:#f36f64;"></i></div>
+              <div class="col col-90" style="margin-left: 4px;">{{data.match_venue}}</div>
+            </div>
+            <div class="row" style="margin:0px;">
+              <div class="col" style="margin-top: -20px;text-align: right;color:#4db6ac;">{{data.competition_id}}</div>
+            </div>
+          </div>
+          <div ng-show="registeredTeamLength[data.id] === data.comp_numOfTeam" class="row" style="border-top: #ebebeb 1px solid;border-bottom: #ebebeb 1px solid;margin:0px;padding:0px;">
+              <div ng-show="lineupStatus[data.id] === false" class="col cursor" style="background-color:#ffffff;text-align:center;font-weight:bold;color:#4DB6AC;padding:10px;" ng-click="chooseLineup('{{data.id}}')"> Choose Line up
+              </div>
+              <div ng-show="lineupStatus[data.id] === true" class="col cursor" style="background-color:#ffffff;text-align:center;font-weight:bold;color:#33cd5f;padding:10px;" ng-click="chooseLineup('{{data.id}}')"> Change Line up
+              </div>
+          </div>
+        </div>
+        
+        <!-- Exist State -->
+      <!-- Sub Tab 3 (Lineup) -->
+    <!-- Tab 1 (Team) -->
+
+    <!-- Tab 2 (Requested) -->
+      <div class="list" ng-if="(menuProfile.role == 'Coach') && (requestedTeam == true)" ng-show="coachTab==2" style="margin-top: 10px;">
+          <a ng-repeat="data in requestedTeamDataArr" class="item item-avatar" style="border-bottom:1px solid #f0efef;width:auto;background-color:#ffffff;">
+            <img ng-show="data.team_logo === null || data.team_logo === ''" src="img/Logo Sportman V1.png">
+            <img ng-show="data.team_logo !== null || data.team_logo !== ''" ng-src={{data.team_logo}} class="avatar" style="left: 3px; top: 8px;">
+            <div style="padding-top: 3px;height:40px;width: fit-content;">
+            <h2 style="margin-left: -26px">{{data.team_name}}</h2>
+            <p style="margin-left: -26px; margin-top: -2px;">{{data.team_manager}}ddd</p>
+            <p style="font-size:14px;color:black;margin-top:-32px;margin-left:140px;">waiting respond</p>
+            </div>
+          </a>
+      </div>
+    <!-- Tab 2 (Requested) -->
+
+    <!-- Tab 3 (Invitation) -->
+      <div class="list" ng-if="(menuProfile.role == 'Coach') && (teamInvitationStatus == true) && (teamInvitationDataArr.length !== 0)" ng-show="coachTab==3" style="margin-top: 10px;">
+          <a ng-repeat="data in teamInvitationDataArr" class="item item-avatar" style="border-bottom:1px solid #f0efef;margin:6px;margin-top:0px;width:auto;background-color:#ffffff;">
+            <img ng-show="data.team_logo === null" src="img/Logo Sportman V1.png">
+            <img ng-show="data.team_logo !== null" ng-src={{data.team_logo}} class="avatar" style="left: 3px; top: 8px;">
+            <div style="padding-top: 3px;height:40px;width: fit-content;">
+            <h2 style="margin-left: -26px">{{data.team_name}}</h2>
+            <p style="margin-left: -26px; margin-top: -2px;">{{data.team_manager}} (manager)</p>
+            <p style="font-size:14px;color:black;margin-top:-32px;margin-left:140px;" ng-click="addUserToTeamSquad('{{data.team_name}}', '{{data.id}}')">Accept</p>
+            <p style="font-size:14px;color:black;margin-top:-22px;margin-left:190px;border-left: 1px solid #4db6ac; padding-left: 8px;" ng-click="delTeamInvitation('{{data.team_name}}')">Decline</p>
+            </div>
+          </a>
+      </div>
+    <!-- Tab 3 (Invitation) -->
+
+  <!-- List of invited member -->
+  <div ng-if="menuProfile.role == 'Coach'" class="list" ng-show="showme==2" ng-if="haveMember=true">
+    <div>
+    <!-- <ion-scroll id="2" zooming="true" direction="y" style="width: 500px; height: 500px" ng-show="showme==2"> -->
+    <!-- Data of invited members -->
+    <a overflow-scroll=false scroll-sista="tabs" ng-repeat="data in invitedMemberData" class="item item-avatar" style="border-bottom:1px solid #f8f8f8;">
+      <img src="img/profile3.png">
+      <div style="padding-top: 3px;height:40px;">
+      <h2 style="margin-left: -26px">{{data.username}}</h2>
+      <p style="margin-left: -26px; margin-top: -2px;">{{data.role}}</p>
+      <p style="font-size:14px;color:black;margin-top:-32px;margin-left:150px;">waiting respond</p>
+      </div>
+    </a>
+    <!-- </ion-scroll> -->
+    </div>
+    <!-- If no member invited yet-->
+    <p ng-show="invitedMemberData.length == 0" style="text-align: center;margin-top: 80px;">No Member Invited</p>
+    <p ng-show="invitedMemberData.length == 0" style="text-align: center;">Invited coach or player will appear here</p>
+  </div>
+  <!-- List of invited member -->
+
+  <!-- List of Request-->
+  <div ng-if="menuProfile.role === 'Coach'" class="list" ng-show="coachTab==3">
+    <!-- If there are request from player or coach -->
+    <div ng-hide="coachRequestData.length === 0">
+    <!-- <ion-scroll id="3" zooming="true" direction="y" style="width: 500px; height: 500px"> -->
+    <a ng-hide="coachRequestData == undefined" ng-repeat="data in coachRequestData" class="item item-avatar" style="border-bottom:2px solid #f0efef;">
+     <img src="img/profile3.png">
+      <div style="padding-top: 3px;height:40px;">
+      <h2 style="margin-left: -26px; width:100px;">{{data.username}}</h2>
+      <p style="margin-left: -26px; margin-top: -2px;">{{data.role}}</p>
+      <p style="margin-left: 140px; margin-top: -40px;" ng-click="addCoachToTeam('{{data.username}}')">Accept</p>
+      <p style="margin-left: 190px; margin-top: -23px;">|</p>
+      <p ng-click="delCoachRequest('{{data.username}}')" style="margin-left: 200px; margin-top: -21px;">Decline</p>
+      </div>
+    </a>
+    </div>
+  </div>
+  <!-- Have Team -->
+<!-- Coach -->
+
+<!-- Player -->
+  <!-- Empty State -->
+    <!-- Tab 1 -->
+      <div ng-if="(menuProfile.role == 'Player') && (menuProfile.team === '')" ng-show="coachTab == 1">
+        <p style="text-align:center;margin-top:200px;">You are not joining any team yet</p>
+        <p style="text-align:center;">Click the search button above and find a team to join</p>
+      </div>
+    <!-- Tab 1 -->
+     
+    <!-- Tab 2 -->
+      <div ng-if="(menuProfile.role == 'Player') && (requestedTeamStatus == false)" ng-show="coachTab == 2">
+        <p style="text-align: center;margin-top:200px;">No Request Yet</p>
+        <p style="text-align: center;">All request you make will appear here</p>
+      </div>
+    <!-- Tab 2 -->
+
+    <!-- Tab 3 -->
+      <div ng-if="(menuProfile.role == 'Player') && (teamInvitationStatus == false)" ng-show="coachTab == 3">
+        <p style="text-align:center;margin-top:200px;">No Team Invitation Yet</p>
+        <p style="text-align:center;">All Team Invitation Will Appear Here</p>
+      </div>
+    <!-- Tab 3 -->
+  <!-- Empty State -->
+
+  <!-- Have Team -->
+    <!-- Tab 1 (Team) -->
+    <div ng-if="(menuProfile.team !== '') && (menuProfile.role == 'Player')" ng-show="coachTab==1">
+      <div ng-hide="imgLoadCompleted == true" style="background-image: url('img/background-leaderboard.png');padding-top:15px;background-repeat:no-repeat;padding-bottom:10px;">
+        <img ng-show="myTeamData.team_logo !== null" ng-src={{myTeamData.team_logo}} class="avatar" style="left:0px;right:0px;top:30px;margin:0px auto;width:72px;height:72px;">
+        <img ng-if="myTeamData.team_logo === ''" src="img/Logo Sportman V1.png"  class="avatar" style="left:0px;right:0px;top:30px;margin:0px auto;width:70px;height:70px;">
+        <center><div ng-hide="myTeamData.team_logo !== null"  style="color: #4db6ac;text-align: center;width: 70px;border-radius: 50%;background-color: #ffffff;padding: 20px;margin-bottom: -90px;margin-top: 16px;font-weight: bold;font-size: 20px;height: 70px;padding-top: 25px;">{{myTeamData.team_abrName}}</div></center>
+        <h1 style="color:white; margin-top:100px; text-align:center; font-size:18px;margin-bottom: 4px;">{{myTeamData.team_name}}</h1>
+        <p style="color:#ececec; text-align:center; font-size:12px;margin-bottom:0px;">{{menuProfile.fullname}} ({{menuProfile.role}})</p>  
+      </div>
+      
+      <div ng-if="menuProfile.team !== null" ng-hide="imgLoadCompleted == true" class="row" style="padding:0px;" >
+          <button class="col" ng-click="tab1()" ng-class="{'activeIcon':showme == 1}"style="color:#897777;padding:10px;background-color:white;border:none;border-bottom:1px solid #e0dfdf;">Member</button>
+          <button class=" col" ng-click="tab2()" ng-class="{'activeIcon':showme == 2}"style="color:#897777;padding:10px;background-color:white;border:none;border-bottom:1px solid #e0dfdf;">Training</button>
+          <button class=" col" ng-click="tab3()" ng-class="{'activeIcon':showme == 3}"style="color:#897777;padding:10px;background-color:white;border:none;border-bottom:1px solid #e0dfdf;">Lineup</button>
+      </div>
+    </div> 
+
+      <!-- Sub Tab 1 (Member) -->
+        <!-- Empty State -->
+          <div ng-if="(menuProfile.role === 'Player') && (menuProfile.team !== '') && (coachTab==1) && (joinedMemberData.length === 0)" ng-show="showme==1">
+            <p style="text-align: center;margin-top: 80px;">No Member yet</p>
+          </div>
+        <!-- Empty State -->
+
+        <!-- Exist State -->
+          <div ng-if="(menuProfile.role === 'Player') && (menuProfile.team !== '') && (coachTab==1)" class="list" ng-show="showme==1" style="background-color: white;">
+            <div ng-hide="joinedMemberData.length === 0">
+              <!-- Data of members -->
+              <a overflow-scroll=false scroll-sista="tabs" ng-repeat="data in joinedMemberData" class="item item-avatar" style="border-bottom:1px solid #ddd9;">
+                <img src="img/profile3.png">
+                <div style="padding-top: 3px;height:40px;">
+                <h2 style="margin-left: -26px">{{data.username}}</h2>
+                <p style="margin-left: -26px; margin-top: -2px;">{{data.role}}</p>
+                <p style="font-size:14px;color:black;margin-top:-32px;margin-left:200px;">Joined</p>
+                </div>
+              </a>
+            </div>
+            <div style="margin-bottom: 30px;"></div>
+          </div>
+        <!-- Exist State -->
+      <!-- Sub Tab 1 (Member) -->
+
+      <!-- Sub Tab 2 (Training) -->
+        <!-- Empty State -->
+          <div ng-if="(menuProfile.role === 'Player') && (menuProfile.team !== '') && (coachTab==1) && (trainingDataArr.length === 0)" ng-show="showme==2">
+            <p style="text-align: center;margin-top: 80px;">No Training Schedule yet</p>
+            <p style="text-align: center;margin-top: 10px;">Click the + button below to create training schedule</p>
+          </div>
+        <!-- Empty State -->
+
+        <!-- Exist State -->
+        <div ng-if="(menuProfile.role === 'Player') && (menuProfile.team !== '') && (coachTab==1) && (trainingDataArr.length !== 0)" ng-show="showme==2">
+            <!-- Data of members -->
+              <a overflow-scroll=false scroll-sista="tabs" ng-repeat="data in trainingDataArr" class="item item-avatar" style="border-bottom:1px solid #f8f8f8;padding:0px 10px 0px 10px;">
+                <div class="row">
+                  <div class="col-30" style="border-right: 1px solid #8080803d;" ng-click="showModalTraining(data.id)">
+                    <p style="font-size: 15px;font-weight: 400;color: #000000cf;padding:10px;margin-top: 20px;padding-right: 14px;">{{data.training_date | date:'dd MMM yy'}}</p>
+                    <p style="font-size: 15px;font-weight: 400;color: #000000cf;padding:10px;margin-top: -15px;">@ {{data.training_time}}</p>
+                  </div>
+                  <div class="col-70">
+                    <div class="row" style="margin-top: 5px;padding:0px;" ng-click="showModalTraining(data.id)">
+                      <p style="font-size: 16px;font-weight: 500;color: #000000ad;padding-left:10px;">{{data.training_name}}</p>
+                    </div>
+                    <div class="row" style="margin-top: 7px;" ng-click="showModalTraining(data.id)">
+                      <div class="col col-10" style="margin-top: -5px;">
+                        <i class="ion-location" style="font-size:17px;color:#f36f64;padding-left: 5px;"></i>
+                      </div>
+                      <div class="col col-90" style="margin-top: -3px;">
+                        <p style="font-size: 14px;font-weight: 400;color: #000000b5;padding-left:8px;">{{data.training_location}}</p>
+                      </div>
+                    </div>
+                    <div class="row" style="margin-top: 2px;">
+                      <div class="col" style="padding-left: 10px;padding-right: 10px;" ng-click="showComingDetail(data.id)">
+                        <p>Coming</p>
+                        <p style="text-align: center;font-size: 17px;font-weight: 400;">{{comingCounter[data.id]}}</p>
+                      </div>
+                      <div class="col" style="padding-left: 10px;padding-right: 10px;" ng-click="showNotComingDetail(data.id)">
+                        <p>Not Coming</p>
+                        <p style="text-align: center;font-size: 17px;font-weight: 400;">{{notComingCounter[data.id]}}</p>
+                      </div>
+                      <div class="col" style="padding-left: 10px;padding-right: 10px;" ng-click="showUnconfirmedDetail(data.id)">
+                        <p>Unconfirmed</p>
+                        <p style="text-align: center;font-size: 17px;font-weight: 400;">{{unconfirmedCounter[data.id]}}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </a>
+              <div style="margin-bottom: 20px;"></div>
+          </div>
+        <!-- Exist State -->
+      <!-- Sub Tab 2 (Training) -->
+
+      <!-- Sub Tab 3 (Lineup) -->
+        <!-- Empty State -->
+          <div ng-if="(menuProfile.role === 'Player') && (menuProfile.team !== '') && (coachTab==1) && (lineupData.length === 0)" ng-show="showme==3">
+            <p style="text-align: center;margin-top: 80px;">No Match Yet</p>
+            <p style="text-align: center;margin-top: 10px;">You have to join competition first</p>
+            <p style="text-align: center;margin-top: 10px;">Click the + button to search a competition to join</p>
+          </div>
+        <!-- Empty State -->
+
+        <!-- Exist State -->
+        <!-- Exist State -->
+      <!-- Sub Tab 3 (Lineup) -->
+    <!-- Tab 1 (Team) -->
+
+    <!-- Tab 2 (Requested) -->
+      <div class="list" ng-if="(menuProfile.role == 'Player') && (requestedTeam == true)" ng-show="coachTab==2">
+          <a ng-repeat="data in requestedTeamDataArr" class="item item-avatar" style="border-bottom:1px solid #f0efef;margin:6px;margin-top:0px;width:auto;background-color:#ffffff;">
+            <img ng-show="data.team_logo === null" src="img/Logo Sportman V1.png">
+            <img ng-show="data.team_logo !== null" ng-src={{data.team_logo}} class="avatar" style="left: 3px; top: 8px;">
+            <div style="padding-top: 3px;height:40px;width: fit-content;">
+            <h2 style="margin-left: -26px">{{data.team_name}}</h2>
+            <p style="margin-left: -26px; margin-top: -2px;">{{data.team_manager}}ddd (manager)</p>
+            <p style="font-size:14px;color:black;margin-top:-32px;margin-left:140px;">waiting respond</p>
+            </div>
+          </a>
+      </div>
+    <!-- Tab 2 (Requested) -->
+
+    <!-- Tab 3 (Invitation) -->
+      <div class="list" ng-if="(menuProfile.role == 'Player') && (teamInvitationStatus == true)" ng-show="coachTab==3" style="margin-top: 10px;">
+          <a ng-repeat="data in teamInvitationDataArr" class="item item-avatar" style="border-bottom:1px solid #f0efef;margin:6px;margin-top:0px;width:auto;background-color:#ffffff;">
+            <img ng-show="data.team_logo === null" src="img/Logo Sportman V1.png">
+            <img ng-show="data.team_logo !== null" ng-src={{data.team_logo}} class="avatar" style="left:0px;right:0px;top:30px;margin:0px auto;width:72px;height:72px;">
+            <div style="padding-top: 3px;height:40px;width: fit-content;">
+            <h2 style="margin-left: -26px">{{data.team_name}}</h2>
+            <p style="margin-left: -26px; margin-top: -2px;">{{data.team_manager}} (manager)</p>
+            <p style="font-size:14px;color:black;margin-top:-32px;margin-left:140px;" ng-click="addUserToTeamSquad('{{data.team_name}}')">Accept</p>
+            <p style="font-size:14px;color:black;margin-top:-22px;margin-left:190px;border-left: 1px solid #4db6ac; padding-left: 8px;" ng-click="delTeamInvitation('{{data.team_name}}')">Decline</p>
+            </div>
+          </a>
+      </div>
+    <!-- Tab 3 (Invitation) -->
+
+  <!-- List of invited member -->
+  <div ng-if="menuProfile.role == 'Player'" class="list" ng-show="showme==2" ng-if="haveMember=true">
+    <div>
+    <!-- <ion-scroll id="2" zooming="true" direction="y" style="width: 500px; height: 500px" ng-show="showme==2"> -->
+    <!-- Data of invited members -->
+    <a overflow-scroll=false scroll-sista="tabs" ng-repeat="data in invitedMemberData" class="item item-avatar" style="border-bottom:1px solid #f8f8f8;">
+      <img src="img/profile3.png">
+      <div style="padding-top: 3px;height:40px;">
+      <h2 style="margin-left: -26px">{{data.username}}</h2>
+      <p style="margin-left: -26px; margin-top: -2px;">{{data.role}}</p>
+      <p style="font-size:14px;color:black;margin-top:-32px;margin-left:150px;">waiting respond</p>
+      </div>
+    </a>
+    <!-- </ion-scroll> -->
+    </div>
+    <!-- If no member invited yet-->
+    <p ng-show="invitedMemberData.length == 0" style="text-align: center;margin-top: 80px;">No Member Invited</p>
+    <p ng-show="invitedMemberData.length == 0" style="text-align: center;">Invited coach or player will appear here</p>
+  </div>
+  <!-- List of invited member -->
+
+  <!-- List of Request-->
+  <div ng-if="menuProfile.role === 'Player'" class="list" ng-show="coachTab==3">
+    <!-- If there are request from player or coach -->
+    <div ng-hide="coachRequestData.length === 0">
+    <!-- <ion-scroll id="3" zooming="true" direction="y" style="width: 500px; height: 500px"> -->
+    <a ng-hide="coachRequestData == undefined" ng-repeat="data in coachRequestData" class="item item-avatar" style="border-bottom:2px solid #f0efef;">
+     <img src="img/profile3.png">
+      <div style="padding-top: 3px;height:40px;">
+      <h2 style="margin-left: -26px; width:100px;">{{data.username}}</h2>
+      <p style="margin-left: -26px; margin-top: -2px;">{{data.role}}</p>
+      <p style="margin-left: 140px; margin-top: -40px;" ng-click="addCoachToTeam('{{data.username}}')">Accept</p>
+      <p style="margin-left: 190px; margin-top: -23px;">|</p>
+      <p ng-click="delCoachRequest('{{data.username}}')" style="margin-left: 200px; margin-top: -21px;">Decline</p>
+      </div>
+    </a>
+    </div>
+  </div>
+  <!-- Have Team -->
+<!-- Player -->
+
+</ion-content>
+  <!-- Main Tab -->
+  <div class="tabs tab" id="main-tab" ng-hide="menuProfile.role=='Manager'" style="border:none !important;">
+      <a class="col" ng-click="coachTab1()" ng-class="{'activeTab':coachTab == 1}" style="text-align:center;font-size:14px;color:#424242;padding: 0px 6px 0px 6px;background-color:#ffffff;border-top:1px solid #ececec;font-weight: bold;">Team</a>
+      <a class="col" ng-click="coachTab2()" ng-class="{'activeTab':coachTab == 2}" style="text-align:center;font-size:14px;color:#424242;padding: 0px 6px 0px 6px;background-color:#ffffff;border-top:1px solid #ececec;font-weight: bold;">Requested</a>
+      <a class="col" ng-click="coachTab3()" ng-class="{'activeTab':coachTab == 3}" style="text-align:center;font-size:14px;color:#424242;padding: 0px 6px 0px 6px;background-color:#ffffff;border-top:1px solid #ececec;font-weight: bold;">Invitation
+        <span class="step" style="float: right;margin-top: 7px;margin-right: 20px;margin-left: -60px;" ng-if="(counter === true) && (teamInvitationDataCount !== 0) " ng-hide="coachTab === 3">{{teamInvitationDataCount}}</span>
+      </a>
+  </div>
+  <!-- Main Tab -->
+
+  <!--Create Button-->
+  <ion-buttons ng-if="teamAlreadyExist == false" ng-show="role == 'Coach'" start id="floating-button" style="margin-right:10px; background-color:#4DB6AC;padding-top: 6px" ng-click="createTeam()">
+  <i class="icon mdi mdi-plus" style="font-size:40px;"></i>
+  </ion-buttons>
+  <ion-buttons ng-if="menuProfile.role == 'Manager'" ng-show="menuProfile.team === ''" start id="floating-button" style="margin-right:10px; background-color:#4DB6AC;width: 50px;height: 50px;" ng-click="createTeam()">
+  <i class="icon mdi mdi-plus" style="font-size:40px;"></i>
+  </ion-buttons>
+  <ion-buttons ng-if="(menuProfile.role == 'Manager') && (menuProfile.team !== '')" ng-show="showme == 1" start id="floating-button" style="margin-right:10px; background-color:#4DB6AC;width: 50px;height: 50px;" ng-click="searchPlayer()">
+  <i class="icon mdi mdi-plus" style="font-size:40px;"></i>
+  </ion-buttons>
+  <ion-buttons ng-if="(menuProfile.role === 'Coach') && (menuProfile.team !== '') && (coachTab==1)" ng-show="showme==2" start id="floating-button" style="margin-bottom:50px;margin-right:10px; background-color:#4DB6AC;width: 50px;height: 50px;" ng-click="goToCreateTraining()">
+  <i class="icon mdi mdi-plus" style="font-size:40px;"></i>
+  </ion-buttons>
+  <ion-buttons ng-if="(menuProfile.role === 'Coach') && (menuProfile.team !== '') && (coachTab==1)" ng-show="showme==3" start id="floating-button" style="margin-bottom:50px;margin-right:10px; background-color:#4DB6AC;width: 50px;height: 50px;" ng-click="searchCompetition()">
+  <i class="icon mdi mdi-plus" style="font-size:40px;"></i>
+  </ion-buttons>
+</ion-view>

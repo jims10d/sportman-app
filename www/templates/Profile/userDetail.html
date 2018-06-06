@@ -1,0 +1,55 @@
+<ion-view view-title="User Detail" cache-view="false">
+<!-- Back Button -->
+<ion-nav-buttons side="left">
+<button ng-show="profile.role=='Player'" class="button button-clear icon-button mdi mdi-chevron-left" ng-click="backToSearchPlayerPage()" style="font-size:25px"></button>
+<button ng-show="profile.role=='Coach'" class="button button-clear icon-button mdi mdi-chevron-left" ng-click="backToSearchCoachPage()" style="font-size:25px"></button>
+</ion-nav-buttons>
+<!-- Shadow space -->
+<div class="bar item-input-inset" style="border:none;box-shadow: 0 1px 2px #aaa"></div>
+<ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color: #ececec;">
+<div style="background-image: url('img/background-leaderboard.png');padding-top:15px;background-repeat:no-repeat;">
+  <img src="img/profile3.png" class="avatar" style="left:0px;right:0px;top:30px;margin:0px auto;width:80px;height:80px;">
+  <img src="img/profile3.png" class="avatar" style="left:0px;right:0px;top:30px;margin:0px auto;width:80px;height:80px;">
+  <h1 style="color:white; margin-top:100px; text-align:center; font-size:18px;">{{profile.username}}</h1>
+  <p style="color:#ececec; text-align:center; font-size:12px;">{{profile.email}}</p>
+  <p style="color:#ececec; text-align:center; font-size:12px;">{{profile.role}}</p>  
+  <p style="color:#ececec; text-align:center; font-size:12px;">{{profile.status_badge}}</p>
+  <!-- Change password link -->
+  <p style="text-align:center; font-size:12px;"><a style="text-decoration:none;color:#ececec;" ng-href="#/app/change_password"><i class="mdi mdi-lock"></i></a></p> 
+</div>
+<div ng-if="profile.role == 'Player'" class="card" style="margin-left:30px; margin-right:30px; margin-top:-33px;">
+  <div class="item item-text-wrap" style="padding:0px;">
+    <div class="row">
+      <div class="col">
+        <p style="text-align:center;border-bottom:1px solid #e1dddd;padding-bottom:2px;color:#000000;">{{profile.play}} Games</p>
+      </div>
+    </div>
+    <div class="row" style="text-align:center;">
+      <div class="col">{{profile.goal}} Goal</div>
+      <div class="col">{{profile.assist}} Assist</div>
+    </div> 
+    <div class="row" style="text-align:center;">
+      <div class="col">{{profile.yellowCard}} Yellow Card</div>
+      <div class="col">{{profile.redCard}} Red Card</div>
+    </div>
+  </div>
+</div>
+<div ng-if="profile.role == 'Coach'" class="card" style="margin-left:30px; margin-right:30px; margin-top:-33px;">
+  <div class="item item-text-wrap" style="padding:0px;">
+    <div class="row">
+      <div class="col">
+        <p style="text-align:center;border-bottom:1px solid #e1dddd;padding-bottom:2px;color:#000000;">{{profile.play}} Games</p>
+      </div>
+    </div>
+    <div class="row" style="text-align:center;">
+      <div class="col">{{profile.goal}} Gssdoal</div>
+      <div class="col">{{profile.assist}} Assist</div>
+    </div> 
+    <div class="row" style="text-align:center;">
+      <div class="col">{{profile.yellowCard}} Yellow Card</div>
+      <div class="col">{{profile.redCard}} Red Card</div>
+    </div>
+  </div>
+</div>
+</ion-content>
+</ion-view>

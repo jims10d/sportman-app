@@ -1,0 +1,65 @@
+<ion-modal-view style="width: 80%;min-height: 450px;top: 20%;left: 10%;right: 20%;bottom: 20%;max-height: 450px;border-radius: 5%;border: 1px solid #e2e2e2 !important;">
+  <ion-content class="hideScroll">
+
+    <div class="row" style="padding: 0px;margin: 0px;padding-top: 10px;">
+      <div class="col" style="padding: 0px;margin: 0px;">
+        <p style="text-align: center;font-size: 19px;color: black;margin-bottom: 5px;font-weight: 400">{{trainingData.training_name}}</p>
+      </div>
+    </div>
+    <div class="row" style="border-bottom: 1px solid #80808021;margin-top: -20px;">
+      <div class="col" style="padding-bottom: 0px;margin-bottom: 0px;">
+         <p style="text-align: center;font-size: 16px;color: #000000cc;margin-bottom: 0px;margin-top: 20px;">{{trainingData.training_date | date:'dd MMM yy'}}</p>
+      </div>
+       <div class="col" style="padding-bottom: 0px;margin-bottom: 0px;">
+         <p style="text-align: center;font-size: 16px;color: #000000b0;margin-bottom: 0px;margin-top: 20px;">{{trainingData.training_time}}</p>
+      </div>
+    </div>
+    <div class="row" style="margin-top: 10px;">
+      <div class="col" style="text-align: center;color: #000000c7;">
+        <p>Coming</p>
+        <p>{{comingCount}}</p>
+      </div>
+      <div class="col" style="text-align: center;color: #000000c7;">
+        <p>Not Coming</p>
+        <p>{{notComingCount}}</p>
+      </div>
+      <div class="col" style="text-align: center;color: #000000c7;">
+        <p>Unconfirmed</p>
+        <p>{{unconfirmedCount}}</p>
+      </div>
+    </div>
+    <div class="row" style="margin-top: -20px;padding: 0px;">
+      <div class="col" style="padding: 0px;padding-top: 5px;">
+        <ng-map center="current-location" zoom="18" style="height:270px;" ng-show="userProfile.role === 'Player'">
+           <!--  <marker position="jalan kebon mangga 11" on-click="myfunc()"></div> -->
+              <directions
+                 draggable="true"
+                 panel="directions-panel"
+                 travel-mode="DRIVING"
+                 origin="current-location"
+                 destination={{trainingData.training_location}}>
+              </directions>
+        </ng-map>
+        <ng-map center="current-location" zoom="18" style="height:310px;" ng-show="userProfile.role === 'Coach'">
+           <!--  <marker position="jalan kebon mangga 11" on-click="myfunc()"></div> -->
+              <directions
+                 draggable="true"
+                 panel="directions-panel"
+                 travel-mode="DRIVING"
+                 origin="current-location"
+                 destination={{trainingData.training_location}}>
+              </directions>
+        </ng-map>
+      </div>
+    </div>
+    
+    <div class="row" style="color: white;padding:0px;" ng-show="userProfile.role === 'Player'">
+      <div class="col" style="background-color: #0a9dc7;padding-top: 15px;" ng-click="coming()">
+        <p style="text-align: center;">Coming</p>
+      </div>
+      <div class="col" style="background-color: #ef473a;padding-top: 15px;" ng-click="notComing()">
+        <p style="text-align: center;">Not Coming</p>
+      </div>
+    </div>
+  </ion-content>
+</ion-modal-view>

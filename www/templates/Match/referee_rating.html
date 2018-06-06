@@ -1,0 +1,125 @@
+<ion-view view-title="Rating" cache-view="false">
+<!-- Back Button -->
+<ion-nav-buttons side="left">
+<!-- <button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="back()" style="font-size:25px"></button> -->
+</ion-nav-buttons>
+<!-- Shadow space -->
+<div class="bar item-input-inset" style="border:none;box-shadow: 0 1px 2px #aaa"></div>
+<ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color: #ececec;">
+<div ng-show="menuProfile.role != 'Referee'" style="background-image: url('img/background-leaderboard.png');padding-top:15px;background-repeat:no-repeat;min-height: 200px;">
+  <img ng-if="loadCompleted == true" ng-hide="profile.photo != ''" src="img/profile3.png" class="avatar" style="left:0px;right:0px;top:30px;margin:0px auto;width:80px;height:80px;">
+  <img src="img/profile3.png" ng-src={{profile.photo}} class="avatar" style="left:0px;right:0px;top:30px;margin:0px auto;width:80px;height:80px;">
+  <h1 style="color:white; margin-top:100px; text-align:center; font-size:18px;">{{profile.username}}Referee1</h1>
+  <p style="color:#ececec; text-align:center; font-size:12px;">{{profile.email}}referee1@gmail.com</p>
+  <p style="color:#ececec; text-align:center; font-size:12px;">{{profile.role}}</p>  
+  <p style="color:#ececec; text-align:center; font-size:12px;">{{profile.status_badge}}</p>
+  <!-- Change password link -->
+  <p style="text-align:center; font-size:12px;"><a style="text-decoration:none;color:#ececec;" ng-href="#/app/change_password"><i class="mdi mdi-lock"></i></a></p> 
+</div>
+<div ng-show="menuProfile.role == 'Referee'" style="background-image: url('img/background-leaderboard.png');padding-top:15px;background-repeat:no-repeat;min-height: 200px;">
+  <img src="img/profile3.png" ng-src={{profile.photo}} class="avatar" style="left:0px;right:0px;top:30px;margin:0px auto;width:80px;height:80px;">
+  <h1 style="color:white; margin-top:100px; text-align:center; font-size:18px;">{{profile.username}}</h1>
+<!--   <p style="color:#ececec; text-align:center; font-size:12px;">{{profile.email}}</p> -->
+  <p style="color:#ececec; text-align:center; font-size:12px;margin-top: -8px;">{{profile.role}}</p>  
+  <p style="color:#ececec; text-align:center; font-size:12px;padding-bottom: 30px;">100 Point</p>
+</div>
+<div class="card" style="margin-top:-33px;">
+  <div class="item item-text-wrap" style="padding:0px;">
+    <div class="row">
+      <div class="col">
+        <p style="text-align:center;border-bottom:1px solid #e1dddd;padding-bottom:2px;color:#000000;font-size:16px;padding-bottom: 10px;padding-top: 4px;">Referee Performance</p>
+      </div>
+    </div>
+    <div class="row" style="text-align:center;margin-top:10px;">
+      <div class="col" style="margin-left:10px;margin-right:-10px;text-align: left;">Fairness</div>
+      <div class="col">
+        <i ng-show="fairnessrated===false || fairnessStar == 0" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;" ng-click="fairnessRating('1')">
+        </i>
+        <i ng-show="fairnessStar == 1 || fairnessStar == 2 || fairnessStar == 3 || fairnessStar == 4 || fairnessStar == 5" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;color:#ffb300;" ng-click="fairnessRating('1')">
+        </i>
+        <i ng-show="fairnessrated===false || fairnessStar == 1" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;" ng-click="fairnessRating('2')">
+        </i>
+        <i ng-show="fairnessStar == 2 || fairnessStar == 3 || fairnessStar == 4 || fairnessStar == 5" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;color:#ffb300;" ng-click="fairnessRating('2')">
+        </i>
+        <i ng-show="fairnessrated===false || fairnessStar == 1 || fairnessStar == 2" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;" ng-click="fairnessRating('3')">
+        </i>
+        <i ng-show="fairnessStar == 3 || fairnessStar == 4 || fairnessStar == 5" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;color:#ffb300;" ng-click="fairnessRating('3')">
+        </i>
+         <i ng-show="fairnessrated===false || fairnessStar == 1 || fairnessStar == 2 || fairnessStar == 3" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;" ng-click="fairnessRating('4')">
+        </i>
+        <i ng-show="fairnessStar == 4 || fairnessStar == 5" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;color:#ffb300;" ng-click="fairnessRating('4')">
+        </i>
+         <i ng-show="fairnessrated===false || fairnessStar == 1 || fairnessStar == 2 || fairnessStar == 3 || fairnessStar == 4" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;" ng-click="fairnessRating('5')">
+        </i>
+        <i ng-show="fairnessStar == 5" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;color:#ffb300;" ng-click="fairnessRating('5')">
+        </i>
+      </div>
+    </div>
+
+    <div class="row" style="text-align:center;margin-top:4px;">
+      <div class="col" style="margin-left:10px;margin-right:-10px;text-align: left;">Decision</div>
+      <div class="col">
+        <i ng-show="decisionrated===false || decisionStar == 0" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;" ng-click="decisionRating('1')">
+        </i>
+        <i ng-show="decisionStar == 1 || decisionStar == 2 || decisionStar == 3 || decisionStar == 4 || decisionStar == 5" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;color:#ffb300;" ng-click="decisionRating('1')">
+        </i>
+        <i ng-show="decisionrated===false || decisionStar == 1" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;" ng-click="decisionRating('2')">
+        </i>
+        <i ng-show="decisionStar == 2 || decisionStar == 3 || decisionStar == 4 || decisionStar == 5" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;color:#ffb300;" ng-click="decisionRating('2')">
+        </i>
+        <i ng-show="decisionrated===false || decisionStar == 1 || decisionStar == 2" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;" ng-click="decisionRating('3')">
+        </i>
+        <i ng-show="decisionStar == 3 || decisionStar == 4 || decisionStar == 5" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;color:#ffb300;" ng-click="decisionRating('3')">
+        </i>
+         <i ng-show="decisionrated===false || decisionStar == 1 || decisionStar == 2 || decisionStar == 3" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;" ng-click="decisionRating('4')">
+        </i>
+        <i ng-show="decisionStar == 4 || decisionStar == 5" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;color:#ffb300;" ng-click="decisionRating('4')">
+        </i>
+         <i ng-show="decisionrated===false || decisionStar == 1 || decisionStar == 2 || decisionStar == 3 || decisionStar == 4" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;" ng-click="decisionRating('5')">
+        </i>
+        <i ng-show="decisionStar == 5" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;color:#ffb300;" ng-click="decisionRating('5')">
+        </i>
+      </div>
+    </div>
+
+    <div class="row" style="text-align:center;margin-top:4px;">
+      <div class="col" style="margin-left:10px;margin-right:-10px;text-align: left;">Discipline</div>
+      <div class="col">
+        <i ng-show="disciplinerated===false || disciplineStar == 0" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;" ng-click="disciplineRating('1')">
+        </i>
+        <i ng-show="disciplineStar == 1 || disciplineStar == 2 || disciplineStar == 3 || disciplineStar == 4 || disciplineStar == 5" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;color:#ffb300;" ng-click="disciplineRating('1')">
+        </i>
+        <i ng-show="disciplinerated===false || disciplineStar == 1" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;" ng-click="disciplineRating('2')">
+        </i>
+        <i ng-show="disciplineStar == 2 || disciplineStar == 3 || disciplineStar == 4 || disciplineStar == 5" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;color:#ffb300;" ng-click="disciplineRating('2')">
+        </i>
+        <i ng-show="disciplinerated===false || disciplineStar == 1 || disciplineStar == 2" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;" ng-click="disciplineRating('3')">
+        </i>
+        <i ng-show="disciplineStar == 3 || disciplineStar == 4 || disciplineStar == 5" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;color:#ffb300;" ng-click="disciplineRating('3')">
+        </i>
+         <i ng-show="disciplinerated===false || disciplineStar == 1 || disciplineStar == 2 || disciplineStar == 3" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;" ng-click="disciplineRating('4')">
+        </i>
+        <i ng-show="disciplineStar == 4 || disciplineStar == 5" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;color:#ffb300;" ng-click="disciplineRating('4')">
+        </i>
+         <i ng-show="disciplinerated===false || disciplineStar == 1 || disciplineStar == 2 || disciplineStar == 3 || disciplineStar == 4" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;" ng-click="disciplineRating('5')">
+        </i>
+        <i ng-show="disciplineStar == 5" class="icon ion-star placeholder-icon" style="background:white; height:60px; padding-top:16px; padding-left:0px; padding-right:4px;font-size: 20px;color:#ffb300;" ng-click="disciplineRating('5')">
+        </i>
+      </div>
+    </div>
+
+    <center>
+      <button ng-show="disciplinerated===false || decisionrated===false || fairnessrated===false" class="button button-balanced" style="margin-top: 20px;margin-bottom: 20px;background-color: #4db6ac80;width: 300px;">
+      Submit
+      </button>
+      <button ng-show="disciplinerated===true && decisionrated===true && fairnessrated===true" class="button button-balanced" style="margin-top: 20px;margin-bottom: 20px;background-color: #4db6ac;width: 300px;" ng-click="submitRating()">
+      Submit
+      </button>
+    </center>
+
+
+    </div>
+  </div>
+</div>
+</ion-content>
+</ion-view>

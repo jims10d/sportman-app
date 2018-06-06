@@ -1,0 +1,491 @@
+<ion-view view-title="Home" title-center cache-view="false">
+  <!-- Right button -->
+  <ion-nav-buttons side="right">
+  <!-- Search button -->
+    <button ng-show="menuProfile.role != 'Referee'" class="button button-clear icon-button mdi mdi-magnify" onclick="document.getElementById('searchmessage').click()" style="min-height:0;font-size:25px; padding-top:7px;"></button>
+  </ion-nav-buttons>
+
+  <!-- tab -->
+  <div ng-show="menuProfile.role == 'Referee'" class="row" ng-model="showme" ng-init="showme = 'available'" style="padding:0px;margin-top: 56px;">
+      <a class="col" ng-click="showme='available'" ng-class="{'tabActive':showme == 'available'}" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;z-index: 1;">Available</a>
+      <a class="col" ng-click="showme='onprogress'" ng-class="{'tabActive':showme == 'onprogress'}" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;z-index: 1;">On Progress</a>
+      <a class="col" ng-click="showme='accepted'" ng-class="{'tabActive':showme == 'accepted'}" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;z-index: 1;">Accepted</a>
+  </div>
+
+<!-- Search box -->
+<div class="bar item-input-inset" style="border:none;margin-top: 55px !important;background-color: #ffffff !important;border-bottom: 1px solid #80808059;padding-top: 15px;" ng-show="searchmessage">
+  <i class="icon ion-ios-search placeholder-icon" style="padding-left: 15px;font-size: 20px;margin-top: -10px;"></i><input id="search" type="text" placeholder=" Search..." ng-model="search.comp_name" style="width:100%;margin-top:-10px;"/>
+</div>
+<!-- Fake button for search -->
+<button ng-click="searchmessage = !searchmessage; filterbutton = false" id="searchmessage" style="display:none"></button>
+
+<ion-content overflow-scroll=false scroll-sista="tabs" style="background-color:#ececec;z-index:0;">
+<div ng-show="searchmessage" style="border:none;margin-top: 40px !important;background-color: #ffffff !important;border-bottom: 1px solid #80808059;padding-top: 15px;"></div>
+<!-- for refresh -->
+<ion-refresher ng-if="menuProfile.role != 'Referee'" pulling-text="Pull to refresh..." on-refresh="doRefresh()" refreshing-text="Fetching ..." refreshing-icon="ion-loading-b"></ion-refresher>
+
+<!-- Available Matches -->
+<p ng-if="(availableMatches.length == 0 ) && (menuProfile.role == 'Referee')" ng-show="showme == 'available'" style="text-align: center;padding-top: 200px;font-size:17px;margin-top: 52px;">No Match Available...</p>
+<div ng-if="menuProfile.role == 'Referee'" ng-show="showme == 'available'" ng-repeat="match in availableMatches" class="card" style="margin-bottom:10px;margin-top: 52px;">
+  <div class="item item-divider" style="padding:0px;border-bottom: 1px solid #d0cece;">
+    <div class="row" style="padding:0px;margin:0px;">
+      <div class="col" style="padding-left:10px;font-weight:bold;color:#7c857e;text-align:left;margin-top:-4px;"> {{match.match_homeTeam}} vs {{match.match_awayTeam}}</div>
+      <div class="col" style="padding-right:10px;font-weight:bold;color:#7c857e;text-align:right;margin-top:-4px;">Rp. 100.000 Reward</div>
+    </div>  
+  </div>
+  <div class="item item-text-wrap" style="padding:0px;">
+    <div class="row" style="margin:0px;">
+      <div class="col col-10"><i class="ion-calendar" style="font-size:21px;color:#11c1f3;"></i></div>
+      <div class="col col-90" style="margin-left: 4px;">{{match.match_date}}</div>
+    </div>
+    <div class="row" style="margin:0px;">
+      <div class="col col-10"><i class="ion-location" style="font-size:21px;color:#f36f64;"></i></div>
+      <div class="col col-90" style="margin-left: 4px;">{{match.match_venue}}</div>
+    </div>
+    <div class="row" style="margin:0px;">
+      <div class="col" style="margin-left: 4px;margin-top:-15px;text-align: right;color: #4db6ac;" ng-click="viewMatchDetail('{{match.id}}')">See more</div>
+    </div>
+  </div>
+    <div ng-show="registeredTeamLength[data.id] === data.comp_numOfTeam" class="row" style="border-top: #ebebeb 1px solid;margin:0px;padding:0px;">
+      <div class="col cursor" style="background-color:#4DB6AC;text-align:center;font-weight:bold;color:#ffffff;padding:10px;" ng-click="request('{{match.id}}')"> Request </div>
+    </div>
+</div>
+<!-- Available Matches -->
+<!-- On Progress Matches -->
+<p ng-if="onProgressMatches.length == 0" ng-show="showme == 'onprogress'" style="text-align: center;padding-top: 200px;font-size:17px;margin-top: 52px;">No Match...</p>
+<div ng-if="menuProfile.role == 'Referee'" ng-show="showme == 'onprogress'" ng-repeat="match in onProgressMatches" class="card" style="margin-bottom:10px;margin-top: 52px;">
+  <div class="item item-divider" style="padding:0px;border-bottom: 1px solid #d0cece;">
+    <div class="row" style="padding:0px;margin:0px;">
+      <div class="col" style="padding-left:10px;font-weight:bold;color:#7c857e;text-align:left;margin-top:-4px;"> {{match.match_homeTeam}} vs {{match.match_awayTeam}}</div>
+      <div class="col" style="padding-right:10px;font-weight:bold;color:#7c857e;text-align:right;margin-top:-4px;"> Rp. 100.000 Reward </div>
+    </div>  
+  </div>
+  <div class="item item-text-wrap" style="padding:0px;">
+    <div class="row" style="margin:0px;">
+      <div class="col col-10"><i class="ion-calendar" style="font-size:21px;color:#11c1f3;"></i></div>
+      <div class="col col-90" style="margin-left: 4px;">{{match.match_date}}</div>
+    </div>
+    <div class="row" style="margin:0px;">
+      <div class="col col-10"><i class="ion-location" style="font-size:21px;color:#f36f64;"></i></div>
+      <div class="col col-90" style="margin-left: 4px;">{{match.match_venue}}</div>
+    </div>
+    <div class="row" style="margin:0px;">
+      <div class="col" style="margin-left: 4px;margin-top:-15px;text-align: right;" ng-click="viewMatchInfo('{{match.id}}')">See more</div>
+    </div>
+  </div>
+    <div ng-show="registeredTeamLength[data.id] === data.comp_numOfTeam" class="row" style="border-top: #ebebeb 1px solid;border-bottom: #ebebeb 1px solid;margin:0px;padding:0px;">
+      <div class="col cursor" style="background-color:#0a9dc7;text-align:center;font-weight:bold;color:#ffffff;padding:10px;"> Waiting Respond </div>
+    </div>
+</div>
+<!-- On Progress Matches -->
+<!-- Accepted Matches -->
+<p ng-if="acceptedMatches.length == 0" ng-show="showme == 'accepted'" style="text-align: center;padding-top: 200px;font-size:17px;margin-top: 52px;">No Match...</p>
+<div ng-if="menuProfile.role == 'Referee'" ng-show="showme == 'accepted'" ng-repeat="match in acceptedMatches" class="card" style="margin-bottom:10px;margin-top: 52px;">
+  <div class="item item-divider" style="padding:0px;border-bottom: 1px solid #d0cece;">
+    <div class="row" style="padding:0px;margin:0px;">
+      <div class="col" style="padding-left:10px;font-weight:bold;color:#7c857e;text-align:left;margin-top:-4px;"> {{match.match_homeTeam}} vs {{match.match_awayTeam}}</div>
+      <div class="col" style="padding-right:10px;font-weight:bold;color:#7c857e;text-align:right;margin-top:-4px;"> Rp. 100.000 Reward</div>
+    </div>  
+  </div>
+  <div class="item item-text-wrap" style="padding:0px;">
+    <div class="row" style="margin:0px;">
+      <div class="col col-10"><i class="ion-calendar" style="font-size:21px;color:#11c1f3;"></i></div>
+      <div class="col col-90" style="margin-left: 4px;">{{match.match_date}}</div>
+    </div>
+    <div class="row" style="margin:0px;">
+      <div class="col col-10"><i class="ion-location" style="font-size:21px;color:#f36f64;"></i></div>
+      <div class="col col-90" style="margin-left: 4px;">{{match.match_venue}}</div>
+    </div>
+    <div class="row" style="margin:0px;">
+      <div class="col" style="margin-left: 4px;margin-top:-15px;text-align: right;">See more</div>
+    </div>
+  </div>
+    <div ng-show="registeredTeamLength[data.id] === data.comp_numOfTeam" class="row" style="border-top: #ebebeb 1px solid;border-bottom: #ebebeb 1px solid;margin:0px;padding:0px;">
+      <div class="col cursor" style="background-color:#ffffff;text-align:center;font-weight:bold;color:#4DB6AC;padding:10px;" ng-click="viewMatches('{{data.id}}')"> Request </div>
+    </div>
+</div>
+<!-- Accepted Matches -->
+
+<!-- Complete Your Profile -->
+<div id="profileDiv" ng-if="menuProfile.role=='Player'" ng-show="menuProfile.profileCompleted != true && allCompetition != null" class="card ng-cloak" style="margin-bottom:-10px;background-color:#4DB6AC;height:155px;margin-top:20px;">
+   <a class="item item-avatar" style="padding-bottom:3px;height: 200px;">
+    <div class="row">
+      <div class="col" style="margin-left:-25px;margin-top:0px;margin-right:30px;">
+        <center>
+          <img ng-src={{menuProfile.photo}} src="img/profile3.png" class="avatar motion">
+        <center>
+      </div>
+      <div class="col" style="padding-right: 1px;">
+        <div style="padding-top: 3px;height:40px;">
+        <p style="margin-left: 170px;margin-top: -20px;" ng-click="closeDiv()"><i class="ion-close-circled" style="font-size:21px;color:#ffffff;"></i></p>
+        <h2 style="margin-left: -26px;color: white;font-size: 19px;padding-bottom: 4px;">Hi {{menuProfile.username}},</h2>
+        <p style="margin-left: -26px; margin-top: -2px;color: white;">Welcome to SportMan...</p>
+        <p style="margin-left: -26px; margin-top: -2px;color: white;">Your profile is 70% complete</p>
+        <p style="margin-left: 40px; margin-top: 15px;color: white;background-color: grey;padding: 5px;border-radius: 8px;text-align: center;" ng-click="goToCompleteProfile()">Complete your profile</p>
+        </div>
+      </div>
+    </div>
+  </a>
+</div>
+<!--Complete Your Profile-->
+
+<!-- Created Competition -->
+<div style="margin-top:20px;"></div>
+<div ng-if="hasCompetition == false;" ng-show="menuProfile.role === 'Organizer'" style="text-align: center;margin-top: 200px;">
+  <p>No Competition Yet</p>
+  <p>Click + button to create competition</p>
+</div>
+<div class="card" style="margin-bottom:10px;" ng-repeat="data in competition | filter:search.comp_name" ng-if="hasCompetition == true;" ng-show="menuProfile.role === 'Organizer'">
+  <div class="item item-divider" style="padding:0px;border-bottom: 1px solid #d0cece;">
+    <div class="row" style="padding:0px;margin:0px;">
+      <div class="col" style="padding-left:10px;font-weight:bold;color:#7c857e;text-align:left;margin-top:-4px;"> {{data.comp_name}} </div>
+      <div class="col" style="padding-right:10px;font-weight:bold;color:#7c857e;text-align:right;margin-top:-4px;" ng-show="rteamLength[data.id] !== undefined"> {{rteamLength[data.id]}} / {{data.comp_numOfTeam}} Teams </div>
+      <div class="col" style="padding-right:10px;font-weight:bold;color:#7c857e;text-align:right;margin-top:-4px;" ng-hide="rteamLength[data.id] !== undefined"> 0 / {{data.comp_numOfTeam}} Teams </div>
+    </div>  
+  </div>
+  <div class="item item-text-wrap" style="padding:0px;">
+    <div class="row" style="margin:0px;">
+      <div class="col col-10"><i class="ion-calendar" style="font-size:21px;color:#11c1f3;"></i></div>
+      <div class="col col-90" style="margin-left: 4px;">{{data.comp_start | date:'dd MMM yy'}} - {{data.comp_finish | date:'dd MMM yy'}}</div>
+    </div>
+    <div class="row" style="margin:0px;">
+      <div class="col col-10"><i class="ion-location" style="font-size:21px;color:#f36f64;"></i></div>
+      <div class="col col-90" style="margin-left: 4px;">{{data.comp_location}}</div>
+    </div>
+    <div class="row" style="margin:0px;">
+      <div class="col col-10"><i class="ion-cash" style="font-size:21px;color:#28a54c;"></i></div>
+      <div class="col col-90" style="margin-left: 4px;">Rp. {{data.comp_fee}}/Team</div>
+    </div>
+    <div class="row">
+      <div class="col col-10" style="margin-top: 3px;margin-right: 6px;" ng-click="goToEditCompetition('{{data.id}}')"><i class="ion-edit" style="font-size:16px;color:#838586;"></i></div>
+      <div class="col col-10" style="margin-top: 2px;" ng-click="delCompetition('{{data.id}}')"><i class="ion-android-delete" style="font-size:19px;color:#838586;"></i></div>
+      <div class="col" style="margin-left: 4px;text-align: right;color: #0cafdd;" ng-click="more('{{data.id}}')">See more</div>
+    </div>
+  </div>
+  <div ng-show="data.schedule_status === null && registeredTeamLength[data.id] === data.comp_numOfTeam" class="row" style="border-top: #ebebeb 1px solid;border-bottom: #ebebeb 1px solid;margin:0px;padding:0px;">
+      <div class="col cursor" style="background-color:#ffffff;text-align:center;font-weight:bold;color:#4DB6AC;padding:10px;"> Scheduling on progress...</div>
+  </div>
+  <div  class="row" style="border-top: #ebebeb 1px solid;border-bottom: #ebebeb 1px solid;margin:0px;padding:0px;">
+      <div class="col cursor" style="background-color:#ffffff;text-align:center;font-weight:bold;color:#4DB6AC;padding:10px;" ng-click="completeScheduling('{{data.id}}')"> Complete Scheduling</div>
+  </div>
+  <div ng-show="registeredTeamLength[data.id] === data.comp_numOfTeam" class="row" style="border-top: #ebebeb 1px solid;border-bottom: #ebebeb 1px solid;margin:0px;padding:0px;">
+      <div class="col cursor" style="background-color:#ffffff;text-align:center;font-weight:bold;color:#4DB6AC;padding:10px;" ng-click="viewMatches('{{data.id}}')"> Set Schedule </div>
+  </div>
+</div>
+<!--Created Competition -->
+
+<!-- All Competition -->
+<div style="margin-top:20px;"></div>
+
+<!-- <div class="card" style="margin-top:10px;border-radius: 10px;" ng-repeat="data in allCompetition | filter:search" ng-if="menuProfile.role=='Player' || menuProfile.role=='Coach' || menuProfile.role=='Manager'">
+
+  <div class="row" style="padding: 0px;">
+    <div class="col" style="padding: 0px;border-right: 1px solid #eceaea;">
+      <p style="text-align: center;font-size: 19px;font-weight: 500;color: #a2a2a2;margin: 0px;padding-top: 10px;">{{data.comp_start | date:'dd'}}</p>
+      <p style="text-align: center;font-size: 17px;font-weight: 400;color: #b2b2b2;margin-bottom: 20px;">{{data.comp_start | date:'MMM'}}</p>
+      <p style="text-align: center;font-size: 9px;margin:0px;height: 10px;margin-top: -10px;margin-bottom: 10px;"><i class="ion-record" style="font-size:5px;color:#4db6ac;"></i></p>
+      <p style="text-align: center;font-size: 9px;margin:0px;height: 10px;margin-bottom: 10px;"><i class="ion-record" style="font-size:5px;color:#4db6ac;"></i></p>
+      <p style="text-align: center;font-size: 9px;margin:0px;height: 10px;margin-top: 10px;margin-bottom: -10px;"><i class="ion-record" style="font-size:5px;color:#4db6ac;"></i></p>
+      <p style="text-align: center;font-size: 19px;font-weight: 500;color: #a2a2a2;margin-top: 20px;margin-bottom: 0px;padding-top: 10px;">{{data.comp_finish | date:'dd'}}</p>
+      <p style="text-align: center;font-size: 17px;font-weight: 400;color: #b2b2b2;">{{data.comp_finish | date:'MMM'}}</p>
+    </div>
+    <div class="col col-67">
+      <p style="font-size: 19px;font-weight: 600;color: #767676;padding-top: 15px;padding-left: 8px;">{{data.comp_name}}</p>
+      <div style="padding-top: 4px;padding-left: 8px;font-size: 15px;color: grey;font-weight: 400;">
+        <i class="ion-location" style="font-size:21px;color:#4db6ac;"></i>
+        <p style="margin-top: -20px; margin-left: 20px;">{{data.comp_location}}</p>
+      </div>
+      <div class="row">
+          <p style="letter-spacing: 2px;padding-top: 20px;padding-left: 8px;font-size: 19px;color: #4db6ac;font-weight: 500;">Rp {{data.comp_fee}}</p>
+      </div>
+      <div class="row">
+          <button class="button-register-competition">Register</button>
+      </div>
+    </div>
+    <div class="col col-20">
+      <p ng-show="rteamLength[data.id] !== undefined" style="font-size: 16px;font-weight: 600;color: #aaa;padding-top: 9px;padding-left: 8px;">{{rteamLength[data.id]}} / {{data.comp_numOfTeam}} Teams</p>
+      <p ng-hide="rteamLength[data.id] !== undefined" style="font-size: 16px;font-weight: 600;color: #aaa;padding-top: 9px;padding-left: 8px;">0 / {{data.comp_numOfTeam}} Teams</p>
+    </div>
+  </div>
+</div>
+
+<div class="card" style="margin-top:10px;border-radius: 10px;" ng-if="menuProfile.role=='Player' || menuProfile.role=='Coach' || menuProfile.role=='Manager'">
+
+  <div class="row" style="padding: 0px;">
+    <div class="col" style="padding: 0px;border-right: 1px solid #eceaea;">
+      <p style="text-align: center;font-size: 20px;padding-top: 15px;font-weight: bold;color: #000000a3;">24</p>
+      <p style="text-align: center;font-size: 17px;">Apr</p>
+      <p style="text-align: center;font-size: 9px;margin:0px;"><i class="ion-record" style="font-size:6px;color:#4db6ac;"></i></p>
+      <p style="text-align: center;font-size: 9px;margin:0px;"><i class="ion-record" style="font-size:6px;color:#4db6ac;"></i></p>
+      <p style="text-align: center;font-size: 9px;margin:0px;"><i class="ion-record" style="font-size:6px;color:#4db6ac;"></i></p>
+      <p style="text-align: center;font-size: 20px;padding-top: 15px;font-weight: bold;color: #000000a3;">27</p>
+      <p style="text-align: center;font-size: 17px;">Apr</p>
+    </div>
+    <div class="col col-67">
+      <p style="font-size: 19px;font-weight: 600;color: #767676;padding-top: 15px;padding-left: 8px;">Sporto Cup</p>
+      <div style="padding-top: 4px;padding-left: 8px;font-size: 15px;color: grey;font-weight: 400;">
+        <i class="ion-location" style="font-size:21px;color:#4db6ac;"></i>
+        <p style="margin-top: -20px; margin-left: 20px;">Planet Futsal</p>
+      </div>
+      <div class="row">
+          <p style="letter-spacing: 2px;padding-top: 20px;padding-left: 8px;font-size: 19px;color: #4db6ac;font-weight: 500;">FREE</p>
+      </div>
+      <div class="row">
+          <button class="button-register-competition" style="background-color: #28a54c;">Registered</button>
+      </div>
+    </div>
+    <div class="col col-20">
+      <p style="font-size: 16px;font-weight: 600;color: #444444a6;padding-top: 9px;padding-left: 8px;">0 / 16 teams</p>
+    </div>
+  </div>
+</div>
+<div class="card" style="margin-top:10px;border-radius: 10px;" ng-if="menuProfile.role=='Player' || menuProfile.role=='Coach' || menuProfile.role=='Manager'">
+
+  <div class="row" style="padding: 0px;">
+    <div class="col" style="padding: 0px;border-right: 1px solid #eceaea;">
+      <p style="text-align: center;font-size: 20px;padding-top: 15px;font-weight: bold;color: #000000a3;">24</p>
+      <p style="text-align: center;font-size: 17px;">Apr</p>
+      <p style="text-align: center;font-size: 9px;margin:0px;"><i class="ion-record" style="font-size:6px;color:#4db6ac;"></i></p>
+      <p style="text-align: center;font-size: 9px;margin:0px;"><i class="ion-record" style="font-size:6px;color:#4db6ac;"></i></p>
+      <p style="text-align: center;font-size: 9px;margin:0px;"><i class="ion-record" style="font-size:6px;color:#4db6ac;"></i></p>
+      <p style="text-align: center;font-size: 20px;padding-top: 15px;font-weight: bold;color: #000000a3;">27</p>
+      <p style="text-align: center;font-size: 17px;">Apr</p>
+    </div>
+    <div class="col col-67">
+      <p style="font-size: 19px;font-weight: 600;color: #767676;padding-top: 15px;padding-left: 8px;">Sporto Cup</p>
+      <div style="padding-top: 4px;padding-left: 8px;font-size: 15px;color: grey;font-weight: 400;">
+        <i class="ion-location" style="font-size:21px;color:#4db6ac;"></i>
+        <p style="margin-top: -20px; margin-left: 20px;">Planet Futsal</p>
+      </div>
+      <div class="row">
+          <p style="letter-spacing: 2px;padding-top: 20px;padding-left: 8px;font-size: 19px;color: #4db6ac;font-weight: 500;">FREE</p>
+      </div>
+      <div class="row">
+          <button class="button-register-competition">Register</button>
+      </div>
+    </div>
+    <div class="col col-20">
+      <p style="font-size: 16px;font-weight: 600;color: #444444a6;padding-top: 9px;padding-left: 8px;">0 / 16 teams</p>
+    </div>
+  </div>
+</div>
+<div class="card" style="margin-top:10px;border-radius: 10px;" ng-if="menuProfile.role=='Player' || menuProfile.role=='Coach' || menuProfile.role=='Manager'">
+
+  <div class="row" style="padding: 0px;">
+    <div class="col" style="padding: 0px;border-right: 1px solid #eceaea;">
+      <p style="text-align: center;font-size: 20px;padding-top: 15px;font-weight: bold;color: #000000a3;">24</p>
+      <p style="text-align: center;font-size: 17px;">Apr</p>
+      <p style="text-align: center;font-size: 9px;margin:0px;"><i class="ion-record" style="font-size:6px;color:#4db6ac;"></i></p>
+      <p style="text-align: center;font-size: 9px;margin:0px;"><i class="ion-record" style="font-size:6px;color:#4db6ac;"></i></p>
+      <p style="text-align: center;font-size: 9px;margin:0px;"><i class="ion-record" style="font-size:6px;color:#4db6ac;"></i></p>
+      <p style="text-align: center;font-size: 20px;padding-top: 15px;font-weight: bold;color: #000000a3;">27</p>
+      <p style="text-align: center;font-size: 17px;">Apr</p>
+    </div>
+    <div class="col col-67">
+      <p style="font-size: 19px;font-weight: 600;color: #767676;padding-top: 15px;padding-left: 8px;">Sporto Cup</p>
+      <div style="padding-top: 4px;padding-left: 8px;font-size: 15px;color: grey;font-weight: 400;">
+        <i class="ion-location" style="font-size:21px;color:#4db6ac;"></i>
+        <p style="margin-top: -20px; margin-left: 20px;">Planet Futsal</p>
+      </div>
+      <div class="row">
+          <p style="letter-spacing: 2px;padding-top: 20px;padding-left: 8px;font-size: 19px;color: #4db6ac;font-weight: 500;">FREE</p>
+      </div>
+      <div class="row">
+          <button class="button-register-competition">Register</button>
+      </div>
+    </div>
+    <div class="col col-20">
+      <p style="font-size: 16px;font-weight: 600;color: #444444a6;padding-top: 9px;padding-left: 8px;">0 / 16 teams</p>
+    </div>
+  </div>
+</div> -->
+<!-- <div class="card" style="margin-top:10px;border-radius: 10px;" ng-if="menuProfile.role=='Player' || menuProfile.role=='Coach' || menuProfile.role=='Manager'">
+
+  <div class="row" style="padding: 0px;">
+    <div class="col" style="padding: 0px;border-right: 1px solid #eceaea;">
+      <p style="text-align: center;font-size: 20px;padding-top: 15px;font-weight: bold;color: #000000a3;">24</p>
+      <p style="text-align: center;font-size: 17px;">Apr</p>
+      <p style="text-align: center;font-size: 9px;margin:0px;"><i class="ion-record" style="font-size:6px;color:#c39f64;"></i></p>
+      <p style="text-align: center;font-size: 9px;margin:0px;"><i class="ion-record" style="font-size:6px;color:#c39f64;"></i></p>
+      <p style="text-align: center;font-size: 9px;margin:0px;"><i class="ion-record" style="font-size:6px;color:#c39f64;"></i></p>
+      <p style="text-align: center;font-size: 20px;padding-top: 15px;font-weight: bold;color: #000000a3;">27</p>
+      <p style="text-align: center;font-size: 17px;">Apr</p>
+    </div>
+    <div class="col col-67">
+      <p style="font-size: 19px;font-weight: 600;color: #767676;padding-top: 9px;padding-left: 8px;">Sporto Cup</p>
+      <p style="padding-top: 4px;padding-left: 8px;font-size: 15px;color: grey;font-weight: 400;">Planet Futsal</p>
+      <p style="letter-spacing: 2px;padding-top: 20px;padding-left: 8px;font-size: 19px;color: #c39f64;font-weight: 500;">FREE</p>
+
+      <button class="button-register-competition">Register</button>
+    </div>
+    <div class="col col-20">
+      <p style="font-size: 16px;font-weight: 600;color: #444444a6;padding-top: 9px;padding-left: 8px;">0 / 16 teams</p>
+    </div>
+  </div>
+</div>
+<div class="card" style="margin-top:10px;border-radius: 10px;" ng-if="menuProfile.role=='Player' || menuProfile.role=='Coach' || menuProfile.role=='Manager'">
+
+  <div class="row" style="padding: 0px;">
+    <div class="col" style="padding: 0px;border-right: 1px solid #eceaea;">
+      <p style="text-align: center;font-size: 20px;padding-top: 15px;font-weight: bold;color: #000000a3;">24</p>
+      <p style="text-align: center;font-size: 17px;">Apr</p>
+      <p style="text-align: center;font-size: 9px;margin:0px;"><i class="ion-record" style="font-size:6px;color:#c39f64;"></i></p>
+      <p style="text-align: center;font-size: 9px;margin:0px;"><i class="ion-record" style="font-size:6px;color:#c39f64;"></i></p>
+      <p style="text-align: center;font-size: 9px;margin:0px;"><i class="ion-record" style="font-size:6px;color:#c39f64;"></i></p>
+      <p style="text-align: center;font-size: 20px;padding-top: 15px;font-weight: bold;color: #000000a3;">27</p>
+      <p style="text-align: center;font-size: 17px;">Apr</p>
+    </div>
+    <div class="col col-67">
+      <p style="font-size: 19px;font-weight: 600;color: #767676;padding-top: 9px;padding-left: 8px;">Sporto Cup</p>
+      <p style="padding-top: 4px;padding-left: 8px;font-size: 15px;color: grey;font-weight: 400;">Planet Futsal</p>
+      <p style="letter-spacing: 2px;padding-top: 20px;padding-left: 8px;font-size: 19px;color: #c39f64;font-weight: 500;">100K</p>
+
+      <button class="button-register-competition">Register</button>
+    </div>
+    <div class="col col-20">
+      <p style="font-size: 16px;font-weight: 600;color: #444444a6;padding-top: 9px;padding-left: 8px;">0 / 16 teams</p>
+    </div>
+  </div>
+</div>
+<div class="card" style="margin-top:10px;border-radius: 10px;" ng-if="menuProfile.role=='Player' || menuProfile.role=='Coach' || menuProfile.role=='Manager'">
+
+  <div class="row" style="padding: 0px;">
+    <div class="col" style="padding: 0px;border-right: 1px solid #eceaea;">
+      <p style="text-align: center;font-size: 20px;padding-top: 15px;font-weight: bold;color: #000000a3;">24</p>
+      <p style="text-align: center;font-size: 17px;">Apr</p>
+      <p style="text-align: center;font-size: 9px;margin:0px;"><i class="ion-record" style="font-size:6px;color:#c39f64;"></i></p>
+      <p style="text-align: center;font-size: 9px;margin:0px;"><i class="ion-record" style="font-size:6px;color:#c39f64;"></i></p>
+      <p style="text-align: center;font-size: 9px;margin:0px;"><i class="ion-record" style="font-size:6px;color:#c39f64;"></i></p>
+      <p style="text-align: center;font-size: 20px;padding-top: 15px;font-weight: bold;color: #000000a3;">27</p>
+      <p style="text-align: center;font-size: 17px;">Apr</p>
+    </div>
+    <div class="col col-67">
+      <p style="font-size: 19px;font-weight: 600;color: #767676;padding-top: 9px;padding-left: 8px;">Sporto Cup</p>
+      <p style="padding-top: 4px;padding-left: 8px;font-size: 15px;color: grey;font-weight: 400;">Planet Futsal</p>
+      <p style="letter-spacing: 2px;padding-top: 20px;padding-left: 8px;font-size: 19px;color: #c39f64;font-weight: 500;">100K</p>
+
+      <button class="button-register-competition">Register</button>
+    </div>
+    <div class="col col-20">
+      <p style="font-size: 16px;font-weight: 600;color: #444444a6;padding-top: 9px;padding-left: 8px;">0 / 16 teams</p>
+    </div>
+  </div>
+</div> -->
+
+
+<div class="card" style="margin-top:10px;border-radius: 10px;" ng-repeat="competition in allCompetition | filter:search" ng-if="menuProfile.role=='Player' || menuProfile.role=='Coach' || menuProfile.role=='Manager'">
+  <div class="item item-divider" style="padding:0px;border-bottom: 1px solid #d0cece;">
+    <div class="row" style="padding:0px;margin:0px;">
+      <div class="col" style="padding-left:10px;font-weight:bold;color:#7c857e;text-align:left;margin-top:-4px;"> {{competition.comp_name}} </div>
+      <div class="col" style="padding-right:10px;font-weight:bold;color:#7c857e;text-align:right;margin-top:-4px;" ng-show="registeredTeamLength[competition.id] !== undefined"> {{registeredTeamLength[competition.id]}} / {{competition.comp_numOfTeam}} Teams </div>
+      <div class="col" style="padding-right:10px;font-weight:bold;color:#7c857e;text-align:right;margin-top:-4px;" ng-hide="registeredTeamLength[competition.id] !== undefined"> 0 / {{competition.comp_numOfTeam}} Teams </div>
+    </div>  
+  </div>
+  <!-- <div class="row" style="border-left: 6px solid grey;">
+    <div class="col col-20" style="border-right: 1px solid #8080801f;">
+      <div class="row" style="margin-bottom: 50px;">
+        <p style="font-size: 17px;font-weight: 400">Rp 500K</p>
+      </div>
+      <div class="row">
+        <p style="font-size: 17px;font-weight: 400">16 Teams</p>
+      </div>
+    </div>
+
+    <div class="col col-80">
+      <div class="row" style="margin-bottom: 10px;">
+        <div class="col col-10"><i class="ion-location" style="font-size:21px;color:#f36f64;"></i></div>
+        <div class="col col-90" style="margin-left: 4px;">SportMan League</div>
+      </div>
+      <div class="row" style="margin-bottom: 10px;">
+        <div class="col col-10"><i class="ion-calendar" style="font-size:21px;color:#11c1f3;"></i></div>
+        <div class="col col-90" style="margin-left: 4px;">{{competition.comp_start | date:'dd MMM yy'}} - {{competition.comp_finish | date:'dd MMM yy'}}</div>
+      </div>
+      <div class="row" style="margin-bottom: 10px;">
+         <div class="col col-10"><i class="ion-location" style="font-size:21px;color:#f36f64;"></i></div>
+        <div class="col col-90" style="margin-left: 4px;">{{competition.comp_location}}</div>
+      </div>
+       <div class="row" style="margin-bottom: 10px;">
+         <div class="col col-10"><i class="ion-location" style="font-size:21px;color:#f36f64;"></i></div>
+        <div class="col col-90" style="margin-left: 4px;">{{competition.comp_location}}</div>
+      </div>
+    </div>
+  </div> -->
+  <div class="item item-text-wrap" style="padding:0px;">
+    <div class="row" style="margin:0px;">
+      <div class="col col-10"><i class="ion-calendar" style="font-size:21px;color:#11c1f3;"></i></div>
+      <div class="col col-90" style="margin-left: 4px;">{{competition.comp_start | date:'dd MMM yy'}} - {{competition.comp_finish | date:'dd MMM yy'}}</div>
+    </div>
+    <div class="row" style="margin:0px;">
+      <div class="col col-10"><i class="ion-location" style="font-size:21px;color:#f36f64;"></i></div>
+      <div class="col col-90" style="margin-left: 4px;">{{competition.comp_location}}</div>
+    </div>
+    <div class="row" style="margin:0px;">
+      <div class="col col-10"><i class="ion-cash" style="font-size:21px;color:#28a54c;"></i></div>
+      <div class="col col-90" style="margin-left: 4px;" ng-show="competition.comp_fee !== null">Rp. {{competition.comp_fee}} / Team</div>
+      <div class="col col-90" style="margin-left: 4px;" ng-hide="competition.comp_fee !== null">Free</div>
+    </div>
+    <div class="row">
+      <div class="col" style="margin-left: 4px;text-align: right;color: #0cafdd;" ng-click="more('{{competition.id}}')">See more</div>
+    </div>
+  </div>
+  <!-- Register Status (registered, scheduling on progress, closed, view schedule) -->
+    <div class="row" style="margin:0px;padding:0px;">
+
+      <div ng-model="registered[competition.id]" ng-show="registered[competition.id]==false" ng-hide="registered[competition.id]==true || registerStatus[competition.id]=='full'" class="col cursor" style="background-color:#33cd5f;text-align:center;font-weight:bold;color:#ffffff;padding:10px;" ng-click="registerCompetition('{{competition.id}}')"> Register </div>
+
+      <div ng-model="registered[competition.id]" ng-show="registered[competition.id]==false || registerStatus[competition.id]=='full'" ng-hide="registered[competition.id]==true || registerStatus[competition.id]!='full'" class="col cursor" style="background-color: #ef473a;text-align:center;font-weight:bold;color:#ffffff;padding:10px;"> Closed (Full) </div>
+
+      <div ng-model="registered[competition.id]" ng-show="registered[competition.id]==true" ng-hide="registered[competition.id]==false || competition.registeredTeam == null || competition.registeredTeam == '' || competition.schedule_status === 'On Progress' || competition.schedule_status === 'Completed'" class="col cursor" style="background-color:#387ef5;text-align:center;font-weight:bold;color:#ffffff;padding:10px;"> Registered </div>
+
+      <div ng-model="registered[competition.id]" ng-if="registered[competition.id]==true" ng-show="competition.schedule_status == 'On Progress'" ng-hide="competition.schedule_status != 'On Progress'" class="col cursor" style="background-color:  #886aea;text-align:center;font-weight:bold;color:#ffffff;padding:10px;"> Scheduling on progress...</div>
+
+      <div ng-click="goToCompetitionSchedule('{{competition.id}}')" ng-model="registered[competition.id]" ng-if="registered[competition.id]==true" ng-show="competition.schedule_status == 'Completed'" ng-hide="competition.schedule_status != 'Completed'"class="col cursor" style="background-color:#4db6ac;text-align:center;font-weight:bold;color:#ffffff;padding:10px;">View Schedule</div>
+
+    </div>
+</div>
+<!--All Competition -->
+
+<!--Live Score for Referee-->
+<p ng-if="task.length == 0" ng-show="noTask == true" style="text-align: center;padding-top: 200px;font-size:17px;">No Task</p>
+<p ng-if="task.length == 0" ng-show="noTask == true" style="text-align: center;padding-top: 0px;margin-top:10px;font-size:17px;">Request to lead match</p>
+<center><button ng-if="task.length == 0" ng-click="request()" ng-show="noTask == true" class="button button-balanced" style="margin-top:0px;background-color: #ef473a;">Request</button></center>
+<!-- <div class="card" style="margin-bottom:10px;margin: 0px;" ng-if="menuProfile.role == 'Referee'">
+  <div class="item item-divider" style="padding:0px;margin:0px;border-bottom: 1px solid #e1e1e1;">
+   <div class="row" style="margin:0px;padding: 0px;">
+      <div ng-click="prev()" class="col col-10" style="text-align:center;padding: 0px;margin: 0px;"><i class="icon ion-arrow-left-b placeholder-icon" style="color: #515151;font-size: 20px;"></i></div>
+      <div class="col col-80" style="text-align:center;padding: 0px;margin:0px;"><p style="padding-left:10px;font-weight:bold;color:#515151;text-align: center;margin:0px;padding: 0px;">{{day}} {{monthName}} {{year}}</p></div>
+      <div ng-click="next()" class="col col-10" style="text-align:center;padding: 0px;margin: 0px;"><i class="icon ion-arrow-right-b placeholder-icon" style="color: #515151;font-size: 20px;"></i></div>
+   </div>
+  </div>
+  <p ng-show="day==25" style="text-align: center;padding-top: 250px;font-size:17px; height: -webkit-fill-available;">No Task Today</p>
+  <p ng-show="day==24" style="text-align: center;padding-top: 250px;font-size:17px; height: -webkit-fill-available;">ahahahahaahh</p>
+</div> -->
+<div ng-show="noTask == false" class="item item-divide ng-if="menuProfile.role == 'Referee'" ng-click="goToClassement()" class="item item-divider" style="padding:0px;margin-left: 6px;margin-top: 8px;margin-right: 6px;width: auto;">
+    <p style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;height:30px;text-align: center;padding-top: 5px;"> Sporto League</p>
+    <p ng-show="noTask == true" style="text-align: center;padding-top: 200px;font-size:17px;">No Task</p>
+</div>
+<div ng-show="noTask == false" class="card" style="margin-bottom:10px;margin-top: 0px;" ng-if="menuProfile.role == 'Referee'">
+  <div class="item item-divide ng-if="menuProfile.role == 'Referee'" class="item item-text-wrap" style="padding:0px;margin-left: 4px;margin-right: 4px;width: auto;background-color: white;">
+    <div class="row" ng-repeat="data in tasks" style="border-bottom: #e8e3e3 1px solid;margin:0px;padding:0px;">
+      <div class="col col-10" style="text-align:center;font-size: 13px;">FT</div>
+      <div class="col" style="text-align:right;font-size: 13px;">{{data.match_homeTeam}}</div>
+      <div ng-show="data.match_time != '18:00'" ng-hide="data.match_time == '18:00' || data.countDownStarted == true" ng-if="data.countDownStarted != 'true'" style="text-align:center;color:#4DB6AC;width: 70px;margin-top: 5px;">{{data.match_time}}</div>
+      <div ng-show="data.countDownStarted == true && data.countDownTimer > 0" ng-hide="data.countDownStarted == null || data.countDownTimer <= 0" ng-click="liveScore('{{data.id}}')" style="text-align:center;color:#4DB6AC;width: 70px;margin-top: 5px;">{{data.countDownTimer}}</div>
+      <div class="col col-20" ng-show="data.match_started == null" ng-click="trackScore('{{data.id}}')" style="text-align:center;color:#33cd5f;width: 70px;margin-top: 5px;font-size: 13px;">Start</div>
+      <div ng-show="data.timer_status == 'halftime'" ng-hide="data.timer_status != 'halftime'" ng-click="liveScore('{{data.id}}')" style="text-align:center;color:#ffc900;width: 70px;margin-top: 5px;">HT</div>
+      <div class="col col-20" ng-show="data.timer_status == 'fulltime'" ng-hide="data.timer_status != 'fulltime'" ng-click="liveScore('{{data.id}}')" style="text-align:center;color:#111;width: 70px;font-size: 13px;">{{data.match_homeScore}} - {{data.match_awayScore}}</div>
+      <div class="col" style="text-align:left;font-size: 13px;">{{data.match_awayTeam}}</div>
+      <div class="col col-10" style="text-align:left;"></div>
+    </div>
+  </div>
+</div>
+<!--Live Score for Referee-->
+<!-- White Space -->
+<div style="height:55px;background:transparent" ng-show="searchbutton"></div>
+<div style="height:200px;background:transparent" ng-show="filterbutton"></div>
+</ion-content>
+<!--Create Post Button-->
+<ion-buttons start id="floating-button" ng-show="menuProfile.role == 'Organizer'" style="margin-right:10px; background-color:#4DB6AC;padding-top: 6px" ng-click="createCompetition()">
+<i class="icon mdi mdi-plus" style="font-size:40px;"></i>
+</ion-buttons>
+</ion-view>

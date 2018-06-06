@@ -1,0 +1,58 @@
+<ion-view view-title="Choose Substitute" hide-back-button="true" text-center cache-view="false">
+<!-- Back Button -->
+<ion-nav-buttons side="left">
+<button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="backToLineupDetail()" style="font-size:25px"></button>
+</ion-nav-buttons>
+<!-- Update Button -->
+<!-- <ion-nav-buttons side="right">
+<button class="button button-clear icon-button mdi mdi-check" ng-click="editProfile()" style="min-height:44;font-size:25px"></button>
+</ion-nav-buttons> -->
+
+<ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color:#ffffff;">
+<div style="margin-top: 13px;"></div>
+
+<!-- Form post -->
+<form method="post" enctype="text/plain" style="border:none;">
+  <label class="item item-input item-select" style="border:none;border-bottom: 1px solid #80808014;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Substitute 1</div>
+     <select name="sub" style="color:black;border-bottom: 1px solid #80808014;" ng-model="substitute.sub1" ng-init="substitute.sub1=substituteData[0]" ng-options="sub1 for sub1 in substituteData" ng-click="select()">
+    </select>
+  </label>
+  <label class="item item-input item-select" style="border:none;border-bottom: 1px solid #80808014;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Substitute 2</div>
+       <select name="sub" style="color:black;border-bottom: 1px solid #80808014;" ng-model="substitute.sub2" ng-init="substitute.sub2=substituteData[0]" ng-options="sub2 for sub2 in substituteData" ng-click="select()">
+    </select>
+  </label>
+  <label class="item item-input item-select" style="border:none;border-bottom: 1px solid #80808014;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Substitute 3</div>
+       <select name="sub" style="color:black;border-bottom: 1px solid #80808014;" ng-model="substitute.sub3" ng-init="substitute.sub3=substituteData[0]" ng-options="sub3 for sub3 in substituteData" ng-click="select()">
+    </select>
+  </label>
+  <label class="item item-input item-select" style="border:none;border-bottom: 1px solid #80808014;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Substitute 4</div>
+       <select name="sub" style="color:black;border-bottom: 1px solid #80808014;" ng-model="substitute.sub4" ng-init="substitute.sub4=substituteData[0]" ng-options="sub4 for sub4 in substituteData" ng-click="select()">
+    </select>
+  </label>
+  <label class="item item-input item-select" style="border:none;border-bottom: 1px solid #80808014;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Substitute 5</div>
+      <select name="sub" style="color:black;border-bottom: 1px solid #80808014;" ng-model="substitute.sub5" ng-init="substitute.sub5=substituteData[0]" ng-options="sub5 for sub5 in substituteData" ng-click="select()">
+    </select>
+  </label>
+  <label class="item item-input item-select" style="border:none;border-bottom: 1px solid #80808014;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Substitute 6</div>
+       <select name="sub" style="color:black;border-bottom: 1px solid #80808014;" ng-model="substitute.sub6" ng-init="substitute.sub6=substituteData[0]" ng-options="sub6 for sub6 in substituteData" ng-click="select()">
+    </select>
+  </label>
+  <label class="item item-input item-select" style="border:none;border-bottom: 1px solid #80808014;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Substitute 7</div>
+       <select name="sub" style="color:black;border-bottom: 1px solid #80808014;" ng-model="substitute.sub7" ng-init="substitute.sub7=substituteData[0]" ng-options="sub7 for sub7 in substituteData" ng-click="select()">
+    </select>
+  </label>     
+</form>
+
+</ion-content>
+
+<div style="text-align: center;display: block;margin: auto 0;"><button start id="floating-button" style="background-color: #ffffff;height: 50px;box-shadow: none !important;color: #4db6ac;font-weight: bold;font-size: 16px;margin-top: 580px;position: relative;right: 0px;" ng-click="submitLineup()">Submit
+</button></div>
+
+</ion-view>

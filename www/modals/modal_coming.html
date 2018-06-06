@@ -1,0 +1,19 @@
+<ion-modal-view style="width: 80%;min-height: 100px;top: 20%;left: 10%;right: 20%;bottom: 20%;max-height: 450px;border-radius: 5%;border: 1px solid #e2e2e2 !important;">
+  <ion-content class="hideScroll">
+
+    <div class="row" style="padding:10px;border-bottom: 1px solid #80808021;">
+      <div class="col" style="padding: 0px;margin: 0px;">
+        <p style="text-align: center;font-size: 19px;color: black;margin-bottom: 5px;font-weight: 400">Coming</p>
+      </div>
+    </div>
+    <div class="list" ng-if="comingDataArr.length !== 0">
+        <a overflow-scroll=false scroll-sista="tabs" class="item item-avatar" style="border-bottom:1px solid #f8f8f8;" ng-repeat="data in comingDataArr">
+          <img src="img/profile3.png">
+          <div style="padding-top: 3px;height:40px;">
+          <h2 style="margin-left: -26px" ng-class="profile.username === data.username? 'notSameWithUsername' : 'sameWithUsername'">{{data.username}}</h2>
+          <p style="margin-left: -26px; margin-top: -2px;">{{data.email}}</p>
+          </div>
+        </a>
+    </div>
+  </ion-content>
+</ion-modal-view>

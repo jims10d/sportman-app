@@ -1,16 +1,47 @@
 angular.module('starter', ['ionic', 'ionic-material', 'starter.controllers', 'starter.services'])
 
-.run(function($ionicPlatform) {
+.run(function($ionicPlatform,$rootScope,$ionicLoading) {
 	$ionicPlatform.ready(function() {
 		if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
 			cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
 			cordova.plugins.Keyboard.disableScroll(true);
-
 		}
 		if (window.StatusBar) {
 			StatusBar.styleLightContent();
 		}
 	});
+	$rootScope.showLoading = function() {
+       	$ionicLoading.show({
+			content: 'Login...',animation: 'fade-in',showBackdrop: true,
+		});
+    };
+    $rootScope.showPopup = function(p,title,template,cssClass) {
+       	p.alert({
+			title: title,template: template,cssClass: cssClass 
+		});
+    };
+    $rootScope.reload = function(state,scope) {
+    	setTimeout(function() {
+    		state.go(state.current, {}, {
+    			reload: true
+    		});
+    	}, 500);
+    	console.log("refresh");
+    	scope.$broadcast('scroll.refreshComplete');
+    };
+    // generate random strings
+    var stringlength = 15,
+		stringArray = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'],
+		rndString = "";
+
+    $rootScope.generateRandomString = function(){
+		var rndNum = Math.ceil(Math.random() * stringArray.length) - 1;
+		rndString = rndString + stringArray[rndNum];
+		  
+		return rndString.substring(0,stringlength); // membatasi panjang string
+	};
+	$rootScope.randomString = stringArray.reduce($rootScope.generateRandomString);
+	// generate random strings
 })
 
 .config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider,$compileProvider, $sceDelegateProvider) {
@@ -21,24 +52,25 @@ angular.module('starter', ['ionic', 'ionic-material', 'starter.controllers', 'st
 		// Allow loading from our assets domain.  Notice the difference between * and **.
 		'https://www.dropbox.com/**'
 	]);
+	$ionicConfigProvider.tabs.position('bottom');
 // Enable Native Scrolling on Android
 $ionicConfigProvider.platform.android.scrolling.jsScrolling(false);
 $stateProvider
 .state('login', {
 	url: '/login',
-	templateUrl: 'templates/login.html',
+	templateUrl: 'templates/Profile/login.html',
 	controller: 'LoginCtrl'
 })
 .state('register', {
 	url: '/register',
-	templateUrl: 'templates/register.html',
+	templateUrl: 'templates/Profile/register.html',
 	controller: 'RegisterCtrl'
 })
 // setup an abstract state for the side menu directive
 .state('app', {
 	url: '/app',
 	abstract: true,
-	templateUrl: 'templates/tabs.html',
+	templateUrl: 'templates/Main/tabs.html',
 	controller: 'MainCtrl'
 })
 // Each tab has its own nav history stack:
@@ -46,7 +78,7 @@ $stateProvider
 	url: '/home',
 	views: {
 		'home': {
-			templateUrl: 'templates/home.html',
+			templateUrl: 'templates/Main/home.html',
 			controller: 'HomeCtrl'
 		}
 	}
@@ -55,7 +87,7 @@ $stateProvider
 	url: '/training',
 	views: {
 		'home': {
-			templateUrl: 'templates/training.html',
+			templateUrl: 'templates/Training/training.html',
 			controller: 'TrainingCtrl'
 		}
 	}
@@ -64,7 +96,7 @@ $stateProvider
 	url: '/competition',
 	views: {
 		'home': {
-			templateUrl: 'templates/competition.html',
+			templateUrl: 'templates/Competition/competition.html',
 			controller: 'CompetitionCtrl'
 		}
 	}
@@ -73,7 +105,7 @@ $stateProvider
 	url: '/competition_detail/:competitionId',
 	views: {
 		'home': {
-			templateUrl: 'templates/competition_detail.html',
+			templateUrl: 'templates/Competition/competition_detail.html',
 			controller: 'CompetitionDetailCtrl'
 		}
 	}
@@ -82,7 +114,7 @@ $stateProvider
 	url: '/create_competition',
 	views: {
 		'home': {
-			templateUrl: 'templates/create_competition.html',
+			templateUrl: 'templates/Competition/create_competition.html',
 			controller: 'CompetitionCtrl'
 		}
 	}
@@ -91,7 +123,7 @@ $stateProvider
 	url: '/create_training',
 	views: {
 		'home': {
-			templateUrl: 'templates/create_training.html',
+			templateUrl: 'templates/Training/create_training.html',
 			controller: 'TrainingCtrl'
 		}
 	}
@@ -100,7 +132,7 @@ $stateProvider
 	url: '/edit_competition/:competitionId',
 	views: {
 		'home': {
-			templateUrl: 'templates/edit_competition.html',
+			templateUrl: 'templates/Competition/edit_competition.html',
 			controller: 'EditCompetitionCtrl'
 		}
 	}
@@ -109,7 +141,16 @@ $stateProvider
 	url: '/create_team',
 	views: {
 		'home': {
-			templateUrl: 'templates/create_team.html',
+			templateUrl: 'templates/Team/create_team.html',
+			controller: 'TeamCtrl'
+		}
+	}
+})
+.state('app.edit_team', {
+	url: '/edit_team',
+	views: {
+		'home': {
+			templateUrl: 'templates/Team/edit_team.html',
 			controller: 'TeamCtrl'
 		}
 	}
@@ -118,7 +159,7 @@ $stateProvider
 	url: '/register_team/:competitionId',
 	views: {
 		'home': {
-			templateUrl: 'templates/register_team.html',
+			templateUrl: 'templates/Competition/register_team.html',
 			controller: 'RegisterTeamCtrl'
 		}
 	}
@@ -127,7 +168,7 @@ $stateProvider
 	url: '/my_team',
 	views: {
 		'home': {
-			templateUrl: 'templates/my_team.html',
+			templateUrl: 'templates/Team/my_team.html',
 			controller: 'MyTeamCtrl'
 		}
 	}
@@ -136,7 +177,7 @@ $stateProvider
 	url: '/schedule',
 	views: {
 		'home': {
-			templateUrl: 'templates/schedule.html',
+			templateUrl: 'templates/Schedule/schedule.html',
 			controller: 'ScheduleCtrl'
 		}
 	}
@@ -145,8 +186,17 @@ $stateProvider
 	url: '/schedule_detail',
 	views: {
 		'home': {
-			templateUrl: 'templates/schedule_detail.html',
+			templateUrl: 'templates/Schedule/schedule_detail.html',
 			controller: 'ScheduleDetailCtrl'
+		}
+	}
+})
+.state('app.complete_scheduling', {
+	url: '/complete_scheduling/:competitionId',
+	views: {
+		'home': {
+			templateUrl: 'templates/Schedule/complete_scheduling.html',
+			controller: 'CompleteSchedulingCtrl'
 		}
 	}
 })
@@ -154,7 +204,7 @@ $stateProvider
 	url: '/competition_schedule/:competitionId',
 	views: {
 		'home': {
-			templateUrl: 'templates/competition_schedule.html',
+			templateUrl: 'templates/Competition/competition_schedule.html',
 			controller: 'CompetitionScheduleCtrl'
 		}
 	}
@@ -163,7 +213,7 @@ $stateProvider
 	url: '/fixture/:id',
 	views: {
 		'home': {
-			templateUrl: 'templates/fixture.html',
+			templateUrl: 'templates/Schedule/fixture.html',
 			controller: 'FixtureCtrl'
 		}
 	}
@@ -172,17 +222,26 @@ $stateProvider
 	url: '/lineup',
 	views: {
 		'home': {
-			templateUrl: 'templates/lineup.html',
+			templateUrl: 'templates/Team/lineup.html',
 			controller: 'LineUpCtrl'
 		}
 	}
 })
 .state('app.lineup_detail', {
-	url: '/lineup_detail/:id',
+	url: '/lineup_detail/:matchId',
 	views: {
 		'home': {
-			templateUrl: 'templates/lineup_detail.html',
+			templateUrl: 'templates/Team/lineup_detail.html',
 			controller: 'LineUpDetailCtrl'
+		}
+	}
+})
+.state('app.substitute_players', {
+	url: '/substitute_players/:matchId',
+	views: {
+		'home': {
+			templateUrl: 'templates/Team/substitute_players.html',
+			controller: 'SubstituteCtrl'
 		}
 	}
 })
@@ -190,7 +249,7 @@ $stateProvider
 	url: '/classement',
 	views: {
 		'home': {
-			templateUrl: 'templates/classement.html',
+			templateUrl: 'templates/Classement/classement.html',
 			controller: 'ClassementCtrl'
 		}
 	}
@@ -199,7 +258,7 @@ $stateProvider
 	url: '/classement_detail',
 	views: {
 		'home': {
-			templateUrl: 'templates/classement_detail.html',
+			templateUrl: 'templates/Classement/classement_detail.html',
 			controller: 'ClassementDetailCtrl'
 		}
 	}
@@ -208,7 +267,7 @@ $stateProvider
 	url: '/team_detail/:teamId',
 	views: {
 		'home': {
-			templateUrl: 'templates/team_detail.html',
+			templateUrl: 'templates/Team/team_detail.html',
 			controller: 'TeamDetailCtrl'
 		}
 	}
@@ -217,7 +276,7 @@ $stateProvider
 	url: '/team_info',
 	views: {
 		'home': {
-			templateUrl: 'templates/team_info.html',
+			templateUrl: 'templates/Team/team_info.html',
 			controller: 'TeamInfoCtrl'
 		}
 	}
@@ -226,7 +285,7 @@ $stateProvider
   url: '/leaderboard',
   views: {
     'home': {
-      templateUrl: 'templates/leaderboard.html',
+      templateUrl: 'templates/Profile/leaderboard.html',
       controller: 'LeaderboardCtrl'
     }
   }
@@ -235,7 +294,7 @@ $stateProvider
   url: '/history',
   views: {
     'home': {
-      templateUrl: 'templates/history.html',
+      templateUrl: 'templates/Match/history.html',
       controller: 'HistoryCtrl'
     }
   }
@@ -244,7 +303,7 @@ $stateProvider
 	url: '/member_profile/:userId',
 	views: {
 		'home': {
-			templateUrl: 'templates/member_profile.html',
+			templateUrl: 'templates/Team/member_profile.html',
 			controller: 'MemberProfileCtrl'
 		}
 	}
@@ -253,7 +312,7 @@ $stateProvider
   url: '/chat',
   views: {
     'home': {
-      templateUrl: 'templates/chat.html',
+      templateUrl: 'templates/Chat/chat.html',
       controller: 'ChatCtrl'
     }
   }
@@ -262,8 +321,17 @@ $stateProvider
 	url: '/chat_detail/:username',
 	views: {
 		'home': {
-			templateUrl: 'templates/chat_detail.html',
+			templateUrl: 'templates/Chat/chat_detail.html',
 			controller: 'ChatDetailCtrl'
+		}
+	}
+})
+.state('app.userDetail', {
+	url: '/userDetail/:username',
+	views: {
+		'home': {
+			templateUrl: 'templates/Profile/userDetail.html',
+			controller: 'UserDetailCtrl'
 		}
 	}
 })
@@ -271,7 +339,7 @@ $stateProvider
 	url: '/match_detail/:matchId',
 	views: {
 		'home': {
-			templateUrl: 'templates/match_detail.html',
+			templateUrl: 'templates/Match/match_detail.html',
 			controller: 'MatchDetailCtrl'
 		}
 	}
@@ -280,7 +348,7 @@ $stateProvider
 	url: '/match_info/:matchId',
 	views: {
 		'home': {
-			templateUrl: 'templates/match_info.html',
+			templateUrl: 'templates/Match/match_info.html',
 			controller: 'MatchInfoCtrl'
 		}
 	}
@@ -289,7 +357,7 @@ $stateProvider
 	url: '/track_score/:matchId',
 	views: {
 		'home': {
-			templateUrl: 'templates/track_score.html',
+			templateUrl: 'templates/Match/track_score.html',
 			controller: 'EditMatchCtrl'
 		}
 	}
@@ -298,7 +366,7 @@ $stateProvider
 	url: '/live_score',
 	views: {
 		'home': {
-			templateUrl: 'templates/live_score.html',
+			templateUrl: 'templates/Match/live_score.html',
 			controller: 'LiveScoreCtrl'
 		}
 	}
@@ -307,8 +375,26 @@ $stateProvider
 	url: '/edit_match/:matchId',
 	views: {
 		'home': {
-			templateUrl: 'templates/edit_match.html',
+			templateUrl: 'templates/Match/edit_match.html',
 			controller: 'EditMatchCtrl'
+		}
+	}
+})
+.state('app.referee_rating', {
+	url: '/referee_rating',
+	views: {
+		'home': {
+			templateUrl: 'templates/Match/referee_rating.html',
+			controller: 'RefereeRatingCtrl'
+		}
+	}
+})
+.state('app.player_rating', {
+	url: '/player_rating',
+	views: {
+		'home': {
+			templateUrl: 'templates/Match/player_rating.html',
+			controller: 'PlayerRatingCtrl'
 		}
 	}
 })
@@ -316,7 +402,7 @@ $stateProvider
 	url: '/profile',
 	views: {
 		'home': {
-			templateUrl: 'templates/profile.html',
+			templateUrl: 'templates/Profile/profile.html',
 			controller: 'ProfileCtrl'
 		}
 	}
@@ -325,7 +411,7 @@ $stateProvider
 	url: '/edit_profile',
 	views: {
 		'home': {
-			templateUrl: 'templates/edit_profile.html',
+			templateUrl: 'templates/Profile/edit_profile.html',
 			controller: 'ProfileCtrl'
 		}
 	}
@@ -334,7 +420,7 @@ $stateProvider
 	url: '/complete_profile',
 	views: {
 		'home': {
-			templateUrl: 'templates/complete_profile.html',
+			templateUrl: 'templates/Profile/complete_profile.html',
 			controller: 'CompleteProfileCtrl'
 		}
 	}
@@ -343,7 +429,7 @@ $stateProvider
 	url: '/forgot_password',
 	views: {
 		'home': {
-			templateUrl: 'templates/forgot_password.html',
+			templateUrl: 'templates/Profile/forgot_password.html',
 			controller: 'Forgot_passwordCtrl'
 		}
 	}
@@ -352,7 +438,7 @@ $stateProvider
 	url: '/change_password',
 	views: {
 		'home': {
-			templateUrl: 'templates/change_password.html',
+			templateUrl: 'templates/Profile/change_password.html',
 			controller: 'ProfileCtrl'
 		}
 	}
@@ -370,7 +456,7 @@ $stateProvider
   url: '/searchPlayer',
   views: {
     'home': {
-      templateUrl: 'templates/searchPlayer.html',
+      templateUrl: 'templates/Team/searchPlayer.html',
       controller: 'SearchCtrl'
     }
   }
@@ -379,7 +465,7 @@ $stateProvider
   url: '/searchCoach',
   views: {
     'home': {
-      templateUrl: 'templates/searchCoach.html',
+      templateUrl: 'templates/Team/searchCoach.html',
       controller: 'SearchCtrl'
     }
   }
@@ -388,7 +474,7 @@ $stateProvider
   url: '/searchTeam',
   views: {
     'home': {
-      templateUrl: 'templates/searchTeam.html',
+      templateUrl: 'templates/Team/searchTeam.html',
       controller: 'SearchCtrl'
     }
   }
@@ -397,7 +483,7 @@ $stateProvider
 	url: '/about',
 	views: {
 		'home': {
-			templateUrl: 'templates/about.html',
+			templateUrl: 'templates/About/about.html',
 			controller: 'MainCtrl'
 		}
 	}

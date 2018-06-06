@@ -1,0 +1,50 @@
+<ion-view view-title="Edit Profile" hide-back-button="true" text-center cache-view="false">
+<!-- Back Button -->
+<ion-nav-buttons side="left">
+<button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="backProfile()" style="font-size:25px"></button>
+</ion-nav-buttons>
+<!-- Update Button -->
+<ion-nav-buttons side="right">
+<button class="button button-clear icon-button mdi mdi-check" ng-click="editProfil()" style="min-height:44;font-size:25px"></button>
+</ion-nav-buttons>
+
+<ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color:#fff;">
+<div style="background-color:#4db6ac; height:150px;padding-top:15px;">
+  <img src="img/profile3.png" ng-src={{profile.photo}} class="avatar" style="left:22px;top:26px;margin:0px auto;width:70px;height:70px;">
+  <img ng-src={{image}} class="avatar" style="left:22px;top:26px;margin:0px auto;width:70px;height:70px;" ng-show="changePhoto == true">
+  <input style="margin-left:120px; margin-top:25px; width:200px; color:#4db6ac; background:white; font-weight:bold;" type="submit" id="upload" value="Change Photo" class="button button-block button-calm-900 text-center" ng-click="uploadImage(); changePhoto = true"></input>
+</div>
+<!-- Form Update -->
+<form method="post" enctype="text/plain">
+  <div class="list padding" style="padding-top:0px;">
+    <!-- Upload Image -->
+    <input ng-hide="true" type="file" onchange="angular.element(this).scope().showPreviewImage(this.files[0])" id="file-upload"/>
+    <label class="item item-input item-floating-label" style="padding:0px">
+      <span class="input-label">Name</span>
+      <input id="title" type="text" placeholder="Name" value="{{profile.name}}" ng-model="profile.fullname" style="color:black;">
+    </label>
+    <label class="item item-input item-floating-label" style="padding:0px">
+      <span class="input-label">Username</span>
+      <input id="title" type="text" placeholder="Username" value="{{profile.username}}" ng-model="profile.username" style="color:black;">
+    </label>
+    <label class="item item-input item-floating-label" style="padding:0px">
+      <span class="input-label">Email</span>
+      <input id="title" type="text" placeholder="Email" value="{{profile.email}}" ng-model="profile.email" style="color:black;">
+    </label>
+    <label class="item item-input item-floating-label" style="padding:0px">
+      <span class="input-label">Age</span>
+      <input id="title" type="text" placeholder="Bio" value="{{profile.bio}}" ng-model="profile.bio" style="color:black;">
+    </label>
+    <label class="item item-input item-floating-label" style="padding:0px">
+      <span class="input-label">Position</span>
+      <input id="title" type="text" placeholder="link" value="{{profile.link}}" ng-model="profile.link" style="color:black;">
+    </label>
+    <label class="item item-input item-floating-label" style="padding:0px">
+      <span class="input-label">Status</span>
+      <input id="title" type="text" placeholder="Status" value="{{profile.status}}" ng-model="profile.status" style="color:black;">
+    </label>
+  </div>
+  <input type="submit" value="Save" class="button button-block button-calm-900 text-center"  id="updateprofile" style="margin:0px; background-color:#24afe5;display:none"></input>
+</form>
+</ion-content>
+</ion-view>

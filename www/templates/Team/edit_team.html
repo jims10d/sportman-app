@@ -1,0 +1,51 @@
+<ion-view view-title="Edit Team" hide-back-button="true" text-center cache-view="false">
+<!-- Back Button -->
+<ion-nav-buttons side="left">
+<button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="backToMyTeam()" style="font-size:25px"></button>
+</ion-nav-buttons>
+<!-- Update Button -->
+<ion-nav-buttons side="right">
+<button class="button button-clear icon-button mdi mdi-send" ng-click="editTeam()" style="min-height:44;font-size:25px"></button>
+</ion-nav-buttons>
+<!-- Shadow space -->
+<div class="bar item-input-inset" style="border:none;box-shadow: 0 1px 2px #aaa"></div>
+<ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color:#fff;">
+<div style="background-color:#4db6ac; height:150px;padding-top:15px;">
+	<img ng-src={{teamInfo.team_logo}} class="avatar" style="left:22px;top:26px;margin:0px auto;width:70px;height:70px;background-color:#f8f8f8;">
+	<img ng-src={{image}} class="avatar" style="left:22px;top:26px;margin:0px auto;width:70px;height:70px;" ng-show="addLogo == true">
+	<input style="margin-left:120px; margin-top:25px; width:200px; color:#4db6ac; background:white; font-weight:bold;" type="submit" id="upload" value="Add Logo" class="button button-block button-calm-900 text-center" ng-click="uploadImage(); addLogo = true"></input>
+</div>
+<!-- Form Update -->
+<form method="post" enctype="text/plain">
+	<div class="list padding" style="padding-top:0px;">
+		<!-- Upload Image -->
+		<input ng-hide="true" type="file" onchange="angular.element(this).scope().showPreviewImage(this.files[0])" id="file-upload"/>
+		<label class="item item-input item-floating-label" style="padding:0px">
+			<span class="input-label"> Team Name</span>
+			<input id="title" type="text" placeholder="Team Name" value="{{teamInfo.team_name}}" ng-model="teamInfo.team_name" style="color:black;">
+		</label>
+		<label class="item item-input item-floating-label" style="padding:0px">
+			<span class="input-label">Team Abreviation Name</span>
+			<input id="title" type="text" placeholder="Team Abreviation Name" value="{{teamInfo.team_abrName}}" ng-model="teamInfo.team_abrName" style="color:black;">
+		</label>
+	 <!--  <label class="item item-input item-floating-label" style="padding:0px">
+			<span class="input-label">Nickname</span>
+			<input id="title" type="text" placeholder="Nickname" value="{{profile.email}}" ng-model="profile.email" style="color:black;">
+		</label>
+		<label class="item item-input item-floating-label" style="padding:0px">
+			<span class="input-label">Bio</span>
+			<input id="title" type="text" placeholder="Bio" value="{{profile.bio}}" ng-model="profile.bio" style="color:black;">
+		</label>
+		<label class="item item-input item-floating-label" style="padding:0px">
+			<span class="input-label">Link</span>
+			<input id="title" type="text" placeholder="link" value="{{profile.link}}" ng-model="profile.link" style="color:black;">
+		</label>
+		<label class="item item-input item-floating-label" style="padding:0px">
+			<span class="input-label">Status</span>
+			<input id="title" type="text" placeholder="Status" value="{{profile.status}}" ng-model="profile.status" style="color:black;">
+		</label> -->
+	</div>
+	<input type="submit" value="Save" class="button button-block button-calm-900 text-center"  id="updateprofile" style="margin:0px; background-color:#24afe5;display:none"></input>
+</form>
+</ion-content>
+</ion-view>

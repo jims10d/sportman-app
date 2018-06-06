@@ -1,0 +1,44 @@
+<ion-view view-title="{{compName}}" title-center cache-view="false">
+<!-- Back Button -->
+<ion-nav-buttons side="left">
+<button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="backToSchedule('{{competition}}')" style="font-size:25px"></button>
+</ion-nav-buttons>
+<!-- Fake button -->
+<button ng-click="searchbutton = !searchbutton; filterbutton = false" id="searchbutton" style="display:none"></button>
+<button ng-click="filterbutton = !filterbutton; searchbutton = false" id="filterbutton" style="display:none"></button>
+<!-- Search bar -->
+<div class="bar item-input-inset" style="border:none;margin-top:58px;margin-bottom:100px;position: fixed" ng-show="searchbutton">
+  <i class="icon ion-ios-search placeholder-icon" style="background:white; height:56px; padding-top:16px; padding-left:11px;"></i><input id="search" type="text" placeholder=" Search..." ng-model="search" style="width:100%; height:60px;" />
+</div>
+<!-- Shadow space -->
+<div class="bar item-input-inset" style="border:none;box-shadow: 0 1px 2px #aaa"></div>
+<ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color: #ececec; z-index:0; margin-top:12px;">
+<!-- for refresh -->
+<ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()" refreshing-text="Fetching ..." refreshing-icon="ion-loading-b"></ion-refresher>
+
+<div class="card" style="margin-bottom:10px;" ng-show="menuProfile.role == 'Organizer'">
+  <div class="item item-divider" style="padding:0px;">
+    <p style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;text-align: center;"> Fixture {{fixtureId}}</p>
+  </div>
+  <div class="item item-text-wrap" style="padding:0px;">
+    <div ng-class="{'green':data.match_date != null}" class="row" ng-repeat="data in matches" style="border-bottom: #e8e3e3 1px solid;margin:0px;">
+      <div class="col col-20" style="text-align:left;color: #808080;font-size: 11px;">{{data.match_date | date:'d/MM'}}</div>
+      <div class="col" style="text-align:right;font-size: 13px;">{{data.match_homeTeam}}</div>
+      <div ng-click="editMatch('{{data.id}}')" style="text-align:center;color:#4DB6AC;width: 70px;margin-top: 5px;">set</div>
+      <div class="col" style="text-align:left;font-size: 13px;">{{data.match_awayTeam}}</div>
+      <div class="col col-20" style="text-align:right;color: #808080;font-size: 11px;">{{data.match_time}}</div>
+    </div>
+  <!--   <div class="row" ng-repeat="data in matches" style="border-bottom: #e8e3e3 1px solid;margin:0px; border-right: 2px solid #387ef5; border-left: 2px solid #387ef5;">
+      <div class="col" style="text-align:right;">{{data.match_homeTeam}}</div>
+      <div ng-click="editMatch('{{data.id}}')" style="text-align:center;color:#4DB6AC;width: 70px;margin-top: 5px;">set</div>
+      <div class="col" style="text-align:left;">{{data.match_awayTeam}}</div>
+    </div> -->
+  </div>
+</div>
+
+<!-- White Space -->
+<div style="height:55px;background:transparent" ng-show="searchbutton"></div>
+<div style="height:200px;background:transparent" ng-show="filterbutton"></div>
+<!--List Posting-->
+</ion-content>
+</ion-view>
