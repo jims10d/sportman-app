@@ -1725,6 +1725,24 @@ angular.module('starter.services', [])
 		        };
 		        return promise;
         	},
+        	getMatchesByCompetitionIdAndDate: function(compId,matchDate) {
+		        var deferred = $q.defer();
+		        var promise = deferred.promise;
+		        $http.get(BACKEND.URL + '/matches?filter=%7B%22where%22%3A%20%7B%22competition_id%22%3A%22' + compId + '%22%2C%20%22match_date%22%3A%22' + matchDate + '%22%7D%7D').success(function(response) {
+		            deferred.resolve(response);
+		        }).error(function(response) {
+		            deferred.reject(response);
+		        });
+		        promise.success = function(fn) {
+		            promise.then(fn);
+		            return promise;
+		        };
+		        promise.error = function(fn) {
+		            promise.then(null, fn);
+		            return promise;
+		        };
+		        return promise;
+        	},
         	getMatchesByReferee: function(referee, date) {
             var deferred = $q.defer();
             var promise = deferred.promise;

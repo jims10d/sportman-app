@@ -182,6 +182,10 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				});
 			}
 		};
+
+		$scope.goToNextPage = function() {
+			$state.go('register2');
+		};
 })
 
 .controller('MainCtrl', function($scope, $ionicPopup, $ionicTabsDelegate, $ionicLoading, $ionicPopover, $state, LoginService, ProfileService, TeamService, $rootScope) {
@@ -1165,8 +1169,28 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 								};
 
 								}
+
+								
 								// scheduling
 							}
+								// bikin array utk menampung wasit-wasit yang available pada tanggal dan waktu pertandingan tertentu
+								var avRefArr = [];
+
+								// bikin function utk cari / get wasit-wasit yang available pada tgl dan waktu pertandingan tertentu
+								var date = "2010-10-20";
+								var time = "4:30";
+								var singleDate = date + " " + time;
+
+								console.log(singleDate);
+								
+								// get day based on date
+								console.log(moment(date).format('dddd')); 
+
+								// bikin function utk get wasit yg available berdasarkan tgl dan waktu pertandingan tertentu
+								$scope.getAvRefByDayAndTime = function(day, time){
+									// bikin service / api utk get av ref where available_day === day && available_time === time
+								};
+
 						}
 					});
 					if($scope.competition !== null){
@@ -7002,27 +7026,41 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	console.log($scope.matchDate);
 	console.log(ls.getItem("myCompetitionId"));
 	$scope.myCompetitionId = ls.getItem("myCompetitionId");
-	if(ls.getItem("myCompetitionId") !== 'null'){
-		console.log("masukk");
-		CompetitionService.getCompetitionById(ls.getItem("myCompetitionId"),ls.getItem("token")).success(function(data) {
-			$scope.competition = data;
-		}).error(function(data) {});
 
-		CompetitionService.getCompetitionByDate(ls.getItem("myCompetitionId"),$scope.matchDate,ls.getItem("token")).success(function(data) {
-			$scope.matches = data;
-			console.log($scope.matches);
-			console.log("berhasil");
-			for(var m = 0; m < $scope.matches.length; m++){
-				$scope.matches[m].match_date = new Date($scope.matches[m].match_date);
-				console.log($scope.matches[m].match_date);
-			}
-			$ionicLoading.hide();
-		}).error(function(data) {
-			console.log("gagal");
+	$scope.myCompetitionArr = ls.getItem("myCompetitionId").split(",");
+
+	if(ls.getItem("myCompetitionId") !== 'null'){
+
+		console.log("masukk");
+		console.log($scope.myCompetitionArr);
+		$scope.myCompetitionArr.forEach(function(competition){
+			CompetitionService.getCompetitionById(competition,ls.getItem("token")).success(function(data) {
+				$scope.competition = data;
+				console.log($scope.competition);
+			}).error(function(data) {});
 		});
+
+
+		$scope.myCompetitionArr.forEach(function(competition){
+			CompetitionService.getCompetitionByDate(competition,$scope.matchDate,ls.getItem("token")).success(function(data) {
+				$scope.matches = data;
+				console.log($scope.matches);
+				console.log("berhasil");
+				for(var m = 0; m < $scope.matches.length; m++){
+					$scope.matches[m].match_date = new Date($scope.matches[m].match_date);
+					console.log($scope.matches[m].match_date);
+				}
+				$ionicLoading.hide();
+			}).error(function(data) {
+				console.log("gagal");
+			});
+		});
+
 	}else if (ls.getItem("myCompetitionId") === 'null') { 
 		$ionicLoading.hide();
 	}	
+
+
 	$scope.backToHome = function(){
 		$state.go('app.home');
 	}
@@ -7051,19 +7089,26 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$scope.matchDate = moment($scope.matchDate).toISOString();
 			console.log($scope.matchDate);
 			console.log(localStorage.getItem("myCompetitionId"));
-			CompetitionService.getCompetitionByDate(ls.getItem("myCompetitionId"),$scope.matchDate,ls.getItem("token")).success(function(data) {
-				$scope.matches = data;
-				console.log($scope.matches);
-				console.log("berhasil");
-				for(var m = 0; m < $scope.matches.length; m++){
-					$scope.matches[m].match_date = new Date($scope.matches[m].match_date);
-					console.log($scope.matches[m].match_date);
-				}
-				$ionicLoading.hide();
-			}).error(function(data) {
-				console.log("gagal");
+			console.log($scope.myCompetitionArr);
+
+
+			$scope.myCompetitionArr.forEach(function(competition){
+				CompetitionService.getCompetitionByDate(competition,$scope.matchDate,ls.getItem("token")).success(function(data) {
+					$scope.matches = data;
+					console.log($scope.matches);
+					console.log("berhasil");
+					for(var m = 0; m < $scope.matches.length; m++){
+						$scope.matches[m].match_date = new Date($scope.matches[m].match_date);
+						console.log($scope.matches[m].match_date);
+					}
+					$ionicLoading.hide();
+				}).error(function(data) {
+					console.log("gagal");
+				});
 			});
+
 		};
+
 		$scope.prev = function(){
 			$scope.showme = 2;
 			$rootScope.showLoading($ionicLoading);
@@ -7087,18 +7132,34 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$scope.matchDate = moment($scope.matchDate).toISOString();
 			console.log($scope.matchDate);
 			console.log(ls.getItem("myCompetitionId"));
-			CompetitionService.getCompetitionByDate(ls.getItem("myCompetitionId"),$scope.matchDate,ls.getItem("token")).success(function(data) {
-				$scope.matches = data;
-				console.log($scope.matches);
-				console.log("berhasil");
-				for(var m = 0; m < $scope.matches.length; m++){
-					$scope.matches[m].match_date = new Date($scope.matches[m].match_date);
-					console.log($scope.matches[m].match_date);
+
+			$scope.matchesArr = [];
+			$scope.allMatches = [];
+			var loop = 1;
+			$scope.myCompetitionArr.forEach(function(competition){
+				$ionicLoading.show();
+				CompetitionService.getCompetitionByDate(competition,$scope.matchDate,ls.getItem("token")).success(function(data) {
+					// $scope.matches = data;
+					console.log(data);
+					if(data.length !== 0){
+						$scope.allMatches = $scope.matchesArr.concat(data);	
+					}
+					
+					console.log($scope.allMatches);
+					console.log("berhasil");
+					for(var m = 0; m < $scope.allMatches.length; m++){
+						$scope.allMatches[m].match_date = new Date($scope.allMatches[m].match_date);
+						console.log($scope.allMatches[m].match_date);
+					}
+				}).error(function(data) {
+					console.log("gagal");
+				});
+				loop++
+				if(loop === $scope.myCompetitionArr.length){
+					$ionicLoading.hide();					
 				}
-				$ionicLoading.hide();
-			}).error(function(data) {
-				console.log("gagal");
 			});
+
 		};
 })
 .controller('CompetitionScheduleCtrl', function($scope, $stateParams, $rootScope, $ionicPopup, $ionicTabsDelegate, $ionicLoading, $ionicPopover, $state, MatchService, ClassementService, TeamService, FixtureService, CompetitionService) {

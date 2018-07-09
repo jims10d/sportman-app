@@ -37,7 +37,7 @@
     <p style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;text-align: center;"> {{competition.comp_name}}</p>
 </div> -->
 <div ng-show="showme==2" ng-if="myCompetitionId !== null" class="item item-text-wrap" style="padding:0px;margin-left: 4px;margin-right: 4px;width: auto;background-color: white;">
-    <div class="row" ng-repeat="data in matches" style="border-bottom: #e8e3e3 1px solid;margin:0px;padding:0px;">
+    <div class="row" ng-repeat="data in allMatches" style="border-bottom: #e8e3e3 1px solid;margin:0px;padding:0px;">
       <div class="col col-10" style="text-align:center;font-size: 13px;"></div>
       <div class="col" style="text-align:right;font-size: 13px;">{{data.match_homeTeam}}</div>
       <div ng-show="data.match_time != '18:00'" ng-hide="data.match_time == '18:00' || data.countDownStarted == true" ng-if="data.countDownStarted != 'true'" style="text-align:center;color:#4DB6AC;width: 70px;margin-top: 5px;">{{data.match_time}}</div>

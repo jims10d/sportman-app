@@ -66,6 +66,11 @@ $stateProvider
 	templateUrl: 'templates/Profile/register.html',
 	controller: 'RegisterCtrl'
 })
+.state('register2', {
+	url: '/register2',
+	templateUrl: 'templates/Profile/register2.html',
+	controller: 'RegisterCtrl'
+})
 // setup an abstract state for the side menu directive
 .state('app', {
 	url: '/app',

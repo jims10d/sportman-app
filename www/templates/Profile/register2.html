@@ -1,0 +1,27 @@
+<ion-view view-title="Register" name="register-view" hide-nav-bar="
+true" class="login">
+<ion-content class="hideScroll" overflow-scroll=true  scroll-sista="tabs" class="padding" style="background: url(img/bg.png) center; background-size: cover;">
+<center><img src="img\sportmanLogo\sportman logo v1.1.7.png" class="login-image" style="margin-top:25px;"></center>
+<p style="color:white;font-size:25px;font-weight:bold;text-align:center;margin-bottom:75px;">SportMan</p>
+<form method="post" enctype="text/plain">
+  <div class="list login-list" style="margin-top:-50px;">
+    <label class="item item-input register">
+      <input type="text" placeholder="Available Day" ng-model="data.availableDay">
+    </label>
+    <label class="item item-input register">
+      <input type="text" placeholder="Available Time" ng-model="data.availableTime">
+    </label>
+  </div>
+  <div class="row">
+    <div class="col">
+      <input ng-hide="data.role === 'Referee'" type="submit" value="Register" class="button button-block button-calm-900 text-center" ng-click="register()" style="background-color:#1a6d65;border-radius: 25px !important;"></input>
+    </div>
+  </div>
+</form>
+<div class="row">
+  <div class="col">
+    <p style="text-align:center; color:white;">Already have an account? Login <a style="color:#ffffff; font-weight:bold; text-decoration:none" ng-href="#/login">here</a></p>
+  </div>
+</div>
+</ion-content>
+</ion-view>
