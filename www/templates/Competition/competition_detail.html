@@ -32,13 +32,13 @@
   <!-- Register Button Status -->
   <center><button ng-model="registered" ng-show="registered==false" ng-hide="registered==true || registerStatus=='full'" class="button button-balanced" style="margin-top:0px;" ng-click="registerCompetition()" style="margin-top:0px;background-color: #33cd5f;">Register</button></center>
 
-  <center><button ng-model="registered" ng-show="registerStatus =='full'" ng-hide="registerStatus != 'full' || competition.schedule_status != 'On Queue'" class="button button-balanced" style="margin-top:0px;background-color: #ef473a;">Closed (Full)</button></center>
+  <center><button ng-model="registered" ng-show="registerStatus == 'full' && registered == false" ng-hide="registerStatus != 'full' || competition.schedule_status != 'On Queue' || competition" class="button button-balanced" style="margin-top:0px;background-color: #ef473a;">Closed (Full)</button></center>
 
   <center><button ng-model="registered" ng-if="registered==true" ng-show="competition.schedule_status == 'On Queue' || competition.schedule_status == null" ng-hide="competition.schedule_status != null" class="button button-balanced" style="margin-top:0px;background-color:#387ef5;">Registered</button></center>
 
   <center><button ng-model="registered" ng-if="registered==true" ng-show="competition.schedule_status == 'On Progress'" ng-hide="competition.schedule_status != 'On Progress'" class="button button-balanced" style="margin-top:0px;background-color: #886aea;">Scheduling on progress...</button></center>
 
-  <center><button ng-click="goToCompetitionSchedule('{{competition.id}}')" ng-model="registered" ng-if="registered==true" ng-show="competition.schedule_status == 'Completed'" ng-hide="competition.schedule_status != 'Completed'" class="button button-balanced" style="margin-top:0px;background-color: #ef473a;">View Schedule</button></center>  
+  <center><button ng-click="goToCompetitionSchedule('{{competition.id}}')" ng-model="registered" ng-if="registered==true" ng-show="competition.schedule_status == 'Completed'" ng-hide="competition.schedule_status != 'Completed'" class="button button-balanced" style="margin-top:0px;background-color: #4db6ac;">View Schedule</button></center>  
 
 </div>
 

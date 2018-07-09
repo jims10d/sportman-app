@@ -42,7 +42,7 @@
       <input class="numOfTeamValidation" type="number" min="4" max="20" id="compTeam" style="font-size:16px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="Number of Teams (between 4 and 20)" ng-model="data.comp_numOfTeam">
   </label>
   <!-- number of team (knockout system) -->
-  <label ng-show="status == 'KnockoutSystem'" class="item item-input item-select">
+  <label ng-show="(status == 'KnockoutSystem') || (status == 'Combination')" class="item item-input item-select">
     <div class="input-label" style="font-weight:unset; padding-right:0px;">Number Of Teams</div>
       <select ng-model="data.comp_numOfTeam" style="padding-right:35px;font-size:16px;">
         <option value="32" style="color:black;">32</option>

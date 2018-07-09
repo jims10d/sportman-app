@@ -5,17 +5,189 @@
 </ion-nav-buttons>
 
 <ion-content overflow-scroll=true scroll-sista="tabs" style="background-color: #ffffff;">
-<!-- List of competitions joined -->
-<div class="list" ng-hide="showme">
-	<!-- Data of competitions -->
-	<div style="margin-top: 15px;"></div>
-	<a ng-repeat="fixture in fixturesArr" class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;">
-		<div style="padding-top: 10px">
-		<h2 style="margin-left: -80px;">Fixture {{fixture}}</h2>
-		<button class="button button-clear icon-button mdi mdi-chevron-right" ng-click="goToFixtureDetail('{{fixture}}')" style="font-size:20px;color:#808a89;margin-top:-60px;margin-left:200px;padding:0px;text-align:right;"></button>
-		</div>
-	</a>
+
+<!-- Group Stage -->
+<div class="list" ng-hide="showme" ng-if="competition.comp_type === 'GroupStage'">
+	<div style="margin-top: 15px;">
+		<a ng-repeat="fixture in fixturesArr" class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;">
+			<div style="padding-top: 10px">
+			<h2 style="margin-left: -80px;">Fixture {{fixture}}</h2>
+			<button class="button button-clear icon-button mdi mdi-chevron-right" ng-click="goToFixtureDetail('{{fixture}}')" style="font-size:20px;color:#808a89;margin-top:-60px;margin-left:200px;padding:0px;text-align:right;"></button>
+			</div>
+		</a>
+	</div>
 </div>
+
+<!-- Knockout System -->
+<div class="list" ng-hide="showme" ng-if="competition.comp_type === 'KnockoutSystem'">
+	<!-- 8 Teams -->
+	<div ng-show="competition.comp_numOfTeam === 8" style="margin-top: 15px;">
+		<a class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;">
+			<div style="padding-top: 10px">
+			<h2 style="margin-left: -80px;">Play Off</h2>
+			<button class="button button-clear icon-button mdi mdi-chevron-right" ng-click="goToFixtureDetail('1')" style="font-size:20px;color:#808a89;margin-top:-60px;margin-left:200px;padding:0px;text-align:right;"></button>
+			</div>
+		</a>
+		<a class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;">
+			<div style="padding-top: 10px">
+			<h2 style="margin-left: -80px;">Semi Finals</h2>
+			<button class="button button-clear icon-button mdi mdi-chevron-right" ng-click="goToFixtureDetail('2')" style="font-size:20px;color:#808a89;margin-top:-60px;margin-left:200px;padding:0px;text-align:right;"></button>
+			</div>
+		</a>
+		<a class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;">
+			<div style="padding-top: 10px">
+			<h2 style="margin-left: -80px;">Final</h2>
+			<button class="button button-clear icon-button mdi mdi-chevron-right" ng-click="goToFixtureDetail('3')" style="font-size:20px;color:#808a89;margin-top:-60px;margin-left:200px;padding:0px;text-align:right;"></button>
+			</div>
+		</a>
+	</div>
+	<!-- 16 Teams -->
+	<div ng-show="competition.comp_numOfTeam === 16" style="margin-top: 15px;">
+		<a class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;">
+			<div style="padding-top: 10px">
+			<h2 style="margin-left: -80px;">Play Off</h2>
+			<button class="button button-clear icon-button mdi mdi-chevron-right" ng-click="goToFixtureDetail('{{fixture}}')" style="font-size:20px;color:#808a89;margin-top:-60px;margin-left:200px;padding:0px;text-align:right;"></button>
+			</div>
+		</a>
+		<a class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;">
+			<div style="padding-top: 10px">
+			<h2 style="margin-left: -80px;">Quarter Finals</h2>
+			<button class="button button-clear icon-button mdi mdi-chevron-right" ng-click="goToFixtureDetail('{{fixture}}')" style="font-size:20px;color:#808a89;margin-top:-60px;margin-left:200px;padding:0px;text-align:right;"></button>
+			</div>
+		</a>
+		<a class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;">
+			<div style="padding-top: 10px">
+			<h2 style="margin-left: -80px;">Semi Finals</h2>
+			<button class="button button-clear icon-button mdi mdi-chevron-right" ng-click="goToFixtureDetail('{{fixture}}')" style="font-size:20px;color:#808a89;margin-top:-60px;margin-left:200px;padding:0px;text-align:right;"></button>
+			</div>
+		</a>
+		<a class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;">
+			<div style="padding-top: 10px">
+			<h2 style="margin-left: -80px;">Final</h2>
+			<button class="button button-clear icon-button mdi mdi-chevron-right" ng-click="goToFixtureDetail('{{fixture}}')" style="font-size:20px;color:#808a89;margin-top:-60px;margin-left:200px;padding:0px;text-align:right;"></button>
+			</div>
+		</a>
+	</div>
+	<!-- 32 Teams -->
+	<div ng-show="competition.comp_numOfTeam === 32" style="margin-top: 15px;">
+		<a class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;">
+			<div style="padding-top: 10px">
+			<h2 style="margin-left: -80px;">Play Off</h2>
+			<button class="button button-clear icon-button mdi mdi-chevron-right" ng-click="goToFixtureDetail('{{fixture}}')" style="font-size:20px;color:#808a89;margin-top:-60px;margin-left:200px;padding:0px;text-align:right;"></button>
+			</div>
+		</a>
+		<a class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;">
+			<div style="padding-top: 10px">
+			<h2 style="margin-left: -80px;">Eighth Finals</h2>
+			<button class="button button-clear icon-button mdi mdi-chevron-right" ng-click="goToFixtureDetail('{{fixture}}')" style="font-size:20px;color:#808a89;margin-top:-60px;margin-left:200px;padding:0px;text-align:right;"></button>
+			</div>
+		</a>
+		<a class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;">
+			<div style="padding-top: 10px">
+			<h2 style="margin-left: -80px;">Quarter Finals</h2>
+			<button class="button button-clear icon-button mdi mdi-chevron-right" ng-click="goToFixtureDetail('{{fixture}}')" style="font-size:20px;color:#808a89;margin-top:-60px;margin-left:200px;padding:0px;text-align:right;"></button>
+			</div>
+		</a>
+		<a class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;">
+			<div style="padding-top: 10px">
+			<h2 style="margin-left: -80px;">Semi Finals</h2>
+			<button class="button button-clear icon-button mdi mdi-chevron-right" ng-click="goToFixtureDetail('{{fixture}}')" style="font-size:20px;color:#808a89;margin-top:-60px;margin-left:200px;padding:0px;text-align:right;"></button>
+			</div>
+		</a>
+		<a class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;">
+			<div style="padding-top: 10px">
+			<h2 style="margin-left: -80px;">Final</h2>
+			<button class="button button-clear icon-button mdi mdi-chevron-right" ng-click="goToFixtureDetail('{{fixture}}')" style="font-size:20px;color:#808a89;margin-top:-60px;margin-left:200px;padding:0px;text-align:right;"></button>
+			</div>
+		</a>
+	</div>
+</div>
+
+<!-- Combination System -->
+<div class="list" ng-hide="showme" ng-if="competition.comp_type === 'Combination'">
+	<!-- 8 Teams -->
+	<div ng-show="competition.comp_numOfTeam === 8" style="margin-top: 15px;">
+		<a ng-repeat="fixture in fixturesArr" class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;">
+			<div style="padding-top: 10px">
+			<h2 style="margin-left: -80px;">Fixture {{fixture}}</h2>
+			<button class="button button-clear icon-button mdi mdi-chevron-right" ng-click="goToFixtureDetail('{{fixture}}')" style="font-size:20px;color:#808a89;margin-top:-60px;margin-left:200px;padding:0px;text-align:right;"></button>
+			</div>
+		</a>
+		<a class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;">
+			<div style="padding-top: 10px">
+			<h2 style="margin-left: -80px;">Semi Finals</h2>
+			<button class="button button-clear icon-button mdi mdi-chevron-right" ng-click="goToFixtureDetail('{{fixture}}')" style="font-size:20px;color:#808a89;margin-top:-60px;margin-left:200px;padding:0px;text-align:right;"></button>
+			</div>
+		</a>
+		<a class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;">
+			<div style="padding-top: 10px">
+			<h2 style="margin-left: -80px;">Final</h2>
+			<button class="button button-clear icon-button mdi mdi-chevron-right" ng-click="goToFixtureDetail('{{fixture}}')" style="font-size:20px;color:#808a89;margin-top:-60px;margin-left:200px;padding:0px;text-align:right;"></button>
+			</div>
+		</a>
+	</div>
+	<!-- 16 Teams -->
+	<div ng-show="competition.comp_numOfTeam === 16" style="margin-top: 15px;">
+		<a ng-repeat="fixture in fixturesArr" class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;">
+			<div style="padding-top: 10px">
+			<h2 style="margin-left: -80px;">Fixture {{fixture}}</h2>
+			<button class="button button-clear icon-button mdi mdi-chevron-right" ng-click="goToFixtureDetail('{{fixture}}')" style="font-size:20px;color:#808a89;margin-top:-60px;margin-left:200px;padding:0px;text-align:right;"></button>
+			</div>
+		</a>
+		<a class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;">
+			<div style="padding-top: 10px">
+			<h2 style="margin-left: -80px;">Quarter Finals</h2>
+			<button class="button button-clear icon-button mdi mdi-chevron-right" ng-click="goToFixtureDetail('{{fixture}}')" style="font-size:20px;color:#808a89;margin-top:-60px;margin-left:200px;padding:0px;text-align:right;"></button>
+			</div>
+		</a>
+		<a class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;">
+			<div style="padding-top: 10px">
+			<h2 style="margin-left: -80px;">Semi Finals</h2>
+			<button class="button button-clear icon-button mdi mdi-chevron-right" ng-click="goToFixtureDetail('{{fixture}}')" style="font-size:20px;color:#808a89;margin-top:-60px;margin-left:200px;padding:0px;text-align:right;"></button>
+			</div>
+		</a>
+		<a class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;">
+			<div style="padding-top: 10px">
+			<h2 style="margin-left: -80px;">Final</h2>
+			<button class="button button-clear icon-button mdi mdi-chevron-right" ng-click="goToFixtureDetail('{{fixture}}')" style="font-size:20px;color:#808a89;margin-top:-60px;margin-left:200px;padding:0px;text-align:right;"></button>
+			</div>
+		</a>
+	</div>
+	<!-- 32 Teams -->
+	<div ng-show="competition.comp_numOfTeam === 32" style="margin-top: 15px;">
+		<a ng-repeat="fixture in fixturesArr" class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;">
+			<div style="padding-top: 10px">
+			<h2 style="margin-left: -80px;">Fixture {{fixture}}</h2>
+			<button class="button button-clear icon-button mdi mdi-chevron-right" ng-click="goToFixtureDetail('{{fixture}}')" style="font-size:20px;color:#808a89;margin-top:-60px;margin-left:200px;padding:0px;text-align:right;"></button>
+			</div>
+		</a>
+		<a class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;">
+			<div style="padding-top: 10px">
+			<h2 style="margin-left: -80px;">Eighth Finals</h2>
+			<button class="button button-clear icon-button mdi mdi-chevron-right" ng-click="goToFixtureDetail('{{fixture}}')" style="font-size:20px;color:#808a89;margin-top:-60px;margin-left:200px;padding:0px;text-align:right;"></button>
+			</div>
+		</a>
+		<a class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;">
+			<div style="padding-top: 10px">
+			<h2 style="margin-left: -80px;">Quarter Finals</h2>
+			<button class="button button-clear icon-button mdi mdi-chevron-right" ng-click="goToFixtureDetail('{{fixture}}')" style="font-size:20px;color:#808a89;margin-top:-60px;margin-left:200px;padding:0px;text-align:right;"></button>
+			</div>
+		</a>
+		<a class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;">
+			<div style="padding-top: 10px">
+			<h2 style="margin-left: -80px;">Semi Finals</h2>
+			<button class="button button-clear icon-button mdi mdi-chevron-right" ng-click="goToFixtureDetail('{{fixture}}')" style="font-size:20px;color:#808a89;margin-top:-60px;margin-left:200px;padding:0px;text-align:right;"></button>
+			</div>
+		</a>
+		<a class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;">
+			<div style="padding-top: 10px">
+			<h2 style="margin-left: -80px;">Final</h2>
+			<button class="button button-clear icon-button mdi mdi-chevron-right" ng-click="goToFixtureDetail('{{fixture}}')" style="font-size:20px;color:#808a89;margin-top:-60px;margin-left:200px;padding:0px;text-align:right;"></button>
+			</div>
+		</a>
+	</div>
+</div>
+
 </ion-content>
 </ion-view>
 

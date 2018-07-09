@@ -17,9 +17,57 @@
 <ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()" refreshing-text="Fetching ..." refreshing-icon="ion-loading-b"></ion-refresher>
 
 <div class="card" style="margin-bottom:10px;" ng-show="menuProfile.role == 'Organizer'">
-  <div class="item item-divider" style="padding:0px;">
+  <!-- Group Stage -->
+  <div class="item item-divider" style="padding:0px;" ng-if="compType === 'GroupStage'">
     <p style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;text-align: center;"> Fixture {{fixtureId}}</p>
   </div>
+
+  <!-- Knockout System -->
+  <!-- 8 Teams -->
+  <div class="item item-divider" style="padding:0px;" ng-if="compType === 'KnockoutSystem'" ng-show="compNumOfTeam === '8'">
+    <p ng-show="fixtureId === '1'" style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;text-align: center;"> Play Off</p>
+    <p ng-show="fixtureId === '2'" style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;text-align: center;"> Semi Finals</p>
+    <p ng-show="fixtureId === '3'" style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;text-align: center;"> Final</p>
+  </div>
+  <!-- 16 Teams -->
+  <div class="item item-divider" style="padding:0px;" ng-if="compType === 'KnockoutSystem'" ng-show="compNumOfTeam === '16'">
+    <p ng-show="fixtureId === '1'" style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;text-align: center;"> Play Off</p>
+    <p ng-show="fixtureId === '2'" style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;text-align: center;"> Quarter Finals</p>
+    <p ng-show="fixtureId === '3'" style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;text-align: center;"> Semi Finals</p>
+    <p ng-show="fixtureId === '4'" style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;text-align: center;"> Final</p>
+  </div>
+  <!-- 32 Teams -->
+  <div class="item item-divider" style="padding:0px;" ng-if="compType === 'KnockoutSystem'" ng-show="compNumOfTeam === '32'">
+    <p ng-show="fixtureId === '1'" style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;text-align: center;"> Play Off</p>
+    <p ng-show="fixtureId === '2'" style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;text-align: center;"> Eighth Finals</p>
+    <p ng-show="fixtureId === '3'" style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;text-align: center;"> Quarter Finals</p>
+    <p ng-show="fixtureId === '4'" style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;text-align: center;"> Semi Finals</p>
+    <p ng-show="fixtureId === '5'" style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;text-align: center;"> Final</p>
+  </div>
+
+  <!-- Combination -->
+  <!-- 8 Teams -->
+  <div class="item item-divider" style="padding:0px;" ng-if="compType === 'Combination'" ng-show="compNumOfTeam === '8'">
+    <p style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;text-align: center;"> Fixture {{fixtureId}}</p>
+    <p ng-show="fixtureId === '4'" style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;text-align: center;"> Semi Finals</p>
+    <p ng-show="fixtureId === '5'" style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;text-align: center;"> Final</p>
+  </div>
+  <!-- 16 Teams -->
+  <div class="item item-divider" style="padding:0px;" ng-if="compType === 'Combination'" ng-show="compNumOfTeam === '16'">
+    <p style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;text-align: center;"> Fixture {{fixtureId}}</p>
+    <p ng-show="fixtureId === '4'" style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;text-align: center;"> Quarter Finals</p>
+    <p ng-show="fixtureId === '5'" style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;text-align: center;"> Semi Finals</p>
+    <p ng-show="fixtureId === '6'" style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;text-align: center;"> Final</p>
+  </div>
+  <!-- 32 Teams -->
+  <div class="item item-divider" style="padding:0px;" ng-if="compType === 'Combination'" ng-show="compNumOfTeam === '32'">
+    <p style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;text-align: center;"> Fixture {{fixtureId}}</p>
+    <p ng-show="fixtureId === '4'" style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;text-align: center;"> Eighth Finals</p>
+    <p ng-show="fixtureId === '5'" style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;text-align: center;"> Quarter Finals</p>
+    <p ng-show="fixtureId === '6'" style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;text-align: center;"> Semi Finals</p>
+    <p ng-show="fixtureId === '7'" style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;text-align: center;"> Final</p>
+  </div>
+
   <div class="item item-text-wrap" style="padding:0px;">
     <div ng-class="{'green':data.match_date != null}" class="row" ng-repeat="data in matches" style="border-bottom: #e8e3e3 1px solid;margin:0px;">
       <div class="col col-20" style="text-align:left;color: #808080;font-size: 11px;">{{data.match_date | date:'d/MM'}}</div>
