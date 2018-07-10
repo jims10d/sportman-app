@@ -7040,20 +7040,34 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			}).error(function(data) {});
 		});
 
-
+		$scope.matchesArr = [];
+		$scope.allMatches = [];
+		var loop = 1;
 		$scope.myCompetitionArr.forEach(function(competition){
+			$ionicLoading.show();
 			CompetitionService.getCompetitionByDate(competition,$scope.matchDate,ls.getItem("token")).success(function(data) {
-				$scope.matches = data;
-				console.log($scope.matches);
+				// $scope.matches = data;
+				console.log(data);
+				if(data.length !== 0){
+					$scope.allMatches = $scope.matchesArr.concat(data);	
+				}
+				
+				console.log($scope.allMatches);
 				console.log("berhasil");
-				for(var m = 0; m < $scope.matches.length; m++){
-					$scope.matches[m].match_date = new Date($scope.matches[m].match_date);
-					console.log($scope.matches[m].match_date);
+				for(var m = 0; m < $scope.allMatches.length; m++){
+					$scope.allMatches[m].match_date = new Date($scope.allMatches[m].match_date);
+					console.log($scope.allMatches[m].match_date);
 				}
 				$ionicLoading.hide();
 			}).error(function(data) {
 				console.log("gagal");
 			});
+			loop++
+			if(loop === $scope.myCompetitionArr.length){
+				setTimeout(function() {
+		             $ionicLoading.hide();
+		        }, 1200);				
+			}
 		});
 
 	}else if (ls.getItem("myCompetitionId") === 'null') { 
@@ -7091,20 +7105,46 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			console.log(localStorage.getItem("myCompetitionId"));
 			console.log($scope.myCompetitionArr);
 
+			$scope.matchesArr = [];
+			$scope.allMatches = [];
+			var nextLoop = 1;
+			$scope.allMatchesObj = {
+				"competition_name": [],
+				"matches": []
+			}
 
 			$scope.myCompetitionArr.forEach(function(competition){
+				$ionicLoading.show();
 				CompetitionService.getCompetitionByDate(competition,$scope.matchDate,ls.getItem("token")).success(function(data) {
-					$scope.matches = data;
-					console.log($scope.matches);
+					// $scope.matches = data
+					console.log(data);
+					if(data.length !== 0){
+						// $scope.allMatches = $scope.matchesArr.concat(data);
+						if($scope.allMatchesObj.competition_name.indexOf(competition) !== -1){
+
+						}else{
+							$scope.allMatchesObj.competition_name.push(competition);
+						}
+						// $scope.allMatchesObj.matches = $scope.matchesArr.concat(data);
+						$scope.allMatchesObj.matches.push(data);
+					}
+					
+					console.log($scope.allMatchesObj);
 					console.log("berhasil");
-					for(var m = 0; m < $scope.matches.length; m++){
-						$scope.matches[m].match_date = new Date($scope.matches[m].match_date);
-						console.log($scope.matches[m].match_date);
+					for(var m = 0; m < $scope.allMatchesObj.length; m++){
+						$scope.allMatchesObj[m].match_date = new Date($scope.allMatchesObj[m].match_date);
+						console.log($scope.allMatchesObj[m].match_date);
 					}
 					$ionicLoading.hide();
 				}).error(function(data) {
 					console.log("gagal");
 				});
+				nextLoop++
+				if(nextLoop === $scope.myCompetitionArr.length){
+					setTimeout(function() {
+			             $ionicLoading.hide();
+			        }, 1200);			
+				}
 			});
 
 		};
@@ -7135,7 +7175,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 			$scope.matchesArr = [];
 			$scope.allMatches = [];
-			var loop = 1;
+			var prevLoop = 0;
 			$scope.myCompetitionArr.forEach(function(competition){
 				$ionicLoading.show();
 				CompetitionService.getCompetitionByDate(competition,$scope.matchDate,ls.getItem("token")).success(function(data) {
@@ -7154,10 +7194,14 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				}).error(function(data) {
 					console.log("gagal");
 				});
-				loop++
-				if(loop === $scope.myCompetitionArr.length){
-					$ionicLoading.hide();					
+				prevLoop++
+				if(prevLoop === $scope.myCompetitionArr.length){
+					setTimeout(function() {
+			             $ionicLoading.hide();
+			        }, 1200);				
 				}
+				console.log($scope.myCompetitionArr.length);
+				console.log(prevLoop);
 			});
 
 		};
