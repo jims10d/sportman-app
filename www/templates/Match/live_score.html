@@ -36,14 +36,14 @@
 <!-- <div ng-show="showme==2" ng-if="myCompetitionId !== null" ng-click="goToClassement()" class="item item-divider" style="padding:0px;margin-left: 4px;margin-top: 8px;margin-right: 4px;width: auto;">
     <p style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;text-align: center;"> {{competition.comp_name}}</p>
 </div> -->
-<div ng-show="showme==2" ng-if="myCompetitionId !== null" class="item item-text-wrap" ng-repeat="data in allMatchesObj.competition_name" style="padding:0px;margin-left: 4px;margin-right: 4px;width: auto;background-color: white;">
-    <p style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;height:30px;text-align: center;padding-top: 5px;margin-top: 10px;">{{data}}</p>
+<div ng-show="showme==2" ng-if="myCompetitionId !== null" class="item item-text-wrap" ng-repeat="data in allMatchesObj.competition_name" style="padding:0px;margin-left: 4px;margin-right: 4px;margin-top:10px;width: auto;background-color: white;">
+    <p style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;height:30px;text-align: center;padding-top: 5px;">{{data}}</p>
     <div class="row" ng-repeat="item in allMatchesObj.matches[$index] track by item.id" style="border-bottom: #e8e3e3 1px solid;margin:0px;padding:0px;">
       <div class="col col-10" style="text-align:center;font-size: 13px;"></div>
       <div class="col" style="text-align:right;font-size: 13px;">{{item.match_homeTeam}}</div>
       <div ng-show="item.match_time != '18:00'" ng-hide="item.match_time == '18:00' || item.countDownStarted == true" ng-if="item.countDownStarted != 'true'" style="text-align:center;color:#4DB6AC;width: 70px;margin-top: 5px;">{{item.match_time}}</div>
       <div ng-show="item.countDownStarted == true && item.countDownTimer > 0" ng-hide="item.countDownStarted == null || item.countDownTimer <= 0" ng-click="liveScore('{{item.id}}')" style="text-align:center;color:#4DB6AC;width: 70px;margin-top: 5px;">{{item.countDownTimer}}</div>
-      <div class="col col-20" ng-show="item.match_started == true" ng-hide="item.match_started == '' || item.timer_status == 'fulltime' || item.timer_status == 'halftime'" ng-click="liveScore('{{item.id}}')" style="text-align:center;color:#33cd5f;width: 70px;margin-top: 5px;font-size: 13px;">Start</div>
+      <!-- <div class="col col-20" ng-show="item.match_started == true" ng-hide="item.match_started == '' || item.timer_status == 'fulltime' || item.timer_status == 'halftime'" ng-click="liveScore('{{item.id}}')" style="text-align:center;color:#33cd5f;width: 70px;margin-top: 5px;font-size: 13px;">Start</div> -->
       <div ng-show="item.timer_status == 'halftime'" ng-hide="item.timer_status != 'halftime'" ng-click="liveScore('{{item.id}}')" style="text-align:center;color:#ffc900;width: 70px;margin-top: 5px;">HT</div>
       <div class="col col-20" ng-show="item.timer_status == 'fulltime'" ng-hide="item.timer_status != 'fulltime'" ng-click="liveScore('{{item.id}}')" style="text-align:center;color:#111;width: 70px;font-size: 13px;">{{item.match_homeScore}} - {{item.match_awayScore}}</div>
       <div class="col" style="text-align:left;font-size: 13px;">{{item.match_awayTeam}}</div>

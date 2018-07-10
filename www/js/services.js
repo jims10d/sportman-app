@@ -1201,7 +1201,7 @@ angular.module('starter.services', [])
 			getCompetitionByDate: function(compId, date, token) {
 				var deferred = $q.defer();
 				var promise = deferred.promise;
-				$http.get(BACKEND.URL + 'competitions/' + compId + '/matches?filter=%7B%22where%22%3A%7B%22match_date%22%3A%22' + date + '%22%7D%7D&access_token=' + token).success(function(response) {
+				$http.get(BACKEND.URL + 'competitions/' + compId + '/matches?filter=%7B%22where%22%3A%7B%22match_date%22%3A%22' + date + '%22%7D%2C%22order%22%3A%22match_time%20ASC%22%7D&access_token=' + token).success(function(response) {
 					deferred.resolve(response);
 				}).error(function(response) {
 					deferred.reject(response);

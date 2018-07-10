@@ -7118,6 +7118,12 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				CompetitionService.getCompetitionByDate(competition,$scope.matchDate,ls.getItem("token")).success(function(data) {
 					// $scope.matches = data
 					console.log(data);
+
+					// create algorithm to sort the data by property match_time
+					//
+					//
+					//
+
 					if(data.length !== 0){
 						// $scope.allMatches = $scope.matchesArr.concat(data);
 						if($scope.allMatchesObj.competition_name.indexOf(competition) !== -1){
@@ -7130,6 +7136,15 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 					}
 					
 					console.log($scope.allMatchesObj);
+
+					$scope.allMatchesObj.matches.forEach(function(m){
+						console.log(m);
+						// find algorithm to sort two or more different competition matches by it's match_time
+						// how ???????
+						// there are two completely different array and then there are outside array that depend on the inside array 
+						// ...
+					})
+
 					console.log("berhasil");
 					for(var m = 0; m < $scope.allMatchesObj.length; m++){
 						$scope.allMatchesObj[m].match_date = new Date($scope.allMatchesObj[m].match_date);
@@ -7143,7 +7158,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				if(nextLoop === $scope.myCompetitionArr.length){
 					setTimeout(function() {
 			             $ionicLoading.hide();
-			        }, 1200);			
+			        }, 2000);			
 				}
 			});
 
