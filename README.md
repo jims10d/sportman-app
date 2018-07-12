@@ -4,7 +4,15 @@ Developed by Jimmy Chen
 
 "theme": "Seti_orig.sublime-theme"
 
-// Change Scheduling System to Automatic :
+# Change Scheduling System to Automatic :
 	- Date & time selection
 	- Stadium / Venue Selection
 	- Referee Selection 
+
+# Tracking Match Score
+
+# Get Live Matches
+
+# View Match Detail
+
+# Referee And Player Rating 

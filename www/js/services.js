@@ -1216,6 +1216,24 @@ angular.module('starter.services', [])
 				};
 				return promise;
 			},
+			getCompetitionByCompIdAndLiveStat: function(compId, token) {
+				var deferred = $q.defer();
+				var promise = deferred.promise;
+				$http.get(BACKEND.URL + 'competitions/' + compId + '/matches?filter=%7B%22where%22%3A%7B%22live_status%22%3A%22true%22%7D%7D&access_token=' + token).success(function(response) {
+					deferred.resolve(response);
+				}).error(function(response) {
+					deferred.reject(response);
+				});
+				promise.success = function(fn) {
+					promise.then(fn);
+					return promise;
+				};
+				promise.error = function(fn) {
+					promise.then(null, fn);
+					return promise;
+				};
+				return promise;
+			},
 			delCompetition: function(id, token) {
 					var deferred = $q.defer();
 					var promise = deferred.promise;

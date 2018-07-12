@@ -7031,6 +7031,44 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 	if(ls.getItem("myCompetitionId") !== 'null'){
 
+		// get live matches
+		// $scope.liveCompetitions = {};
+		$scope.liveMatchArr = [];
+		$scope.allLiveMatchesArr = [];
+		$scope.allLiveMatchesObj = {
+			"competition_name": [],
+			"matches": []
+		}
+		var liveMatchLoop = 1;
+		// fungsi ini harus di looping terus karena datanya akan ditampilkan secara real-time
+		// bikin interval waktu utk looping fungsi ini
+		$scope.myCompetitionArr.forEach(function(competition){
+			$ionicLoading.show();
+			CompetitionService.getCompetitionByCompIdAndLiveStat(competition,ls.getItem("token")).success(function(data) {
+				// $scope.liveCompetitions = data;
+				// console.log($scope.liveCompetitions);
+				console.log(data);
+				if(data.length !== 0){
+					// $scope.allLiveMatchesArr = $scope.liveMatchArr.concat(data);
+					if($scope.allLiveMatchesObj.competition_name.indexOf(competition) !== -1){
+
+					}else{
+						$scope.allLiveMatchesObj.competition_name.push(competition);
+					}
+					// $scope.allLiveMatchesObj.matches = $scope.matchesArr.concat(data);
+					$scope.allLiveMatchesObj.matches.push(data);
+				}
+
+				console.log($scope.allLiveMatchesObj);
+			}).error(function(data) {});
+			liveMatchLoop++;
+			if(liveMatchLoop === $scope.myCompetitionArr.length){
+				setTimeout(function() {
+		             $ionicLoading.hide();
+		        }, 2000);				
+			}
+		});
+
 		console.log("masukk");
 		console.log($scope.myCompetitionArr);
 		$scope.myCompetitionArr.forEach(function(competition){
@@ -7043,20 +7081,39 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		$scope.matchesArr = [];
 		$scope.allMatches = [];
 		var loop = 1;
+		$scope.allMatchesObj = {
+			"competition_name": [],
+			"matches": []
+		}
 		$scope.myCompetitionArr.forEach(function(competition){
 			$ionicLoading.show();
 			CompetitionService.getCompetitionByDate(competition,$scope.matchDate,ls.getItem("token")).success(function(data) {
 				// $scope.matches = data;
-				console.log(data);
+				// console.log(data);
+				// if(data.length !== 0){
+				// 	$scope.allMatches = $scope.matchesArr.concat(data);	
+				// }
+				
+				// console.log($scope.allMatches);
+				// console.log("berhasil");
+
 				if(data.length !== 0){
-					$scope.allMatches = $scope.matchesArr.concat(data);	
+					// $scope.allMatches = $scope.matchesArr.concat(data);
+					if($scope.allMatchesObj.competition_name.indexOf(competition) !== -1){
+
+					}else{
+						$scope.allMatchesObj.competition_name.push(competition);
+					}
+					// $scope.allMatchesObj.matches = $scope.matchesArr.concat(data);
+					$scope.allMatchesObj.matches.push(data);
 				}
 				
-				console.log($scope.allMatches);
+				console.log($scope.allMatchesObj);
+
 				console.log("berhasil");
-				for(var m = 0; m < $scope.allMatches.length; m++){
-					$scope.allMatches[m].match_date = new Date($scope.allMatches[m].match_date);
-					console.log($scope.allMatches[m].match_date);
+				for(var m = 0; m < $scope.allMatchesObj.length; m++){
+					$scope.allMatchesObj[m].match_date = new Date($scope.allMatchesObj[m].match_date);
+					console.log($scope.allMatchesObj[m].match_date);
 				}
 				$ionicLoading.hide();
 			}).error(function(data) {
@@ -7066,7 +7123,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			if(loop === $scope.myCompetitionArr.length){
 				setTimeout(function() {
 		             $ionicLoading.hide();
-		        }, 1200);				
+		        }, 2000);				
 			}
 		});
 
@@ -7137,13 +7194,22 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 					
 					console.log($scope.allMatchesObj);
 
-					$scope.allMatchesObj.matches.forEach(function(m){
-						console.log(m);
-						// find algorithm to sort two or more different competition matches by it's match_time
-						// how ???????
-						// there are two completely different array and then there are outside array that depend on the inside array 
-						// ...
-					})
+					// for(var i = 0; i < $scope.allMatchesObj.matches.length; i++){
+					// 	console.log($scope.allMatchesObj.matches[i]);
+					// 	$scope.allMatchesObj.matches[i].forEach(function(m1){
+					// 		console.log(m1.match_time);
+					// 	})	
+					// }
+
+					// $scope.allMatchesObj.matches.forEach(function(m){
+					// 	console.log(m);
+					// 	// find algorithm to sort two or more different competition matches by it's match_time
+					// 	// how ???????
+					// 	// there are two completely different array and then there are outside array that depend on the inside array 
+					// 	// ...
+					// 	// ga usah aja
+					// 	// sort berdasarkan kompetisi aja
+					// })
 
 					console.log("berhasil");
 					for(var m = 0; m < $scope.allMatchesObj.length; m++){
@@ -7195,17 +7261,37 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				$ionicLoading.show();
 				CompetitionService.getCompetitionByDate(competition,$scope.matchDate,ls.getItem("token")).success(function(data) {
 					// $scope.matches = data;
-					console.log(data);
-					if(data.length !== 0){
-						$scope.allMatches = $scope.matchesArr.concat(data);	
-					}
+					// console.log(data);
+					// if(data.length !== 0){
+					// 	$scope.allMatches = $scope.matchesArr.concat(data);	
+					// }
 					
-					console.log($scope.allMatches);
-					console.log("berhasil");
-					for(var m = 0; m < $scope.allMatches.length; m++){
-						$scope.allMatches[m].match_date = new Date($scope.allMatches[m].match_date);
-						console.log($scope.allMatches[m].match_date);
+					// console.log($scope.allMatches);
+					// console.log("berhasil");
+					// for(var m = 0; m < $scope.allMatches.length; m++){
+					// 	$scope.allMatches[m].match_date = new Date($scope.allMatches[m].match_date);
+					// 	console.log($scope.allMatches[m].match_date);
+					// }
+
+				if(data.length !== 0){
+					// $scope.allMatches = $scope.matchesArr.concat(data);
+					if($scope.allMatchesObj.competition_name.indexOf(competition) !== -1){
+
+					}else{
+						$scope.allMatchesObj.competition_name.push(competition);
 					}
+					// $scope.allMatchesObj.matches = $scope.matchesArr.concat(data);
+					$scope.allMatchesObj.matches.push(data);
+				}
+				
+				console.log($scope.allMatchesObj);
+
+				console.log("berhasil");
+				for(var m = 0; m < $scope.allMatchesObj.length; m++){
+					$scope.allMatchesObj[m].match_date = new Date($scope.allMatchesObj[m].match_date);
+					console.log($scope.allMatchesObj[m].match_date);
+				}
+				$ionicLoading.hide();
 				}).error(function(data) {
 					console.log("gagal");
 				});
