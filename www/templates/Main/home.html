@@ -25,7 +25,51 @@
 <ion-refresher ng-if="menuProfile.role != 'Referee'" pulling-text="Pull to refresh..." on-refresh="doRefresh()" refreshing-text="Fetching ..." refreshing-icon="ion-loading-b"></ion-refresher>
 
 <!-- Available Matches -->
-<p ng-if="(availableMatches.length == 0 ) && (menuProfile.role == 'Referee')" ng-show="showme == 'available'" style="text-align: center;padding-top: 200px;font-size:17px;margin-top: 52px;">No Match Available...</p>
+<p ng-if="(availableMatches.length == 0 ) && (menuProfile.role == 'Referee')" ng-show="(showme == 'available' && refMatches.length === 0)" style="text-align: center;padding-top: 200px;font-size:17px;margin-top: 52px;">No Match Available...</p>
+
+<div ng-if="menuProfile.role == 'Referee'" ng-show="(showme == 'available' && refMatches.length !== 0)" ng-repeat="match in refMatches" class="card" style="margin-bottom:10px;margin-top: 52px;">
+  <div class="item item-divider" style="padding:0px;border-bottom: 1px solid #d0cece;">
+    <div class="row" style="padding:0px;margin:0px;">
+      <div class="col" style="padding-left:10px;font-weight:bold;color:#7c857e;text-align:left;margin-top:-4px;"> {{match.match_homeTeam}} vs {{match.match_awayTeam}}</div>
+      <div class="col" style="padding-right:10px;font-weight:bold;color:#7c857e;text-align:right;margin-top:-4px;">Rp. 100.000 Reward</div>
+    </div>  
+  </div>
+  <div class="item item-text-wrap" style="padding:0px;">
+    <div class="row" style="margin:0px;">
+      <div class="col col-10"><i class="ion-calendar" style="font-size:21px;color:#11c1f3;"></i></div>
+      <div class="col col-90" style="margin-left: 4px;">{{match.match_date | date:'dd MMM yy'}}</div>
+    </div>
+    <div class="row" style="margin:0px;">
+      <div class="col col-10"><i class="ion-location" style="font-size:21px;color:#f36f64;"></i></div>
+      <div class="col col-90" style="margin-left: 4px;">{{match.match_venue}}</div>
+    </div>
+    <div class="row" style="margin:0px;">
+      <div class="col col-10"><i class="ion-location" style="font-size:21px;color:#f36f64;"></i></div>
+      <div class="col col-90" style="margin-left: 4px;">{{countDownTimer.countDownTimer}}</div>
+    </div>
+    <div class="row" style="margin:0px;">
+      <div class="col" style="margin-left: 4px;margin-top:-15px;text-align: right;color: #4db6ac;" ng-click="viewMatchDetail('{{match.id}}')">See more</div>
+    </div>
+  </div>
+<!--   <div ng-show="registeredTeamLength[data.id] === data.comp_numOfTeam" class="row" style="border-top: #ebebeb 1px solid;margin:0px;padding:0px;">
+    <div class="col cursor" style="background-color:#4DB6AC;text-align:center;font-weight:bold;color:#ffffff;padding:10px;" ng-click="goToTrackScore('{{match.id}}')"> 2 days left </div>
+  </div> -->
+
+
+  <div class="row">
+    <div class="col">
+       <div class="col cursor" style="background-color:#4DB6AC;text-align:center;font-weight:bold;color:#ffffff;padding:10px;" ng-click="goToTrackScore('{{match.id}}')"> Track Score </div>
+  </div>
+    </div>
+    <div class="col">
+       <div class="col cursor" style="background-color:#4DB6AC;text-align:center;font-weight:bold;color:#ffffff;padding:10px;" ng-click="goToAnalyzeMatch('{{match.id}}')"> Analyze Match </div>
+  </div>
+    </div>
+  </div>
+
+
+</div>
+
 <div ng-if="menuProfile.role == 'Referee'" ng-show="showme == 'available'" ng-repeat="match in availableMatches" class="card" style="margin-bottom:10px;margin-top: 52px;">
   <div class="item item-divider" style="padding:0px;border-bottom: 1px solid #d0cece;">
     <div class="row" style="padding:0px;margin:0px;">
@@ -177,7 +221,8 @@
 <!-- All Competition -->
 <div style="margin-top:20px;"></div>
 
-<!-- <div class="card" style="margin-top:10px;border-radius: 10px;" ng-repeat="data in allCompetition | filter:search" ng-if="menuProfile.role=='Player' || menuProfile.role=='Coach' || menuProfile.role=='Manager'">
+<!-- New UI -->
+<div class="card" style="margin-top:10px;border-radius: 10px;" ng-repeat="data in allCompetition | filter:search" ng-if="menuProfile.role=='Player' || menuProfile.role=='Coach' || menuProfile.role=='Manager'">
 
   <div class="row" style="padding: 0px;">
     <div class="col" style="padding: 0px;border-right: 1px solid #eceaea;">
@@ -189,27 +234,67 @@
       <p style="text-align: center;font-size: 19px;font-weight: 500;color: #a2a2a2;margin-top: 20px;margin-bottom: 0px;padding-top: 10px;">{{data.comp_finish | date:'dd'}}</p>
       <p style="text-align: center;font-size: 17px;font-weight: 400;color: #b2b2b2;">{{data.comp_finish | date:'MMM'}}</p>
     </div>
+
     <div class="col col-67">
-      <p style="font-size: 19px;font-weight: 600;color: #767676;padding-top: 15px;padding-left: 8px;">{{data.comp_name}}</p>
+
+      <p style="font-size: 18px;font-weight: 600;color: #767676;padding-top: 15px;padding-left: 8px;">{{data.comp_name}}</p>
+
       <div style="padding-top: 4px;padding-left: 8px;font-size: 15px;color: grey;font-weight: 400;">
         <i class="ion-location" style="font-size:21px;color:#4db6ac;"></i>
         <p style="margin-top: -20px; margin-left: 20px;">{{data.comp_location}}</p>
       </div>
+
       <div class="row">
-          <p style="letter-spacing: 2px;padding-top: 20px;padding-left: 8px;font-size: 19px;color: #4db6ac;font-weight: 500;">Rp {{data.comp_fee}}</p>
+          <p ng-show="data.comp_fee !== null" style="letter-spacing: 2px;padding-top: 20px;padding-left: 8px;font-size: 19px;color: #4db6ac;font-weight: 500;">Rp. {{data.comp_fee}}</p>
+          <p ng-hide="data.comp_fee !== null" style="letter-spacing: 2px;padding-top: 20px;padding-left: 8px;font-size: 19px;color: #4db6ac;font-weight: 500;">FREE</p>
       </div>
-      <div class="row">
-          <button class="button-register-competition">Register</button>
+
+      <div ng-click="goToCompetitionSchedule('{{data.id}}')" ng-model="registered[data.id]" ng-if="registered[data.id]==true" ng-show="data.schedule_status == 'Completed'" ng-hide="data.schedule_status != 'Completed'" class="row" style="margin-top: 5px;">
+          <button class="button-register-competition" style="padding-top: 10px;padding-bottom: 25px;padding-left: 195px;padding-right: 30px;margin-top: 0px;margin-left: 50px;"></button>
       </div>
+      <div ng-click="goToCompetitionSchedule('{{data.id}}')" ng-model="registered[data.id]" ng-if="registered[data.id]==true" ng-show="data.schedule_status == 'Completed'" ng-hide="data.schedule_status != 'Completed'" class="row" style="margin-top: -30px;margin-left: 120px;">
+          <p style="z-index: 1;color: white;">View Schedule</p>
+      </div>
+
+      <div ng-click="registerCompetition('{{data.id}}')" ng-model="registered[data.id]" ng-show="registered[data.id]==false" ng-hide="registered[data.id]==true || registerStatus[data.id]=='full'" class="row" style="margin-top: 5px;">
+          <button class="button-register-competition" style="padding-top: 10px;padding-bottom: 25px;padding-left: 195px;padding-right: 30px;margin-top: 0px;margin-left: 50px;background-color: #33cd5f;"></button>
+      </div>
+      <div ng-click="registerCompetition('{{data.id}}')" ng-model="registered[data.id]" ng-show="registered[data.id]==false" ng-hide="registered[data.id]==true || registerStatus[data.id]=='full'" class="row" style="margin-top: -30px;margin-left: 143px;">
+          <p style="z-index: 1;color: white;">Register</p>
+      </div>
+
+      <div ng-model="registered[data.id]" ng-show="registered[data.id]==false || registerStatus[data.id]=='full'" ng-hide="registered[data.id]==true || registerStatus[data.id]!='full'" class="row" style="margin-top: 5px;">
+          <button class="button-register-competition" style="padding-top: 10px;padding-bottom: 25px;padding-left: 195px;padding-right: 30px;margin-top: 0px;margin-left: 50px;"></button>
+      </div>
+      <div ng-model="registered[data.id]" ng-show="registered[data.id]==false || registerStatus[data.id]=='full'" ng-hide="registered[data.id]==true || registerStatus[data.id]!='full'" class="row" style="margin-top: -30px;margin-left: 120px;">
+          <p style="z-index: 1;color: white;">Closed (Full)</p>
+      </div>
+
+      <div ng-model="registered[data.id]" ng-show="registered[data.id]==true" ng-hide="registered[data.id]==false || data.registeredTeam == null || data.registeredTeam == '' || data.schedule_status === 'On Progress' || data.schedule_status === 'Completed'" class="row" style="margin-top: 5px;">
+          <button class="button-register-competition" style="padding-top: 10px;padding-bottom: 25px;padding-left: 195px;padding-right: 30px;margin-top: 0px;margin-left: 50px;"></button>
+      </div>
+      <div ng-model="registered[data.id]" ng-show="registered[data.id]==true" ng-hide="registered[data.id]==false || data.registeredTeam == null || data.registeredTeam == '' || data.schedule_status === 'On Progress' || data.schedule_status === 'Completed'" class="row" style="margin-top: -30px;margin-left: 120px;">
+          <p style="z-index: 1;color: white;">Registered</p>
+      </div>
+
+      <div ng-model="registered[data.id]" ng-if="registered[data.id]==true" ng-show="data.schedule_status == 'On Progress'" ng-hide="data.schedule_status != 'On Progress'" class="row" style="margin-top: 5px;">
+          <button class="button-register-competition" style="padding-top: 10px;padding-bottom: 25px;padding-left: 195px;padding-right: 30px;margin-top: 0px;margin-left: 50px;"></button>
+      </div>
+      <div ng-model="registered[data.id]" ng-if="registered[data.id]==true" ng-show="data.schedule_status == 'On Progress'" ng-hide="data.schedule_status != 'On Progress'" class="row" style="margin-top: -30px;margin-left: 120px;">
+          <p style="z-index: 1;color: white;">Scheduling on progress...</p>
+      </div>
+
     </div>
+
     <div class="col col-20">
-      <p ng-show="rteamLength[data.id] !== undefined" style="font-size: 16px;font-weight: 600;color: #aaa;padding-top: 9px;padding-left: 8px;">{{rteamLength[data.id]}} / {{data.comp_numOfTeam}} Teams</p>
-      <p ng-hide="rteamLength[data.id] !== undefined" style="font-size: 16px;font-weight: 600;color: #aaa;padding-top: 9px;padding-left: 8px;">0 / {{data.comp_numOfTeam}} Teams</p>
+      <p ng-show="registeredTeamLength[data.id] !== undefined" style="font-size: 13px;font-weight: 600;color: #aaa;padding-top: 9px;padding-left: 8px;text-align: center;">{{registeredTeamLength[data.id]}} / {{data.comp_numOfTeam}} Teams</p>
+      <p ng-hide="registeredTeamLength[data.id] !== undefined" style="font-size: 13px;font-weight: 600;color: #aaa;padding-top: 9px;padding-left: 8px;text-align: center;">0 / {{data.comp_numOfTeam}} Teams</p>
     </div>
+
   </div>
 </div>
 
-<div class="card" style="margin-top:10px;border-radius: 10px;" ng-if="menuProfile.role=='Player' || menuProfile.role=='Coach' || menuProfile.role=='Manager'">
+<!-- <div class="card" style="margin-top:10px;border-radius: 10px;" ng-if="menuProfile.role=='Player' || menuProfile.role=='Coach' || menuProfile.role=='Manager'">
 
   <div class="row" style="padding: 0px;">
     <div class="col" style="padding: 0px;border-right: 1px solid #eceaea;">

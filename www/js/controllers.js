@@ -263,6 +263,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			ls.removeItem("firstRoundMatchesStatus"); // menghapus data user id
 			ls.removeItem("secondRoundMatchesStatus");
 			ls.removeItem("thirdRoundMatchesStatus");
+			ls.removeItem("knockoutSchedulingStat");
 			$scope.isOrganizer = false;
 			$state.go('login'); // menampilkan halaman login
 		};
@@ -1204,7 +1205,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			}
 		};
 	
-			$scope.loadCompetition = setInterval($scope.getCompetitionByOrganizer, 1000);
+		$scope.loadCompetition = setInterval($scope.getCompetitionByOrganizer, 1000);
 		
 
 	console.log(ls.getItem("role"));
@@ -1213,7 +1214,86 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	$scope.availableLoaded = false;
 	$scope.onProgressLoaded = false;
 	$scope.acceptedLoaded = false;
-	if(ls.getItem("role") === 'Referee'){
+
+	$scope.refMatches = {};
+	$scope.getMatchesByReferee = function(){
+		if(ls.getItem("role") === 'Referee'){
+			MatchService.getMatchesByReferee(localStorage.getItem("username")).success(function(data) {
+				console.log("berhasil");
+				console.log(data.length);
+				$scope.refMatches = data;
+
+				$scope.refMatches.forEach(function(match){
+					// console.log(match);
+					// console.log(moment().format('MM/DD/YYYY'));
+					// console.log(moment().format('kk:mm'));
+					// console.log(moment(match.match_date).format('MM/DD/YYYY'));
+					$scope.countDownData = {};
+					if(moment(match.match_date).format('MM/DD/YYYY') == moment().format('MM/DD/YYYY') && match.match_countDown == moment().format('kk:mm')){
+						// console.log("start countdown");
+						$scope.countDownData.countDownStarted = true; 
+		        		$scope.countDownData.countDownTimer = 59;
+		        		clearInterval($scope.loadRefMatches);
+		        		MatchService.editMatchById(match.id,localStorage.getItem("token"),$scope.countDownData).success(function(data) {
+							// console.log('countDowncountdowncountdown');
+							$scope.countDown = setInterval($scope.startCountDown, 1000);
+							$ionicLoading.hide();
+							// $state.go('app.home');
+						}).error(function(data) {
+							$ionicLoading.hide();
+						});
+					}					
+				});
+			}).error(function(data) {
+				console.log("gagal");
+				$ionicLoading.hide();
+			});
+		}
+	};
+	$scope.loadRefMatches = setInterval($scope.getMatchesByReferee, 1000);
+
+	$scope.countDownTimer = {};   
+   	$scope.startCountDown = function() {
+		MatchService.getMatchesByReferee(localStorage.getItem("username")).success(function(data) {
+	        console.log(data);
+	        $scope.refMatches = data;
+
+	        $scope.refMatches.forEach(function(match){
+	        	if(match.countDownStarted == "true" && match.countDownTimer > 0){
+	        		// console.log("xcvx cvx vxvxcvxvx vxvxvxvcxv");
+	        		$scope.countDownTimer.countDownTimer = match.countDownTimer - 1;
+					console.log($scope.countDownTimer.countDownTimer);
+					if($scope.countDownTimer.countDownTimer === 0){
+						clearInterval($scope.countDown);
+						// $scope.myVar = setInterval($scope.getMatchesByFixture, 1000);
+					}
+					MatchService.editMatchById(match.id,localStorage.getItem("token"),$scope.countDownTimer).success(function(data) {
+						console.log('startcountdownstartcountdown');
+						// $ionicLoading.hide();
+						// $state.go('app.home');
+					}).error(function(data) {
+						// $ionicLoading.hide();
+					});
+	        	}
+	        });
+		}).error(function(data) {});
+	};
+	// $scope.countDown = setInterval($scope.startCountDown, 1000);
+
+		// go to track score page
+		$scope.goToTrackScore = function(id) { 
+			$state.go('app.track_score', {
+				'matchId': id
+			});
+		};
+
+		// go to analyze match page
+		$scope.goToAnalyzeMatch = function(id) { 
+			$state.go('app.analyze_match', {
+				'matchId': id
+			});
+		};
+
 		// utk sementara pake hide loading dlu
 		$ionicLoading.hide();
 
@@ -1278,7 +1358,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		if($scope.acceptedLoaded === false){
 			$scope.loadAcceptedMatches = setInterval($scope.getAcceptedMatches, 2000);
 		}
-	}	
+	// }	
 
 	$scope.doRefresh = function() {
 		$rootScope.reload($state,$scope);
@@ -1321,757 +1401,757 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
    		$scope.getAllCompetition = function(){
    			if(ls.getItem("role") === 'Player' || ls.getItem("role") === 'Coach'|| ls.getItem("role") === 'Manager'){
-			CompetitionService.getAllCompetition().success(function(data) {
-				// $ionicLoading.hide();
-				$scope.registerStatus = [];
-				$scope.allCompetition = {};
-				$scope.allCompetition = data;
-				$scope.newTeams = [];
-				$scope.fixNum = "";
-				$scope.match = [];
-				$scope.matches = [];
-				$scope.all = [];
-				$scope.registeredTeamLength = [];
-				$scope.registered = [];
-				$scope.registerStatus = [];
-				console.log($scope.allCompetition);
-				console.log(data);
+				CompetitionService.getAllCompetition().success(function(data) {
+					// $ionicLoading.hide();
+					$scope.registerStatus = [];
+					$scope.allCompetition = {};
+					$scope.allCompetition = data;
+					$scope.newTeams = [];
+					$scope.fixNum = "";
+					$scope.match = [];
+					$scope.matches = [];
+					$scope.all = [];
+					$scope.registeredTeamLength = [];
+					$scope.registered = [];
+					$scope.registerStatus = [];
+					console.log($scope.allCompetition);
+					console.log(data);
 
-				// Check if team has registered in the competition
-				data.forEach(function(entry){
-					if(entry.registeredTeam != null){
-						$scope.registerArr = entry.registeredTeam.split(',');
-						$scope.registeredTeamLength[entry.id] = $scope.registerArr.length;
-						var a = $scope.registerArr.indexOf(localStorage.getItem("team"));
-						if(a != -1){
-							$scope.registered[entry.id] = true;
+					// Check if team has registered in the competition
+					data.forEach(function(entry){
+						if(entry.registeredTeam != null){
+							$scope.registerArr = entry.registeredTeam.split(',');
+							$scope.registeredTeamLength[entry.id] = $scope.registerArr.length;
+							var a = $scope.registerArr.indexOf(localStorage.getItem("team"));
+							if(a != -1){
+								$scope.registered[entry.id] = true;
+							}else{
+								$scope.registered[entry.id] = false;
+							}
+
+							if($scope.registeredTeamLength[entry.id] === entry.comp_numOfTeam){
+								$scope.registerStatus[entry.id] = 'full';
+							}else{
+								$scope.registerStatus[entry.id] = 'available';
+							}
+
 						}else{
 							$scope.registered[entry.id] = false;
 						}
+						console.log($scope.registered[entry.id]);
+					});
+					// Check if team has registered in the competition
 
-						if($scope.registeredTeamLength[entry.id] === entry.comp_numOfTeam){
-							$scope.registerStatus[entry.id] = 'full';
-						}else{
-							$scope.registerStatus[entry.id] = 'available';
-						}
+					// data.forEach(function(entry){
+					// 	if(entry.registeredTeam !== null){
+					// 		if(entry.registeredTeam !== ""){
+					// 			$scope.registerArr = entry.registeredTeam.split(',');
+					// 			$scope.registerArrLength = $scope.registerArr.length;
+					// 			$scope.registeredTeamLength[entry.id] = $scope.registerArr.length;
+					// 			//Check if registered or not
+					// 			var a = $scope.registerArr.indexOf(ls.getItem("team"));
+					// 			console.log(ls.getItem("team"));
+					// 			if(ls.getItem("team") !== null){
+					// 				if(a != -1){
+					// 					$scope.registered[entry.id] = true;
+					// 				}else{
+					// 					$scope.registered[entry.id] = false;
+					// 				}
+					// 				//Check if registered or not
+					// 			}else{
+					// 				$scope.registered[entry.id] = false;
+					// 			}
+					// 		}
 
-					}else{
-						$scope.registered[entry.id] = false;
+					// 	if(entry.comp_type == "GroupStage"){
+					// 		console.log("GroupStage");
+					// 		//Round Robin Scheduling
+					// 		if($scope.registerArrLength == entry.comp_numOfTeam){
+					// 			$scope.registerStatus[entry.id] = "full";
+					// 			console.log(entry.id);
+					// 			console.log("Scheduling");
+					// 			$scope.matchPerDay = $scope.registerArrLength / 2;
+					// 			if($scope.registerArr.length % 2 === 0){
+					// 				$scope.registerArrLength = $scope.registerArr.length - 1;
+					// 			}
+					// 			if($scope.registerArr.length % 2 !== 0){
+					// 				$scope.matchPerDay = ($scope.registerArr.length - 1) / 2;
+					// 			}
+					// 			console.log($scope.registerArrLength);
+					// 			console.log($scope.matchPerDay);
+					// 			for(var b = 1; b < $scope.registerArr.length; b++){
+					// 				$scope.newTeams.push($scope.registerArr[b]);
+					// 			}
+					// 			for(var c = $scope.registerArr.length; c <= $scope.registerArr.length; c++){
+					// 				$scope.fixNum = $scope.registerArr[c-$scope.registerArr.length];
+					// 			}
+					// 			console.log($scope.newTeams);
+					// 			console.log($scope.fixNum);
+
+					// 			if(entry.register_status === null){
+					// 				console.log("Full");
+					// 				$scope.formCompetition = {};
+					// 				$scope.formCompetition.register_status = "Full";
+					// 				console.log($scope.formCompetition);
+					// 				CompetitionService.editCompetition(entry.id, ls.getItem("token"), $scope.formCompetition).success(function(data) {
+					// 					// $ionicLoading.hide();
+					// 					console.log("berhasil");
+					// 				}).error(function(data) {
+					// 					// $ionicLoading.hide();
+					// 					console.log("gagal");
+					// 				});
+					// 			}	
+					// 			}
+					// 			for(var r = 0; r < $scope.registerArrLength; r++){
+					// 				for(var i = 0; i < $scope.matchPerDay; i++){
+					// 					var team1 = "";
+					// 					var team2 = "";
+					// 					if($scope.registerArr.length % 2 !== 0){
+					// 						team1 = $scope.registerArr[$scope.matchPerDay - i];
+					// 						team2 = $scope.registerArr[$scope.matchPerDay + i + 1];
+					// 					}else{
+					// 						team1 = $scope.registerArr[$scope.matchPerDay - i - 1];
+					// 						team2 = $scope.registerArr[$scope.matchPerDay + i];
+					// 					}
+					// 					$scope.match.push(team1);
+					// 					$scope.match.push(team2);
+					// 				}
+					// 				$scope.matches.push($scope.match);
+					// 				//rotate array
+					// 				if($scope.registerArr.length % 2 !== 0){
+					// 					$scope.registerArr = $scope.arrayRotateOdd($scope.registerArr, true);	
+					// 				}else{
+					// 					$scope.registerArr = $scope.arrayRotateEven($scope.newTeams, true);
+					// 				}
+					// 				$scope.match = [];
+					// 				var fixture = r + 1;
+					// 				console.log("Fixture " + fixture + " : " + $scope.matches[r]);
+					// 			}
+
+					// 			$scope.homeTeam = [];
+					// 			$scope.awayTeam = [];
+					// 			$scope.fixtureObj = [];
+					// 			for(w = 0; w < $scope.matches.length; w++){
+					// 				for(e = 0; e < $scope.matches[w].length; e++){
+					// 					if(e % 2 === 0){
+					// 						$scope.homeTeam.push($scope.matches[w][e]);
+					// 					}else{
+					// 						$scope.awayTeam.push($scope.matches[w][e]);
+					// 					}
+					// 				}
+					// 			}
+					// 			console.log($scope.homeTeam);
+					// 			console.log($scope.awayTeam);
+					// 			for(t = 0; t < $scope.homeTeam.length; t++){
+					// 				$scope.fixtureObj[t] = {};
+					// 				$scope.fixtureObj[t].match_homeTeam = $scope.homeTeam[t];
+					// 				$scope.fixtureObj[t].match_awayTeam = $scope.awayTeam[t];
+					// 				$scope.fixtureObj[t].match_time = "";
+					// 				$scope.fixtureObj[t].match_started = "";
+					// 			}
+					// 			console.log($scope.fixtureObj);
+					// 			$scope.allFixtures = $scope.fixtureObj;
+					// 			$scope.fixture = [];
+					// 			var fixtureNumber = 0;
+					// 			$rootScope.showLoading($ionicLoading);
+					// 			for(p = 1; p < $scope.registerArr.length; p++){
+					// 				fixtureNumber++;
+					// 				console.log(fixtureNumber);
+					// 				$scope.fixture[p] = [];
+					// 				for(u = 0; u < $scope.matchPerDay; u++){
+					// 					$scope.fixtureObj[u].fixture_number = fixtureNumber;
+					// 					$scope.fixtureObj[u].competition_id = entry.id;
+					// 					$scope.fixture[p].push($scope.fixtureObj[u]);
+					// 				}
+					// 				$scope.fixtureObj.splice(0,$scope.matchPerDay);
+					// 				console.log($scope.fixture[p]);
+					// 				console.log(entry.schedule_status);
+					// 				if(entry.schedule_status === ""){
+					// 					console.log("on progressssssssss");
+
+					// 					$scope.fixture[p].forEach(function(entry){
+					// 						console.log(entry.competition_id);
+					// 						//insert data to database
+					// 						MatchService.addMatch(entry).success(function(data){
+					// 							// $ionicLoading.hide();
+					// 							console.log(data);
+					// 						}).error(function(data){
+					// 							// $ionicLoading.hide();
+					// 						});
+					// 						//insert data to database
+					// 					});
+					// 				}
+									
+					// 			}
+					// 			if(entry.schedule_status === ""){
+					// 				console.log("on progressssssssss");
+					// 				$scope.formCompetition = {};
+					// 				$scope.formCompetition.schedule_status = "On Progress";
+					// 				console.log($scope.formCompetition);
+					// 				CompetitionService.editCompetition(entry.id, localStorage.getItem("token"), $scope.formCompetition).success(function(data) {
+					// 					// $ionicLoading.hide();
+					// 					console.log("berhasil");
+					// 				}).error(function(data) {
+					// 					// $ionicLoading.hide();
+					// 					console.log("gagal");
+					// 				});
+					// 			}	
+					// 		//Round Robin Scheduling
+
+					// 	}else if(entry.comp_type == "KnockoutSystem"){
+					// 		console.log("KnockoutSystem");
+					// 		console.log(entry.schedule_status);
+					// 		if($scope.registerArrLength == entry.comp_numOfTeam){
+					// 			$scope.registerStatus[entry.id] = "full";
+					// 			console.log(entry);
+					// 			console.log("All Team Filled");
+					// 			// Knockout Scheduling
+					// 				$scope.matchPerDay = $scope.registerArr.length / 2;
+					// 				$scope.match = [];
+					// 				$scope.matches = {};
+					// 				$scope.matches.match_homeTeam = "";
+					// 				$scope.matches.match_awayTeam = "";
+					// 				$scope.matches.winner = "";
+					// 				$scope.matches.loser = "";
+					// 				$scope.matches.match_homeScore = 0;
+					// 				$scope.matches.match_awayScore = 0;
+					// 				$scope.matches.competition_id = entry.id;
+					// 				$scope.matches.match_status = "Play Off";
+					// 				$scope.matches.match_number = 0;
+					// 				$scope.matchArr = [];
+					// 				// Random Team
+					// 				 $scope.team1 = "";
+					// 				 $scope.team2 = "";
+					// 				 $scope.ran = 0;
+					// 				 for(var m = 1; m <= $scope.matchPerDay; m++){
+					// 				 	$scope.ran = Math.floor(Math.random()*$scope.registerArr.length);
+					// 				 	$scope.team1 = $scope.registerArr[$scope.ran];
+					// 				 	$scope.registerArr.splice($scope.ran,1);
+					// 				 	$scope.ran = Math.floor(Math.random()*$scope.registerArr.length);
+					// 				 	$scope.team2 = $scope.registerArr[$scope.ran];
+					// 				 	$scope.registerArr.splice($scope.ran,1);
+					// 				 	$scope.match.push($scope.team1);
+					// 				 	$scope.match.push($scope.team2);
+					// 				 	console.log($scope.match);
+					// 				 	if($scope.matches.match_homeTeam === ""){
+					// 				 		console.log("adadad");
+					// 				 		$scope.matches.match_homeTeam = $scope.team1;
+					// 						$scope.matches.match_awayTeam = $scope.team2;
+					// 						$scope.matches.winner = "";
+					// 						$scope.matches.loser = "";
+					// 						$scope.matches.match_homeScore = 0;
+					// 						$scope.matches.match_awayScore = 0;
+					// 						$scope.matches.competition_id = entry.id;
+					// 						$scope.matches.match_status = "Play Off";
+					// 						$scope.matches.match_number = m;
+					// 				 	}else{
+					// 				 		console.log("asdasdasd");
+					// 				 		$scope.matches.match_homeTeam = $scope.matches.match_homeTeam + "," + $scope.team1;
+					// 						$scope.matches.match_awayTeam = $scope.matches.match_awayTeam + "," + $scope.team2;
+					// 						$scope.matches.winner = "";
+					// 						$scope.matches.loser = "";
+					// 						$scope.matches.match_homeScore = 0;
+					// 						$scope.matches.match_awayScore = 0;
+					// 						$scope.matches.competition_id = entry.id;
+					// 						$scope.matches.match_status = "Play Off";
+					// 						$scope.matches.match_number = m;
+					// 				 	}
+					// 				 	$scope.matchArr.push($scope.matches);
+					// 				 	// console.log($scope.matchArr);
+					// 				 	$scope.match = [];
+					// 				 	$scope.matches = {};
+					// 				 	$scope.matches.match_homeTeam = "";
+					// 					$scope.matches.match_awayTeam = "";
+					// 					$scope.matches.winner = "";
+					// 					$scope.matches.loser = "";
+					// 					$scope.matches.match_homeScore = 0;
+					// 					$scope.matches.match_awayScore = 0;
+					// 					$scope.matches.competition_id = entry.id;
+					// 					$scope.matches.match_status = "Play Off";
+					// 					$scope.matches.match_number = m;
+					// 				 }	
+					// 				console.log($scope.matchArr);
+					// 				console.log(entry.schedule_status);
+					// 				// Random Team
+
+					// 				// 32 Team
+					// 				if(entry.comp_numOfTeam == 32){
+					// 					console.log("32 team man");
+					// 					$scope.eighthfinalTeams = [];
+					// 					$scope.eighthfinalmatch = [];
+					// 					$scope.eighthfinal = [];
+					// 					$scope.eighthfinalArr = [];
+					// 					for(var n = 1; n <= entry.comp_numOfTeam / 4; n++){
+					// 						$scope.eighthfinalmatch[n] = [];
+					// 						$scope.eighthfinal[n] = [];
+					// 						console.log($scope.eighthfinal);
+					// 					}
+					// 					if($scope.matchArr.length == 16){
+					// 						// get match from database
+					// 					  for(var l = 0; l < $scope.matchArr.length; l++){
+					// 					    if($scope.matchArr[l].homeScore > $scope.matchArr[l].awayScore){
+					// 					      $scope.matchArr[l].winner = $scope.matchArr[l].home;
+					// 					    }else{    
+					// 					      $scope.matchArr[l].winner = $scope.matchArr[l].away;
+					// 					    }
+					// 					    $scope.eighthfinalTeams.push($scope.matchArr[l].winner);
+					// 					  }
+
+					// 					  for(r = 1; r <= entry.comp_numOfTeam / 4; r++){
+					// 					  	$scope.eighthfinalmatch[r] = $scope.eighthfinalTeams.splice(0,2);
+					// 					  	$scope.eighthfinal[r].match_homeTeam = "";
+					// 						$scope.eighthfinal[r].match_awayTeam = "";
+					// 						$scope.eighthfinal[r].winner = "";
+					// 						$scope.eighthfinal[r].loser = "";
+					// 						$scope.eighthfinal[r].match_homeScore = 0;
+					// 						$scope.eighthfinal[r].match_awayScore = 0;
+					// 						$scope.eighthfinal[r].competition_id = entry.id;
+					// 						$scope.eighthfinal[r].match_status = "Eighth Final";
+					// 						$scope.eighthfinalArr.push($scope.eighthfinal[r]);
+					// 					  }
+					// 					}  
+					// 				//    $scope.eighthfinalmatch1 =  $scope.eighthfinalTeams.splice(0,2); 
+					// 				//    $scope.eighthfinalmatch2 =  $scope.eighthfinalTeams.splice(0,2);
+					// 				//    $scope.eighthfinalmatch3 =  $scope.eighthfinalTeams.splice(0,2); 
+					// 				//    $scope.eighthfinalmatch4 =  $scope.eighthfinalTeams.splice(0,2);
+					// 				//    $scope.eighthfinalmatch5 =  $scope.eighthfinalTeams.splice(0,2); 
+					// 				//    $scope.eighthfinalmatch6 =  $scope.eighthfinalTeams.splice(0,2);
+					// 				//    $scope.eighthfinalmatch7 =  $scope.eighthfinalTeams.splice(0,2); 
+					// 				//    $scope.eighthfinalmatch8 =  $scope.eighthfinalTeams.splice(0,2);
+					// 				//    $scope.eighthfinal1.home =  $scope.eighthfinalmatch1[0];
+					// 				//    $scope.eighthfinal1.away =  $scope.eighthfinalmatch1[1];
+					// 				//    $scope.eighthfinal1.homeScore = 2;
+					// 				//    $scope.eighthfinal1.awayScore = 5;
+					// 				//    $scope.eighthfinal2.home =  $scope.eighthfinalmatch2[0];
+					// 				//    $scope.eighthfinal2.away =  $scope.eighthfinalmatch2[1];
+					// 				//    $scope.eighthfinal2.homeScore = 2;
+					// 				//    $scope.eighthfinal2.awayScore = 5;
+					// 				//    $scope.eighthfinal3.home =  $scope.eighthfinalmatch3[0];
+					// 				//    $scope.eighthfinal3.away =  $scope.eighthfinalmatch3[1];
+					// 				//    $scope.eighthfinal3.homeScore = 2;
+					// 				//    $scope.eighthfinal3.awayScore = 5;
+					// 				//    $scope.eighthfinal4.home =  $scope.eighthfinalmatch4[0];
+					// 				//    $scope.eighthfinal4.away =  $scope.eighthfinalmatch4[1];
+					// 				//    $scope.eighthfinal4.homeScore = 2;
+					// 				//    $scope.eighthfinal4.awayScore = 5;
+					// 				//    $scope.eighthfinal5.home =  $scope.eighthfinalmatch5[0];
+					// 				//    $scope.eighthfinal5.away =  $scope.eighthfinalmatch5[1];
+					// 				//    $scope.eighthfinal5.homeScore = 2;
+					// 				//    $scope.eighthfinal5.awayScore = 5;
+					// 				//    $scope.eighthfinal6.home =  $scope.eighthfinalmatch6[0];
+					// 				//    $scope.eighthfinal6.away =  $scope.eighthfinalmatch6[1];
+					// 				//    $scope.eighthfinal6.homeScore = 2;
+					// 				//    $scope.eighthfinal6.awayScore = 5;
+					// 				//    $scope.eighthfinal7.home =  $scope.eighthfinalmatch7[0];
+					// 				//    $scope.eighthfinal7.away =  $scope.eighthfinalmatch7[1];
+					// 				//    $scope.eighthfinal7.homeScore = 2;
+					// 				//    $scope.eighthfinal7.awayScore = 5;
+					// 				//    $scope.eighthfinal8.home =  $scope.eighthfinalmatch8[0];
+					// 				//    $scope.eighthfinal8.away =  $scope.eighthfinalmatch8[1];
+					// 				//    $scope.eighthfinal8.homeScore = 2;
+					// 				//    $scope.eighthfinal8.awayScore = 5;
+					// 				//    $scope.eighthfinalArr.push( $scope.eighthfinal1);
+					// 				//    $scope.eighthfinalArr.push( $scope.eighthfinal2);
+					// 				//    $scope.eighthfinalArr.push( $scope.eighthfinal3);
+					// 				//    $scope.eighthfinalArr.push( $scope.eighthfinal4);
+					// 				//    $scope.eighthfinalArr.push( $scope.eighthfinal5);
+					// 				//    $scope.eighthfinalArr.push( $scope.eighthfinal6);
+					// 				//    $scope.eighthfinalArr.push( $scope.eighthfinal7);
+					// 				//    $scope.eighthfinalArr.push( $scope.eighthfinal8);
+
+					// 				//   console.log($scope.eighthfinalArr);
+
+					// 				//   for(var m = 0; m < eighthfinalArr.length; m++){
+					// 				//     if(eighthfinalArr[m].homeScore > eighthfinalArr[m].awayScore){
+					// 				//       eighthfinalArr[m].winner = eighthfinalArr[m].home;
+					// 				//     }else{    
+					// 				//       eighthfinalArr[m].winner = eighthfinalArr[m].away;
+					// 				//     }
+					// 				//     quarterfinalTeams.push(eighthfinalArr[m].winner);
+					// 				//   }
+
+					// 				//   quarterfinalmatch1 = quarterfinalTeams.splice(0,2); 
+					// 				//   quarterfinalmatch2 = quarterfinalTeams.splice(0,2);
+					// 				//   quarterfinalmatch3 = quarterfinalTeams.splice(0,2); 
+					// 				//   quarterfinalmatch4 = quarterfinalTeams.splice(0,2);
+					// 				//   quarterfinal1.home = quarterfinalmatch1[0];
+					// 				//   quarterfinal1.away = quarterfinalmatch1[1];
+					// 				//   quarterfinal1.homeScore = 2;
+					// 				//   quarterfinal1.awayScore = 5;
+					// 				//   quarterfinal2.home = quarterfinalmatch2[0];
+					// 				//   quarterfinal2.away = quarterfinalmatch2[1];
+					// 				//   quarterfinal2.homeScore = 2;
+					// 				//   quarterfinal2.awayScore = 5;
+					// 				//   quarterfinal3.home = quarterfinalmatch3[0];
+					// 				//   quarterfinal3.away = quarterfinalmatch3[1];
+					// 				//   quarterfinal3.homeScore = 2;
+					// 				//   quarterfinal3.awayScore = 5;
+					// 				//   quarterfinal4.home = quarterfinalmatch4[0];
+					// 				//   quarterfinal4.away = quarterfinalmatch4[1];
+					// 				//   quarterfinal4.homeScore = 2;
+					// 				//   quarterfinal4.awayScore = 5;
+									  
+					// 				//   quarterfinalArr.push(quarterfinal1);
+					// 				//   quarterfinalArr.push(quarterfinal2);
+					// 				//   quarterfinalArr.push(quarterfinal3);
+					// 				//   quarterfinalArr.push(quarterfinal4);
+
+					// 				//   console.log(quarterfinalArr);
+
+					// 				//   for(var m = 0; m < quarterfinalArr.length; m++){
+					// 				//     if(quarterfinalArr[m].homeScore > quarterfinalArr[m].awayScore){
+					// 				//       quarterfinalArr[m].winner = quarterfinalArr[m].home;
+					// 				//     }else{    
+					// 				//       quarterfinalArr[m].winner = quarterfinalArr[m].away;
+					// 				//     }
+					// 				//     semifinalTeams.push(quarterfinalArr[m].winner);
+					// 				//   }
+
+					// 				//   semifinalmatch1 = semifinalTeams.splice(0,2); 
+					// 				//   semifinalmatch2 = semifinalTeams.splice(0,2);
+					// 				//   semifinal1.home = semifinalmatch1[0];
+					// 				//   semifinal1.away = semifinalmatch1[1];
+					// 				//   semifinal1.homeScore = 2;
+					// 				//   semifinal1.awayScore = 5;
+					// 				//   semifinal2.home = semifinalmatch2[0];
+					// 				//   semifinal2.away = semifinalmatch2[1];
+					// 				//   semifinal2.homeScore = 2;
+					// 				//   semifinal2.awayScore = 5;
+									  
+					// 				//   semifinalArr.push(semifinal1);
+					// 				//   semifinalArr.push(semifinal2);
+
+					// 				//   console.log(semifinalArr);
+
+					// 				//   for(var m = 0; m < semifinalArr.length; m++){
+					// 				//     if(semifinalArr[m].homeScore > semifinalArr[m].awayScore){
+					// 				//       semifinalArr[m].winner = semifinalArr[m].home;
+					// 				//       semifinalArr[m].loser = semifinalArr[m].away;
+					// 				//     }else{    
+					// 				//       semifinalArr[m].winner = semifinalArr[m].away;
+					// 				//       semifinalArr[m].loser = semifinalArr[m].home;
+					// 				//     }
+					// 				//     finalTeams.push(semifinalArr[m].winner);
+					// 				//     thirdplaceTeams.push(semifinalArr[m].loser);
+					// 				//   }
+
+					// 				//   finalmatch1 = finalTeams.splice(0,2); 
+					// 				//   final.home = finalmatch1[0];
+					// 				//   final.away = finalmatch1[1];
+					// 				//   final.homeScore = 2;
+					// 				//   final.awayScore = 5;
+					// 				//   var firstplace = [];
+					// 				//   var secondplace = [];
+					// 				//   finalArr.push(final);
+					// 				//   console.log(finalArr);
+					// 				//   for(var m = 0; m < finalArr.length; m++){
+					// 				//   if(finalArr[m].homeScore > finalArr[m].awayScore){
+					// 				//     finalArr[m].winner = finalArr[m].home;
+					// 				//     finalArr[m].loser = finalArr[m].away;
+					// 				//   }else{    
+					// 				//     finalArr[m].winner = finalArr[m].away;
+					// 				//     finalArr[m].loser = finalArr[m].home;
+					// 				//   }
+					// 				//   console.log(finalArr[m].winner);
+					// 				//   firstplace.push(finalArr[m].winner);
+					// 				//   secondplace.push(finalArr[m].loser);
+					// 				// }
+					// 				// console.log("First Place : " + firstplace);
+					// 				// console.log("Second Place : " + secondplace);
+
+					// 				// thirdplaceteam = thirdplaceTeams.splice(0,2); 
+					// 				//   thirdplacematch.home = thirdplaceteam[0];
+					// 				//   thirdplacematch.away = thirdplaceteam[1];
+					// 				//   thirdplacematch.homeScore = 2;
+					// 				//   thirdplacematch.awayScore = 5;
+					// 				//   var thirdplace = [];
+					// 				//   thirdplaceArr.push(thirdplacematch);
+					// 				//   console.log(thirdplaceArr);
+					// 				//   for(var m = 0; m < thirdplaceArr.length; m++){
+					// 				//   if(thirdplaceArr[m].homeScore > thirdplaceArr[m].awayScore){
+					// 				//     thirdplaceArr[m].winner = thirdplaceArr[m].home;
+					// 				//     thirdplaceArr[m].loser = thirdplaceArr[m].away;
+					// 				//   }else{    
+					// 				//     thirdplaceArr[m].winner = thirdplaceArr[m].away;
+					// 				//     thirdplaceArr[m].loser = thirdplaceArr[m].home;
+					// 				//   }
+					// 				//   thirdplace.push(thirdplaceArr[m].winner);
+					// 				// }
+					// 				// console.log("Third Place : " + thirdplace);	
+					// 				}else if(entry.comp_numOfTeam == 16){
+					// 					console.log("16 team man");
+					// 					$scope.quarterfinalTeams = [];
+					// 					$scope.quarterfinalmatch = [];
+					// 					$scope.quarterfinal = [];
+					// 					$scope.quarterfinalArr = [];
+					// 					for(var r = 0; r < entry.comp_numOfTeam / 4; r++){
+					// 						$scope.quarterfinalmatch[r+1] = [];
+					// 						$scope.quarterfinal[r+1] = [];
+					// 						console.log($scope.quarterfinal);
+					// 					}
+					// 				}else{
+					// 					console.log("8 team man");
+					// 					$scope.semifinalTeams = [];
+					// 					$scope.semifinalmatch = [];
+					// 					$scope.semifinal = [];
+					// 					$scope.semifinalArr = [];
+					// 					for(var r = 1; r <= entry.comp_numOfTeam / 4; r++){
+					// 						$scope.semifinalmatch[r] = [];
+					// 						$scope.semifinal[r] = [];
+					// 					}
+					// 					if($scope.matchArr.length == 4){
+					// 					  for(var m = 0; m < $scope.matchArr.length; m++){
+					// 					    if($scope.matchArr[m].homeScore > $scope.matchArr[m].awayScore){
+					// 					      $scope.matchArr[m].winner = $scope.matchArr[m].home;
+					// 					    }else{    
+					// 					      $scope.matchArr[m].winner = $scope.matchArr[m].away;
+					// 					    }
+					// 					    $scope.semifinalTeams.push($scope.matchArr[m].winner);
+					// 					  }
+					// 					for(r = 1; r <= entry.comp_numOfTeam / 4; r++){
+					// 						$scope.semifinalmatch[r] = $scope.semifinalTeams.splice(0,2);
+					// 						$scope.semifinal[r].match_homeTeam = "";
+					// 						$scope.semifinal[r].match_awayTeam = "";
+					// 						$scope.semifinal[r].winner = "";
+					// 						$scope.semifinal[r].loser = "";
+					// 						$scope.semifinal[r].match_homeScore = 0;
+					// 						$scope.semifinal[r].match_awayScore = 0;
+					// 						$scope.semifinal[r].competition_id = entry.id;
+					// 						$scope.semifinal[r].match_status = "Semi Final";
+					// 						$scope.semifinalArr.push($scope.semifinal[r]);
+					// 					}
+					// 				 		console.log($scope.semifinalArr);
+					// 					}
+					// 					$scope.finalTeams = [];
+					// 					$scope.finalmatch = [];
+					// 					$scope.final = {};
+					// 					$scope.finalArr = [];
+					// 					$scope.thirdplaceTeams = [];
+					// 					  for(var m = 0; m < $scope.semifinalArr.length; m++){
+					// 					    if($scope.semifinalArr[m].homeScore > $scope.semifinalArr[m].awayScore){
+					// 					      $scope.semifinalArr[m].winner = $scope.semifinalArr[m].home;
+					// 					      $scope.semifinalArr[m].loser = $scope.semifinalArr[m].away;
+					// 					    }else{    
+					// 					      $scope.semifinalArr[m].winner = $scope.semifinalArr[m].away;
+					// 					   	  $scope.semifinalArr[m].loser = $scope.semifinalArr[m].home;
+					// 					    }
+					// 					    $scope.finalTeams.push($scope.semifinalArr[m].winner);
+					// 					    $scope.thirdplaceTeams.push($scope.semifinalArr[m].loser);
+					// 					  }
+
+					// 					  $scope.finalmatch = $scope.finalTeams.splice(0,2); 
+					// 					  $scope.final.home = $scope.finalmatch[0];
+					// 					  $scope.final.away = $scope.finalmatch[1];
+					// 					  $scope.final.homeScore = 2;
+					// 					  $scope.final.awayScore = 5;
+					// 					  var firstplace = [];
+					// 					  var secondplace = [];
+					// 					  $scope.finalArr.push($scope.final);
+					// 					  console.log($scope.finalArr);
+					// 					  for(var m = 0; m < $scope.finalArr.length; m++){
+					// 					  if($scope.finalArr[m].homeScore > $scope.finalArr[m].awayScore){
+					// 					    $scope.finalArr[m].winner = $scope.finalArr[m].home;
+					// 					    $scope.finalArr[m].loser = $scope.finalArr[m].away;
+					// 					  }else{    
+					// 					    $scope.finalArr[m].winner = $scope.finalArr[m].away;
+					// 					    $scope.finalArr[m].loser = $scope.finalArr[m].home;
+					// 					  }
+					// 					  console.log($scope.finalArr[m].winner);
+					// 					  firstplace.push($scope.finalArr[m].winner);
+					// 					  secondplace.push($scope.finalArr[m].loser);
+					// 					}
+					// 					console.log("First Place : " + firstplace);
+					// 					console.log("Second Place : " + secondplace);
+					// 					$scope.thirdplaceteams = [];
+					// 					$scope.thirdplacematch = {};
+					// 					$scope.thirdplaceArr = [];
+					// 					$scope.thirdplace = [];
+					// 					$scope.thirdplaceteam = $scope.thirdplaceTeams.splice(0,2); 
+					// 					  $scope.thirdplacematch.home = $scope.thirdplaceteam[0];
+					// 					  $scope.thirdplacematch.away = $scope.thirdplaceteam[1];
+					// 					  $scope.thirdplacematch.homeScore = 2;
+					// 					  $scope.thirdplacematch.awayScore = 5;
+					// 					  var thirdplace = [];
+					// 					  $scope.thirdplaceArr.push($scope.thirdplacematch);
+					// 					  console.log($scope.thirdplaceArr);
+					// 					  for(var m = 0; m < $scope.thirdplaceArr.length; m++){
+					// 					  if($scope.thirdplaceArr[m].homeScore > $scope.thirdplaceArr[m].awayScore){
+					// 					    $scope.thirdplaceArr[m].winner = $scope.thirdplaceArr[m].home;
+					// 					    $scope.thirdplaceArr[m].loser = $scope.thirdplaceArr[m].away;
+					// 					  }else{    
+					// 					    $scope.thirdplaceArr[m].winner = $scope.thirdplaceArr[m].away;
+					// 					    $scope.thirdplaceArr[m].loser = $scope.thirdplaceArr[m].home;
+					// 					  }
+					// 					  $scope.thirdplace.push($scope.thirdplaceArr[m].winner);
+					// 					}
+					// 					console.log("Third Place : " + $scope.thirdplace);
+					// 				}
+				
+					// 				if(entry.schedule_status === ""){
+					// 					console.log("blm di schedule");
+					// 					console.log($scope.matchArr.length);
+					// 					$scope.matchArr.forEach(function(entry){
+					// 						console.log(entry);
+					// 						//insert data to database
+					// 						MatchService.addMatch(entry).success(function(data){
+					// 							// $ionicLoading.hide();
+					// 							console.log("berhasil add match");
+					// 						}).error(function(data){
+					// 							// $ionicLoading.hide();
+					// 						});
+					// 						//insert data to database
+					// 					});
+					// 					console.log("on progressssssssss");
+					// 					$scope.formCompetition = {};
+					// 					$scope.formCompetition.schedule_status = "On Progress";
+					// 					console.log($scope.formCompetition);
+					// 					CompetitionService.editCompetition(entry.id, localStorage.getItem("token"), $scope.formCompetition).success(function(data) {
+					// 						// $ionicLoading.hide();
+					// 						console.log("berhasil");
+					// 					}).error(function(data) {
+					// 						// $ionicLoading.hide();
+					// 						console.log("gagal");
+					// 					});	
+					// 				}	
+					// 			}
+
+					// 				// if(entry.schedule_status === ""){	
+					// 				// 	console.log("on progressssssssss");
+					// 				// 	$scope.formCompetition = {};
+					// 				// 	$scope.formCompetition.schedule_status = "On Progress";
+					// 				// 	console.log($scope.formCompetition);
+					// 				// 	CompetitionService.editCompetition(entry.id, localStorage.getItem("token"), $scope.formCompetition).success(function(data) {
+					// 				// 		$ionicLoading.hide();
+					// 				// 		console.log("berhasil");
+					// 				// 	}).error(function(data) {
+					// 				// 		$ionicLoading.hide();
+					// 				// 		console.log("gagal");
+					// 				// 	});	
+					// 				// }
+					// 				// 32 Team
+					// 				// 8 team
+					// 				// $scope.semifinalTeams = [];
+					// 				// $scope.semifinalmatch1 = [];
+					// 				// $scope.semifinalmatch2 = [];
+					// 				// $scope.semifinal1 = {};
+					// 				// $scope.semifinal1.home = "";
+					// 				// $scope.semifinal1.away = "";
+					// 				// $scope.semifinal1.winner = "";
+					// 				// $scope.semifinal1.loser = "";
+					// 				// $scope.semifinal1.homeScore = 2;
+					// 				// $scope.semifinal1.awayScore = 5;
+					// 				// $scope.semifinal2 = {};
+					// 				// $scope.semifinal2.home = "";
+					// 				// $scope.semifinal2.away = "";
+					// 				// $scope.semifinal2.winner = "";
+					// 				// $scope.semifinal2.loser = "";
+					// 				// $scope.semifinal2.homeScore = 2;
+					// 				// $scope.semifinal2.awayScore = 5;
+					// 				// $scope.semifinalArr = [];
+					// 				// if($scope.matchArr.length == 4){
+					// 				//   for(var m = 0; m < $scope.matchArr.length; m++){
+					// 				//     if($scope.matchArr[m].homeScore > $scope.matchArr[m].awayScore){
+					// 				//       $scope.matchArr[m].winner = $scope.matchArr[m].home;
+					// 				//     }else{    
+					// 				//       $scope.matchArr[m].winner = $scope.matchArr[m].away;
+					// 				//     }
+					// 				//     $scope.semifinalTeams.push($scope.matchArr[m].winner);
+					// 				//   }
+
+					// 				//   $scope.semifinalmatch1 = $scope.semifinalTeams.splice(0,2); 
+					// 				//   $scope.semifinalmatch2 = $scope.semifinalTeams.splice(0,2);
+					// 				//   $scope.semifinal1.home = $scope.semifinalmatch1[0];
+					// 				//   $scope.semifinal1.away = $scope.semifinalmatch1[1];
+					// 				//   $scope.semifinal1.homeScore = 2;
+					// 				//   $scope.semifinal1.awayScore = 5;
+					// 				//   $scope.semifinal2.home = $scope.semifinalmatch2[0];
+					// 				//   $scope.semifinal2.away = $scope.semifinalmatch2[1];
+					// 				//   $scope.semifinal2.homeScore = 2;
+					// 				//   $scope.semifinal2.awayScore = 5;
+									  
+					// 				//   $scope.semifinalArr.push($scope.semifinal1);
+					// 				//   $scope.semifinalArr.push($scope.semifinal2);
+
+					// 				//   console.log($scope.semifinalArr);
+					// 				// }
+					// 				// $scope.finalTeams = [];
+					// 				// $scope.finalmatch = [];
+					// 				// $scope.final = {};
+					// 				// $scope.finalArr = [];
+					// 				// $scope.thirdplaceTeams = [];
+					// 				//   for(var m = 0; m < $scope.semifinalArr.length; m++){
+					// 				//     if($scope.semifinalArr[m].homeScore > $scope.semifinalArr[m].awayScore){
+					// 				//       $scope.semifinalArr[m].winner = $scope.semifinalArr[m].home;
+					// 				//       $scope.semifinalArr[m].loser = $scope.semifinalArr[m].away;
+					// 				//     }else{    
+					// 				//       $scope.semifinalArr[m].winner = $scope.semifinalArr[m].away;
+					// 				//    	  $scope.semifinalArr[m].loser = $scope.semifinalArr[m].home;
+					// 				//     }
+					// 				//     $scope.finalTeams.push($scope.semifinalArr[m].winner);
+					// 				//     $scope.thirdplaceTeams.push($scope.semifinalArr[m].loser);
+					// 				//   }
+
+					// 				//   $scope.finalmatch = $scope.finalTeams.splice(0,2); 
+					// 				//   $scope.final.home = $scope.finalmatch[0];
+					// 				//   $scope.final.away = $scope.finalmatch[1];
+					// 				//   $scope.final.homeScore = 2;
+					// 				//   $scope.final.awayScore = 5;
+					// 				//   var firstplace = [];
+					// 				//   var secondplace = [];
+					// 				//   $scope.finalArr.push($scope.final);
+					// 				//   console.log($scope.finalArr);
+					// 				//   for(var m = 0; m < $scope.finalArr.length; m++){
+					// 				//   if($scope.finalArr[m].homeScore > $scope.finalArr[m].awayScore){
+					// 				//     $scope.finalArr[m].winner = $scope.finalArr[m].home;
+					// 				//     $scope.finalArr[m].loser = $scope.finalArr[m].away;
+					// 				//   }else{    
+					// 				//     $scope.finalArr[m].winner = $scope.finalArr[m].away;
+					// 				//     $scope.finalArr[m].loser = $scope.finalArr[m].home;
+					// 				//   }
+					// 				//   console.log($scope.finalArr[m].winner);
+					// 				//   firstplace.push($scope.finalArr[m].winner);
+					// 				//   secondplace.push($scope.finalArr[m].loser);
+					// 				// }
+					// 				// console.log("First Place : " + firstplace);
+					// 				// console.log("Second Place : " + secondplace);
+					// 				// $scope.thirdplaceteams = [];
+					// 				// $scope.thirdplacematch = {};
+					// 				// $scope.thirdplaceArr = [];
+					// 				// $scope.thirdplace = [];
+					// 				// $scope.thirdplaceteam = $scope.thirdplaceTeams.splice(0,2); 
+					// 				//   $scope.thirdplacematch.home = $scope.thirdplaceteam[0];
+					// 				//   $scope.thirdplacematch.away = $scope.thirdplaceteam[1];
+					// 				//   $scope.thirdplacematch.homeScore = 2;
+					// 				//   $scope.thirdplacematch.awayScore = 5;
+					// 				//   var thirdplace = [];
+					// 				//   $scope.thirdplaceArr.push($scope.thirdplacematch);
+					// 				//   console.log($scope.thirdplaceArr);
+					// 				//   for(var m = 0; m < $scope.thirdplaceArr.length; m++){
+					// 				//   if($scope.thirdplaceArr[m].homeScore > $scope.thirdplaceArr[m].awayScore){
+					// 				//     $scope.thirdplaceArr[m].winner = $scope.thirdplaceArr[m].home;
+					// 				//     $scope.thirdplaceArr[m].loser = $scope.thirdplaceArr[m].away;
+					// 				//   }else{    
+					// 				//     $scope.thirdplaceArr[m].winner = $scope.thirdplaceArr[m].away;
+					// 				//     $scope.thirdplaceArr[m].loser = $scope.thirdplaceArr[m].home;
+					// 				//   }
+					// 				//   $scope.thirdplace.push($scope.thirdplaceArr[m].winner);
+					// 				// }
+					// 				// console.log("Third Place : " + $scope.thirdplace);
+					// 				// 8 team
+					// 			// Knockout Scheduling
+					// 		}
+					// 		$ionicLoading.hide();
+					// 	}
+					// 	$ionicLoading.hide();
+					// });
+					if($scope.allCompetition !== null){
+						clearInterval($scope.loadAllCompetition);
+						$ionicLoading.hide();
 					}
-					console.log($scope.registered[entry.id]);
-				});
-				// Check if team has registered in the competition
-
-				// data.forEach(function(entry){
-				// 	if(entry.registeredTeam !== null){
-				// 		if(entry.registeredTeam !== ""){
-				// 			$scope.registerArr = entry.registeredTeam.split(',');
-				// 			$scope.registerArrLength = $scope.registerArr.length;
-				// 			$scope.registeredTeamLength[entry.id] = $scope.registerArr.length;
-				// 			//Check if registered or not
-				// 			var a = $scope.registerArr.indexOf(ls.getItem("team"));
-				// 			console.log(ls.getItem("team"));
-				// 			if(ls.getItem("team") !== null){
-				// 				if(a != -1){
-				// 					$scope.registered[entry.id] = true;
-				// 				}else{
-				// 					$scope.registered[entry.id] = false;
-				// 				}
-				// 				//Check if registered or not
-				// 			}else{
-				// 				$scope.registered[entry.id] = false;
-				// 			}
-				// 		}
-
-				// 	if(entry.comp_type == "GroupStage"){
-				// 		console.log("GroupStage");
-				// 		//Round Robin Scheduling
-				// 		if($scope.registerArrLength == entry.comp_numOfTeam){
-				// 			$scope.registerStatus[entry.id] = "full";
-				// 			console.log(entry.id);
-				// 			console.log("Scheduling");
-				// 			$scope.matchPerDay = $scope.registerArrLength / 2;
-				// 			if($scope.registerArr.length % 2 === 0){
-				// 				$scope.registerArrLength = $scope.registerArr.length - 1;
-				// 			}
-				// 			if($scope.registerArr.length % 2 !== 0){
-				// 				$scope.matchPerDay = ($scope.registerArr.length - 1) / 2;
-				// 			}
-				// 			console.log($scope.registerArrLength);
-				// 			console.log($scope.matchPerDay);
-				// 			for(var b = 1; b < $scope.registerArr.length; b++){
-				// 				$scope.newTeams.push($scope.registerArr[b]);
-				// 			}
-				// 			for(var c = $scope.registerArr.length; c <= $scope.registerArr.length; c++){
-				// 				$scope.fixNum = $scope.registerArr[c-$scope.registerArr.length];
-				// 			}
-				// 			console.log($scope.newTeams);
-				// 			console.log($scope.fixNum);
-
-				// 			if(entry.register_status === null){
-				// 				console.log("Full");
-				// 				$scope.formCompetition = {};
-				// 				$scope.formCompetition.register_status = "Full";
-				// 				console.log($scope.formCompetition);
-				// 				CompetitionService.editCompetition(entry.id, ls.getItem("token"), $scope.formCompetition).success(function(data) {
-				// 					// $ionicLoading.hide();
-				// 					console.log("berhasil");
-				// 				}).error(function(data) {
-				// 					// $ionicLoading.hide();
-				// 					console.log("gagal");
-				// 				});
-				// 			}	
-				// 			}
-				// 			for(var r = 0; r < $scope.registerArrLength; r++){
-				// 				for(var i = 0; i < $scope.matchPerDay; i++){
-				// 					var team1 = "";
-				// 					var team2 = "";
-				// 					if($scope.registerArr.length % 2 !== 0){
-				// 						team1 = $scope.registerArr[$scope.matchPerDay - i];
-				// 						team2 = $scope.registerArr[$scope.matchPerDay + i + 1];
-				// 					}else{
-				// 						team1 = $scope.registerArr[$scope.matchPerDay - i - 1];
-				// 						team2 = $scope.registerArr[$scope.matchPerDay + i];
-				// 					}
-				// 					$scope.match.push(team1);
-				// 					$scope.match.push(team2);
-				// 				}
-				// 				$scope.matches.push($scope.match);
-				// 				//rotate array
-				// 				if($scope.registerArr.length % 2 !== 0){
-				// 					$scope.registerArr = $scope.arrayRotateOdd($scope.registerArr, true);	
-				// 				}else{
-				// 					$scope.registerArr = $scope.arrayRotateEven($scope.newTeams, true);
-				// 				}
-				// 				$scope.match = [];
-				// 				var fixture = r + 1;
-				// 				console.log("Fixture " + fixture + " : " + $scope.matches[r]);
-				// 			}
-
-				// 			$scope.homeTeam = [];
-				// 			$scope.awayTeam = [];
-				// 			$scope.fixtureObj = [];
-				// 			for(w = 0; w < $scope.matches.length; w++){
-				// 				for(e = 0; e < $scope.matches[w].length; e++){
-				// 					if(e % 2 === 0){
-				// 						$scope.homeTeam.push($scope.matches[w][e]);
-				// 					}else{
-				// 						$scope.awayTeam.push($scope.matches[w][e]);
-				// 					}
-				// 				}
-				// 			}
-				// 			console.log($scope.homeTeam);
-				// 			console.log($scope.awayTeam);
-				// 			for(t = 0; t < $scope.homeTeam.length; t++){
-				// 				$scope.fixtureObj[t] = {};
-				// 				$scope.fixtureObj[t].match_homeTeam = $scope.homeTeam[t];
-				// 				$scope.fixtureObj[t].match_awayTeam = $scope.awayTeam[t];
-				// 				$scope.fixtureObj[t].match_time = "";
-				// 				$scope.fixtureObj[t].match_started = "";
-				// 			}
-				// 			console.log($scope.fixtureObj);
-				// 			$scope.allFixtures = $scope.fixtureObj;
-				// 			$scope.fixture = [];
-				// 			var fixtureNumber = 0;
-				// 			$rootScope.showLoading($ionicLoading);
-				// 			for(p = 1; p < $scope.registerArr.length; p++){
-				// 				fixtureNumber++;
-				// 				console.log(fixtureNumber);
-				// 				$scope.fixture[p] = [];
-				// 				for(u = 0; u < $scope.matchPerDay; u++){
-				// 					$scope.fixtureObj[u].fixture_number = fixtureNumber;
-				// 					$scope.fixtureObj[u].competition_id = entry.id;
-				// 					$scope.fixture[p].push($scope.fixtureObj[u]);
-				// 				}
-				// 				$scope.fixtureObj.splice(0,$scope.matchPerDay);
-				// 				console.log($scope.fixture[p]);
-				// 				console.log(entry.schedule_status);
-				// 				if(entry.schedule_status === ""){
-				// 					console.log("on progressssssssss");
-
-				// 					$scope.fixture[p].forEach(function(entry){
-				// 						console.log(entry.competition_id);
-				// 						//insert data to database
-				// 						MatchService.addMatch(entry).success(function(data){
-				// 							// $ionicLoading.hide();
-				// 							console.log(data);
-				// 						}).error(function(data){
-				// 							// $ionicLoading.hide();
-				// 						});
-				// 						//insert data to database
-				// 					});
-				// 				}
-								
-				// 			}
-				// 			if(entry.schedule_status === ""){
-				// 				console.log("on progressssssssss");
-				// 				$scope.formCompetition = {};
-				// 				$scope.formCompetition.schedule_status = "On Progress";
-				// 				console.log($scope.formCompetition);
-				// 				CompetitionService.editCompetition(entry.id, localStorage.getItem("token"), $scope.formCompetition).success(function(data) {
-				// 					// $ionicLoading.hide();
-				// 					console.log("berhasil");
-				// 				}).error(function(data) {
-				// 					// $ionicLoading.hide();
-				// 					console.log("gagal");
-				// 				});
-				// 			}	
-				// 		//Round Robin Scheduling
-
-				// 	}else if(entry.comp_type == "KnockoutSystem"){
-				// 		console.log("KnockoutSystem");
-				// 		console.log(entry.schedule_status);
-				// 		if($scope.registerArrLength == entry.comp_numOfTeam){
-				// 			$scope.registerStatus[entry.id] = "full";
-				// 			console.log(entry);
-				// 			console.log("All Team Filled");
-				// 			// Knockout Scheduling
-				// 				$scope.matchPerDay = $scope.registerArr.length / 2;
-				// 				$scope.match = [];
-				// 				$scope.matches = {};
-				// 				$scope.matches.match_homeTeam = "";
-				// 				$scope.matches.match_awayTeam = "";
-				// 				$scope.matches.winner = "";
-				// 				$scope.matches.loser = "";
-				// 				$scope.matches.match_homeScore = 0;
-				// 				$scope.matches.match_awayScore = 0;
-				// 				$scope.matches.competition_id = entry.id;
-				// 				$scope.matches.match_status = "Play Off";
-				// 				$scope.matches.match_number = 0;
-				// 				$scope.matchArr = [];
-				// 				// Random Team
-				// 				 $scope.team1 = "";
-				// 				 $scope.team2 = "";
-				// 				 $scope.ran = 0;
-				// 				 for(var m = 1; m <= $scope.matchPerDay; m++){
-				// 				 	$scope.ran = Math.floor(Math.random()*$scope.registerArr.length);
-				// 				 	$scope.team1 = $scope.registerArr[$scope.ran];
-				// 				 	$scope.registerArr.splice($scope.ran,1);
-				// 				 	$scope.ran = Math.floor(Math.random()*$scope.registerArr.length);
-				// 				 	$scope.team2 = $scope.registerArr[$scope.ran];
-				// 				 	$scope.registerArr.splice($scope.ran,1);
-				// 				 	$scope.match.push($scope.team1);
-				// 				 	$scope.match.push($scope.team2);
-				// 				 	console.log($scope.match);
-				// 				 	if($scope.matches.match_homeTeam === ""){
-				// 				 		console.log("adadad");
-				// 				 		$scope.matches.match_homeTeam = $scope.team1;
-				// 						$scope.matches.match_awayTeam = $scope.team2;
-				// 						$scope.matches.winner = "";
-				// 						$scope.matches.loser = "";
-				// 						$scope.matches.match_homeScore = 0;
-				// 						$scope.matches.match_awayScore = 0;
-				// 						$scope.matches.competition_id = entry.id;
-				// 						$scope.matches.match_status = "Play Off";
-				// 						$scope.matches.match_number = m;
-				// 				 	}else{
-				// 				 		console.log("asdasdasd");
-				// 				 		$scope.matches.match_homeTeam = $scope.matches.match_homeTeam + "," + $scope.team1;
-				// 						$scope.matches.match_awayTeam = $scope.matches.match_awayTeam + "," + $scope.team2;
-				// 						$scope.matches.winner = "";
-				// 						$scope.matches.loser = "";
-				// 						$scope.matches.match_homeScore = 0;
-				// 						$scope.matches.match_awayScore = 0;
-				// 						$scope.matches.competition_id = entry.id;
-				// 						$scope.matches.match_status = "Play Off";
-				// 						$scope.matches.match_number = m;
-				// 				 	}
-				// 				 	$scope.matchArr.push($scope.matches);
-				// 				 	// console.log($scope.matchArr);
-				// 				 	$scope.match = [];
-				// 				 	$scope.matches = {};
-				// 				 	$scope.matches.match_homeTeam = "";
-				// 					$scope.matches.match_awayTeam = "";
-				// 					$scope.matches.winner = "";
-				// 					$scope.matches.loser = "";
-				// 					$scope.matches.match_homeScore = 0;
-				// 					$scope.matches.match_awayScore = 0;
-				// 					$scope.matches.competition_id = entry.id;
-				// 					$scope.matches.match_status = "Play Off";
-				// 					$scope.matches.match_number = m;
-				// 				 }	
-				// 				console.log($scope.matchArr);
-				// 				console.log(entry.schedule_status);
-				// 				// Random Team
-
-				// 				// 32 Team
-				// 				if(entry.comp_numOfTeam == 32){
-				// 					console.log("32 team man");
-				// 					$scope.eighthfinalTeams = [];
-				// 					$scope.eighthfinalmatch = [];
-				// 					$scope.eighthfinal = [];
-				// 					$scope.eighthfinalArr = [];
-				// 					for(var n = 1; n <= entry.comp_numOfTeam / 4; n++){
-				// 						$scope.eighthfinalmatch[n] = [];
-				// 						$scope.eighthfinal[n] = [];
-				// 						console.log($scope.eighthfinal);
-				// 					}
-				// 					if($scope.matchArr.length == 16){
-				// 						// get match from database
-				// 					  for(var l = 0; l < $scope.matchArr.length; l++){
-				// 					    if($scope.matchArr[l].homeScore > $scope.matchArr[l].awayScore){
-				// 					      $scope.matchArr[l].winner = $scope.matchArr[l].home;
-				// 					    }else{    
-				// 					      $scope.matchArr[l].winner = $scope.matchArr[l].away;
-				// 					    }
-				// 					    $scope.eighthfinalTeams.push($scope.matchArr[l].winner);
-				// 					  }
-
-				// 					  for(r = 1; r <= entry.comp_numOfTeam / 4; r++){
-				// 					  	$scope.eighthfinalmatch[r] = $scope.eighthfinalTeams.splice(0,2);
-				// 					  	$scope.eighthfinal[r].match_homeTeam = "";
-				// 						$scope.eighthfinal[r].match_awayTeam = "";
-				// 						$scope.eighthfinal[r].winner = "";
-				// 						$scope.eighthfinal[r].loser = "";
-				// 						$scope.eighthfinal[r].match_homeScore = 0;
-				// 						$scope.eighthfinal[r].match_awayScore = 0;
-				// 						$scope.eighthfinal[r].competition_id = entry.id;
-				// 						$scope.eighthfinal[r].match_status = "Eighth Final";
-				// 						$scope.eighthfinalArr.push($scope.eighthfinal[r]);
-				// 					  }
-				// 					}  
-				// 				//    $scope.eighthfinalmatch1 =  $scope.eighthfinalTeams.splice(0,2); 
-				// 				//    $scope.eighthfinalmatch2 =  $scope.eighthfinalTeams.splice(0,2);
-				// 				//    $scope.eighthfinalmatch3 =  $scope.eighthfinalTeams.splice(0,2); 
-				// 				//    $scope.eighthfinalmatch4 =  $scope.eighthfinalTeams.splice(0,2);
-				// 				//    $scope.eighthfinalmatch5 =  $scope.eighthfinalTeams.splice(0,2); 
-				// 				//    $scope.eighthfinalmatch6 =  $scope.eighthfinalTeams.splice(0,2);
-				// 				//    $scope.eighthfinalmatch7 =  $scope.eighthfinalTeams.splice(0,2); 
-				// 				//    $scope.eighthfinalmatch8 =  $scope.eighthfinalTeams.splice(0,2);
-				// 				//    $scope.eighthfinal1.home =  $scope.eighthfinalmatch1[0];
-				// 				//    $scope.eighthfinal1.away =  $scope.eighthfinalmatch1[1];
-				// 				//    $scope.eighthfinal1.homeScore = 2;
-				// 				//    $scope.eighthfinal1.awayScore = 5;
-				// 				//    $scope.eighthfinal2.home =  $scope.eighthfinalmatch2[0];
-				// 				//    $scope.eighthfinal2.away =  $scope.eighthfinalmatch2[1];
-				// 				//    $scope.eighthfinal2.homeScore = 2;
-				// 				//    $scope.eighthfinal2.awayScore = 5;
-				// 				//    $scope.eighthfinal3.home =  $scope.eighthfinalmatch3[0];
-				// 				//    $scope.eighthfinal3.away =  $scope.eighthfinalmatch3[1];
-				// 				//    $scope.eighthfinal3.homeScore = 2;
-				// 				//    $scope.eighthfinal3.awayScore = 5;
-				// 				//    $scope.eighthfinal4.home =  $scope.eighthfinalmatch4[0];
-				// 				//    $scope.eighthfinal4.away =  $scope.eighthfinalmatch4[1];
-				// 				//    $scope.eighthfinal4.homeScore = 2;
-				// 				//    $scope.eighthfinal4.awayScore = 5;
-				// 				//    $scope.eighthfinal5.home =  $scope.eighthfinalmatch5[0];
-				// 				//    $scope.eighthfinal5.away =  $scope.eighthfinalmatch5[1];
-				// 				//    $scope.eighthfinal5.homeScore = 2;
-				// 				//    $scope.eighthfinal5.awayScore = 5;
-				// 				//    $scope.eighthfinal6.home =  $scope.eighthfinalmatch6[0];
-				// 				//    $scope.eighthfinal6.away =  $scope.eighthfinalmatch6[1];
-				// 				//    $scope.eighthfinal6.homeScore = 2;
-				// 				//    $scope.eighthfinal6.awayScore = 5;
-				// 				//    $scope.eighthfinal7.home =  $scope.eighthfinalmatch7[0];
-				// 				//    $scope.eighthfinal7.away =  $scope.eighthfinalmatch7[1];
-				// 				//    $scope.eighthfinal7.homeScore = 2;
-				// 				//    $scope.eighthfinal7.awayScore = 5;
-				// 				//    $scope.eighthfinal8.home =  $scope.eighthfinalmatch8[0];
-				// 				//    $scope.eighthfinal8.away =  $scope.eighthfinalmatch8[1];
-				// 				//    $scope.eighthfinal8.homeScore = 2;
-				// 				//    $scope.eighthfinal8.awayScore = 5;
-				// 				//    $scope.eighthfinalArr.push( $scope.eighthfinal1);
-				// 				//    $scope.eighthfinalArr.push( $scope.eighthfinal2);
-				// 				//    $scope.eighthfinalArr.push( $scope.eighthfinal3);
-				// 				//    $scope.eighthfinalArr.push( $scope.eighthfinal4);
-				// 				//    $scope.eighthfinalArr.push( $scope.eighthfinal5);
-				// 				//    $scope.eighthfinalArr.push( $scope.eighthfinal6);
-				// 				//    $scope.eighthfinalArr.push( $scope.eighthfinal7);
-				// 				//    $scope.eighthfinalArr.push( $scope.eighthfinal8);
-
-				// 				//   console.log($scope.eighthfinalArr);
-
-				// 				//   for(var m = 0; m < eighthfinalArr.length; m++){
-				// 				//     if(eighthfinalArr[m].homeScore > eighthfinalArr[m].awayScore){
-				// 				//       eighthfinalArr[m].winner = eighthfinalArr[m].home;
-				// 				//     }else{    
-				// 				//       eighthfinalArr[m].winner = eighthfinalArr[m].away;
-				// 				//     }
-				// 				//     quarterfinalTeams.push(eighthfinalArr[m].winner);
-				// 				//   }
-
-				// 				//   quarterfinalmatch1 = quarterfinalTeams.splice(0,2); 
-				// 				//   quarterfinalmatch2 = quarterfinalTeams.splice(0,2);
-				// 				//   quarterfinalmatch3 = quarterfinalTeams.splice(0,2); 
-				// 				//   quarterfinalmatch4 = quarterfinalTeams.splice(0,2);
-				// 				//   quarterfinal1.home = quarterfinalmatch1[0];
-				// 				//   quarterfinal1.away = quarterfinalmatch1[1];
-				// 				//   quarterfinal1.homeScore = 2;
-				// 				//   quarterfinal1.awayScore = 5;
-				// 				//   quarterfinal2.home = quarterfinalmatch2[0];
-				// 				//   quarterfinal2.away = quarterfinalmatch2[1];
-				// 				//   quarterfinal2.homeScore = 2;
-				// 				//   quarterfinal2.awayScore = 5;
-				// 				//   quarterfinal3.home = quarterfinalmatch3[0];
-				// 				//   quarterfinal3.away = quarterfinalmatch3[1];
-				// 				//   quarterfinal3.homeScore = 2;
-				// 				//   quarterfinal3.awayScore = 5;
-				// 				//   quarterfinal4.home = quarterfinalmatch4[0];
-				// 				//   quarterfinal4.away = quarterfinalmatch4[1];
-				// 				//   quarterfinal4.homeScore = 2;
-				// 				//   quarterfinal4.awayScore = 5;
-								  
-				// 				//   quarterfinalArr.push(quarterfinal1);
-				// 				//   quarterfinalArr.push(quarterfinal2);
-				// 				//   quarterfinalArr.push(quarterfinal3);
-				// 				//   quarterfinalArr.push(quarterfinal4);
-
-				// 				//   console.log(quarterfinalArr);
-
-				// 				//   for(var m = 0; m < quarterfinalArr.length; m++){
-				// 				//     if(quarterfinalArr[m].homeScore > quarterfinalArr[m].awayScore){
-				// 				//       quarterfinalArr[m].winner = quarterfinalArr[m].home;
-				// 				//     }else{    
-				// 				//       quarterfinalArr[m].winner = quarterfinalArr[m].away;
-				// 				//     }
-				// 				//     semifinalTeams.push(quarterfinalArr[m].winner);
-				// 				//   }
-
-				// 				//   semifinalmatch1 = semifinalTeams.splice(0,2); 
-				// 				//   semifinalmatch2 = semifinalTeams.splice(0,2);
-				// 				//   semifinal1.home = semifinalmatch1[0];
-				// 				//   semifinal1.away = semifinalmatch1[1];
-				// 				//   semifinal1.homeScore = 2;
-				// 				//   semifinal1.awayScore = 5;
-				// 				//   semifinal2.home = semifinalmatch2[0];
-				// 				//   semifinal2.away = semifinalmatch2[1];
-				// 				//   semifinal2.homeScore = 2;
-				// 				//   semifinal2.awayScore = 5;
-								  
-				// 				//   semifinalArr.push(semifinal1);
-				// 				//   semifinalArr.push(semifinal2);
-
-				// 				//   console.log(semifinalArr);
-
-				// 				//   for(var m = 0; m < semifinalArr.length; m++){
-				// 				//     if(semifinalArr[m].homeScore > semifinalArr[m].awayScore){
-				// 				//       semifinalArr[m].winner = semifinalArr[m].home;
-				// 				//       semifinalArr[m].loser = semifinalArr[m].away;
-				// 				//     }else{    
-				// 				//       semifinalArr[m].winner = semifinalArr[m].away;
-				// 				//       semifinalArr[m].loser = semifinalArr[m].home;
-				// 				//     }
-				// 				//     finalTeams.push(semifinalArr[m].winner);
-				// 				//     thirdplaceTeams.push(semifinalArr[m].loser);
-				// 				//   }
-
-				// 				//   finalmatch1 = finalTeams.splice(0,2); 
-				// 				//   final.home = finalmatch1[0];
-				// 				//   final.away = finalmatch1[1];
-				// 				//   final.homeScore = 2;
-				// 				//   final.awayScore = 5;
-				// 				//   var firstplace = [];
-				// 				//   var secondplace = [];
-				// 				//   finalArr.push(final);
-				// 				//   console.log(finalArr);
-				// 				//   for(var m = 0; m < finalArr.length; m++){
-				// 				//   if(finalArr[m].homeScore > finalArr[m].awayScore){
-				// 				//     finalArr[m].winner = finalArr[m].home;
-				// 				//     finalArr[m].loser = finalArr[m].away;
-				// 				//   }else{    
-				// 				//     finalArr[m].winner = finalArr[m].away;
-				// 				//     finalArr[m].loser = finalArr[m].home;
-				// 				//   }
-				// 				//   console.log(finalArr[m].winner);
-				// 				//   firstplace.push(finalArr[m].winner);
-				// 				//   secondplace.push(finalArr[m].loser);
-				// 				// }
-				// 				// console.log("First Place : " + firstplace);
-				// 				// console.log("Second Place : " + secondplace);
-
-				// 				// thirdplaceteam = thirdplaceTeams.splice(0,2); 
-				// 				//   thirdplacematch.home = thirdplaceteam[0];
-				// 				//   thirdplacematch.away = thirdplaceteam[1];
-				// 				//   thirdplacematch.homeScore = 2;
-				// 				//   thirdplacematch.awayScore = 5;
-				// 				//   var thirdplace = [];
-				// 				//   thirdplaceArr.push(thirdplacematch);
-				// 				//   console.log(thirdplaceArr);
-				// 				//   for(var m = 0; m < thirdplaceArr.length; m++){
-				// 				//   if(thirdplaceArr[m].homeScore > thirdplaceArr[m].awayScore){
-				// 				//     thirdplaceArr[m].winner = thirdplaceArr[m].home;
-				// 				//     thirdplaceArr[m].loser = thirdplaceArr[m].away;
-				// 				//   }else{    
-				// 				//     thirdplaceArr[m].winner = thirdplaceArr[m].away;
-				// 				//     thirdplaceArr[m].loser = thirdplaceArr[m].home;
-				// 				//   }
-				// 				//   thirdplace.push(thirdplaceArr[m].winner);
-				// 				// }
-				// 				// console.log("Third Place : " + thirdplace);	
-				// 				}else if(entry.comp_numOfTeam == 16){
-				// 					console.log("16 team man");
-				// 					$scope.quarterfinalTeams = [];
-				// 					$scope.quarterfinalmatch = [];
-				// 					$scope.quarterfinal = [];
-				// 					$scope.quarterfinalArr = [];
-				// 					for(var r = 0; r < entry.comp_numOfTeam / 4; r++){
-				// 						$scope.quarterfinalmatch[r+1] = [];
-				// 						$scope.quarterfinal[r+1] = [];
-				// 						console.log($scope.quarterfinal);
-				// 					}
-				// 				}else{
-				// 					console.log("8 team man");
-				// 					$scope.semifinalTeams = [];
-				// 					$scope.semifinalmatch = [];
-				// 					$scope.semifinal = [];
-				// 					$scope.semifinalArr = [];
-				// 					for(var r = 1; r <= entry.comp_numOfTeam / 4; r++){
-				// 						$scope.semifinalmatch[r] = [];
-				// 						$scope.semifinal[r] = [];
-				// 					}
-				// 					if($scope.matchArr.length == 4){
-				// 					  for(var m = 0; m < $scope.matchArr.length; m++){
-				// 					    if($scope.matchArr[m].homeScore > $scope.matchArr[m].awayScore){
-				// 					      $scope.matchArr[m].winner = $scope.matchArr[m].home;
-				// 					    }else{    
-				// 					      $scope.matchArr[m].winner = $scope.matchArr[m].away;
-				// 					    }
-				// 					    $scope.semifinalTeams.push($scope.matchArr[m].winner);
-				// 					  }
-				// 					for(r = 1; r <= entry.comp_numOfTeam / 4; r++){
-				// 						$scope.semifinalmatch[r] = $scope.semifinalTeams.splice(0,2);
-				// 						$scope.semifinal[r].match_homeTeam = "";
-				// 						$scope.semifinal[r].match_awayTeam = "";
-				// 						$scope.semifinal[r].winner = "";
-				// 						$scope.semifinal[r].loser = "";
-				// 						$scope.semifinal[r].match_homeScore = 0;
-				// 						$scope.semifinal[r].match_awayScore = 0;
-				// 						$scope.semifinal[r].competition_id = entry.id;
-				// 						$scope.semifinal[r].match_status = "Semi Final";
-				// 						$scope.semifinalArr.push($scope.semifinal[r]);
-				// 					}
-				// 				 		console.log($scope.semifinalArr);
-				// 					}
-				// 					$scope.finalTeams = [];
-				// 					$scope.finalmatch = [];
-				// 					$scope.final = {};
-				// 					$scope.finalArr = [];
-				// 					$scope.thirdplaceTeams = [];
-				// 					  for(var m = 0; m < $scope.semifinalArr.length; m++){
-				// 					    if($scope.semifinalArr[m].homeScore > $scope.semifinalArr[m].awayScore){
-				// 					      $scope.semifinalArr[m].winner = $scope.semifinalArr[m].home;
-				// 					      $scope.semifinalArr[m].loser = $scope.semifinalArr[m].away;
-				// 					    }else{    
-				// 					      $scope.semifinalArr[m].winner = $scope.semifinalArr[m].away;
-				// 					   	  $scope.semifinalArr[m].loser = $scope.semifinalArr[m].home;
-				// 					    }
-				// 					    $scope.finalTeams.push($scope.semifinalArr[m].winner);
-				// 					    $scope.thirdplaceTeams.push($scope.semifinalArr[m].loser);
-				// 					  }
-
-				// 					  $scope.finalmatch = $scope.finalTeams.splice(0,2); 
-				// 					  $scope.final.home = $scope.finalmatch[0];
-				// 					  $scope.final.away = $scope.finalmatch[1];
-				// 					  $scope.final.homeScore = 2;
-				// 					  $scope.final.awayScore = 5;
-				// 					  var firstplace = [];
-				// 					  var secondplace = [];
-				// 					  $scope.finalArr.push($scope.final);
-				// 					  console.log($scope.finalArr);
-				// 					  for(var m = 0; m < $scope.finalArr.length; m++){
-				// 					  if($scope.finalArr[m].homeScore > $scope.finalArr[m].awayScore){
-				// 					    $scope.finalArr[m].winner = $scope.finalArr[m].home;
-				// 					    $scope.finalArr[m].loser = $scope.finalArr[m].away;
-				// 					  }else{    
-				// 					    $scope.finalArr[m].winner = $scope.finalArr[m].away;
-				// 					    $scope.finalArr[m].loser = $scope.finalArr[m].home;
-				// 					  }
-				// 					  console.log($scope.finalArr[m].winner);
-				// 					  firstplace.push($scope.finalArr[m].winner);
-				// 					  secondplace.push($scope.finalArr[m].loser);
-				// 					}
-				// 					console.log("First Place : " + firstplace);
-				// 					console.log("Second Place : " + secondplace);
-				// 					$scope.thirdplaceteams = [];
-				// 					$scope.thirdplacematch = {};
-				// 					$scope.thirdplaceArr = [];
-				// 					$scope.thirdplace = [];
-				// 					$scope.thirdplaceteam = $scope.thirdplaceTeams.splice(0,2); 
-				// 					  $scope.thirdplacematch.home = $scope.thirdplaceteam[0];
-				// 					  $scope.thirdplacematch.away = $scope.thirdplaceteam[1];
-				// 					  $scope.thirdplacematch.homeScore = 2;
-				// 					  $scope.thirdplacematch.awayScore = 5;
-				// 					  var thirdplace = [];
-				// 					  $scope.thirdplaceArr.push($scope.thirdplacematch);
-				// 					  console.log($scope.thirdplaceArr);
-				// 					  for(var m = 0; m < $scope.thirdplaceArr.length; m++){
-				// 					  if($scope.thirdplaceArr[m].homeScore > $scope.thirdplaceArr[m].awayScore){
-				// 					    $scope.thirdplaceArr[m].winner = $scope.thirdplaceArr[m].home;
-				// 					    $scope.thirdplaceArr[m].loser = $scope.thirdplaceArr[m].away;
-				// 					  }else{    
-				// 					    $scope.thirdplaceArr[m].winner = $scope.thirdplaceArr[m].away;
-				// 					    $scope.thirdplaceArr[m].loser = $scope.thirdplaceArr[m].home;
-				// 					  }
-				// 					  $scope.thirdplace.push($scope.thirdplaceArr[m].winner);
-				// 					}
-				// 					console.log("Third Place : " + $scope.thirdplace);
-				// 				}
-			
-				// 				if(entry.schedule_status === ""){
-				// 					console.log("blm di schedule");
-				// 					console.log($scope.matchArr.length);
-				// 					$scope.matchArr.forEach(function(entry){
-				// 						console.log(entry);
-				// 						//insert data to database
-				// 						MatchService.addMatch(entry).success(function(data){
-				// 							// $ionicLoading.hide();
-				// 							console.log("berhasil add match");
-				// 						}).error(function(data){
-				// 							// $ionicLoading.hide();
-				// 						});
-				// 						//insert data to database
-				// 					});
-				// 					console.log("on progressssssssss");
-				// 					$scope.formCompetition = {};
-				// 					$scope.formCompetition.schedule_status = "On Progress";
-				// 					console.log($scope.formCompetition);
-				// 					CompetitionService.editCompetition(entry.id, localStorage.getItem("token"), $scope.formCompetition).success(function(data) {
-				// 						// $ionicLoading.hide();
-				// 						console.log("berhasil");
-				// 					}).error(function(data) {
-				// 						// $ionicLoading.hide();
-				// 						console.log("gagal");
-				// 					});	
-				// 				}	
-				// 			}
-
-				// 				// if(entry.schedule_status === ""){	
-				// 				// 	console.log("on progressssssssss");
-				// 				// 	$scope.formCompetition = {};
-				// 				// 	$scope.formCompetition.schedule_status = "On Progress";
-				// 				// 	console.log($scope.formCompetition);
-				// 				// 	CompetitionService.editCompetition(entry.id, localStorage.getItem("token"), $scope.formCompetition).success(function(data) {
-				// 				// 		$ionicLoading.hide();
-				// 				// 		console.log("berhasil");
-				// 				// 	}).error(function(data) {
-				// 				// 		$ionicLoading.hide();
-				// 				// 		console.log("gagal");
-				// 				// 	});	
-				// 				// }
-				// 				// 32 Team
-				// 				// 8 team
-				// 				// $scope.semifinalTeams = [];
-				// 				// $scope.semifinalmatch1 = [];
-				// 				// $scope.semifinalmatch2 = [];
-				// 				// $scope.semifinal1 = {};
-				// 				// $scope.semifinal1.home = "";
-				// 				// $scope.semifinal1.away = "";
-				// 				// $scope.semifinal1.winner = "";
-				// 				// $scope.semifinal1.loser = "";
-				// 				// $scope.semifinal1.homeScore = 2;
-				// 				// $scope.semifinal1.awayScore = 5;
-				// 				// $scope.semifinal2 = {};
-				// 				// $scope.semifinal2.home = "";
-				// 				// $scope.semifinal2.away = "";
-				// 				// $scope.semifinal2.winner = "";
-				// 				// $scope.semifinal2.loser = "";
-				// 				// $scope.semifinal2.homeScore = 2;
-				// 				// $scope.semifinal2.awayScore = 5;
-				// 				// $scope.semifinalArr = [];
-				// 				// if($scope.matchArr.length == 4){
-				// 				//   for(var m = 0; m < $scope.matchArr.length; m++){
-				// 				//     if($scope.matchArr[m].homeScore > $scope.matchArr[m].awayScore){
-				// 				//       $scope.matchArr[m].winner = $scope.matchArr[m].home;
-				// 				//     }else{    
-				// 				//       $scope.matchArr[m].winner = $scope.matchArr[m].away;
-				// 				//     }
-				// 				//     $scope.semifinalTeams.push($scope.matchArr[m].winner);
-				// 				//   }
-
-				// 				//   $scope.semifinalmatch1 = $scope.semifinalTeams.splice(0,2); 
-				// 				//   $scope.semifinalmatch2 = $scope.semifinalTeams.splice(0,2);
-				// 				//   $scope.semifinal1.home = $scope.semifinalmatch1[0];
-				// 				//   $scope.semifinal1.away = $scope.semifinalmatch1[1];
-				// 				//   $scope.semifinal1.homeScore = 2;
-				// 				//   $scope.semifinal1.awayScore = 5;
-				// 				//   $scope.semifinal2.home = $scope.semifinalmatch2[0];
-				// 				//   $scope.semifinal2.away = $scope.semifinalmatch2[1];
-				// 				//   $scope.semifinal2.homeScore = 2;
-				// 				//   $scope.semifinal2.awayScore = 5;
-								  
-				// 				//   $scope.semifinalArr.push($scope.semifinal1);
-				// 				//   $scope.semifinalArr.push($scope.semifinal2);
-
-				// 				//   console.log($scope.semifinalArr);
-				// 				// }
-				// 				// $scope.finalTeams = [];
-				// 				// $scope.finalmatch = [];
-				// 				// $scope.final = {};
-				// 				// $scope.finalArr = [];
-				// 				// $scope.thirdplaceTeams = [];
-				// 				//   for(var m = 0; m < $scope.semifinalArr.length; m++){
-				// 				//     if($scope.semifinalArr[m].homeScore > $scope.semifinalArr[m].awayScore){
-				// 				//       $scope.semifinalArr[m].winner = $scope.semifinalArr[m].home;
-				// 				//       $scope.semifinalArr[m].loser = $scope.semifinalArr[m].away;
-				// 				//     }else{    
-				// 				//       $scope.semifinalArr[m].winner = $scope.semifinalArr[m].away;
-				// 				//    	  $scope.semifinalArr[m].loser = $scope.semifinalArr[m].home;
-				// 				//     }
-				// 				//     $scope.finalTeams.push($scope.semifinalArr[m].winner);
-				// 				//     $scope.thirdplaceTeams.push($scope.semifinalArr[m].loser);
-				// 				//   }
-
-				// 				//   $scope.finalmatch = $scope.finalTeams.splice(0,2); 
-				// 				//   $scope.final.home = $scope.finalmatch[0];
-				// 				//   $scope.final.away = $scope.finalmatch[1];
-				// 				//   $scope.final.homeScore = 2;
-				// 				//   $scope.final.awayScore = 5;
-				// 				//   var firstplace = [];
-				// 				//   var secondplace = [];
-				// 				//   $scope.finalArr.push($scope.final);
-				// 				//   console.log($scope.finalArr);
-				// 				//   for(var m = 0; m < $scope.finalArr.length; m++){
-				// 				//   if($scope.finalArr[m].homeScore > $scope.finalArr[m].awayScore){
-				// 				//     $scope.finalArr[m].winner = $scope.finalArr[m].home;
-				// 				//     $scope.finalArr[m].loser = $scope.finalArr[m].away;
-				// 				//   }else{    
-				// 				//     $scope.finalArr[m].winner = $scope.finalArr[m].away;
-				// 				//     $scope.finalArr[m].loser = $scope.finalArr[m].home;
-				// 				//   }
-				// 				//   console.log($scope.finalArr[m].winner);
-				// 				//   firstplace.push($scope.finalArr[m].winner);
-				// 				//   secondplace.push($scope.finalArr[m].loser);
-				// 				// }
-				// 				// console.log("First Place : " + firstplace);
-				// 				// console.log("Second Place : " + secondplace);
-				// 				// $scope.thirdplaceteams = [];
-				// 				// $scope.thirdplacematch = {};
-				// 				// $scope.thirdplaceArr = [];
-				// 				// $scope.thirdplace = [];
-				// 				// $scope.thirdplaceteam = $scope.thirdplaceTeams.splice(0,2); 
-				// 				//   $scope.thirdplacematch.home = $scope.thirdplaceteam[0];
-				// 				//   $scope.thirdplacematch.away = $scope.thirdplaceteam[1];
-				// 				//   $scope.thirdplacematch.homeScore = 2;
-				// 				//   $scope.thirdplacematch.awayScore = 5;
-				// 				//   var thirdplace = [];
-				// 				//   $scope.thirdplaceArr.push($scope.thirdplacematch);
-				// 				//   console.log($scope.thirdplaceArr);
-				// 				//   for(var m = 0; m < $scope.thirdplaceArr.length; m++){
-				// 				//   if($scope.thirdplaceArr[m].homeScore > $scope.thirdplaceArr[m].awayScore){
-				// 				//     $scope.thirdplaceArr[m].winner = $scope.thirdplaceArr[m].home;
-				// 				//     $scope.thirdplaceArr[m].loser = $scope.thirdplaceArr[m].away;
-				// 				//   }else{    
-				// 				//     $scope.thirdplaceArr[m].winner = $scope.thirdplaceArr[m].away;
-				// 				//     $scope.thirdplaceArr[m].loser = $scope.thirdplaceArr[m].home;
-				// 				//   }
-				// 				//   $scope.thirdplace.push($scope.thirdplaceArr[m].winner);
-				// 				// }
-				// 				// console.log("Third Place : " + $scope.thirdplace);
-				// 				// 8 team
-				// 			// Knockout Scheduling
-				// 		}
-				// 		$ionicLoading.hide();
-				// 	}
-				// 	$ionicLoading.hide();
-				// });
-				if($scope.allCompetition !== null){
-					clearInterval($scope.loadAllCompetition);
+				}).error(function(data) {
 					$ionicLoading.hide();
-				}
-			}).error(function(data) {
-				$ionicLoading.hide();
-			});
-		}
+				});
+			}
 		};
 		// window.onload = $scope.getAllCompetition;
 		$scope.loadAllCompetition = setInterval($scope.getAllCompetition, 5000);
@@ -2913,6 +2993,99 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			});
 		}	
 	};
+
+	$scope.teamASecond = 0;
+	// $scope.teamAMinute = 0;
+	$scope.teamBSecond = 0;
+	// $scope.teamBMinute = 0;
+	$scope.timerTeamAStat = false;
+	$scope.timerTeamBStat = false;
+
+	$scope.startTeamATimer = function(){
+		console.log("afsd fsdf sdfsdf sdfsdf sf");
+		$scope.teamASecond = $scope.teamASecond + 1;
+		// if($scope.teamASecond == 59){
+		// 	$scope.teamASecond = 0;
+		// 	$scope.teamAMinute = $scope.teamAMinute + 1;
+		// }
+	};
+
+	$scope.startTeamBTimer = function(){
+		console.log("afsd fsdf sdfsdf sdfsdf sf");
+		$scope.teamBSecond = $scope.teamBSecond + 1;
+		// if($scope.teamBSecond == 59){
+		// 	$scope.teamBSecond = 0;
+		// 	$scope.teamBMinute = $scope.teamBMinute + 1;
+		// }
+	};
+
+	$scope.startTimerTeamA = function(){
+		$scope.loadTimerTeamA = setInterval($scope.startTeamATimer, 1000);
+		clearInterval($scope.loadTimerTeamB);
+		$scope.timerTeamAStat = true;
+		$scope.timerTeamBStat = false;
+	};
+
+	$scope.stopTimerAB = function(){
+		clearInterval($scope.loadTimerTeamA);
+		clearInterval($scope.loadTimerTeamB);
+		$scope.timerTeamAStat = false;
+		$scope.timerTeamBStat = false;
+	};
+
+	$scope.startTimerTeamB = function(){
+		$scope.loadTimerTeamB = setInterval($scope.startTeamBTimer, 1000);
+		clearInterval($scope.loadTimerTeamA);
+		$scope.timerTeamBStat = true;
+		$scope.timerTeamAStat = false;
+	};
+
+
+	$scope.possessionTeamAPercentage = 0;
+	$scope.possessionTeamBPercentage = 0;
+	// $scope.totalMinute = 0;
+	$scope.totalSecond = 0;
+	// console.log($scope.teamAMinute);
+
+
+	// to do 
+	// change total into second
+	// load team possession when teamASecond != 0 && teamBSecond != 0
+
+	$scope.startTeamPossession = function() {
+		console.log($scope.teamASecond);
+		console.log($scope.teamBSecond);
+	// if (($scope.teamAMinute == 0) && ($scope.teamBMinute == 0)) {
+	// 	console.log("team a minute 0");
+	// 	if(($scope.teamASecond != 0) && ($scope.teamBSecond != 0)){
+	// 		$scope.totalSecond = $scope.teamASecond + $scope.teamBSecond;
+	// 		$scope.possessionTeamAPercentage = parseInt($scope.teamASecond / $scope.totalSecond * 100);
+	// 		$scope.possessionTeamBPercentage = parseInt($scope.teamBSecond / $scope.totalSecond * 100); 
+	// 	}else{
+	// 		console.log("team a second 0");
+	// 	}
+	// } else {
+	// 	// $scope.totalMinute = $scope.teamAMinute + $scope.teamBMinute;	
+	// 	// $scope.possessionTeamAPercentage = $scope.teamAMinute / $scope.totalMinute * 100;
+	// 	// $scope.possessionTeamBPercentage = $scope.teamBMinute / $scope.totalMinute * 100;
+
+	// }
+		if($scope.teamASecond != 0 && $scope.teamBSecond != 0){
+			$scope.totalSecond = $scope.teamASecond + $scope.teamBSecond;
+			$scope.possessionTeamAPercentage = parseInt($scope.teamASecond / $scope.totalSecond * 100);
+			$scope.possessionTeamBPercentage = parseInt($scope.teamBSecond / $scope.totalSecond * 100);
+		}else{
+			$scope.possessionTeamAPercentage = 0;
+			$scope.possessionTeamBPercentage = 0;
+		}
+
+	};
+
+
+	$scope.loadTeamPossession = setInterval($scope.startTeamPossession, 10000);
+
+
+
 
 	// window.onload = $scope.getMatchById;
     $scope.loadMatch = setInterval($scope.getMatchById, 1000);

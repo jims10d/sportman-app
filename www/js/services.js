@@ -1761,95 +1761,113 @@ angular.module('starter.services', [])
 		        };
 		        return promise;
         	},
-        	getMatchesByReferee: function(referee, date) {
-            var deferred = $q.defer();
-            var promise = deferred.promise;
-            $http.get(BACKEND.URL + '/matches?filter=%7B%22where%22%3A%7B%22match_referee%22%3A%22' + referee + '%22%2C%20%22match_date%22%3A%22' + date + '%22%7D%2C%20%22order%22%3A%22match_date%22%7D').success(function(response) {
-                deferred.resolve(response);
-            }).error(function(response) {
-                deferred.reject(response);
-            });
-            promise.success = function(fn) {
-                promise.then(fn);
-                return promise;
-            };
-            promise.error = function(fn) {
-                promise.then(null, fn);
-                return promise;
-            };
-            return promise;
+        	getMatchesByReferee: function(referee) {
+	            var deferred = $q.defer();
+	            var promise = deferred.promise;
+	            $http.get(BACKEND.URL + '/matches?filter=%7B%22where%22%3A%7B%22match_referee%22%3A%22' + referee + '%22%7D%7D').success(function(response) {
+	                deferred.resolve(response);
+	            }).error(function(response) {
+	                deferred.reject(response);
+	            });
+	            promise.success = function(fn) {
+	                promise.then(fn);
+	                return promise;
+	            };
+	            promise.error = function(fn) {
+	                promise.then(null, fn);
+	                return promise;
+	            };
+	            return promise;
+        	},
+        	getMatchesByRefereeAndDate: function(referee, date) {
+	            var deferred = $q.defer();
+	            var promise = deferred.promise;
+	            $http.get(BACKEND.URL + '/matches?filter=%7B%22where%22%3A%7B%22match_referee%22%3A%22' + referee + '%22%2C%20%22match_date%22%3A%22' + date + '%22%7D%2C%20%22order%22%3A%22match_date%22%7D').success(function(response) {
+	                deferred.resolve(response);
+	            }).error(function(response) {
+	                deferred.reject(response);
+	            });
+	            promise.success = function(fn) {
+	                promise.then(fn);
+	                return promise;
+	            };
+	            promise.error = function(fn) {
+	                promise.then(null, fn);
+	                return promise;
+	            };
+	            return promise;
         	},
         	getAvailableMatches: function(date) {
-            var deferred = $q.defer();
-            var promise = deferred.promise;
-            $http.get(BACKEND.URL + '/matches?filter=%7B%22where%22%3A%7B%22match_referee%22%3A%22%22%2C%20%22match_date%22%3A%22' + date + '%22%7D%2C%20%22order%22%3A%22match_time%22%7D').success(function(response) {
-                deferred.resolve(response);
-            }).error(function(response) {
-                deferred.reject(response);
-            });
-            promise.success = function(fn) {
-                promise.then(fn);
-                return promise;
-            };
-            promise.error = function(fn) {
-                promise.then(null, fn);
-                return promise;
-            };
-            return promise;
+	            var deferred = $q.defer();
+	            var promise = deferred.promise;
+	            $http.get(BACKEND.URL + '/matches?filter=%7B%22where%22%3A%7B%22match_referee%22%3A%22%22%2C%20%22match_date%22%3A%22' + date + '%22%7D%2C%20%22order%22%3A%22match_time%22%7D').success(function(response) {
+	                deferred.resolve(response);
+	            }).error(function(response) {
+	                deferred.reject(response);
+	            });
+	            promise.success = function(fn) {
+	                promise.then(fn);
+	                return promise;
+	            };
+	            promise.error = function(fn) {
+	                promise.then(null, fn);
+	                return promise;
+	            };
+	            return promise;
         	},
         	getOnProgressMatches: function(referee, date) {
-            var deferred = $q.defer();
-            var promise = deferred.promise;
-            $http.get(BACKEND.URL + '/matches?filter=%7B%22where%22%3A%7B%22match_referee%22%3A%22' + referee + '%22%2C%22referee_status%22%3A%22onprogress%22%2C%20%22match_date%22%3A%22' + date + '%22%7D%2C%20%22order%22%3A%22match_time%22%7D').success(function(response) {
-                deferred.resolve(response);
-            }).error(function(response) {
-                deferred.reject(response);
-            });
-            promise.success = function(fn) {
-                promise.then(fn);
-                return promise;
-            };
-            promise.error = function(fn) {
-                promise.then(null, fn);
-                return promise;
-            };
-            return promise;
+	            var deferred = $q.defer();
+	            var promise = deferred.promise;
+	            $http.get(BACKEND.URL + '/matches?filter=%7B%22where%22%3A%7B%22match_referee%22%3A%22' + referee + '%22%2C%22referee_status%22%3A%22onprogress%22%2C%20%22match_date%22%3A%22' + date + '%22%7D%2C%20%22order%22%3A%22match_time%22%7D').success(function(response) {
+	                deferred.resolve(response);
+	            }).error(function(response) {
+	                deferred.reject(response);
+	            });
+	            promise.success = function(fn) {
+	                promise.then(fn);
+	                return promise;
+	            };
+	            promise.error = function(fn) {
+	                promise.then(null, fn);
+	                return promise;
+	            };
+	            return promise;
         	},
         	getAcceptedMatches: function(referee, date) {
-            var deferred = $q.defer();
-            var promise = deferred.promise;
-            $http.get(BACKEND.URL + '/matches?filter=%7B%22where%22%3A%7B%22match_referee%22%3A%22' + referee + '%22%2C%22referee_status%22%3A%22accepted%22%2C%20%22match_date%22%3A%22' + date + '%22%7D%2C%20%22order%22%3A%22match_time%22%7D').success(function(response) {
-                deferred.resolve(response);
-            }).error(function(response) {
-                deferred.reject(response);
-            });
-            promise.success = function(fn) {
-                promise.then(fn);
-                return promise;
-            };
-            promise.error = function(fn) {
-                promise.then(null, fn);
-                return promise;
-            };
-            return promise;
+	            var deferred = $q.defer();
+	            var promise = deferred.promise;
+	            $http.get(BACKEND.URL + '/matches?filter=%7B%22where%22%3A%7B%22match_referee%22%3A%22' + referee + '%22%2C%22referee_status%22%3A%22accepted%22%2C%20%22match_date%22%3A%22' + date + '%22%7D%2C%20%22order%22%3A%22match_time%22%7D').success(function(response) {
+	                deferred.resolve(response);
+	            }).error(function(response) {
+	                deferred.reject(response);
+	            });
+	            promise.success = function(fn) {
+	                promise.then(fn);
+	                return promise;
+	            };
+	            promise.error = function(fn) {
+	                promise.then(null, fn);
+	                return promise;
+	            };
+	            return promise;
         	},
         	getMatchesByCompetitionId: function(compId, fixtureNum, token) {
-            var deferred = $q.defer();
-            var promise = deferred.promise;
-            $http.get(BACKEND.URL + '/competitions/'+compId+'/matches?filter=%7B%22where%22%3A%7B%22fixture_number%22%3A%22'+fixtureNum+'%22%7D%7D&access_token=' + token).success(function(response) {
-                deferred.resolve(response);
-            }).error(function(response) {
-                deferred.reject(response);
-            });
-            promise.success = function(fn) {
-                promise.then(fn);
-                return promise;
-            };
-            promise.error = function(fn) {
-                promise.then(null, fn);
-                return promise;
-            };
-            return promise;
+	            var deferred = $q.defer();
+	            var promise = deferred.promise;
+	            $http.get(BACKEND.URL + '/competitions/'+compId+'/matches?filter=%7B%22where%22%3A%7B%22fixture_number%22%3A%22'+fixtureNum+'%22%7D%7D&access_token=' + token).success(function(response) {
+	                deferred.resolve(response);
+	            }).error(function(response) {
+	                deferred.reject(response);
+	            });
+	            promise.success = function(fn) {
+	                promise.then(fn);
+	                return promise;
+	            };
+	            promise.error = function(fn) {
+	                promise.then(null, fn);
+	                return promise;
+	            };
+	            return promise;
         	},
         	editMatchById: function(matchId, token, data) {
 				var deferred = $q.defer();

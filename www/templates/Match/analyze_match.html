@@ -1,0 +1,142 @@
+<ion-view view-title="Track Score" title-center cache-view="true">
+<ion-nav-buttons side="left">
+<button class="button button-clear icon-button mdi mdi-arrow-left" ng-click="back()"></button>
+</ion-nav-buttons>
+<!-- Right button -->
+<ion-nav-buttons side="right">
+<!-- Filter button -->
+<button class="button button-clear icon-button mdi mdi-send" ng-click="editMatchById()" style="min-height:44px;font-size:20px;margin-top:2px;"></button>
+</ion-nav-buttons>
+<!-- Fake button -->
+<button ng-click="searchbutton = !searchbutton; filterbutton = false" id="searchbutton" style="display:none"></button>
+<button ng-click="filterbutton = !filterbutton; searchbutton = false" id="filterbutton" style="display:none"></button>
+<!-- Search bar -->
+<div class="bar item-input-inset" style="border:none;margin-top:58px;margin-bottom:100px;position: fixed" ng-show="searchbutton">
+  <i class="icon ion-ios-search placeholder-icon" style="background:white; height:56px; padding-top:16px; padding-left:11px;"></i><input id="search" type="text" placeholder=" Search..." ng-model="search" style="width:100%; height:60px;" />
+</div>
+<!-- Shadow space -->
+<div class="bar item-input-inset" style="border:none;box-shadow: 0 1px 2px #aaa"></div>
+<ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color: #ececec; z-index:0; margin-top:12px;">
+<!-- for refresh -->
+<ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()" refreshing-text="Fetching ..." refreshing-icon="ion-loading-b"></ion-refresher>
+<div class="card" style="margin-bottom:10px;background-color:#4db6ac;">
+  <div class="item item-text-wrap" style="padding:0px;">
+    <div class="row" style="margin:0px;padding:0px;">
+      <div ng-if="matchData.timer_status == null || matchData.timer_status == 'started'" class="col col-20" style="text-align:center;color:#4DB6AC;font-size:16px;background-color:white;margin:0 auto;border-bottom-left-radius:5px;border-bottom-right-radius:5px;">{{matchData.timer}}'</div>
+      <div ng-if="matchData.timer_status == 'halftime'"  class="col col-10" style="text-align:center;color:#4DB6AC;font-size:16px;background-color:white;margin:0 auto;border-bottom-left-radius:5px;border-bottom-right-radius:5px;">HT</div>
+      <div ng-if="matchData.timer_status == 'fulltime'"  class="col col-10" style="text-align:center;color:#4DB6AC;font-size:16px;background-color:white;margin:0 auto;border-bottom-left-radius:5px;border-bottom-right-radius:5px;">FT</div>
+    </div>
+    <div class="row" style="margin:0px;">
+      <div class="col col-35" style="text-align:center;color:white;"><center><img src="img\sportmanLogo\sportman logo v1.1.10.png" style="width: 70px;height: 70px;" class="avatar motion"></center></div>
+      <div class="col col-20" style="text-align:center;color:#4DB6AC;font-size:15px;color:white;margin-top:30px;">{{possessionTeamAPercentage}}%</div>
+      <div class="col col-10" style="text-align:center;color:#4DB6AC;font-size:30px;color:white;margin-top:30px;">-</div>
+      <div class="col col-20" style="text-align:center;color:#4DB6AC;font-size:15px;color:white;margin-top:30px;">{{possessionTeamBPercentage}}%</div>
+      <div class="col col-35" style="text-align:center;color:white;"><center><img src="img\sportmanLogo\sportman logo v1.1.10.png" style="width: 70px;height: 70px;" class="avatar motion"></center></div>
+    </div>
+    <div class="row" style="margin:0px;">
+      <div class="col col-50" style="text-align:left;color:#4DB6AC;font-size:16px;color:white;">
+        <div style="text-align: left;">{{matchData.match_homeTeam}}</div>
+
+      </div>
+      <div class="col col-50" style="text-align:right;color:#4DB6AC;font-size:16px;color:white;">
+        <div style="text-align: right;">{{matchData.match_awayTeam}}</div>
+       
+      </div>
+    </div>
+   <!--  <div class="row" style="margin:0px;">
+      <div class="col" style="text-align:center;color:#4DB6AC;font-size:16px;color:white;">
+        <div style="text-align: center;margin-top: 10px;">00:00</div>
+      </div>
+      <div class="col" style="text-align:center;color:#4DB6AC;font-size:16px;color:white;">
+        <div style="text-align: center;margin-top: 10px;"></div>
+      </div>
+      <div class="col" style="text-align:center;color:#4DB6AC;font-size:16px;color:white;">
+        <div style="text-align: center;margin-top: 10px;">00:00</div>
+      </div>
+    </div> -->
+  </div>
+</div>
+
+<div class="card" style="margin-bottom:10px;background-color:#FFFFFF;">
+  <div class="item item-text-wrap" style="padding:0px;">
+
+    <!-- Possession -->
+    <div class="row" style="margin:0px;padding:0px;height: 20px;">
+      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;" ng-click="goalHome()" ng-show="matchData.timer_status == 'started'">
+        <p>{{teamASecond}}</p>
+        <!-- <p ng-show="(teamAMinute < 10 && teamASecond < 10)">0{{teamAMinute}}:0{{teamASecond}}</p>
+        <p ng-show="(teamAMinute < 10 && teamASecond > 9)">0{{teamAMinute}}:{{teamASecond}}</p>
+        <p ng-show="(teamAMinute > 9 && teamASecond < 10)">{{teamAMinute}}:0{{teamASecond}}</p>
+        <p ng-show="(teamAMinute > 9 && teamASecond > 9)">{{teamAMinute}}:{{teamASecond}}</p> -->
+      </div>
+
+      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;" ng-show="matchData.timer_status == 'halftime' || matchData.timer_status == 'fulltime'">
+        <p>{{teamASecond}}</p>
+       <!--  <p ng-show="(teamAMinute < 10 && teamASecond < 10)">0{{teamAMinute}}:0{{teamASecond}}</p>
+        <p ng-show="(teamAMinute < 10 && teamASecond > 9)">0{{teamAMinute}}:{{teamASecond}}</p>
+        <p ng-show="(teamAMinute > 9 && teamASecond < 10)">{{teamAMinute}}:0{{teamASecond}}</p>
+        <p ng-show="(teamAMinute > 9 && teamASecond > 9)">{{teamAMinute}}:{{teamASecond}}</p> -->
+      </div>
+
+      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;" ng-click="goalHome()" ng-show="matchData.timer_status == 'started'">
+      </div>
+
+      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;" ng-show="matchData.timer_status == 'halftime' || matchData.timer_status == 'fulltime'">
+      </div>
+
+      <div class="col" style="text-align:center;color:#26A69A;" ng-click="goalAway()" ng-show="matchData.timer_status == 'started'">
+        <p>{{teamBSecond}}</p>
+       <!--  <p ng-show="(teamBMinute < 10 && teamBSecond < 10)">0{{teamBMinute}}:0{{teamBSecond}}</p>
+        <p ng-show="(teamBMinute < 10 && teamBSecond > 9)">0{{teamBMinute}}:{{teamBSecond}}</p>
+        <p ng-show="(teamBMinute > 9 && teamBSecond < 10)">{{teamBMinute}}:0{{teamBSecond}}</p>
+        <p ng-show="(teamBMinute > 9 && teamBSecond > 9)">{{teamBMinute}}:{{teamBSecond}}</p> -->
+      </div
+      >
+      <div class="col" style="text-align:center;color:#26A69A;" ng-show="matchData.timer_status == 'halftime' || matchData.timer_status == 'fulltime'">
+        <p>{{teamBSecond}}</p>
+       <!--  <p ng-show="(teamBMinute < 10 && teamBSecond < 10)">0{{teamBMinute}}:0{{teamBSecond}}</p>
+        <p ng-show="(teamBMinute < 10 && teamBSecond > 9)">0{{teamBMinute}}:{{teamBSecond}}</p>
+        <p ng-show="(teamBMinute > 9 && teamBSecond < 10)">{{teamBMinute}}:0{{teamBSecond}}</p>
+        <p ng-show="(teamBMinute > 9 && teamBSecond > 9)">{{teamBMinute}}:{{teamBSecond}}</p> -->
+      </div>
+    </div>
+
+    <div class="row" style="margin:0px;padding:0px;">
+      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:20px;padding-bottom:20px;" ng-show="timerTeamAStat === true">
+        <i class="ion-ios-football" style="font-size:30px;color:#cdcece;"></i>
+        <p style="color: #b2b2b2;">Possession</p>
+      </div>
+
+      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:20px;padding-bottom:20px;" ng-click="startTimerTeamA()" ng-show="timerTeamAStat === false">
+        <i class="ion-ios-football" style="font-size:30px;color:#444;"></i>
+        <p>Possession</p>
+      </div>
+
+      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:25px;padding-bottom:20px;" ng-click="goalHome()" ng-show="matchData.timer_status == 'started'" ng-click="stopTimerAB()">
+        <i class="ion-pause" style="font-size:25px;" ng-click="stopTimerAB()"></i>
+      </div>
+
+      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:25px;padding-bottom:20px;" ng-show="matchData.timer_status == 'halftime' || matchData.timer_status == 'fulltime'" ng-click="stopTimerAB()">
+        <i class="ion-pause" style="font-size:25px;" ng-click="stopTimerAB()"></i>
+      </div>
+
+      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:20px;padding-bottom:20px;" ng-show="timerTeamBStat === true">
+        <i class="ion-ios-football" style="font-size:30px;color:#cdcece;"></i>
+        <p style="color: #b2b2b2;">Possession</p>
+      </div>
+
+      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:20px;padding-bottom:20px;" ng-click="startTimerTeamB()" ng-show="timerTeamBStat === false">
+        <i class="ion-ios-football" style="font-size:30px;color:#444;"></i>
+        <p>Possession</p>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+<!-- White Space -->
+<div style="height:55px;background:transparent" ng-show="searchbutton"></div>
+<div style="height:200px;background:transparent" ng-show="filterbutton"></div>
+<!--List Posting-->
+</ion-content>
+</ion-view>

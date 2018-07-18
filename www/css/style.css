@@ -293,13 +293,13 @@ ion-buttons:hover{
 }
 
 .button-register-competition:hover {
-  margin-top: 15px;
+/*  margin-top: 15px;
   margin-left: 160px;
   border-radius: 50px;
-  margin-bottom: 0px; 
+  margin-bottom: 0px; */
   /*background-color: #1b3748;*/
-  background-color: #4d9e96;
-  color: #ffffff;
+/*  background-color: #4d9e96;
+  color: #ffffff;*/
 }
 
 

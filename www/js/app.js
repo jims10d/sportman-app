@@ -367,6 +367,15 @@ $stateProvider
 		}
 	}
 })
+.state('app.analyze_match', {
+	url: '/analyze_match/:matchId',
+	views: {
+		'home': {
+			templateUrl: 'templates/Match/analyze_match.html',
+			controller: 'EditMatchCtrl'
+		}
+	}
+})
 .state('app.live_score', {
 	url: '/live_score',
 	views: {

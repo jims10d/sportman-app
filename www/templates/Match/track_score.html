@@ -19,7 +19,7 @@
 <ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color: #ececec; z-index:0; margin-top:12px;">
 <!-- for refresh -->
 <ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()" refreshing-text="Fetching ..." refreshing-icon="ion-loading-b"></ion-refresher>
-<div class="card" style="margin-bottom:10px;background-color:#26A69A;">
+<div class="card" style="margin-bottom:10px;background-color:#4db6ac;">
   <div class="item item-text-wrap" style="padding:0px;">
     <div class="row" style="margin:0px;padding:0px;">
       <div ng-if="matchData.timer_status == null || matchData.timer_status == 'started'" class="col col-20" style="text-align:center;color:#4DB6AC;font-size:16px;background-color:white;margin:0 auto;border-bottom-left-radius:5px;border-bottom-right-radius:5px;">{{matchData.timer}}'</div>
@@ -27,11 +27,11 @@
       <div ng-if="matchData.timer_status == 'fulltime'"  class="col col-10" style="text-align:center;color:#4DB6AC;font-size:16px;background-color:white;margin:0 auto;border-bottom-left-radius:5px;border-bottom-right-radius:5px;">FT</div>
     </div>
     <div class="row" style="margin:0px;">
-      <div class="col col-35" style="text-align:center;color:white;"><center><img src="img/icon.png" style="width: 70px;height: 70px;" class="avatar motion"></center></div>
+      <div class="col col-35" style="text-align:center;color:white;"><center><img src="img\sportmanLogo\sportman logo v1.1.10.png" style="width: 70px;height: 70px;" class="avatar motion"></center></div>
       <div class="col col-20" style="text-align:center;color:#4DB6AC;font-size:30px;color:white;margin-top:30px;">{{matchData.match_homeScore}}</div>
       <div class="col col-10" style="text-align:center;color:#4DB6AC;font-size:30px;color:white;margin-top:30px;">-</div>
       <div class="col col-20" style="text-align:center;color:#4DB6AC;font-size:30px;color:white;margin-top:30px;">{{matchData.match_awayScore}}</div>
-      <div class="col col-35" style="text-align:center;color:white;"><center><img src="img/icon.png" style="width: 70px;height: 70px;" class="avatar motion"></center></div>
+      <div class="col col-35" style="text-align:center;color:white;"><center><img src="img\sportmanLogo\sportman logo v1.1.10.png" style="width: 70px;height: 70px;" class="avatar motion"></center></div>
     </div>
     <div class="row" style="margin:0px;">
       <div class="col col-50" style="text-align:left;color:#4DB6AC;font-size:16px;color:white;">{{matchData.match_homeTeam}}</div>
@@ -52,33 +52,169 @@
 
 <div class="card" style="margin-bottom:10px;background-color:#FFFFFF;">
   <div class="item item-text-wrap" style="padding:0px;">
+
+    <!-- Goal -->
     <div class="row" style="margin:0px;padding:0px;">
-      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:20px;padding-bottom:20px;" ng-click="goalHome()" ng-show="matchData.timer_status == 'started'"><i class="ion-ios-football" style="font-size:30px;color:#4ab5d4;"></i></div>
-      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:20px;padding-bottom:20px;" ng-click="goalHome()" ng-show="matchData.timer_status == 'halftime' || matchData.timer_status == 'fulltime'"><i class="ion-ios-football" style="font-size:30px;color:#cdcece;"></i></div>
-      <!-- <div class="col" style="text-align:center;color:#26A69A;margin:10px;">|</div> -->
-      <div class="col" style="text-align:center;color:#26A69A;padding-top:20px;padding-bottom:20px;" ng-click="goalAway()" ng-show="matchData.timer_status == 'started'"><i class="ion-ios-football" style="font-size:30px;color:#4ab5d4;"></i></div>
-      <div class="col" style="text-align:center;color:#26A69A;padding-top:20px;padding-bottom:20px;" ng-click="goalAway()" ng-show="matchData.timer_status == 'halftime' || matchData.timer_status == 'fulltime'"><i class="ion-ios-football" style="font-size:30px;color:#cdcece;"></i></div>
+      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:20px;padding-bottom:20px;" ng-click="goalHome()" ng-show="matchData.timer_status == 'started'">
+        <i class="ion-ios-football" style="font-size:30px;color:#444;"></i>
+        <p>Goal</p>
+      </div>
+
+      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:20px;padding-bottom:20px;" ng-show="matchData.timer_status == 'halftime' || matchData.timer_status == 'fulltime'">
+        <i class="ion-ios-football" style="font-size:30px;color:#cdcece;"></i>
+        <p>Goal</p>
+      </div>
+
+      <div class="col" style="text-align:center;color:#26A69A;padding-top:20px;padding-bottom:20px;" ng-click="goalAway()" ng-show="matchData.timer_status == 'started'">
+        <i class="ion-ios-football" style="font-size:30px;color:#444;"></i>
+        <p>Goal</p>
+      </div
+      >
+      <div class="col" style="text-align:center;color:#26A69A;padding-top:20px;padding-bottom:20px;" ng-show="matchData.timer_status == 'halftime' || matchData.timer_status == 'fulltime'">
+        <i class="ion-ios-football" style="font-size:30px;color:#cdcece;"></i>
+        <p>Goal</p>
+      </div>
     </div>
+
+    <!-- Own Goal -->
     <div class="row" style="margin:0px;padding:0px;">
+      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:20px;padding-bottom:20px;" ng-click="goalHome()" ng-show="matchData.timer_status == 'started'">
+        <i class="ion-ios-football" style="font-size:30px;color:#ef473a;"></i>
+        <p>Own Goal</p>
+      </div>
+
+      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:20px;padding-bottom:20px;" ng-show="matchData.timer_status == 'halftime' || matchData.timer_status == 'fulltime'">
+        <i class="ion-ios-football" style="font-size:30px;color:#cdcece;"></i>
+        <p>Own Goal</p>
+      </div>
+     
+      <div class="col" style="text-align:center;color:#26A69A;padding-top:20px;padding-bottom:20px;" ng-click="goalAway()" ng-show="matchData.timer_status == 'started'">
+        <i class="ion-ios-football" style="font-size:30px;color:#ef473a;"></i>
+        <p>Own Goal</p>
+      </div>
+
+       <div class="col" style="text-align:center;color:#26A69A;padding-top:20px;padding-bottom:20px;" ng-show="matchData.timer_status == 'halftime' || matchData.timer_status == 'fulltime'">
+        <i class="ion-ios-football" style="font-size:30px;color:#cdcece;"></i>
+        <p>Own Goal</p>
+      </div>
+    </div>
+
+    <!-- Penalty Goal -->
+    <div class="row" style="margin:0px;padding:0px;">
+      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:20px;padding-bottom:20px;" ng-click="goalHome()" ng-show="matchData.timer_status == 'started'">
+        <center><img src="img/iconFootball/penalty goal2.png" style="width: 40px;height: 40px;" /></center>
+        <p>Penalty Goal</p>
+      </div>
+
+      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:20px;padding-bottom:20px;" ng-show="matchData.timer_status == 'halftime' || matchData.timer_status == 'fulltime'">
+        <center><img src="img/iconFootball/penalty goal2.png" style="width: 40px;height: 40px;opacity: 0.4;" /></center>
+        <p>Penalty Goal</p>
+      </div>
+     
+      <div class="col" style="text-align:center;color:#26A69A;padding-top:20px;padding-bottom:20px;" ng-click="goalAway()" ng-show="matchData.timer_status == 'started'">
+        <center><img src="img/iconFootball/penalty goal2.png" style="width: 40px;height: 40px;" /></center>
+        <p>Penalty Goal</p>
+      </div>
+
+      <div class="col" style="text-align:center;color:#26A69A;padding-top:20px;padding-bottom:20px;" ng-show="matchData.timer_status == 'halftime' || matchData.timer_status == 'fulltime'">
+        <center><img src="img/iconFootball/penalty goal2.png" style="width: 40px;height: 40px;opacity: 0.4;" /></center>
+        <p>Penalty Goal</p>
+      </div>
+    </div>
+
+    <!-- <div class="row" style="margin:0px;padding:0px;">
       <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:20px;padding-bottom:20px;" ng-click="assistHome()"><i class="ion-android-hand" style="font-size:30px;color:#6f7e7c;"></i></div>
       <div class="col" style="text-align:center;color:#26A69A;padding-top:20px;padding-bottom:20px;" ng-click="assistAway()"><i class="ion-android-hand" style="font-size:30px;color:#6f7e7c;"></i></div>
-    </div>
+    </div> -->
+
+    <!-- Yellow Card -->
     <div class="row" style="margin:0px;padding:0px;">
-      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:20px;padding-bottom:20px;" ng-click="YelCardHome()"><i class="ion-ios-photos" style="font-size: 30px;color:rgb(239, 206, 82);"></i></div>
-      <div class="col" style="text-align:center;color:#26A69A;padding-top:20px;padding-bottom:20px;" ng-click="YelCardAway()"><i class="ion-ios-photos" style="font-size:30px;color:rgb(239, 206, 82);"></i></div>
+      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:20px;padding-bottom:20px;" ng-click="YelCardHome()" ng-show="matchData.timer_status == 'started'">
+        <!-- <i class="ion-ios-photos" style="font-size: 30px;color:rgb(239, 206, 82);"></i> -->
+        <center><img src="img/iconFootball/yellow card2.png" style="width: 40px;height: 40px;" /></center>
+        <p>Yellow Card</p>
+      </div>
+
+      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:20px;padding-bottom:20px;" ng-show="matchData.timer_status == 'halftime' || matchData.timer_status == 'fulltime'">
+        <!-- <i class="ion-ios-photos" style="font-size: 30px;color:#cdcece;"></i> -->
+        <center><img src="img/iconFootball/yellow card2.png" style="width: 40px;height: 40px;opacity: 0.4;" /></center>
+        <p>Yellow Card</p>
+      </div>
+
+      <div class="col" style="text-align:center;color:#26A69A;padding-top:20px;padding-bottom:20px;" ng-click="YelCardAway()" ng-show="matchData.timer_status == 'started'">
+        <!-- <i class="ion-ios-photos" style="font-size:30px;color:rgb(239, 206, 82);"></i> -->
+        <center><img src="img/iconFootball/yellow card2.png" style="width: 40px;height: 40px;" /></center>
+        <p>Yellow Card</p>
+      </div>
+
+      <div class="col" style="text-align:center;color:#26A69A;padding-top:20px;padding-bottom:20px;" ng-show="matchData.timer_status == 'halftime' || matchData.timer_status == 'fulltime'">
+        <!-- <i class="ion-ios-photos" style="font-size:30px;color:#cdcece;"></i> -->
+        <center><img src="img/iconFootball/yellow card2.png" style="width: 40px;height: 40px;opacity: 0.4;" /></center>
+        <p>Yellow Card</p>
+      </div>
     </div>
+
+    <!-- Red Card -->
     <div class="row" style="margin:0px;padding:0px;">
-      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:20px;padding-bottom:20px;" ng-click="RedCardHome()"><i class="ion-ios-photos" style="font-size:30px;color:#ef473a;"></i></div>
-      <div class="col" style="text-align:center;color:#26A69A;padding-top:20px;padding-bottom:20px;" ng-click="RedCardAway()"><i class="ion-ios-photos" style="font-size:30px;color:#ef473a;"></i></div>
+      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:20px;padding-bottom:20px;" ng-click="RedCardHome()" ng-show="matchData.timer_status == 'started'">
+        <!-- <i class="ion-ios-photos" style="font-size:30px;color:#ef473a;"></i> -->
+        <center><img src="img/iconFootball/red card2.png" style="width: 40px;height: 40px;" /></center>
+        <p>Red Card</p>
+      </div>
+
+      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:20px;padding-bottom:20px;" ng-show="matchData.timer_status == 'halftime' || matchData.timer_status == 'fulltime'">
+        <!-- <i class="ion-ios-photos" style="font-size:30px;color:#cdcece;"></i> -->
+        <center><img src="img/iconFootball/red card2.png" style="width: 40px;height: 40px;opacity: 0.4;" /></center>
+        <p>Red Card</p>
+      </div>
+
+      <div class="col" style="text-align:center;color:#26A69A;padding-top:20px;padding-bottom:20px;" ng-click="RedCardAway()" ng-show="matchData.timer_status == 'started'">
+        <!-- <i class="ion-ios-photos" style="font-size:30px;color:#ef473a;"></i> -->
+        <center><img src="img/iconFootball/red card2.png" style="width: 40px;height: 40px;" /></center>
+        <p>Red Card</p>
+      </div>
+
+      <div class="col" style="text-align:center;color:#26A69A;padding-top:20px;padding-bottom:20px;" ng-show="matchData.timer_status == 'halftime' || matchData.timer_status == 'fulltime'">
+        <!-- <i class="ion-ios-photos" style="font-size:30px;color:#cdcece;"></i> -->
+        <center><img src="img/iconFootball/red card2.png" style="width: 40px;height: 40px;opacity: 0.4;" /></center>
+        <p>Red Card</p>
+      </div>
     </div>
+
+    <!-- Substitution -->
     <div class="row" style="margin:0px;padding:0px;">
-      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:20px;padding-bottom:20px;" ng-click="SubHome()"><i class="ion-arrow-swap" style="font-size:30px;color:#886aea;"></i></div>
-      <div class="col" style="text-align:center;color:#26A69A;padding-top:20px;padding-bottom:20px;" ng-click="SubAway()"><i class="ion-arrow-swap" style="font-size:30px;color:#886aea;"></i></div>
+      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:20px;padding-bottom:20px;" ng-click="SubHome()" ng-show="matchData.timer_status == 'started'">
+        <!-- <i class="ion-arrow-swap" style="font-size:30px;color:#886aea;"></i> -->
+        <center><img src="img/iconFootball/substitute2.png" style="width: 40px;height: 40px;" /></center>
+        <p>Substitute</p>
+      </div>
+
+      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:20px;padding-bottom:20px;" ng-show="matchData.timer_status == 'halftime' || matchData.timer_status == 'fulltime'">
+        <!-- <i class="ion-arrow-swap" style="font-size:30px;color:#cdcece;"></i> -->
+        <center><img src="img/iconFootball/substitute2.png" style="width: 40px;height: 40px;opacity: 0.4;" /></center>
+        <p>Substitute</p>
+      </div>
+
+      <div class="col" style="text-align:center;color:#26A69A;padding-top:20px;padding-bottom:20px;" ng-click="SubAway()" ng-show="matchData.timer_status == 'started'">
+        <!-- <i class="ion-arrow-swap" style="font-size:30px;color:#886aea;"></i> -->
+        <center><img src="img/iconFootball/substitute2.png" style="width: 40px;height: 40px;" /></center>
+        <p>Substitute</p>
+      </div>
+
+      <div class="col" style="text-align:center;color:#26A69A;padding-top:20px;padding-bottom:20px;" ng-show="matchData.timer_status == 'halftime' || matchData.timer_status == 'fulltime'">
+        <!-- <i class="ion-arrow-swap" style="font-size:30px;color:#cdcece;"></i> -->
+        <center><img src="img/iconFootball/substitute2.png" style="width: 40px;height: 40px;opacity: 0.4;" /></center>
+        <p>Substitute</p>
+      </div>
     </div>
-    <div class="row" style="margin:0px;padding:0px;">
+
+    <!-- Line up -->
+   <!--  <div class="row" style="margin:0px;padding:0px;">
       <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:20px;padding-bottom:20px;font-size: 15px;" ng-click="openLineUpHome()"><i class="ion-clipboard" style="font-size:30px;color:#33cd5f;"></i></div>
       <div class="col" style="text-align:center;color:#26A69A;padding-top:20px;padding-bottom:20px;font-size: 15px;" ng-click="openLineUpAway()"><i class="ion-clipboard" style="font-size:30px;color:#33cd5f;"></i></div>
-    </div>
+    </div> -->
+
+
   </div>
 </div>
 <!-- White Space -->
