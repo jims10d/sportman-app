@@ -30,16 +30,16 @@
   <div class="item item-text-wrap" style="padding:0px;">
     <div class="row">
       <div class="col">
-        <p style="text-align:center;border-bottom:1px solid #e1dddd;padding-bottom:2px;color:#000000;">250 Games</p>
+        <p style="text-align:center;border-bottom:1px solid #e1dddd;padding-bottom:2px;color:#000000;">{{teamData.team_play}} Games</p>
       </div>
     </div>
     <div class="row" style="text-align:center;">
-      <div class="col">200 Goal</div>
-      <div class="col">40 Assist</div>
+      <div class="col">{{profile.goal}} Goal</div>
+      <div class="col">{{profile.assist}} Assist</div>
     </div>
     <div class="row" style="text-align:center;">
-      <div class="col">5 Yellow Card</div>
-      <div class="col">0 Red Card</div>
+      <div class="col">{{profile.yellowCard}} Yellow Card</div>
+      <div class="col">{{profile.redCard}} Red Card</div>
     </div>
   </div>
 </div>
@@ -48,13 +48,13 @@
   <div class="item item-text-wrap" style="padding:0px;">
     <div class="row">
       <div class="col">
-        <p style="text-align:center;border-bottom:1px solid #e1dddd;padding-bottom:2px;color:#000000;">250 Games</p>
+        <p style="text-align:center;border-bottom:1px solid #e1dddd;padding-bottom:2px;color:#000000;">{{teamData.team_play}} Games</p>
       </div>
     </div>
     <div class="row" style="text-align:center;">
-      <div class="col">200 W</div>
-      <div class="col">40 D</div>
-       <div class="col">10 L</div>
+      <div class="col">{{teamData.team_win}} W</div>
+      <div class="col">{{teamData.team_draw}} D</div>
+       <div class="col">{{teamData.team_lose}} L</div>
     </div>
   </div>
 </div>

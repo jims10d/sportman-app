@@ -159,6 +159,11 @@ small, .font_small {font-family: 'Hind','Roboto','Helvetica Neue',Arial,sans-ser
   color: #aaa !important;
 }
 
+input::-webkit-calendar-picker-indicator {
+  opacity: 100;
+  color: grey;
+}
+
 #map{
   height: 200px;
   width: 100%;
@@ -215,6 +220,7 @@ ion-buttons:hover{
 .item-floating-label, .list .item.item-floating-label{
   border-bottom:1px solid #ccc;
   /*border-bottom:1px solid #cccccc3d;*/
+  /*border-bottom:1px solid #fafafa;*/
 }
 
 .login-form{
@@ -646,8 +652,10 @@ a.subdued{
 
 .register{
   /*border-bottom: 1px solid rgba(255, 255, 255, 0.5) !important;*/
-  border-bottom: 1px solid #cccccc3d !important;
-  margin-bottom: 7px !important;
+  /*border-bottom: 1px solid #cccccc3d !important;*/
+  /*border-bottom:1px solid #fafafa !important;*/
+  border-bottom:1px solid #ccc !important;
+  margin-bottom: 4px !important;
 }
 
 .cursor{
@@ -870,4 +878,41 @@ a.subdued{
   border-color: transparent;
   background-color: #444;    
   color: #fff;
+}
+
+.ion-checkbox-day {
+  padding-left: 50px !important;
+  color: white;
+  margin-left: 100px !important;
+}
+
+.ion-checkbox-time {
+  padding-left: 50px !important;
+  color: white;
+  margin-left: -10px !important;
+}
+
+.checkbox input, .checkbox-icon {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    display: block;
+    border: 0;
+    background: 0 0;
+    cursor: pointer;
+    -webkit-appearance: none;
+}
+
+.no-padding {
+  padding: 0px !important;
+}
+
+.no-margin {
+  margin: 0px !important;
+}
+
+.activeDay {
+  background-color: white;
+  color: #4db6ac;
+  border: none;
 }

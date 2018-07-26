@@ -1,49 +1,298 @@
-<ion-view view-title="Register" name="register-view" hide-nav-bar="
+<ion-view view-title="Register" name="register2-view" hide-nav-bar="
 true" class="login">
-<ion-content class="hideScroll" overflow-scroll=true  scroll-sista="tabs" class="padding" style="background: url(img/bg.png) center; background-size: cover;">
-<center><img src="img\sportmanLogo\sportman logo v1.1.7.png" class="login-image" style="margin-top:25px;"></center>
-<p style="color:white;font-size:25px;font-weight:bold;text-align:center;margin-bottom:75px;">SportMan</p>
-<form method="post" enctype="text/plain">
-  <div class="list login-list" style="margin-top:-50px;">
-    <label class="item item-input register">
-      <input type="text" placeholder="Available Day" ng-model="data.availableDay">
-    </label>
-    <label class="item item-input register">
-      <input type="text" placeholder="Available Time" ng-model="data.availableTime">
-    </label>
-    <!-- <div class="list">
-      <label class="item item-input item-select">
-        <div class="input-label" style="font-weight:unset; padding-right:0px;">Role</div>
-        <select ng-model="data.role" style="background:transparent;padding:0px;margin-right:27px;" multiple>
-          <option value="Organizer" style="color:black">Organizer</option>
-          <option value="Manager" style="color:black">Manager</option>
-          <option value="Coach" style="color:black">Coach</option>
-          <option value="Player" style="color:black">Player</option>
-          <option value="Referee" style="color:black">Referee</option>
-        </select>
-      </label>
-    </div> -->
+<ion-content class="hideScroll" overflow-scroll=false  scroll-sista="tabs" class="padding" style="background: url(img/bg.png) center; background-size: cover;">
 
-    <!-- Optgroups -->
-<!-- <select id="multiple-optgroups" multiple>
-  <optgroup label="Label 1">
-    <option value="value 1">Value 1</option>
-    <option value="value 2">Value 2</option>
-    <option value="value 3">Value 3</option>
-  </optgroup>
-  <optgroup label="Label 2">
-    <option value="value 21">Value 1</option>
-    <option value="value 22">Value 2</option>
-    <option value="value 23">Value 3</option>
-  </optgroup>
-</select> -->
-    
+<form method="post" enctype="text/plain" style="margin-top: 50px;">
+  <p style="color: white;font-weight: 600;text-align: center;font-size: 16px;">Choose Available Day And Time</p>
+  <p style="color: white;font-weight: 500;font-size: 12px;margin-bottom: 20px;text-align: center;">Click on your available day and select your available time on that day</p>
+
+  <p style="text-align: center;color: white;font-weight: 500;font-size: 17px;padding:5px;">DAY</p>
+
+  <div class="row" style="color: white;margin-bottom: 15px;" ng-init="day = 'Mon'">
+    <div class="col" style="border: 1px solid;text-align: center;" ng-click="day = 'Mon'" ng-class="{'activeDay':day == 'Mon'}">Mon</div>
+    <div class="col" style="border: 1px solid;text-align: center;" ng-click="day = 'Tue'" ng-class="{'activeDay':day == 'Tue'}">Tue</div>
+    <div class="col" style="border: 1px solid;text-align: center;" ng-click="day = 'Wed'" ng-class="{'activeDay':day == 'Wed'}">Wed</div>
+    <div class="col" style="border: 1px solid;text-align: center;" ng-click="day = 'Thu'" ng-class="{'activeDay':day == 'Thu'}">Thu</div>
+    <div class="col" style="border: 1px solid;text-align: center;" ng-click="day = 'Fri'" ng-class="{'activeDay':day == 'Fri'}">Fri</div>
+    <div class="col" style="border: 1px solid;text-align: center;" ng-click="day = 'Sat'" ng-class="{'activeDay':day == 'Sat'}">Sat</div>
+    <div class="col" style="border: 1px solid;text-align: center;" ng-click="day = 'Sun'" ng-class="{'activeDay':day == 'Sun'}">Sun</div>
   </div>
-  <div class="row">
+
+  <p style="text-align: center;color: white;font-weight: 500;font-size: 17px;padding:5px;">TIME</p>
+
+  <div class="row no-padding no-margin" ng-show="day == 'Mon'">
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="monday.eight" class="ion-checkbox-time">8</ion-checkbox>
+          <ion-checkbox ng-model="monday.thirteen" class="ion-checkbox-time">13</ion-checkbox>
+          <ion-checkbox ng-model="monday.eightteen" class="ion-checkbox-time">18</ion-checkbox>
+        </ion-list>
+      </div>
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="monday.nine" class="ion-checkbox-time">9</ion-checkbox>
+          <ion-checkbox ng-model="monday.fourteen" class="ion-checkbox-time">14</ion-checkbox>
+          <ion-checkbox ng-model="monday.nineteen" class="ion-checkbox-time">19</ion-checkbox>
+        </ion-list>
+      </div>
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="monday.ten" class="ion-checkbox-time">10</ion-checkbox>
+          <ion-checkbox ng-model="monday.fifthteen" class="ion-checkbox-time">15</ion-checkbox>
+          <ion-checkbox ng-model="monday.twenty" class="ion-checkbox-time">20</ion-checkbox>
+        </ion-list>
+      </div>
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="monday.eleven" class="ion-checkbox-time">11</ion-checkbox>
+          <ion-checkbox ng-model="monday.sixteen" class="ion-checkbox-time">16</ion-checkbox>
+          <ion-checkbox ng-model="monday.twentyone" class="ion-checkbox-time">21</ion-checkbox>
+        </ion-list>
+      </div>
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="monday.twelve" class="ion-checkbox-time">12</ion-checkbox>
+          <ion-checkbox ng-model="monday.seventeen" class="ion-checkbox-time">17</ion-checkbox>
+          <ion-checkbox ng-model="monday.twentytwo" class="ion-checkbox-time">22</ion-checkbox>
+        </ion-list>
+      </div>
+  </div>
+
+  <div class="row no-padding no-margin" ng-show="day == 'Tue'">
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="tuesday.eight" class="ion-checkbox-time">8</ion-checkbox>
+          <ion-checkbox ng-model="tuesday.thirteen" class="ion-checkbox-time">13</ion-checkbox>
+          <ion-checkbox ng-model="tuesday.eightteen" class="ion-checkbox-time">18</ion-checkbox>
+        </ion-list>
+      </div>
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="tuesday.nine" class="ion-checkbox-time">9</ion-checkbox>
+          <ion-checkbox ng-model="tuesday.fourteen" class="ion-checkbox-time">14</ion-checkbox>
+          <ion-checkbox ng-model="tuesday.nineteen" class="ion-checkbox-time">19</ion-checkbox>
+        </ion-list>
+      </div>
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="tuesday.ten" class="ion-checkbox-time">10</ion-checkbox>
+          <ion-checkbox ng-model="tuesday.fifthteen" class="ion-checkbox-time">15</ion-checkbox>
+          <ion-checkbox ng-model="tuesday.twenty" class="ion-checkbox-time">20</ion-checkbox>
+        </ion-list>
+      </div>
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="tuesday.eleven" class="ion-checkbox-time">11</ion-checkbox>
+          <ion-checkbox ng-model="tuesday.sixteen" class="ion-checkbox-time">16</ion-checkbox>
+          <ion-checkbox ng-model="tuesday.twentyone" class="ion-checkbox-time">21</ion-checkbox>
+        </ion-list>
+      </div>
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="tuesday.twelve" class="ion-checkbox-time">12</ion-checkbox>
+          <ion-checkbox ng-model="tuesday.seventeen" class="ion-checkbox-time">17</ion-checkbox>
+          <ion-checkbox ng-model="tuesday.twentytwo" class="ion-checkbox-time">22</ion-checkbox>
+        </ion-list>
+      </div>
+  </div>
+
+  <div class="row no-padding no-margin" ng-show="day == 'Wed'">
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="wednesday.eight" class="ion-checkbox-time">8</ion-checkbox>
+          <ion-checkbox ng-model="wednesday.thirteen" class="ion-checkbox-time">13</ion-checkbox>
+          <ion-checkbox ng-model="wednesday.eightteen" class="ion-checkbox-time">18</ion-checkbox>
+        </ion-list>
+      </div>
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="wednesday.nine" class="ion-checkbox-time">9</ion-checkbox>
+          <ion-checkbox ng-model="wednesday.fourteen" class="ion-checkbox-time">14</ion-checkbox>
+          <ion-checkbox ng-model="wednesday.nineteen" class="ion-checkbox-time">19</ion-checkbox>
+        </ion-list>
+      </div>
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="wednesday.ten" class="ion-checkbox-time">10</ion-checkbox>
+          <ion-checkbox ng-model="wednesday.fifthteen" class="ion-checkbox-time">15</ion-checkbox>
+          <ion-checkbox ng-model="wednesday.twenty" class="ion-checkbox-time">20</ion-checkbox>
+        </ion-list>
+      </div>
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="wednesday.eleven" class="ion-checkbox-time">11</ion-checkbox>
+          <ion-checkbox ng-model="wednesday.sixteen" class="ion-checkbox-time">16</ion-checkbox>
+          <ion-checkbox ng-model="wednesday.twentyone" class="ion-checkbox-time">21</ion-checkbox>
+        </ion-list>
+      </div>
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="wednesday.twelve" class="ion-checkbox-time">12</ion-checkbox>
+          <ion-checkbox ng-model="wednesday.seventeen" class="ion-checkbox-time">17</ion-checkbox>
+          <ion-checkbox ng-model="wednesday.twentytwo" class="ion-checkbox-time">22</ion-checkbox>
+        </ion-list>
+      </div>
+  </div>
+
+  <div class="row no-padding no-margin" ng-show="day == 'Thu'">
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="thursday.eight" class="ion-checkbox-time">8</ion-checkbox>
+          <ion-checkbox ng-model="thursday.thirteen" class="ion-checkbox-time">13</ion-checkbox>
+          <ion-checkbox ng-model="thursday.eightteen" class="ion-checkbox-time">18</ion-checkbox>
+        </ion-list>
+      </div>
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="thursday.nine" class="ion-checkbox-time">9</ion-checkbox>
+          <ion-checkbox ng-model="thursday.fourteen" class="ion-checkbox-time">14</ion-checkbox>
+          <ion-checkbox ng-model="thursday.nineteen" class="ion-checkbox-time">19</ion-checkbox>
+        </ion-list>
+      </div>
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="thursday.ten" class="ion-checkbox-time">10</ion-checkbox>
+          <ion-checkbox ng-model="thursday.fifthteen" class="ion-checkbox-time">15</ion-checkbox>
+          <ion-checkbox ng-model="thursday.twenty" class="ion-checkbox-time">20</ion-checkbox>
+        </ion-list>
+      </div>
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="thursday.eleven" class="ion-checkbox-time">11</ion-checkbox>
+          <ion-checkbox ng-model="thursday.sixteen" class="ion-checkbox-time">16</ion-checkbox>
+          <ion-checkbox ng-model="thursday.twentyone" class="ion-checkbox-time">21</ion-checkbox>
+        </ion-list>
+      </div>
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="thursday.twelve" class="ion-checkbox-time">12</ion-checkbox>
+          <ion-checkbox ng-model="thursday.seventeen" class="ion-checkbox-time">17</ion-checkbox>
+          <ion-checkbox ng-model="thursday.twentytwo" class="ion-checkbox-time">22</ion-checkbox>
+        </ion-list>
+      </div>
+  </div>
+
+  <div class="row no-padding no-margin" ng-show="day == 'Fri'">
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="friday.eight" class="ion-checkbox-time">8</ion-checkbox>
+          <ion-checkbox ng-model="friday.thirteen" class="ion-checkbox-time">13</ion-checkbox>
+          <ion-checkbox ng-model="friday.eightteen" class="ion-checkbox-time">18</ion-checkbox>
+        </ion-list>
+      </div>
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="friday.nine" class="ion-checkbox-time">9</ion-checkbox>
+          <ion-checkbox ng-model="friday.fourteen" class="ion-checkbox-time">14</ion-checkbox>
+          <ion-checkbox ng-model="friday.nineteen" class="ion-checkbox-time">19</ion-checkbox>
+        </ion-list>
+      </div>
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="friday.ten" class="ion-checkbox-time">10</ion-checkbox>
+          <ion-checkbox ng-model="friday.fifthteen" class="ion-checkbox-time">15</ion-checkbox>
+          <ion-checkbox ng-model="friday.twenty" class="ion-checkbox-time">20</ion-checkbox>
+        </ion-list>
+      </div>
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="friday.eleven" class="ion-checkbox-time">11</ion-checkbox>
+          <ion-checkbox ng-model="friday.sixteen" class="ion-checkbox-time">16</ion-checkbox>
+          <ion-checkbox ng-model="friday.twentyone" class="ion-checkbox-time">21</ion-checkbox>
+        </ion-list>
+      </div>
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="friday.twelve" class="ion-checkbox-time">12</ion-checkbox>
+          <ion-checkbox ng-model="friday.seventeen" class="ion-checkbox-time">17</ion-checkbox>
+          <ion-checkbox ng-model="friday.twentytwo" class="ion-checkbox-time">22</ion-checkbox>
+        </ion-list>
+      </div>
+  </div>
+
+  <div class="row no-padding no-margin" ng-show="day == 'Sat'">
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="saturday.eight" class="ion-checkbox-time">8</ion-checkbox>
+          <ion-checkbox ng-model="saturday.thirteen" class="ion-checkbox-time">13</ion-checkbox>
+          <ion-checkbox ng-model="saturday.eightteen" class="ion-checkbox-time">18</ion-checkbox>
+        </ion-list>
+      </div>
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="saturday.nine" class="ion-checkbox-time">9</ion-checkbox>
+          <ion-checkbox ng-model="saturday.fourteen" class="ion-checkbox-time">14</ion-checkbox>
+          <ion-checkbox ng-model="saturday.nineteen" class="ion-checkbox-time">19</ion-checkbox>
+        </ion-list>
+      </div>
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="saturday.ten" class="ion-checkbox-time">10</ion-checkbox>
+          <ion-checkbox ng-model="saturday.fifthteen" class="ion-checkbox-time">15</ion-checkbox>
+          <ion-checkbox ng-model="saturday.twenty" class="ion-checkbox-time">20</ion-checkbox>
+        </ion-list>
+      </div>
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="saturday.eleven" class="ion-checkbox-time">11</ion-checkbox>
+          <ion-checkbox ng-model="saturday.sixteen" class="ion-checkbox-time">16</ion-checkbox>
+          <ion-checkbox ng-model="saturday.twentyone" class="ion-checkbox-time">21</ion-checkbox>
+        </ion-list>
+      </div>
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="saturday.twelve" class="ion-checkbox-time">12</ion-checkbox>
+          <ion-checkbox ng-model="saturday.seventeen" class="ion-checkbox-time">17</ion-checkbox>
+          <ion-checkbox ng-model="saturday.twentytwo" class="ion-checkbox-time">22</ion-checkbox>
+        </ion-list>
+      </div>
+  </div>
+
+  <div class="row no-padding no-margin" ng-show="day == 'Sun'">
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="sunday.eight" class="ion-checkbox-time">8</ion-checkbox>
+          <ion-checkbox ng-model="sunday.thirteen" class="ion-checkbox-time">13</ion-checkbox>
+          <ion-checkbox ng-model="sunday.eightteen" class="ion-checkbox-time">18</ion-checkbox>
+        </ion-list>
+      </div>
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="sunday.nine" class="ion-checkbox-time">9</ion-checkbox>
+          <ion-checkbox ng-model="sunday.fourteen" class="ion-checkbox-time">14</ion-checkbox>
+          <ion-checkbox ng-model="sunday.nineteen" class="ion-checkbox-time">19</ion-checkbox>
+        </ion-list>
+      </div>
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="sunday.ten" class="ion-checkbox-time">10</ion-checkbox>
+          <ion-checkbox ng-model="sunday.fifthteen" class="ion-checkbox-time">15</ion-checkbox>
+          <ion-checkbox ng-model="sunday.twenty" class="ion-checkbox-time">20</ion-checkbox>
+        </ion-list>
+      </div>
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="sunday.eleven" class="ion-checkbox-time">11</ion-checkbox>
+          <ion-checkbox ng-model="sunday.sixteen" class="ion-checkbox-time">16</ion-checkbox>
+          <ion-checkbox ng-model="sunday.twentyone" class="ion-checkbox-time">21</ion-checkbox>
+        </ion-list>
+      </div>
+      <div class="col no-padding no-margin">
+        <ion-list>
+          <ion-checkbox ng-model="sunday.twelve" class="ion-checkbox-time">12</ion-checkbox>
+          <ion-checkbox ng-model="sunday.seventeen" class="ion-checkbox-time">17</ion-checkbox>
+          <ion-checkbox ng-model="sunday.twentytwo" class="ion-checkbox-time">22</ion-checkbox>
+        </ion-list>
+      </div>
+  </div>
+
+  <div class="row" style="margin-top: 10px;">
     <div class="col">
-      <input ng-hide="data.role === 'Referee'" type="submit" value="Register" class="button button-block button-calm-900 text-center" ng-click="register()" style="background-color:#1a6d65;border-radius: 25px !important;"></input>
+     <!--  <input  ng-hide="(monday !== undefined || tuesday !== undefined || wednesday !== undefined || thursday !== undefined || friday !== undefined || saturday !== undefined || sunday !== undefined)" type="submit" value="Register" class="button button-block button-calm-900 text-center" style="background-color:#1a6d65;border-radius: 25px !important;"></input> -->
+      <input type="submit" value="Register" class="button button-block button-calm-900 text-center" ng-click="registerReferee()" style="background-color:#1a6d65;border-radius: 25px !important;"></input>
     </div>
   </div>
+
 </form>
 <div class="row">
   <div class="col">

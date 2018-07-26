@@ -10,7 +10,7 @@
   </ion-list>
    <div style="color: white;padding: 10px;padding-left: 14px;background-color: #77d677;font-size: 16px;">Assist</div>
   <ion-list ng-repeat="data in squadDataArr track by $index">
-     <ion-radio ng-model="assist" value="{{data.username}}" name="assist" style="border-bottom: 1px solid #eeeeee;">{{data.username}}</ion-radio>
+     <!-- <ion-radio ng-model="assist" value="{{data.username}}" name="assist" style="border-bottom: 1px solid #eeeeee;">{{data.username}}</ion-radio> -->
   </ion-list>
   <div class="list">
   <!-- White area -->
@@ -31,20 +31,20 @@
     </div>
   </a>
 
-  <a ng-if="status == 'assistHome'" ng-repeat="data in squadDataArr track by $index" class="item item-avatar" style="border-bottom:2px solid #f0efef;" ng-click="addAssistHome('{{data.username}}')">
+  <!-- <a ng-if="status == 'assistHome'" ng-repeat="data in squadDataArr track by $index" class="item item-avatar" style="border-bottom:2px solid #f0efef;" ng-click="addAssistHome('{{data.username}}')">
    <img src="img/profile3.png" ng-if="data !== null">
     <div style="padding-top: 3px;height:40px;" ng-if="data !== null">
     <h2 style="margin-left: -26px; width:100px;" ng-if="data !== null">{{data.username}}</h2>
     <p style="margin-left: -26px; margin-top: -2px;" ng-if="data !== null">{{data.email}}</p>
     </div>
-  </a>
-  <a ng-if="status == 'assistAway'" ng-repeat="data in squadDataArr track by $index" class="item item-avatar" style="border-bottom:2px solid #f0efef;" ng-click="addAssistAway('{{data.username}}')">
+  </a> -->
+<!--   <a ng-if="status == 'assistAway'" ng-repeat="data in squadDataArr track by $index" class="item item-avatar" style="border-bottom:2px solid #f0efef;" ng-click="addAssistAway('{{data.username}}')">
    <img src="img/profile3.png" ng-if="data !== null">
     <div style="padding-top: 3px;height:40px;" ng-if="data !== null">
     <h2 style="margin-left: -26px; width:100px;" ng-if="data !== null">{{data.username}}</h2>
     <p style="margin-left: -26px; margin-top: -2px;" ng-if="data !== null">{{data.email}}</p>
     </div>
-  </a>
+  </a> -->
 
   <a ng-if="status == 'yelCardHome'" ng-repeat="data in squadDataArr track by $index" class="item item-avatar" style="border-bottom:2px solid #f0efef;" ng-click="addYelCardHome('{{data.username}}')">
    <img src="img/profile3.png" ng-if="data !== null">

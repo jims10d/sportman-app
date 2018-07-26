@@ -6,7 +6,7 @@
 
   <ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color: #F1F5F8;padding-bottom: 70px">
     <div id="scrollToBottom" class="scroll" style="margin-bottom:70px;border:none;" scroll-glue="glued">
-      <div class="div-left" ng-repeat="data in chatData track by data.id" ng-class="{'div-right':profile.username === data.sender}">
+      <div class="div-left" ng-repeat="data in chatData track by $index" ng-class="{'div-right':profile.username === data.sender}">
        <p ng-class="profile.username === data.sender? 'date-left' : 'date-right'" ng-model="todayDate[data.id]" ng-show="todayDate[data.id]==true">Today</p>
        <p ng-class="profile.username === data.sender? 'date-left' : 'date-right'" ng-model="yesterdayDate[data.id]" ng-show="yesterdayDate[data.id]==true">Yesterday</p>
        <p ng-class="profile.username === data.sender? 'date-left' : 'date-right'" ng-model="chatDate[data.id]" ng-show="chatDate[data.id]==true">{{dateofChat[data.id]}}</p>

@@ -6,7 +6,7 @@
 </ion-nav-buttons>
 <!-- Upload Image and Post button -->
 <ion-nav-buttons side="right">
-<button class="button button-clear icon-button mdi mdi-camera" ng-click="uploadImage()" style="min-height:44px;font-size:20px;margin-top:2px;margin-right:-10px;"></button>
+<!-- <button class="button button-clear icon-button mdi mdi-camera" ng-click="uploadImage()" style="min-height:44px;font-size:20px;margin-top:2px;margin-right:-10px;"></button> -->
 <button class="button button-clear icon-button mdi mdi-send" ng-click="addCompetition()" style="min-height:44px;font-size:20px;margin-top:2px;"></button>
 </ion-nav-buttons>
 <ion-content class="hideScroll" overflow-scroll=false scroll-sista="tabs" style="background-color:#fff;">
@@ -15,7 +15,7 @@
 <form method="post" enctype="text/plain" style="padding-top: 10px">
   <!-- competition name -->
   <label class="item item-input content-border" style="padding:0">
-      <input type="text" id="compName" style="font-size:16px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="Competition Name" ng-model="data.comp_name">
+      <input type="text" id="compName" style="font-size:16px;resize:none;margin-top:8px;margin-bottom:8px;padding-left:16px;padding-right:16px;" placeholder="Competition Name" ng-model="data.comp_name">
   </label>
   <!-- competition type -->
   <label class="item item-input item-select" style="border-bottom: none;border-right: none;">
@@ -59,24 +59,65 @@
   </label>
 
   <!-- comp location -->
-  <label class="item item-input content-border" style="padding:0">
+<!--   <label class="item item-input content-border" style="padding:0">
       <input type="text" id="compLocation" style="font-size:16px;resize:none;margin-top:10px;padding-left:16px;padding-right:16px;" placeholder="Competition Location" ng-model="data.comp_location">
+  </label> -->
+
+  <!-- competition Address -->
+  <label class="item item-input content-border" style="padding: 16px;font-size: 15px;color: white;background-color: #4db6ac;">Competition Address</label>
+    <!-- City Option -->
+  <label class = "item item-input item-select">
+    <div class = "input-label">City</div>
+    <select style="color:black" ng-model="data.comp_address.city" ng-options="city for city in cities">
+    </select>
   </label>
+  <!-- Venue Option -->
+    <!-- Jakarta Pusat -->
+    <label ng-show="data.comp_address.city === 'Jakarta Pusat'"  class = "item item-input item-select">
+      <div class = "input-label">Venue</div>
+      <select style="color:black" ng-model="data.comp_address.venue" ng-options="venue.nama for venue in venueInJakartaPusat">
+      </select>
+    </label>
+    <!-- Jakarta Barat -->
+    <label ng-show="data.comp_address.city === 'Jakarta Barat'" class = "item item-input item-select">
+      <div class = "input-label">Venue</div>
+      <select style="color:black" ng-model="data.comp_address.venue" ng-options="venue.nama for venue in venueInJakartaBarat">
+      </select>
+    </label>
+    <!-- Jakarta Selatan -->
+    <label ng-show="data.comp_address.city === 'Jakarta Selatan'" class = "item item-input item-select">
+      <div class = "input-label">Venue</div>
+      <select style="color:black" ng-model="data.comp_address.venue" ng-options="venue.nama for venue in venueInJakartaSelatan">
+      </select>
+    </label>
+    <!-- Jakarta Timur -->
+    <label ng-show="data.comp_address.city === 'Jakarta Timur'" class = "item item-input item-select">
+      <div class = "input-label">Venue</div>
+      <select style="color:black" ng-model="data.comp_address.venue" ng-options="venue.nama for venue in venueInJakartaTimur">
+      </select>
+    </label>
+    <!-- Jakarta Utara -->
+    <label ng-show="data.comp_address.city === 'Jakarta Utara'" class = "item item-input item-select">
+      <div class = "input-label">Venue</div>
+      <select style="color:black" ng-model="data.comp_address.venue" ng-options="venue.nama for venue in venueInJakartaUtara">
+      </select>
+    </label>
+  <!-- Venue Option -->
 
   <!-- start date -->
   <label class="item item-input content-border" style="padding:0">
-      <div class="input-label" style="font-weight:unset; padding-left:15px;">Start Date</div>
-      <input type="date" id="compStart" style="margin-right:-20px;padding-left:110px;" ng-model="data.comp_start">
+      <div class="input-label" style="font-weight:unset; padding-left:15px;padding-top: 10px;padding-bottom: 10px;">Start Date</div>
+      <input type="date" id="compStart" style="margin-right:-13px;padding-left:80px;" ng-model="data.comp_start">
   </label>
 
   <!-- end date -->
   <label class="item item-input content-border" style="padding:0">
-      <div class="input-label" style="font-weight:unset; padding-left:15px;">End Date</div>
-      <input type="date" id="compEnd" style="margin-right:-20px;padding-left:110px;" ng-model="data.comp_finish">
+      <div class="input-label" style="font-weight:unset; padding-left:15px;padding-top: 10px;padding-bottom: 10px;">End Date</div>
+      <input type="date" id="compEnd" style="margin-right:-13px;padding-left:80px;" ng-model="data.comp_finish">
   </label>
 
   <!-- competition rewards -->
-  <label class="item item-input content-border" style="padding:13px;font-size: 15px;">Competition Rewards</label>
+  <label class="item item-input content-border" style="padding: 16px;font-size: 15px;color: white;background-color: #4db6ac;">Competition Rewards</label>
 
   <!-- first place reward -->
   <label class="item item-input content-border" style="padding:0">
