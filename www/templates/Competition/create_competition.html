@@ -52,8 +52,8 @@
   </label>
 
   <!-- comp fee -->
-  <ion-toggle ng-model="fee" toggle-class="toggle-calm" style="font-size:16px;">Collect Registration Fee ?</ion-toggle>
-  <label class="item item-input" style="padding:0" ng-show="fee == true">
+  <ion-toggle ng-model="fee.checked" ng-change="feeChange()" toggle-class="toggle-calm" style="font-size:16px;">Collect Registration Fee ?</ion-toggle>
+  <label class="item item-input" style="padding:0" ng-show="fee.checked == true">
       <span style="font-size: 16px;padding: 10px 16px; margin-top: 5px;">Rp</span>
       <input class="compFeeValidation" type="text" id="compFee" style="font-size:16px;resize:none;margin-top:5px;padding: 10px 16px;" placeholder="Set Registration Fee" ng-model="data.comp_fee" maxlength="10">
   </label>

@@ -10,17 +10,17 @@
 	</ion-side-menu-content>
 	<ion-side-menu side="left">
 		<!-- Account infromation -->
-		<ion-header-bar class="expanded bar bar-header disable-user-behavior sidemenu-header">
+		<ion-header-bar class="expanded bar bar-header disable-user-behavior sidemenu-header" style="min-height: 110px;">
 			<a ng-href="#/app/profile" menu-close="" style="color:inherit;">
-				<img ng-src={{menuProfile.photo}} src="img/profile3.png" class="avatar motion">
-				<div class="menu-bottom">
+				<img ng-src={{menuProfile.photo}} src="img/profile3.png" class="avatar motion" style="top: 20px;">
+				<div class="menu-bottom" style="top: 35px;left: 100px;">
 					<p class="sidemenu-nama" style=" margin-left:4px; font-weight:bold;text-align: left; font-size:16px;">{{menuProfile.username}}</p>
 					<p class="sidemenu-nama" style="font-size:15px; margin-left:4px;">{{menuProfile.role}}</p>
 				</div>
 			</a>
 		</ion-header-bar>
 		<!-- Tab menu -->
-		<ion-content class="has-expanded-header scroll-content ionic-scroll has-header sidemenu-content" style="overflow-y:hidden;">
+		<ion-content class="has-expanded-header scroll-content ionic-scroll has-header sidemenu-content" style="overflow-y:hidden;top: 115px !important;">
 			<ion-list class="disable-user-behavior">
 				<div class="list side-menu">
 					<ion-item class="item item-complex" nav-clear="" menu-close="" ng-href="#/app/home">

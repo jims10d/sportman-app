@@ -650,6 +650,10 @@ a.subdued{
   font-weight: bold;
 }
 
+.activeCompetition{
+  border-bottom: 4px solid #4db6ac;
+}
+
 .register{
   /*border-bottom: 1px solid rgba(255, 255, 255, 0.5) !important;*/
   /*border-bottom: 1px solid #cccccc3d !important;*/
@@ -915,4 +919,15 @@ a.subdued{
   background-color: white;
   color: #4db6ac;
   border: none;
+}
+
+#myProgress {
+    width: 100%;
+    background-color: #dedddd;
+}
+
+#myBar {
+    width: 0%;
+    height: 4px;
+    background-color: #4db6ac;
 }

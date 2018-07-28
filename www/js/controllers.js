@@ -382,29 +382,41 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		$scope.backProfile = function() { // kembali ke halaman profile
 			$state.go('app.profile');
 		};
-		$scope.logout = function() { // fungsi utk logout
-			ls.removeItem("userid"); // menghapus data user id
-			ls.removeItem("token"); // menghapus data token
-			ls.removeItem("compName"); // menghapus data user id
-			ls.removeItem("compId"); // menghapus data token
-			ls.removeItem("fixId"); // menghapus data user id
-			ls.removeItem("role"); // menghapus data user id
-			ls.removeItem("team"); // menghapus data user id
-			ls.removeItem("myTeamId"); // menghapus data user id
-			ls.removeItem("username"); // menghapus data user id
-			ls.removeItem("myCompetitionId"); // menghapus data user id
-			ls.removeItem("myTeamCoach");
-			ls.removeItem("myTeamSquad");
-			ls.removeItem("firstRoundMatchesStatus"); // menghapus data user id
-			ls.removeItem("secondRoundMatchesStatus");
-			ls.removeItem("thirdRoundMatchesStatus");
-			ls.removeItem("knockoutSchedulingStat");
-			$scope.isOrganizer = false;
-			$state.go('login'); // menampilkan halaman login
+		// fungsi utk logout
+		$scope.logout = function() { 
+			var confirmPopup = $ionicPopup.confirm({
+				title: 'Logout From SportMan',
+				template: 'Are you sure?'
+			});
+			confirmPopup.then(function(res) {
+		        if(res) {
+		            console.log('Sure!');
+		         	ls.removeItem("userid"); // menghapus data user id
+					ls.removeItem("token"); // menghapus data token
+					ls.removeItem("compName"); // menghapus data user id
+					ls.removeItem("compId"); // menghapus data token
+					ls.removeItem("fixId"); // menghapus data user id
+					ls.removeItem("role"); // menghapus data user id
+					ls.removeItem("team"); // menghapus data user id
+					ls.removeItem("myTeamId"); // menghapus data user id
+					ls.removeItem("username"); // menghapus data user id
+					ls.removeItem("myCompetitionId"); // menghapus data user id
+					ls.removeItem("myTeamCoach");
+					ls.removeItem("myTeamSquad");
+					ls.removeItem("firstRoundMatchesStatus"); // menghapus data user id
+					ls.removeItem("secondRoundMatchesStatus");
+					ls.removeItem("thirdRoundMatchesStatus");
+					ls.removeItem("knockoutSchedulingStat");
+					$scope.isOrganizer = false;
+					$state.go('login'); // menampilkan halaman login
+		         } else {
+		            console.log('Not sure!');
+		         }
+		    });
 		};
 })
 
-.controller('HomeCtrl', function($scope, $compile, $state, $stateParams, $rootScope, $ionicPopup, $ionicPlatform, $ionicLoading, ClassementService, TeamService, CompetitionService, MatchService, PostService, $cordovaSocialSharing, $window, $ionicModal) {
+.controller('HomeCtrl', function($scope, $compile, $state, $stateParams, $rootScope, $ionicPopup, $ionicPlatform, $ionicLoading, ClassementService, TeamService, CompetitionService, MatchService, PostService, ProfileService, $cordovaSocialSharing, $window, $ionicModal) {
 		
 	var ls = localStorage;
 	$rootScope.showLoading();
@@ -446,12 +458,31 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 
 				$scope.rteamLength = []; // the number of registered team
+				$scope.totalWidth = [];
+				$scope.elem = [];
+
 				data.forEach(function(entry){
 					// check if the registered team is not null
 					if(entry.registeredTeam !== null){	
 						$scope.registerArr = entry.registeredTeam.split(',');
 						$scope.rteamLength[entry.id] = $scope.registerArr.length;
+						$scope.totalWidth[entry.id] = ($scope.registerArr.length / entry.comp_numOfTeam) * 100;
 
+						// Progress Bar
+						setTimeout(function(){
+							$scope.elem[entry.id] = document.getElementById(entry.id);
+							var width = 1;
+							var id = setInterval(frame, 30);
+						    function frame() {
+						        if (width >= $scope.totalWidth[entry.id]) {
+						            clearInterval(id);
+						        } else {
+						            width++; 
+						            $scope.elem[entry.id].style.width = width + '%'; 
+						        }
+						    }
+						},2000);
+						
 						if(entry.schedule_status === 'On Queue' && $scope.registerArr.length === entry.comp_numOfTeam){
 							console.log("do the scheduling");
 							// Scheduling
@@ -1854,19 +1885,71 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	         }
 	    });
 	};
+
+	$scope.profileData = {};
+	$scope.profileData.createdCompetition = {};
+	$scope.profileData.createdCompetition.active = "";
+	
 	$scope.delCompetition = function(id) {
+
+		console.log($scope.menuProfile);
+		$scope.profileData.createdCompetition.completed = $scope.menuProfile.createdCompetition.completed;
+
+		var activeCompetitionArr = $scope.menuProfile.createdCompetition.active.split(",");
+		var compName = "";
+		var activeCompetitions = [];
+
+		CompetitionService.getCompetitionName(id).success(function(data) {
+			compName = data;
+			console.log(compName);
+		}).error(function(data) {});
+
 		var confirmPopup = $ionicPopup.confirm({
 			title: 'Delete Competition',
 			template: 'Are you sure?'
 		});
+
 		confirmPopup.then(function(res) {
+
 	        if(res) {
+
+	        	activeCompetitionArr.forEach(function(comp){
+					if(comp === compName){
+						console.log("sama");
+						comp = "";
+					}else{
+						// $scope.activeCompetitionArr.push(comp);
+						activeCompetitions.push(comp);
+					}
+				});
+
+	        	if(activeCompetitions.length > 1){
+	        		$scope.profileData.createdCompetition.active = activeCompetitions.join(",");
+	        	}else{
+	        		$scope.profileData.createdCompetition.active = activeCompetitions[0];
+	        	}
+				
+	        	console.log($scope.profileData);
 	            console.log('Sure!');
+
+	            $rootScope.showLoading();
+
 	            CompetitionService.delCompetition(id).success(function(data) {
 		            $scope.loadCompetition = setInterval($scope.getCompetitionByOrganizer, 100);
+		            setTimeout(function(){
+		            	$ionicLoading.hide();
+		            },5000);
 				}).error(function(data) {
 					// $ionicLoading.hide();
+					 setTimeout(function(){
+		            	$ionicLoading.hide();
+		            },5000);
 				});
+
+				ProfileService.editProfileById(localStorage.getItem("userid"), localStorage.getItem("token"), $scope.profileData).success(function(data) {
+					console.log("berhasil");
+				}).error(function(data) {});
+
 	         } else {
 	            console.log('Not sure!');
 	         }
@@ -1976,7 +2059,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	};
 })
 
-.controller('ProfileCtrl', function($scope, $state, $ionicPopup, $ionicPlatform, $ionicLoading, LoginService, TeamService, PostService, ProfileService, $cordovaImagePicker, $cordovaCamera) {
+.controller('ProfileCtrl', function($scope, $rootScope, $state, $ionicPopup, $ionicPlatform, $ionicLoading, LoginService, CompetitionService, TeamService, PostService, ProfileService, $cordovaImagePicker, $cordovaCamera) {
 	 $ionicLoading.show({
         content: 'Loading',
         animation: 'fade-in',
@@ -2000,18 +2083,92 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		};
 
 		LoginService.getUserById(localStorage.getItem("userid"), localStorage.getItem("token")).success(function(data) {
+			localStorage.setItem('profileObj', JSON.stringify(data));
 			$scope.profile = {};
 			$scope.profile = data;
 			$scope.loadCompleted = true;
 			$ionicLoading.hide();
+
+			var profileObj = localStorage.getItem('profileObj');
+			var profileObjData = JSON.parse(profileObj);
+			console.log(profileObjData);
+
+			$scope.competitionStatus = "";	
+
+			if($scope.profile.createdCompetition.active !== ''){
+				$scope.activeCompetitions = $scope.profile.createdCompetition.active.split(",");
+				$scope.totalActiveCompetitions = $scope.profile.createdCompetition.active.split(",").length;
+			}else{
+				$scope.totalActiveCompetitions = 0;
+			}
+			if($scope.profile.createdCompetition.completed !== ''){
+				$scope.completedCompetitions = $scope.profile.createdCompetition.completed.split(",");
+				$scope.totalCompletedCompetitions = $scope.profile.createdCompetition.completed.split(",").length;
+			}else{
+				$scope.totalCompletedCompetitions = 0;
+			}
+
+			$scope.totalCompetitions = $scope.totalActiveCompetitions + $scope.totalCompletedCompetitions;
+
+
+			$scope.showActiveCompetitions = function(){
+				$scope.competitionStatus = "Active";
+			};
+			$scope.showCompletedCompetitions = function(){
+				$scope.competitionStatus = "Completed";
+			};
+			$scope.setDefaultCompStatus = function(){
+				$scope.competitionStatus = "";
+			};
+			$scope.showCompetition = function(competition){
+
+				CompetitionService.getCompetitionId(competition).success(function(data) {
+					$state.go('app.competition_detail', {
+						'competitionId': data
+					});
+					$ionicLoading.hide();
+				}).error(function(data) {
+					$ionicLoading.hide();
+				});
+			};
+
 			$scope.editProfil = function() {
                 // Loading
-                $ionicLoading.show({
-                    content: 'Loading',
-                    animation: 'fade-in',
-                    showBackdrop: true,
-                });
+                // $ionicLoading.show({
+                //     content: 'Loading',
+                //     animation: 'fade-in',
+                //     showBackdrop: true,
+                // });
+                // $rootScope.showLoading();
                 $scope.profile = data;
+
+
+                console.log(JSON.stringify($scope.profile) === JSON.stringify(profileObjData));
+
+               	if(JSON.stringify($scope.profile) === JSON.stringify(profileObjData) === true){
+					console.log("tidak ada perubahan data");
+					var alertPopup = $ionicPopup.alert({
+						title: 'Info',
+						template: 'Tidak Ada Perubahan Data'
+					});
+				}else{
+					console.log("ada data yang diubah");
+
+
+		var emailRe = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+		$scope.validateEmail = emailRe.test(String($scope.profile.email).toLowerCase());
+		   
+		if ($scope.profile.fullname === undefined || $scope.profile.fullname === "") {
+			$rootScope.showPopup($ionicPopup,'Edit Profile failed!','Fullname is required !', 'popup-error');
+		} else if ($scope.profile.username === undefined || $scope.profile.username === "") {
+			$rootScope.showPopup($ionicPopup,'Edit Profile failed!','Username is required !', 'popup-error');
+		} else if ($scope.validateEmail === false) {
+			$rootScope.showPopup($ionicPopup,'Edit Profile failed!','Email not valid', 'popup-error');			
+		} else if ($scope.profile.email === undefined || $scope.profile.email === "") {
+			$rootScope.showPopup($ionicPopup,'Edit Profile failed!','Your email must be filled and valid', 'popup-error');
+		} else {
+		
+
                 // Image upload processing
                 var fileInput = document.getElementById('file-upload');
                 var file = fileInput.files[0];
@@ -2022,8 +2179,16 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
                         $scope.profile = data;
                         $state.go('app.profile');
                         $ionicLoading.hide();
+                        var alertPopup = $ionicPopup.alert({
+							title: 'Berhasil',
+							template: 'Data Profil Berhasil Diubah'
+						});
                     }).error(function(data) {
                         $ionicLoading.hide();
+                        var alertPopup = $ionicPopup.alert({
+							title: 'Gagal',
+							template: 'Gagal Mengubah Data Profil'
+						});
                     });
                 } else {
                     ProfileService.uploadImage(file, '/' + file.name).success(function(data) {
@@ -2042,12 +2207,23 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
                                     $scope.profile = data;
                                     $state.go('app.profile');
                                     $ionicLoading.hide();
-                    			}).error(function(data) {})
+                                    var alertPopup = $ionicPopup.alert({
+										title: 'Berhasil',
+										template: 'Data Profil Berhasil Diubah'
+									});
+                    			}).error(function(data) {
+                    				var alertPopup = $ionicPopup.alert({
+										title: 'Gagal',
+										template: 'Gagal Mengubah Data Profil'
+									});
+                    			})
                             .error(function(data) {});
                             }).error(function(data2) {});
                         }).error(function(data) {});
                     }).error(function(data) {});
                 }
+            }
+        }
             };
 			$scope.editPassword = function() {
 				// Loading
@@ -3533,7 +3709,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	};
 })
 
-.controller('CompetitionCtrl', function($scope, $rootScope, $state, $stateParams, $ionicPopup, $ionicPlatform, $ionicLoading, MatchService, CompetitionService, ionicMaterialInk, ionicMaterialMotion, $cordovaSocialSharing, $compile, NgMap) {
+.controller('CompetitionCtrl', function($scope, $rootScope, $state, $stateParams, $ionicPopup, $ionicPlatform, $ionicLoading, ProfileService, MatchService, CompetitionService, ionicMaterialInk, ionicMaterialMotion, $cordovaSocialSharing, $compile, NgMap) {
 	
 	$ionicLoading.show({
 		content: 'Login...',
@@ -3642,6 +3818,10 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	$scope.data.register = "";
 	$scope.data.id = "C"+rndString;
 	$scope.registered = [];
+	$scope.data.comp_address = {
+		city: "",
+		venue: ""
+	};
 
 	CompetitionService.getAllCompetition().success(function(data) {
 		$ionicLoading.hide();
@@ -3833,6 +4013,16 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		});
     });
 
+    $scope.fee = { checked: false };
+
+    $scope.feeChange = function() {
+		console.log('Fee Change', $scope.fee.checked);
+		$scope.data.comp_fee = "";
+	};
+
+	$scope.profileData = {};
+	$scope.profileData.createdCompetition = {};
+
 	$scope.addCompetition = function() {
 
 		// validasi start date
@@ -3844,6 +4034,26 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		// var y = todayDate.getFullYear();
 
 		// var someFormattedDate = dd + '/'+ mm + '/'+ y;
+		console.log($scope.menuProfile);
+		$scope.profileData.createdCompetition.active = "";
+		$scope.profileData.createdCompetition.completed = "";
+		// $scope.profileData.createdCompetition.active.push($scope.data.comp_name);
+
+
+		if($scope.menuProfile.createdCompetition !== ''){
+			console.log("createdCompetition not null");
+			if($scope.menuProfile.createdCompetition.active === ''){
+				console.log("active null");
+				$scope.profileData.createdCompetition.active = $scope.data.comp_name;
+			}else{
+				console.log("active not null");
+				$scope.profileData.createdCompetition.active = $scope.menuProfile.createdCompetition.active + "," + $scope.data.comp_name;
+			}
+		}else{	
+			$scope.profileData.createdCompetition.active = $scope.data.comp_name;
+		}
+
+		
 		console.log($scope.data.comp_start);
 		if($scope.data.comp_start != null){
 			console.log($scope.data.comp_start.getDate());
@@ -3885,6 +4095,8 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		    }
 		}
 
+		console.log($scope.fee.checked);
+
 		if ($scope.data.comp_name === undefined && $scope.data.comp_type === undefined && $scope.data.comp_location === undefined && $scope.data.comp_numOfTeam === undefined && $scope.data.comp_start === undefined && $scope.data.comp_finish === undefined) {
 			$rootScope.showPopup($ionicPopup,'Create Competition failed!','Please fill all the fields', 'popup-error');
 		} else if ($scope.data.comp_name === undefined || $scope.data.comp_name === "") {
@@ -3893,6 +4105,12 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$rootScope.showPopup($ionicPopup,'Create Competition failed!','Competition type is required !', 'popup-error');
 		} else if ($scope.data.comp_numOfTeam === undefined || $scope.data.comp_numOfTeam === "") {
 			$rootScope.showPopup($ionicPopup,'Create Competition failed!','Number of teams is required !', 'popup-error');
+		} else if ($scope.fee.checked == true && $scope.data.comp_fee === undefined || $scope.data.comp_fee === "") {
+			$rootScope.showPopup($ionicPopup,'Create Competition failed!','registration fee is required !', 'popup-error');
+		} else if ($scope.data.comp_address.city === undefined || $scope.data.comp_address.city === "") {
+			$rootScope.showPopup($ionicPopup,'Create Competition failed!','city is required !', 'popup-error');
+		} else if ($scope.data.comp_address.venue === undefined || $scope.data.comp_address.venue === "") {
+			$rootScope.showPopup($ionicPopup,'Create Competition failed!','venue is required !', 'popup-error'); 
 		} else if ($scope.data.comp_start === undefined || $scope.data.comp_start === "") {
 			$rootScope.showPopup($ionicPopup,'Create Competition failed!','start date is required !', 'popup-error');
 		} else if (isStartDateValid === false) {
@@ -3904,20 +4122,24 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		} else if ($scope.data.comp_name !== null && $scope.data.comp_type !== null && $scope.data.comp_numOfTeam !== null && $scope.data.comp_location !== null && $scope.data.comp_start !== null && $scope.data.comp_finish !== null) {
 			console.log($scope.data);
 			CompetitionService.addCompetition($scope.data).success(function(data) {
-				// $ionicLoading.hide();
-				// var alertPopup = $ionicPopup.alert({
-				// 	title: 'Success!',
-				// 	template: 'Berhasil Membuat Kompetisi'
-				// });
+				$ionicLoading.hide();
+				var alertPopup = $ionicPopup.alert({
+					title: 'Success!',
+					template: 'Berhasil Membuat Kompetisi'
+				});
 				$state.go('app.home');
 
 			}).error(function(data) {
-				// $ionicLoading.hide();
-				// var alertPopup = $ionicPopup.alert({
-				// 	title: 'Post Data Failed!',
-				// 	template: 'Gagal Membuat Kompetisi'
-				// });
+				$ionicLoading.hide();
+				var alertPopup = $ionicPopup.alert({
+					title: 'Post Data Failed!',
+					template: 'Gagal Membuat Kompetisi'
+				});
 			});	
+			console.log($scope.profileData);
+		 	ProfileService.editProfileById(localStorage.getItem("userid"), localStorage.getItem("token"), $scope.profileData).success(function(data) {
+				console.log("berhasil");
+			}).error(function(data) {});
 		}
 	};
 
@@ -4099,41 +4321,425 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	};
 })
 
-.controller('EditCompetitionCtrl', function(NgMap, $scope, $state, $stateParams, $ionicPopup, $ionicPlatform, $ionicLoading, MatchService, PostService, CompetitionService, ionicMaterialInk, ionicMaterialMotion, $cordovaSocialSharing) {
+.controller('EditCompetitionCtrl', function(NgMap, $scope, $rootScope, $state, $stateParams, $ionicPopup, $ionicPlatform, $ionicLoading, ProfileService, MatchService, PostService, CompetitionService, ionicMaterialInk, ionicMaterialMotion, $cordovaSocialSharing) {
 	$ionicLoading.show({
 		content: 'Login...',
 		animation: 'fade-in',
 		showBackdrop: true,
 	});
 
+	$scope.cities = ["Jakarta Pusat", "Jakarta Barat", "Jakarta Selatan", "Jakarta Timur", "Jakarta Utara"];
+
+	// Jakarta Pusat
+	$scope.venueInJakartaPusat = ["Nirwana Futsal", "Planet Futsal Plaza Kenari Mas", "Maestro", "Senayan Trade Center"];
+
+	// Jakarta Barat
+	$scope.venueInJakartaBarat = ["Lucky Futsal",	"Batavia Futsal", "Indo Futsal", "Futsal One", "Total Futsal Arena", "GOR Pertamina Simprug", "Star Futsal", "Copa Futsal", "Moi Futsal", "Centor Futsal"]
+
+	// Jakarta Selatan
+	$scope.venueInJakartaSelatan = ["Kick Sport", "Kuningan Village Futsal", "Kemang Futsal", "Frog Bread Club", "The Fiq's Futsal", "The Futsal 1919", 
+	"Pro Arena Futsal Pondok Indah", "Futsal Plaza Nagari Pakubuwono", "Tanjung Barat Futsal", "Champion Futsal", 
+	"Pejaten Futsal", "Goals", "Hanggar IBM Futsal", "My Futsal", "The Planet Futsal", "Kick Off", "Samba Futsal", "Grand Futsal Kuningan", "Bros Futsal", "Buncit Futsal", "Football Matches", "Bintang Futsal", "Hall Voli Senayan", "Metro Futsal", "BTC Futsal"		
+	]
+
+	// Jakarta Timur
+	$scope.venueInJakartaTimur = ["Jengki Futsal", "Green futsal", "de King's Futsal", "Zy Futsal", "Gudang Futsal Kalimalang", "Tifosi Futsal Raden Inten"]
+
+	// Jakarta Utara
+	$scope.venueInJakartaUtara = ["Tango Futsal", "Cometa Arena", "Grand Futsal", "Salvo Futsal", "Cosmo Futsal", "The Planet Futsal", "Futsal Kick Off", "Galaxy Sport Ancol"]
+
+	$scope.feeChange = function() {
+		console.log('Fee Change', $scope.fee.checked);
+		$scope.competition.comp_fee = "";
+	};
+	  
+	$scope.fee = { checked: false };
+
+	window.myFunction = function() {
+	    var x = document.getElementById("mySelect").value;
+	    console.log(x);
+	    if (x=="GroupStage") {
+	    	$scope.status = "GroupStage";
+	    }else if (x=="KnockoutSystem") {
+	    	$scope.status = "KnockoutSystem";
+	    }else {
+			$scope.status = "Combination";
+	    }
+	};
+
+	// restrict input data for number of teams
+	$('.numOfTeamValidation').on('keyup', function(e){
+		// if input less than 4
+		console.log($(this).val());
+        if ($(this).val() < 4
+        		&& e.keyCode != 46 // delete
+        		&& e.keyCode != 8 // backspace
+           ) {
+           		e.preventDefault();     
+           		$(this).val(4);
+        }
+        // if input more than 20
+        if ($(this).val() > 20
+           		&& e.keyCode != 46 // delete
+        		&& e.keyCode != 8 // backspace
+           ) {
+          		e.preventDefault();     
+          		$(this).val(20);
+        }
+    });
+
+    $('.compFeeValidation').on('keyup keydown', function(e){
+		// if input less than 0
+		// console.log($(this).val());
+  //       if ($(this).val() <= 0
+  //       		&& e.keyCode != 46 // delete
+  //       		&& e.keyCode != 8 // backspace
+  //          ) {
+  //          		console.log("kurang");
+  //          		e.preventDefault();     
+  //          		$(this).val();
+  //       }
+  		// 1.
+		var selection = window.getSelection().toString();
+		if(selection !== ''){
+			return;
+		}
+
+		// 2.
+		if($.inArray(e.keyCode, [38,40,37,39]) !== -1){
+			return;
+		}
+
+		// 3.
+		var $this = $(this);
+		var input = $this.val();
+
+		// 4.
+		var input = input.replace(/[\D\s\._\-]+/g, "");
+
+		// 5.
+		input = input ? parseInt(input, 10) : 0;
+
+		// 6.
+		$this.val(function(){
+			return (input === 0) ? "" : input.toLocaleString("id-ID");
+		});
+    });
+
+    $('.firstPlaceRewardValidation').on('keyup keydown', function(e){
+     	// 1.
+		var selection = window.getSelection().toString();
+		if(selection !== ''){
+			return;
+		}
+
+		// 2.
+		if($.inArray(e.keyCode, [38,40,37,39]) !== -1){
+			return;
+		}
+
+		// 3.
+		var $this = $(this);
+		var input = $this.val();
+
+		// 4.
+		var input = input.replace(/[\D\s\._\-]+/g, "");
+
+		// 5.
+		input = input ? parseInt(input, 10) : 0;
+
+		// 6.
+		$this.val(function(){
+			return (input === 0) ? "" : input.toLocaleString("id-ID");
+		});
+    });
+
+    $('.secondPlaceRewardValidation').on('keyup keydown', function(e){
+		// 1.
+		var selection = window.getSelection().toString();
+		if(selection !== ''){
+			return;
+		}
+
+		// 2.
+		if($.inArray(e.keyCode, [38,40,37,39]) !== -1){
+			return;
+		}
+
+		// 3.
+		var $this = $(this);
+		var input = $this.val();
+
+		// 4.
+		var input = input.replace(/[\D\s\._\-]+/g, "");
+
+		// 5.
+		input = input ? parseInt(input, 10) : 0;
+
+		// 6.
+		$this.val(function(){
+			return (input === 0) ? "" : input.toLocaleString("id-ID");
+		});
+    });
+
+    $('.thirdPlaceRewardValidation').on('keyup', function(e){
+		// 1.
+		var selection = window.getSelection().toString();
+		if(selection !== ''){
+			return;
+		}
+
+		// 2.
+		if($.inArray(e.keyCode, [38,40,37,39]) !== -1){
+			return;
+		}
+
+		// 3.
+		var $this = $(this);
+		var input = $this.val();
+
+		// 4.
+		var input = input.replace(/[\D\s\._\-]+/g, "");
+
+		// 5.
+		input = input ? parseInt(input, 10) : 0;
+
+		// 6.
+		$this.val(function(){
+			return (input === 0) ? "" : input.toLocaleString("id-ID");
+		});
+    });
+
 	$scope.competition = {};
+
+	$scope.numOfTeamOption = [32,16,8];
+
 	console.log($stateParams.competitionId);
 	CompetitionService.getCompetitionById($stateParams.competitionId,localStorage.getItem("token")).success(function(data) {
+		data.comp_start = new Date(data.comp_start);
+		data.comp_finish = new Date(data.comp_finish);
+
+		localStorage.setItem('competitionObj', JSON.stringify(data));
 		$scope.competition = data;
+		$scope.status = data.comp_type;
 		$ionicLoading.hide();
-		console.log($scope.competition);
+		console.log($scope.competition.comp_numOfTeam);
+		if($scope.competition.comp_fee !== ""){
+			console.log("not null");
+			$scope.fee = { checked: true };
+		}
 	}).error(function(data) {});
 
+	var competitionObj = localStorage.getItem('competitionObj');
+	var competitionObjData = JSON.parse(competitionObj);
+	console.log(competitionObjData);
+	console.log($scope.menuProfile.createdCompetition.active);
+	var activeCompetitionArr = $scope.menuProfile.createdCompetition.active.split(",");
+	$scope.profileData = {};
+	$scope.profileData.createdCompetition = {};
+	$scope.profileData.createdCompetition.active = "";
+	$scope.profileData.createdCompetition.completed = $scope.menuProfile.createdCompetition.completed;
+	$scope.activeCompetitionArr = [];
+
 	$scope.editCompetition = function() {
-	$scope.competition.comp_start = moment($scope.competition.comp_start).format('YYYY-MM-DD');
-	console.log($scope.competition.comp_start);
-	$scope.competition.comp_finish = moment($scope.competition.comp_finish).format('YYYY-MM-DD');
-	console.log($scope.competition.comp_finish);
-	CompetitionService.editCompetition($stateParams.competitionId, localStorage.getItem("token"), $scope.competition).success(function(data) {
-		$ionicLoading.hide();
-		var alertPopup = $ionicPopup.alert({
-			title: 'Success!',
-			template: 'Berhasil Edit Kompetisi'
-		});
-		$state.go('app.home');
-	}).error(function(data) {
-		$ionicLoading.hide();
-		var alertPopup = $ionicPopup.alert({
-			title: 'Failed!',
-			template: 'Gagal Edit Kompetisi'
-		});
-	});
+		// $scope.competition.comp_start = moment($scope.competition.comp_start).format('YYYY-MM-DD');
+		// console.log($scope.competition.comp_start);
+		// $scope.competition.comp_finish = moment($scope.competition.comp_finish).format('YYYY-MM-DD');
+		// console.log($scope.competition.comp_finish);
+
+		// console.log(isEquivalent($scope.competition, $scope.oldCompetition));
+
+
+		// CompetitionService.getCompetitionById($stateParams.competitionId,localStorage.getItem("token")).success(function(data) {
+			
+			if($scope.competition.comp_name !== competitionObjData.comp_name){
+				console.log("tidak sama");
+				activeCompetitionArr.forEach(function(comp){
+					if(comp === competitionObjData.comp_name){
+						console.log("sama");
+						$scope.activeCompetitionArr.push($scope.competition.comp_name); 
+					}else{
+						$scope.activeCompetitionArr.push(comp);
+					}
+				});
+			}else{
+				console.log("sama");
+			}
+			$scope.profileData.createdCompetition.active = $scope.activeCompetitionArr.join(",");
+			console.log($scope.profileData.createdCompetition.active);
+
+
+			$scope.competition.comp_start = new Date($scope.competition.comp_start);
+			$scope.competition.comp_finish = new Date($scope.competition.comp_finish);
+
+			console.log($scope.competition.comp_start);
+			console.log(competitionObjData);
+			console.log($scope.competition.comp_start.getDate());
+
+			console.log(JSON.stringify($scope.competition) === JSON.stringify(competitionObjData));
+
+			if($scope.fee.checked === false){
+				console.log("false");
+				$scope.competition.comp_fee = "";
+			}
+
+
+			if(JSON.stringify($scope.competition) === JSON.stringify(competitionObjData) === true){
+				console.log("tidak ada perubahan data");
+				var alertPopup = $ionicPopup.alert({
+					title: 'Info',
+					template: 'Tidak Ada Perubahan Data'
+				});
+			}else{
+				console.log("ada data yang diubah");
+
+				console.log($scope.competition.comp_start);
+
+		if($scope.competition.comp_start != null){
+			console.log($scope.competition.comp_start.getDate());
+
+			var minStartDate = new Date();
+			console.log(minStartDate.getDate());
+			minStartDate.setDate(minStartDate.getDate() + 14);
+
+			var maxStartDate = new Date();
+			maxStartDate.setDate(maxStartDate.getDate() + 21);
+
+			var minEndDate = new Date($scope.competition.comp_start);
+			minEndDate.setDate(minEndDate.getDate() + 7);
+
+			var maxEndDate = new Date($scope.competition.comp_start);
+			maxEndDate.setDate(maxEndDate.getDate() + 30);
+
+			console.log($scope.competition.comp_start);
+			console.log(minStartDate);
+			console.log(maxStartDate);
+			console.log(minEndDate);
+			console.log(maxEndDate);
+
+			var isStartDateValid = true;
+			var isEndDateValid = true;
+
+			if ($scope.competition.comp_start < minStartDate || $scope.competition.comp_start > maxStartDate) {
+		       	console.log("start date must be between 14 and 21 day next to the day the competition is created");
+		       	isStartDateValid = false;
+		    } else {
+		    	isStartDateValid = true;
+		    }
+
+		    if ($scope.competition.comp_finish < minEndDate || $scope.competition.comp_finish > maxEndDate) {
+		       	console.log("end date must be between 7 and 30 day next to the competition start date");
+		       	isEndDateValid = false;
+		    } else {
+		    	isEndDateValid = true;
+		    }
+		}
+
+		console.log($scope.fee.checked);
+
+		if ($scope.competition.comp_name === undefined && $scope.competition.comp_type === undefined && $scope.competition.comp_location === undefined && $scope.competition.comp_numOfTeam === undefined && $scope.competition.comp_start === undefined && $scope.competition.comp_finish === undefined) {
+			$rootScope.showPopup($ionicPopup,'Create Competition failed!','Please fill all the fields', 'popup-error');
+		} else if ($scope.competition.comp_name === undefined || $scope.competition.comp_name === "") {
+			$rootScope.showPopup($ionicPopup,'Create Competition failed!','Competition name is required !', 'popup-error');
+		} else if ($scope.competition.comp_type === undefined || $scope.competition.comp_type === "") {
+			$rootScope.showPopup($ionicPopup,'Create Competition failed!','Competition type is required !', 'popup-error');
+		} else if ($scope.competition.comp_numOfTeam === undefined || $scope.competition.comp_numOfTeam === "") {
+			$rootScope.showPopup($ionicPopup,'Create Competition failed!','Number of teams is required !', 'popup-error');
+		} else if ($scope.fee.checked == true && $scope.competition.comp_fee === undefined || $scope.competition.comp_fee === "") {
+			$rootScope.showPopup($ionicPopup,'Create Competition failed!','registration fee is required !', 'popup-error');
+		} else if ($scope.competition.comp_address.city === undefined || $scope.competition.comp_address.city === "") {
+			$rootScope.showPopup($ionicPopup,'Create Competition failed!','city is required !', 'popup-error');
+		} else if ($scope.competition.comp_address.venue === undefined || $scope.competition.comp_address.venue === "") {
+			$rootScope.showPopup($ionicPopup,'Create Competition failed!','venue is required !', 'popup-error'); 
+		} else if ($scope.competition.comp_start === undefined || $scope.competition.comp_start === "") {
+			$rootScope.showPopup($ionicPopup,'Create Competition failed!','start date is required !', 'popup-error');
+		} else if (isStartDateValid === false) {
+			$rootScope.showPopup($ionicPopup,'Create Competition failed!','start date is not valid (must be minimal 14 day next to the day the competition is created)', 'popup-error');
+		} else if ($scope.competition.comp_finish === undefined || $scope.competition.comp_finish === "") {
+			$rootScope.showPopup($ionicPopup,'Create Competition failed!','end date is required !', 'popup-error');
+		} else if (isEndDateValid === false) {
+			$rootScope.showPopup($ionicPopup,'Create Competition failed!','end date is not valid (must be between 7 and 30 day next to the competition start date)', 'popup-error');
+		} else if ($scope.competition.comp_name !== null && $scope.competition.comp_type !== null && $scope.competition.comp_numOfTeam !== null && $scope.competition.comp_start !== null && $scope.competition.comp_finish !== null) {
+			console.log($scope.competition);
+
+				CompetitionService.editCompetition($stateParams.competitionId, localStorage.getItem("token"), $scope.competition).success(function(data) {
+					$ionicLoading.hide();
+					var alertPopup = $ionicPopup.alert({
+						title: 'Success',
+						template: 'Berhasil Melakukan Perubahan Data Kompetisi'
+					});
+				}).error(function(data) {
+					$ionicLoading.hide();
+					var alertPopup = $ionicPopup.alert({
+						title: 'Failed',
+						template: 'Gagal Melakukan Perubahan Data Kompetisi'
+					});
+				});
+
+				console.log($scope.profileData);
+			 	ProfileService.editProfileById(localStorage.getItem("userid"), localStorage.getItem("token"), $scope.profileData).success(function(data) {
+					console.log("berhasil");
+					$state.go('app.home');
+				}).error(function(data) {});
+
+			}
+		}
+	// }).error(function(data) {});
+
+
+		
+
+		
+		// if(isEquivalent($scope.competition, $scope.oldCompetition) === true){
+		// 	console.log("tidak ada perubahan data");
+		// 	var alertPopup = $ionicPopup.alert({
+		// 		title: 'Gagal!',
+		// 		template: 'Tidak Ada Perubahan Data'
+		// 	});
+		// }else{
+		// 	console.log("ada data yang diubah");
+		// }
+		// CompetitionService.editCompetition($stateParams.competitionId, localStorage.getItem("token"), $scope.newCompetition).success(function(data) {
+		// 	$ionicLoading.hide();
+		// 	var alertPopup = $ionicPopup.alert({
+		// 		title: 'Success!',
+		// 		template: 'Berhasil Edit Kompetisi'
+		// 	});
+		// 	$state.go('app.home');
+		// }).error(function(data) {
+		// 	$ionicLoading.hide();
+		// 	var alertPopup = $ionicPopup.alert({
+		// 		title: 'Failed!',
+		// 		template: 'Gagal Edit Kompetisi'
+		// 	});
+		// });
 	};
+
+	function isEquivalent(a, b) {
+	    // Create arrays of property names
+	    var aProps = Object.getOwnPropertyNames(a);
+	    var bProps = Object.getOwnPropertyNames(b);
+
+	    // If number of properties is different,
+	    // objects are not equivalent
+	    if (aProps.length != bProps.length) {
+	        return false;
+	    }
+
+	    for (var i = 0; i < aProps.length; i++) {
+	        var propName = aProps[i];
+
+	        // If values of same property are not equal,
+	        // objects are not equivalent
+	        if (a[propName] !== b[propName]) {
+	            return false;
+	        }
+	    }
+
+	    // If we made it this far, objects
+	    // are considered equivalent
+	    return true;
+	}
 
 	$scope.backToCompetition = function() {
 		$state.go('app.competition');
@@ -6893,20 +7499,27 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			"matches": []
 		}
 		var liveMatchLoop = 1;
+		var compName = "";
 		// fungsi ini harus di looping terus karena datanya akan ditampilkan secara real-time
 		// bikin interval waktu utk looping fungsi ini
 		$scope.myCompetitionArr.forEach(function(competition){
 			$ionicLoading.show();
+
+			CompetitionService.getCompetitionName(competition).success(function(data) {
+				compName = data;
+				console.log(compName);
+			}).error(function(data) {});
+
 			CompetitionService.getCompetitionByCompIdAndLiveStat(competition,ls.getItem("token")).success(function(data) {
 				// $scope.liveCompetitions = data;
 				// console.log($scope.liveCompetitions);
 				console.log(data);
 				if(data.length !== 0){
 					// $scope.allLiveMatchesArr = $scope.liveMatchArr.concat(data);
-					if($scope.allLiveMatchesObj.competition_name.indexOf(competition) !== -1){
+					if($scope.allLiveMatchesObj.competition_name.indexOf(compName) !== -1){
 
 					}else{
-						$scope.allLiveMatchesObj.competition_name.push(competition);
+						$scope.allLiveMatchesObj.competition_name.push(compName);
 					}
 					// $scope.allLiveMatchesObj.matches = $scope.matchesArr.concat(data);
 					$scope.allLiveMatchesObj.matches.push(data);
@@ -6938,8 +7551,18 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			"competition_name": [],
 			"matches": []
 		}
+
+
+	setTimeout(function() {
+		   
 		$scope.myCompetitionArr.forEach(function(competition){
 			$ionicLoading.show();
+
+			CompetitionService.getCompetitionName(competition).success(function(data) {
+				compName = data;
+				console.log(compName);
+			}).error(function(data) {});
+
 			CompetitionService.getCompetitionByDate(competition,$scope.matchDate,ls.getItem("token")).success(function(data) {
 				// $scope.matches = data;
 				// console.log(data);
@@ -6952,10 +7575,10 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 				if(data.length !== 0){
 					// $scope.allMatches = $scope.matchesArr.concat(data);
-					if($scope.allMatchesObj.competition_name.indexOf(competition) !== -1){
+					if($scope.allMatchesObj.competition_name.indexOf(compName) !== -1){
 
 					}else{
-						$scope.allMatchesObj.competition_name.push(competition);
+						$scope.allMatchesObj.competition_name.push(compName);
 					}
 					// $scope.allMatchesObj.matches = $scope.matchesArr.concat(data);
 					$scope.allMatchesObj.matches.push(data);
@@ -6980,6 +7603,8 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			}
 		});
 
+	}, 5000);		
+
 	}else if (ls.getItem("myCompetitionId") === 'null') { 
 		$ionicLoading.hide();
 	}	
@@ -6991,6 +7616,10 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	
 		$scope.next = function(){
 			console.log("next");
+			$scope.allMatchesObj = {
+				"competition_name": [],
+				"matches": []
+			}
 			$scope.showme = 2;
 			// $rootScope.showLoading($ionicLoading);
 			var lastDay = new Date($scope.year, $scope.month + 1, 0);
@@ -7018,72 +7647,86 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$scope.matchesArr = [];
 			$scope.allMatches = [];
 			var nextLoop = 1;
-			$scope.allMatchesObj = {
-				"competition_name": [],
-				"matches": []
-			}
+
+		setTimeout(function() {
 
 			$scope.myCompetitionArr.forEach(function(competition){
 				$ionicLoading.show();
-				CompetitionService.getCompetitionByDate(competition,$scope.matchDate,ls.getItem("token")).success(function(data) {
-					// $scope.matches = data
-					console.log(data);
 
-					// create algorithm to sort the data by property match_time
-					//
-					//
-					//
+				CompetitionService.getCompetitionName(competition).success(function(data) {
+					compName = data;
+					console.log(compName);
+				}).error(function(data) {});
 
-					if(data.length !== 0){
-						// $scope.allMatches = $scope.matchesArr.concat(data);
-						if($scope.allMatchesObj.competition_name.indexOf(competition) !== -1){
+				setTimeout(function(){
 
-						}else{
-							$scope.allMatchesObj.competition_name.push(competition);
+					CompetitionService.getCompetitionByDate(competition,$scope.matchDate,ls.getItem("token")).success(function(data) {
+						// $scope.matches = data
+						console.log(data);
+
+						// create algorithm to sort the data by property match_time
+						//
+						//
+						//
+
+						if(data.length !== 0){
+							// $scope.allMatches = $scope.matchesArr.concat(data);
+							if($scope.allMatchesObj.competition_name.indexOf(compName) !== -1){
+
+							}else{
+								$scope.allMatchesObj.competition_name.push(compName);
+							}
+							// $scope.allMatchesObj.matches = $scope.matchesArr.concat(data);
+							$scope.allMatchesObj.matches.push(data);
 						}
-						// $scope.allMatchesObj.matches = $scope.matchesArr.concat(data);
-						$scope.allMatchesObj.matches.push(data);
-					}
-					
-					console.log($scope.allMatchesObj);
+						
+						console.log($scope.allMatchesObj);
 
-					// for(var i = 0; i < $scope.allMatchesObj.matches.length; i++){
-					// 	console.log($scope.allMatchesObj.matches[i]);
-					// 	$scope.allMatchesObj.matches[i].forEach(function(m1){
-					// 		console.log(m1.match_time);
-					// 	})	
-					// }
+						// for(var i = 0; i < $scope.allMatchesObj.matches.length; i++){
+						// 	console.log($scope.allMatchesObj.matches[i]);
+						// 	$scope.allMatchesObj.matches[i].forEach(function(m1){
+						// 		console.log(m1.match_time);
+						// 	})	
+						// }
 
-					// $scope.allMatchesObj.matches.forEach(function(m){
-					// 	console.log(m);
-					// 	// find algorithm to sort two or more different competition matches by it's match_time
-					// 	// how ???????
-					// 	// there are two completely different array and then there are outside array that depend on the inside array 
-					// 	// ...
-					// 	// ga usah aja
-					// 	// sort berdasarkan kompetisi aja
-					// })
+						// $scope.allMatchesObj.matches.forEach(function(m){
+						// 	console.log(m);
+						// 	// find algorithm to sort two or more different competition matches by it's match_time
+						// 	// how ???????
+						// 	// there are two completely different array and then there are outside array that depend on the inside array 
+						// 	// ...
+						// 	// ga usah aja
+						// 	// sort berdasarkan kompetisi aja
+						// })
 
-					console.log("berhasil");
-					for(var m = 0; m < $scope.allMatchesObj.length; m++){
-						$scope.allMatchesObj[m].match_date = new Date($scope.allMatchesObj[m].match_date);
-						console.log($scope.allMatchesObj[m].match_date);
-					}
-					$ionicLoading.hide();
-				}).error(function(data) {
-					console.log("gagal");
+						// console.log("berhasil");
+						// for(var m = 0; m < $scope.allMatchesObj.length; m++){
+						// 	$scope.allMatchesObj[m].match_date = new Date($scope.allMatchesObj[m].match_date);
+						// 	console.log($scope.allMatchesObj[m].match_date);
+						// }
+						// $ionicLoading.hide();
+					}).error(function(data) {
+						console.log("gagal");
+					});
 				});
-				nextLoop++
-				if(nextLoop === $scope.myCompetitionArr.length){
-					setTimeout(function() {
-			             $ionicLoading.hide();
-			        }, 2000);			
-				}
+				$ionicLoading.hide();
+				// nextLoop++
+				// if(nextLoop === $scope.myCompetitionArr.length){
+				// 	setTimeout(function() {
+			 //             $ionicLoading.hide();
+			 //        }, 2000);			
+				// }
 			});
+
+		}, 5000);			
 
 		};
 
 		$scope.prev = function(){
+			$scope.allMatchesObj = {
+				"competition_name": [],
+				"matches": []
+			}
 			$scope.showme = 2;
 			$rootScope.showLoading($ionicLoading);
 			if($scope.day == 1){
@@ -7110,8 +7753,17 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$scope.matchesArr = [];
 			$scope.allMatches = [];
 			var prevLoop = 0;
+
+		setTimeout(function() {
+			
 			$scope.myCompetitionArr.forEach(function(competition){
 				$ionicLoading.show();
+
+				CompetitionService.getCompetitionName(competition).success(function(data) {
+					compName = data;
+					console.log(compName);
+				}).error(function(data) {});
+
 				CompetitionService.getCompetitionByDate(competition,$scope.matchDate,ls.getItem("token")).success(function(data) {
 					// $scope.matches = data;
 					// console.log(data);
@@ -7128,10 +7780,10 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 				if(data.length !== 0){
 					// $scope.allMatches = $scope.matchesArr.concat(data);
-					if($scope.allMatchesObj.competition_name.indexOf(competition) !== -1){
+					if($scope.allMatchesObj.competition_name.indexOf(compName) !== -1){
 
 					}else{
-						$scope.allMatchesObj.competition_name.push(competition);
+						$scope.allMatchesObj.competition_name.push(compName);
 					}
 					// $scope.allMatchesObj.matches = $scope.matchesArr.concat(data);
 					$scope.allMatchesObj.matches.push(data);
@@ -7139,15 +7791,16 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				
 				console.log($scope.allMatchesObj);
 
-				console.log("berhasil");
-				for(var m = 0; m < $scope.allMatchesObj.length; m++){
-					$scope.allMatchesObj[m].match_date = new Date($scope.allMatchesObj[m].match_date);
-					console.log($scope.allMatchesObj[m].match_date);
-				}
-				$ionicLoading.hide();
+				// console.log("berhasil");
+				// for(var m = 0; m < $scope.allMatchesObj.length; m++){
+				// 	$scope.allMatchesObj[m].match_date = new Date($scope.allMatchesObj[m].match_date);
+				// 	console.log($scope.allMatchesObj[m].match_date);
+				// }
+				// $ionicLoading.hide();
 				}).error(function(data) {
 					console.log("gagal");
 				});
+				$ionicLoading.hide();
 				prevLoop++
 				if(prevLoop === $scope.myCompetitionArr.length){
 					setTimeout(function() {
@@ -7157,6 +7810,8 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				console.log($scope.myCompetitionArr.length);
 				console.log(prevLoop);
 			});
+
+		}, 5000);		
 
 		};
 })

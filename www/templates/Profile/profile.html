@@ -9,7 +9,7 @@
 <!-- Shadow space -->
 <div class="bar item-input-inset" style="border:none;box-shadow: 0 1px 2px #aaa"></div>
 <ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color: #ececec;">
-<div ng-show="menuProfile.role != 'Referee'" style="background-image: url('img/background-leaderboard.png');padding-top:15px;background-repeat:no-repeat;">
+<div ng-click="setDefaultCompStatus()" ng-show="menuProfile.role != 'Referee'" style="background-image: url('img/background-leaderboard.png');padding-top:15px;background-repeat:no-repeat;">
   <img ng-if="loadCompleted == true" ng-hide="profile.photo != ''" src="img/profile3.png" class="avatar" style="left:0px;right:0px;top:30px;margin:0px auto;width:80px;height:80px;">
   <img src="img/profile3.png" ng-src={{profile.photo}} class="avatar" style="left:0px;right:0px;top:30px;margin:0px auto;width:80px;height:80px;">
   <h1 style="color:white; margin-top:100px; text-align:center; font-size:18px;">{{profile.username}}</h1>
@@ -63,12 +63,17 @@
   <div class="item item-text-wrap" style="padding:0px;">
     <div class="row">
       <div class="col">
-        <p style="text-align:center;border-bottom:1px solid #e1dddd;padding-bottom:2px;color:#000000;">10 Competitions</p>
+        <p ng-show="profile.createdCompetition === ''" style="text-align:center;border-bottom:1px solid #e1dddd;padding-bottom:2px;color:#000000;">0 Competitions</p>
+        <p ng-show="profile.createdCompetition !== ''" style="text-align:center;border-bottom:1px solid #e1dddd;padding-bottom:2px;color:#000000;">{{totalCompetitions}} Competitions</p>
       </div>
     </div>
-    <div class="row" style="text-align:center;">
-      <div class="col">1 Active</div>
-      <div class="col">9 Completed</div>
+
+    <div class="row" style="text-align:center;padding: 0px;">
+      <div ng-class="{'activeCompetition':competitionStatus == 'Active'}" class="col" ng-show="profile.createdCompetition === ''" ng-click="showActiveCompetitions()">0 Active</div>
+      <div ng-class="{'activeCompetition':competitionStatus == 'Active'}" class="col" ng-show="profile.createdCompetition !== ''" ng-click="showActiveCompetitions()">{{totalActiveCompetitions}} Active</div>
+
+      <div ng-class="{'activeCompetition':competitionStatus == 'Completed'}" class="col" ng-show="profile.createdCompetition === ''" ng-click="showCompletedCompetitions()">0 Completed</div>
+      <div ng-class="{'activeCompetition':competitionStatus == 'Completed'}" class="col" ng-show="profile.createdCompetition !== ''" ng-click="showCompletedCompetitions()">{{totalCompletedCompetitions}} Completed</div>
     </div>
   </div>
 </div>
@@ -119,14 +124,32 @@
       <div class="col" style="text-align: right;">25 Year Old</div>
     </div>
   </div> -->
-   <div class="item item-text-wrap" style="padding:0px;">
+  <div class="item item-text-wrap" style="padding:0px;" ng-show="competitionStatus === 'Active'">
     <div class="row">
       <div class="col">
         <p style="text-align:center;border-bottom:1px solid #e1dddd;padding-bottom:2px;color:#000000;">Active Competition</p>
       </div>
     </div>
     <div class="row" style="text-align:center;">
-      <div class="col">Sporto Cup</div>
+      <div class="col" ng-show="profile.createdCompetition === ''">no active competition</div>
+      <div class="col" ng-show="profile.createdCompetition !== ''">
+          <p ng-show="totalActiveCompetitions !== 0" ng-repeat="competition in activeCompetitions" ng-click="showCompetition('{{competition}}')" style="text-align: center;padding: 8px;font-size: 15px;font-weight: 600;">{{competition}}</p>
+          <p ng-show="totalActiveCompetitions === 0" style="text-align: center;padding: 8px;font-size: 15px;font-weight: 600;">no active competition</p>
+      </div>
+    </div>
+  </div>
+  <div class="item item-text-wrap" style="padding:0px;" ng-show="competitionStatus === 'Completed'">
+    <div class="row">
+      <div class="col">
+        <p style="text-align:center;border-bottom:1px solid #e1dddd;padding-bottom:2px;color:#000000;">Completed Competition</p>
+      </div>
+    </div>
+    <div class="row" style="text-align:center;">
+      <div class="col" ng-show="profile.createdCompetition === ''">no completed competition yet</div>
+      <div class="col" ng-show="profile.createdCompetition !== ''">
+          <p ng-show="totalCompletedCompetitions !== 0" ng-repeat="competition in completedCompetitions" ng-click="showCompetition('{{competition}}')" style="text-align: center;padding: 8px;font-size: 15px;font-weight: 600;">{{competition}}</p>
+          <p ng-show="totalCompletedCompetitions === 0" style="text-align: center;padding: 8px;font-size: 15px;">no completed competition yet</p>
+      </div>
     </div>
   </div>
   <!--  <div class="item item-text-wrap" style="padding:0px;">
@@ -141,6 +164,9 @@
     </div>
   </div> -->
 </div>
+
+<div ng-show="competitionStatus === ''" ng-click="setDefaultCompStatus()" class="row" style="height: 600px;margin-top: -100px;"></div>
+<div ng-show="competitionStatus !== ''" ng-click="setDefaultCompStatus()" class="row" style="height: 550px;margin-top: -200px;"></div>
 
 <!-- <div class="card" style="margin:0px;margin-top:5px;height: 420px;">
   <div class="item item-text-wrap" style="padding: 0px;">

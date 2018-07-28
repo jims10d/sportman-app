@@ -277,11 +277,11 @@
     </div>
     <div class="row" style="margin:0px;">
       <div class="col col-10"><i class="ion-location" style="font-size:21px;color:#f36f64;"></i></div>
-      <div class="col col-90" style="margin-left: 4px;">{{data.comp_location}}</div>
+      <div class="col col-90" style="margin-left: 4px;">{{data.comp_address.venue.nama}}</div>
     </div>
     <div class="row" style="margin:0px;">
       <div class="col col-10"><i class="ion-cash" style="font-size:21px;color:#28a54c;"></i></div>
-      <div class="col col-90" style="margin-left: 4px;">Rp. {{data.comp_fee}}/Team</div>
+      <div class="col col-90" style="margin-left: 4px;">Rp. {{data.comp_fee}} / Team</div>
     </div>
     <div class="row">
       <div class="col col-10" style="margin-top: 3px;margin-right: 6px;" ng-click="goToEditCompetition('{{data.id}}')"><i class="ion-edit" style="font-size:16px;color:#838586;"></i></div>
@@ -292,12 +292,19 @@
   <div ng-show="data.schedule_status === null && registeredTeamLength[data.id] === data.comp_numOfTeam" class="row" style="border-top: #ebebeb 1px solid;border-bottom: #ebebeb 1px solid;margin:0px;padding:0px;">
       <div class="col cursor" style="background-color:#ffffff;text-align:center;font-weight:bold;color:#4DB6AC;padding:10px;"> Scheduling on progress...</div>
   </div>
-  <div  class="row" style="border-top: #ebebeb 1px solid;border-bottom: #ebebeb 1px solid;margin:0px;padding:0px;">
+
+  <div ng-show="data.schedule_status === 'completed'" class="row" style="border-top: #ebebeb 1px solid;border-bottom: #ebebeb 1px solid;margin:0px;padding:0px;">
       <div class="col cursor" style="background-color:#ffffff;text-align:center;font-weight:bold;color:#4DB6AC;padding:10px;" ng-click="completeScheduling('{{data.id}}')"> Complete Scheduling</div>
   </div>
+
   <div ng-show="registeredTeamLength[data.id] === data.comp_numOfTeam" class="row" style="border-top: #ebebeb 1px solid;border-bottom: #ebebeb 1px solid;margin:0px;padding:0px;">
       <div class="col cursor" style="background-color:#ffffff;text-align:center;font-weight:bold;color:#4DB6AC;padding:10px;" ng-click="viewMatches('{{data.id}}')"> Set Schedule </div>
   </div>
+
+  <div id="myProgress">
+    <div id="{{data.id}}" style=" width: 0%;height: 4px;background-color: #4db6ac;"></div>
+  </div>
+
 </div>
 <!--Created Competition -->
 

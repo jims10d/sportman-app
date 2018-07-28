@@ -1126,6 +1126,42 @@ angular.module('starter.services', [])
 				};
 				return promise;
 			},
+			getCompetitionId: function(compName) {
+				var deferred = $q.defer();
+				var promise = deferred.promise;
+				$http.get(BACKEND.URL + '/competitions/getCompetitionId?competitionName=' + compName).success(function(response) {
+					deferred.resolve(response);
+				}).error(function(response) {
+					deferred.reject(response);
+				});
+				promise.success = function(fn) {
+					promise.then(fn);
+					return promise;
+				};
+				promise.error = function(fn) {
+					promise.then(null, fn);
+					return promise;
+				};
+				return promise;
+			},
+			getCompetitionName: function(compId) {
+				var deferred = $q.defer();
+				var promise = deferred.promise;
+				$http.get(BACKEND.URL + '/competitions/getCompetitionName?competitionId=' + compId).success(function(response) {
+					deferred.resolve(response);
+				}).error(function(response) {
+					deferred.reject(response);
+				});
+				promise.success = function(fn) {
+					promise.then(fn);
+					return promise;
+				};
+				promise.error = function(fn) {
+					promise.then(null, fn);
+					return promise;
+				};
+				return promise;
+			},
 			getMatchesByCompetition: function(compId,tokens) {
 				var deferred = $q.defer();
 				var promise = deferred.promise;
