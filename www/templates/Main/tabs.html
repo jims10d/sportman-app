@@ -26,44 +26,44 @@
 					<ion-item class="item item-complex" nav-clear="" menu-close="" ng-href="#/app/home">
 						<i class="mdi mdi-home" style="margin-right:10px; font-size:18px;"></i>   Home
 					</ion-item>
-					<ion-item class="item item-complex" nav-clear="" menu-close="" ng-hide="menuProfile.role == 'Organizer' || menuProfile.role == 'Referee'" ng-href="#/app/chat">
+					<ion-item class="item item-complex" nav-clear="" menu-close="" ng-hide="menuProfile.role == 'Organizer' || menuProfile.role == 'Referee'" ng-href="" ng-click="viewChat()">
 						<i class="mdi mdi-message" style="margin-right:10px; font-size:18px;"></i>   Chat
 					</ion-item>
-					<ion-item class="item item-complex" nav-clear="" menu-close="" ng-href="#/app/profile">
+					<ion-item class="item item-complex" nav-clear="" menu-close="" ng-href="" ng-click="viewProfile()">
 						<i class="mdi mdi-account" style="margin-right:10px; font-size:20px;"></i>   Profile
 					</ion-item>
 			<!-- 		<ion-item class="item item-complex" ng-show="menuProfile.role == 'Referee'" nav-clear="" menu-close="" ng-href="#/app/competition">
 						<i class="mdi mdi-trophy-variant" style="margin-right:10px; font-size:20px;"></i> Task
 					</ion-item> -->
-					<ion-item class="item item-complex" ng-show="menuProfile.role == 'Referee'" nav-clear="" menu-close="" ng-href="#/app/track_score">
+					<ion-item class="item item-complex" ng-show="menuProfile.role == 'Referee'" nav-clear="" menu-close="" ng-href="" ng-click="viewTrackScore()">
 						<i class="mdi mdi-trophy-variant" style="margin-right:10px; font-size:20px;"></i> Track Score
 					</ion-item>
-					<ion-item class="item item-complex" ng-show="menuProfile.role == 'Referee'" nav-clear="" menu-close="" ng-href="#/app/history">
+					<!-- <ion-item class="item item-complex" ng-show="menuProfile.role == 'Referee'" nav-clear="" menu-close="" ng-href="#/app/history">
 						<i class="mdi mdi-history" style="margin-right:10px; font-size:20px;"></i>   History
 					</ion-item>
 					<ion-item class="item item-complex" ng-show="menuProfile.role == 'Referee'" nav-clear="" menu-close="" ng-href="#/app/leaderboard">
 						<i class="mdi mdi-chart-bar" style="margin-right:10px; font-size:20px;"></i>   Leaderboard
-					</ion-item>
+					</ion-item> -->
 					<!-- <ion-item class="item item-complex" ng-show="menuProfile.role == 'Coach'" nav-clear="" menu-close="" ng-href="#/app/lineup">
 						<i class="mdi mdi-trophy-variant" style="margin-right:10px; font-size:20px;"></i> Line Up
 					</ion-item> -->
-					<ion-item class="item item-complex" ng-show="menuProfile.role != 'Referee'" nav-clear="" menu-close="" ng-href="#/app/live_score">
+					<ion-item class="item item-complex" ng-show="menuProfile.role != 'Referee'" nav-clear="" menu-close="" ng-href="" ng-click="viewLiveScore()">
 						<i class="mdi mdi-trophy-variant" style="margin-right:10px; font-size:20px;"></i> Matches
 					</ion-item>
-					<ion-item class="item item-complex" nav-clear="" menu-close="" ng-hide="menuProfile.role == 'Organizer' || menuProfile.role == 'Referee'" ng-href="#/app/my_team">
+					<ion-item class="item item-complex" nav-clear="" menu-close="" ng-hide="menuProfile.role == 'Organizer' || menuProfile.role == 'Referee'" ng-href="" ng-click="viewTeam()">
 						<i class="mdi mdi-account-multiple" style="margin-right:10px; font-size:20px;"></i>   Team
 					</ion-item>
 					<!-- <ion-item class="item item-complex" nav-clear="" menu-close="" ng-show="menuProfile.role == 'Coach'" ng-href="#/app/training">
 						<i class="mdi mdi-account-multiple" style="margin-right:10px; font-size:20px;"></i>   Training
 					</ion-item> -->
 					
-					<ion-item class="item item-complex" nav-clear="" menu-close="" ng-href="#/app/schedule">
+					<ion-item class="item item-complex" nav-clear="" menu-close="" ng-href="" ng-click="viewSchedule()">
 						<i class="mdi mdi-calendar" style="margin-right:10px; font-size:20px;"></i>   Schedule
 					</ion-item>
-					<ion-item class="item item-complex" nav-clear="" menu-close="" ng-href="#/app/classement">
+					<!-- <ion-item class="item item-complex" nav-clear="" menu-close="" ng-href="#/app/classement">
 						<i class="mdi mdi-trophy-variant" style="margin-right:10px; font-size:20px;"></i>   Classement
-					</ion-item>
-					<ion-item class="item item-complex" nav-clear="" menu-close="" ng-href="#/app/about">
+					</ion-item> -->
+					<ion-item class="item item-complex" nav-clear="" menu-close="" ng-href="" ng-click="viewAbout()">
 						<i class="mdi mdi-help-circle" style="margin-right:10px; font-size:20px;"></i>   About
 					</ion-item>
 					<ion-item class="item item-complex" nav-clear="" menu-close="" ng-href="" ng-click="logout()">

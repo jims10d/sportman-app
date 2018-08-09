@@ -2,55 +2,160 @@
 <ion-nav-buttons side="left">
 <button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="back()" style="font-size:25px"></button>
 </ion-nav-buttons>
-<ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color: #ececec; z-index:0; margin-top:12px;">
-<!-- for refresh -->
-<ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()" refreshing-text="Fetching ..." refreshing-icon="ion-loading-b"></ion-refresher>
-<div class="card" style="margin-bottom:0px;background-color:#26A69A;border-bottom: 0px;box-shadow: none;padding: 10px;">
-  <div class="item item-text-wrap" style="padding:0px;">
-    <div class="row" style="margin:0px;">
-      <div class="col" style="text-align:center;color:#4DB6AC;font-size:15px;color:white;">Saturday</div>
+
+<!-- referee tab -->
+<div ng-show="menuProfile.role == 'Referee'" class="row" ng-model="showme" ng-init="showme = 1" style="padding:0px;margin-top: 56px;">
+    
+  <a class="col col-50" ng-click="showme=1" ng-class="{'tabActive':showme == 1}" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;z-index: 1;">Match Detail</a>
+
+  <a class="col col-50" ng-click="showme=2" ng-class="{'tabActive':showme == 2}" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;z-index: 1;">Line Ups</a>
+
+</div>
+<!-- referee tab -->
+
+<ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color: #ececec; z-index:0; margin-top:41px;">
+
+<div ng-show="showme==1">
+  <div class="card" style="margin-bottom:0px;background-color:#26A69A;border-bottom: 0px;box-shadow: none;padding: 10px;">
+    <div class="item item-text-wrap" style="padding:0px;">
+      <div class="row" style="margin:0px;">
+        <div class="col" style="text-align:center;color:#4DB6AC;font-size:15px;color:white;">{{day}}</div>
+      </div>
+      <div class="row" style="margin:0px;">
+        <div class="col" style="text-align:center;color:white;margin-top: -20px;">{{match.match_homeTeam}}</div>
+        <div class="col col-30" style="text-align:center;color:#4DB6AC;font-size:15px;color:white;margin-top: -10px;">{{match.match_date | date:'dd MMM'}}</div>
+        <div class="col" style="text-align:center;color:white;margin-top: -20px;">{{match.match_awayTeam}}</div>
+      </div>
     </div>
-    <div class="row" style="margin:0px;">
-      <div class="col" style="text-align:center;color:white;margin-top: -20px;">{{match.match_homeTeam}}</div>
-      <div class="col col-30" style="text-align:center;color:#4DB6AC;font-size:15px;color:white;margin-top: -10px;">16 Sep</div>
-      <div class="col" style="text-align:center;color:white;margin-top: -20px;">{{match.match_awayTeam}}</div>
+  </div>
+
+  <div class="card" style="margin-bottom:10px;margin-top:-5px;">
+    <div class="item item-text-wrap" style="padding:0px;">
+      <div class="row" style="margin:0px;padding-bottom: 0px;">
+        <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 0px;"><i class="mdi mdi-trophy-variant" style="font-size:20px;"></i></div>
+      </div>
+      <div class="row" style="margin:0px;">
+        <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 10px;border-bottom: 1px solid #ddd;">
+          <p style="color: black;font-weight: 400;padding-bottom: 2px;">{{compName}}<p>
+          <p style="color: black;font-weight: 400;">( {{match.match_fixture}} )</p>
+        </div>
+      </div>
+    </div>
+    <div class="item item-text-wrap" style="padding:0px;">
+      <div class="row" style="margin:0px;padding-bottom: 0px;">
+        <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 0px;"><i class="mdi mdi-calendar" style="font-size:20px;"></i></div>
+      </div>
+      <div class="row" style="margin:0px;">
+        <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 10px;border-bottom: 1px solid #ddd;">{{match.match_date | date:'dd MMMM yyyy'}}, {{match.match_time}}</div>
+      </div>
+    </div>
+    <div class="item item-text-wrap" style="padding:0px;">
+      <div class="row" style="margin:0px;padding-bottom: 0px;">
+        <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 0px;"><i class="mdi mdi-home" style="font-size:20px;"></i></div>
+      </div>
+      <div class="row" style="margin:0px;">
+        <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 10px;border-bottom: 1px solid #ddd;">{{match.match_venue}} (Field {{match.match_field}})</div>
+      </div>
+    </div>
+    <div class="item item-text-wrap" style="padding:0px;">
+      <div class="row" style="margin:0px;padding-bottom: 0px;">
+        <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 0px;"><i class="mdi mdi-account" style="font-size:20px;"></i></div>
+      </div>
+      <div class="row" style="margin:0px;">
+        <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 10px;">{{match.match_referee}}</div>
+      </div>
     </div>
   </div>
 </div>
-<div class="card" style="margin-bottom:10px;margin-top:-5px;">
-  <div class="item item-text-wrap" style="padding:0px;">
-    <div class="row" style="margin:0px;padding-bottom: 0px;">
-      <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 0px;"><i class="mdi mdi-trophy-variant" style="font-size:20px;"></i></div>
-    </div>
-    <div class="row" style="margin:0px;">
-      <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 10px;border-bottom: 1px solid #ddd;">Sporto League</div>
-    </div>
-  </div>
-  <div class="item item-text-wrap" style="padding:0px;">
-    <div class="row" style="margin:0px;padding-bottom: 0px;">
-      <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 0px;"><i class="mdi mdi-calendar" style="font-size:20px;"></i></div>
-    </div>
-    <div class="row" style="margin:0px;">
-      <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 10px;border-bottom: 1px solid #ddd;">16 September 2017, 10:00 </div>
+
+<div ng-show="showme==2">
+  <div class="card" style="margin-bottom:0px;background-color:#26A69A;border-bottom: 0px;box-shadow: none;padding: 0px;">
+    <div class="item item-text-wrap" style="padding:0px;">
+      <div class="row" ng-model="activeTeam" ng-init="activeTeam = 1" style="margin:0px;padding:0px;">
+        <div class="col" ng-click="activeTeam = 1" ng-class="{'teamActive':activeTeam == 1}" style="padding:5px;text-align:center;color:#585353;background-color: white;">{{match.match_homeTeam}}</div>
+        <div class="col" ng-click="activeTeam = 2" ng-class="{'teamActive':activeTeam == 2}" style="padding:5px;text-align:center;color:#585353;background-color: white;">{{match.match_awayTeam}}</div>
+      </div>
     </div>
   </div>
-  <div class="item item-text-wrap" style="padding:0px;">
-    <div class="row" style="margin:0px;padding-bottom: 0px;">
-      <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 0px;"><i class="mdi mdi-home" style="font-size:20px;"></i></div>
-    </div>
-    <div class="row" style="margin:0px;">
-      <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 10px;border-bottom: 1px solid #ddd;">Grand Futsal</div>
-    </div>
+
+  <!-- Empty State Line Up -->
+  <div ng-show="(match.match_homeTeamObj.formation === '' || match.match_awayTeamObj.formation === '')" style="text-align: center;margin-top: 150px;">
+    <p>Line up not available yet</p>
+    <p>Check back later...</p>
   </div>
-  <div class="item item-text-wrap" style="padding:0px;">
-    <div class="row" style="margin:0px;padding-bottom: 0px;">
-      <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 0px;"><i class="mdi mdi-account" style="font-size:20px;"></i></div>
-    </div>
-    <div class="row" style="margin:0px;">
-      <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 10px;">Mark Snowderlyn</div>
-    </div>
+
+  <!-- Exist State Line Up -->
+  <div ng-if="(match.match_homeTeamObj.formation !== '' && match.match_awayTeamObj.formation !== '')" class="card" ng-show="activeTeam == 1" style="margin-bottom:10px;margin-top:15px;">
+      <!-- Formation -->
+      <div class="item item-text-wrap" style="margin:0px;padding:0px;">
+        <div class="row" style="margin:0px;padding:0px;">
+          <div class="col" style="text-align:left;font-size:14px;padding:10px;background-color: #4db6ac;color: white;">Line Up ({{match.match_homeTeamObj.formation}})</div>
+        </div>
+      </div>
+      <!-- Line Up -->
+      <!-- Goal Keeper -->
+      <div class="item item-text-wrap" style="margin:0px;padding: 5px 0px;border-bottom: 1px solid #ddd;">
+        <div class="row" style="margin:0px;padding:0px;">
+          <!-- <div class="col col-10" style="text-align: center;font-weight: bold;">{{homeLineupGKObj.shirtNumber}}</div> -->
+          <div class="col col-70">{{homeLineupGKObj.username}}</div>
+          <!-- <div class="col col-20" style="text-align: center;font-weight: bold;">{{homeLineupGKObj.position}}</div> -->
+        </div>
+      </div>
+      <div ng-repeat="player in homeLineupPlayerArr" class="item item-text-wrap" style="margin:0px;padding: 5px 0px;border-bottom: 1px solid #ddd;">
+        <div class="row" style="margin:0px;padding:0px;">
+          <div class="col col-10" style="text-align: center;font-weight: bold;">{{player.shirtNumber}}</div>
+          <div class="col col-90">{{player.username}}</div>
+        </div>
+      </div>
   </div>
-</div>
+
+  <div ng-if="(match.match_homeTeamObj.formation !== '' && match.match_awayTeamObj.formation !== '')" class="card" ng-show="activeTeam == 1" style="margin-bottom:10px;margin-top:15px;">
+      <!-- Substitutes -->
+      <div class="item item-text-wrap" style="margin-top:0px;padding:0px;">
+        <div class="row" style="margin:0px;padding:0px;">
+          <div class="col" style="text-align:left;font-size:14px;padding:10px;background-color: #4db6ac;color: white;">Substitutes</div>
+        </div>
+      </div>
+
+      <div ng-repeat="player in homeSubPlayerArr" class="item item-text-wrap" style="margin:0px;padding:0px;">
+        <div class="row" style="margin:0px;padding:0px;">
+          <div class="col col-10" style="text-align: center;font-weight: bold;">{{player.shirtNumber}}</div>
+          <div class="col col-90">{{player.username}}</div>
+        </div>
+      </div>   
+  </div>
+
+  <div ng-if="(match.match_homeTeamObj.formation !== '' && match.match_awayTeamObj.formation !== '')" class="card" ng-show="activeTeam == 2" style="margin-bottom:10px;margin-top:15px;">
+      <!-- Line Up -->
+      <div class="item item-text-wrap" style="margin:0px;padding:0px;">
+        <div class="row" style="margin:0px;padding:0px;">
+          <div class="col" style="text-align:left;font-size:14px;padding:10px;background-color: #4db6ac;color: white;">Line Up ({{match.match_awayTeamObj.formation}})</div>
+        </div>
+      </div>
+
+      <div ng-repeat="player in awayLineupPlayerArr" class="item item-text-wrap" style="margin:0px;padding: 5px 0px;border-bottom: 1px solid #ddd;">
+        <div class="row" style="margin:0px;padding:0px;">
+          <div class="col col-10" style="text-align: center;font-weight: bold;">{{player.shirtNumber}}</div>
+          <div class="col col-90">{{player.username}}</div>
+        </div>
+      </div>
+  </div>
+
+  <div ng-if="(match.match_homeTeamObj.formation !== '' && match.match_awayTeamObj.formation !== '')" class="card" ng-show="activeTeam == 2" style="margin-bottom:10px;margin-top:15px;">
+      <!-- Substitutes -->
+      <div class="item item-text-wrap" style="margin-top:0px;padding:0px;">
+        <div class="row" style="margin:0px;padding:0px;">
+          <div class="col" style="text-align:left;font-size:14px;padding:10px;background-color: #4db6ac;color: white;">Substitutes</div>
+        </div>
+      </div>
+
+      <div ng-repeat="player in awaySubPlayerArr" class="item item-text-wrap" style="margin:0px;padding:0px;">
+        <div class="row" style="margin:0px;padding:0px;">
+          <div class="col col-10" style="text-align: center;font-weight: bold;">{{player.shirtNumber}}</div>
+          <div class="col col-90">{{player.username}}</div>
+        </div>
+      </div>   
+  </div>
 <!-- White Space -->
 <div style="height:55px;background:transparent" ng-show="searchbutton"></div>
 <div style="height:200px;background:transparent" ng-show="filterbutton"></div>

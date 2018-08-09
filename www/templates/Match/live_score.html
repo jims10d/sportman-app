@@ -7,13 +7,19 @@
 <ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()" refreshing-text="Fetching ..." refreshing-icon="ion-loading-b"></ion-refresher>
 
 <!-- tab -->
-<div class="row" ng-init="showme = 1" style="padding:0px;margin-top: 10px;">
-    <a class="col col-50" ng-click="showme=1" ng-class="{'top-tab-active':showme == 1}" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;">Live (0)</a>
-    <div ng-show="showme==1" class="col col-10" style="text-align:center;font-size:13px;padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;" ng-click="showme=2"><i ng-class="{'top-tab-active':showme == 2}" class="icon ion-arrow-left-b placeholder-icon" style="color:rgba(255, 255, 255, 0.45);font-size: 20px;"></i></div>
-    <div ng-show="showme==2" class="col col-10" style="text-align:center;font-size:13px;padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;" ng-click="prev()"><i ng-class="{'top-tab-active':showme == 2}" class="icon ion-arrow-left-b placeholder-icon" style="color:rgba(255, 255, 255, 0.45);font-size: 20px;"></i></div>
-    <div class="col col-30" ng-click="showme=2" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;"><p ng-class="{'top-tab-active':showme == 2}" style="padding-left:10px;font-weight:bold;color:rgba(255, 255, 255, 0.45);text-align: center;margin:0px;padding: 0px;">{{day}} {{monthName}} {{year}}</p></div>
-    <div ng-show="showme==1" class="col col-10" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;" ng-click="showme=2"><i ng-class="{'top-tab-active':showme == 2}" class="icon ion-arrow-right-b placeholder-icon" style="color:rgba(255, 255, 255, 0.45);font-size: 20px;"></i></div>
-    <div ng-show="showme==2" class="col col-10" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;" ng-click="next()"><i ng-class="{'top-tab-active':showme == 2}" class="icon ion-arrow-right-b placeholder-icon" style="color:rgba(255, 255, 255, 0.45);font-size: 20px;"></i></div>
+<div class="row" style="padding:0px;margin-top: 10px;">
+
+  <a class="col col-50" ng-click="showme1()" ng-class="{'top-tab-active':showme == 1}" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;">Live ({{liveMatchCount}})</a>
+   
+  <div ng-show="showme==1" class="col col-10" style="text-align:center;font-size:13px;padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;" ng-click="showme=2"><i ng-class="{'top-tab-active':showme == 2}" class="icon ion-arrow-left-b placeholder-icon" style="color:rgba(255, 255, 255, 0.45);font-size: 20px;"></i></div>
+  <div ng-show="showme==2" class="col col-10" style="text-align:center;font-size:13px;padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;" ng-click="prev()"><i ng-class="{'top-tab-active':showme == 2}" class="icon ion-arrow-left-b placeholder-icon" style="color:rgba(255, 255, 255, 0.45);font-size: 20px;"></i></div>
+
+  <div ng-show="day === thisDay && monthName === thisMonthName" class="col col-30"  style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;"><p ng-class="{'top-tab-active':showme == 2}" style="padding-left:10px;font-weight:bold;color:rgba(255, 255, 255, 0.45);text-align: center;margin:0px;padding: 0px;" ng-click="showme2()">Today</p></div>
+  <div ng-hide="day === thisDay && monthName === thisMonthName" class="col col-30"  style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;"><p ng-class="{'top-tab-active':showme == 2}" style="padding-left:10px;font-weight:bold;color:rgba(255, 255, 255, 0.45);text-align: center;margin:0px;padding: 0px;" ng-click="showme2()">{{day}} {{monthName}} {{year}}</p></div>
+
+  <div ng-show="showme==1" class="col col-10" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;" ng-click="showme=2"><i ng-class="{'top-tab-active':showme == 2}" class="icon ion-arrow-right-b placeholder-icon" style="color:rgba(255, 255, 255, 0.45);font-size: 20px;"></i></div>
+  <div ng-show="showme==2" class="col col-10" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;" ng-click="next()"><i ng-class="{'top-tab-active':showme == 2}" class="icon ion-arrow-right-b placeholder-icon" style="color:rgba(255, 255, 255, 0.45);font-size: 20px;"></i></div>
+
 </div>
 <!-- tab -->
 
@@ -35,15 +41,27 @@
 <div ng-if="myCompetitionId !== null" ng-show="showme==1 && allLiveMatchesObj.matches.length !== 0" class="item item-text-wrap" ng-repeat="data in allLiveMatchesObj.competition_name track by $index" style="padding:0px;margin-left: 4px;margin-right: 4px;margin-top:10px;width: auto;background-color: white;">
     <p style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;height:30px;text-align: center;padding-top: 5px;">{{data}}</p>
     <div class="row" ng-repeat="item in allLiveMatchesObj.matches[$index] track by item.id" style="border-bottom: #e8e3e3 1px solid;margin:0px;padding:0px;">
-      <div class="col col-10" style="text-align:center;font-size: 13px;"></div>
+     <!--  <div class="col col-10" style="text-align:center;font-size: 13px;"></div>
       <div class="col" style="text-align:right;font-size: 13px;">{{item.match_homeTeam}}</div>
       <div ng-show="item.match_time != '18:00'" ng-hide="item.match_time == '18:00' || item.countDownStarted == true" ng-if="item.countDownStarted != 'true'" style="text-align:center;color:#4DB6AC;width: 70px;margin-top: 5px;">{{item.match_time}}</div>
       <div ng-show="item.countDownStarted == true && item.countDownTimer > 0" ng-hide="item.countDownStarted == null || item.countDownTimer <= 0" ng-click="liveScore('{{item.id}}')" style="text-align:center;color:#4DB6AC;width: 70px;margin-top: 5px;">{{item.countDownTimer}}</div>
-      <!-- <div class="col col-20" ng-show="item.match_started == true" ng-hide="item.match_started == '' || item.timer_status == 'fulltime' || item.timer_status == 'halftime'" ng-click="liveScore('{{item.id}}')" style="text-align:center;color:#33cd5f;width: 70px;margin-top: 5px;font-size: 13px;">Start</div> -->
+      <div class="col col-20" ng-show="item.match_started == true" ng-hide="item.match_started == '' || item.timer_status == 'fulltime' || item.timer_status == 'halftime'" ng-click="liveScore('{{item.id}}')" style="text-align:center;color:#33cd5f;width: 70px;margin-top: 5px;font-size: 13px;">Start</div>
       <div ng-show="item.timer_status == 'halftime'" ng-hide="item.timer_status != 'halftime'" ng-click="liveScore('{{item.id}}')" style="text-align:center;color:#ffc900;width: 70px;margin-top: 5px;">HT</div>
       <div class="col col-20" ng-show="item.timer_status == 'fulltime'" ng-hide="item.timer_status != 'fulltime'" ng-click="liveScore('{{item.id}}')" style="text-align:center;color:#111;width: 70px;font-size: 13px;">{{item.match_homeScore}} - {{item.match_awayScore}}</div>
       <div class="col" style="text-align:left;font-size: 13px;">{{item.match_awayTeam}}</div>
+      <div class="col col-10" style="text-align:left;"></div> -->
+
+
+       <div class="col col-10" style="text-align:left;color: #4db6ac;">{{liveMatchData[item.id].timer}}'</div>
+        <div class="col" style="text-align:right;font-size: 13px;">{{liveMatchData[item.id].match_homeTeam}}</div>
+<!--         <div ng-show="liveMatchData[item.id].match_time != '18:00'" ng-hide="liveMatchData[item.id].match_time == '18:00' || liveMatchData[item.id].countDownStarted == true" ng-if="liveMatchData[item.id].countDownStarted != 'true'" style="text-align:center;color:#4DB6AC;width: 70px;margin-top: 5px;">{{liveMatchData[item.id].match_time}}</div> -->
+       <!--  <div ng-show="liveMatchData[item.id].countDownStarted == true && liveMatchData[item.id].countDownTimer > 0" ng-hide="liveMatchData[item.id].countDownStarted == null || liveMatchData[item.id].countDownTimer <= 0" ng-click="liveScore('{{liveMatchData[item.id].id}}')" style="text-align:center;color:#4DB6AC;width: 70px;margin-top: 5px;">{{liveMatchData[item.id].countDownTimer}}</div> -->
+        <!-- <div class="col col-20" ng-show="liveMatchData[item.id].match_started == true" ng-hide="liveMatchData[item.id].match_started == '' || liveMatchData[item.id].timer_status == 'fulltime' || liveMatchData[item.id].timer_status == 'halftime'" ng-click="liveScore('{{liveMatchData[item.id].id}}')" style="text-align:center;color:#33cd5f;width: 70px;margin-top: 5px;font-size: 13px;">Start</div> -->
+        <div ng-show="liveMatchData[item.id].timer_status == 'halftime'" ng-hide="liveMatchData[item.id].timer_status != 'halftime'" ng-click="liveScore('{{liveMatchData[item.id].id}}')" style="text-align:center;color:#ffc900;width: 70px;margin-top: 5px;">HT</div>
+        <div class="col col-20" ng-click="liveScore('{{liveMatchData[item.id].id}}')" style="text-align:center;color:#111;width: 70px;font-size: 13px;">{{liveMatchData[item.id].match_homeTeamObj.score}} - {{liveMatchData[item.id].match_awayTeamObj.score}}</div>
+        <div class="col" style="text-align:left;font-size: 13px;">{{liveMatchData[item.id].match_awayTeam}}</div>
       <div class="col col-10" style="text-align:left;"></div>
+
     </div>
 </div>
 

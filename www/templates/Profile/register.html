@@ -29,14 +29,15 @@ true" class="login">
           <option value="Coach" style="color:black">Coach</option>
           <option value="Player" style="color:black">Player</option>
           <option value="Referee" style="color:black">Referee</option>
+          <option value="Analyst" style="color:black">Analyst</option>
         </select>
       </label>
     </div>
   </div>
   <div class="row">
     <div class="col">
-      <input ng-hide="data.role === 'Referee'" type="submit" value="Register" class="button button-block button-calm-900 text-center" ng-click="register()" style="background-color:#1a6d65;border-radius: 25px !important;"></input>
-      <input ng-show="data.role === 'Referee'" type="submit" value="Next" class="button button-block button-calm-900 text-center" ng-click="goToNextPage()" style="background-color:#1a6d65;border-radius: 25px !important;"></input>
+      <input ng-hide="(data.role === 'Referee' || data.role === 'Player')" type="submit" value="Register" class="button button-block button-calm-900 text-center" ng-click="register()" style="background-color:#1a6d65;border-radius: 25px !important;"></input>
+      <input ng-show="(data.role === 'Referee' || data.role === 'Player')" type="submit" value="Next" class="button button-block button-calm-900 text-center" ng-click="goToNextPage()" style="background-color:#1a6d65;border-radius: 25px !important;"></input>
     </div>
   </div>
 </form>

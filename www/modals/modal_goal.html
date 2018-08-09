@@ -4,14 +4,35 @@
    </ion-header-bar> -->
 	
 <ion-content class="hideScroll">
-  <div style="color: white;padding: 10px;padding-left: 14px;background-color: #77d677;font-size: 16px;">Scorer</div>
-  <ion-list ng-repeat="data in squadDataArr track by $index">
-    <ion-radio ng-model="scorer" value="{{data.username}}" name="scorer" style="border-bottom: 1px solid #eeeeee;">{{data.username}}</ion-radio>
-  </ion-list>
-   <div style="color: white;padding: 10px;padding-left: 14px;background-color: #77d677;font-size: 16px;">Assist</div>
-  <ion-list ng-repeat="data in squadDataArr track by $index">
-     <!-- <ion-radio ng-model="assist" value="{{data.username}}" name="assist" style="border-bottom: 1px solid #eeeeee;">{{data.username}}</ion-radio> -->
-  </ion-list>
+  <!-- Goal Home -->
+  <div ng-hide="status == 'subHome' || status == 'subAway'">
+    <div style="color: white;padding: 10px;padding-left: 14px;background-color: #77d677;font-size: 16px;">Scorer</div>
+    <!-- Home -->
+    <ion-list ng-show="status == 'goalHome' || status == 'ownGoalHome' || status == 'penaltyGoalHome' || status == 'yellowCardHome' || status == 'redCardHome'" ng-repeat="data in lineupDataArr track by $index">
+      <ion-radio ng-model="scorer" value="{{data}}" name="scorer" style="border-bottom: 1px solid #eeeeee;" ng-click="showAssistPlayerHome()">{{data}}</ion-radio>
+    </ion-list>
+    <!-- Away -->
+    <ion-list ng-show="status == 'goalAway' || status == 'ownGoalAway' || status == 'penaltyGoalAway' || status == 'yellowCardAway' || status == 'redCardAway'" ng-repeat="data in lineupDataArr track by $index">
+      <ion-radio ng-model="scorer" value="{{data}}" name="scorer" style="border-bottom: 1px solid #eeeeee;" ng-click="showAssistPlayerAway()">{{data}}</ion-radio>
+    </ion-list>
+
+    <div ng-hide="status == 'subHome' || status == 'subAway'" style="color: white;padding: 10px;padding-left: 14px;background-color: #77d677;font-size: 16px;">Assist</div>
+    <ion-list ng-hide="status == 'subHome' || status == 'subAway'" ng-repeat="data in assistPlayerArr track by $index">
+       <ion-radio ng-model="assist" value="{{data}}" name="assist" style="border-bottom: 1px solid #eeeeee;">{{data}}</ion-radio>
+    </ion-list>
+  </div>
+
+  <!-- Substitute -->
+  <div ng-show="status == 'subHome' || status == 'subAway'">
+    <div style="color: white;padding: 10px;padding-left: 14px;background-color: #77d677;font-size: 16px;">Player Out</div>
+    <ion-list ng-repeat="data in lineupDataArr track by $index">
+      <ion-radio ng-model="playerOut" value="{{data}}" name="playerOut" style="border-bottom: 1px solid #eeeeee;">{{data}}</ion-radio>
+    </ion-list>
+    <div style="color: white;padding: 10px;padding-left: 14px;background-color: #77d677;font-size: 16px;">Player In</div>
+    <ion-list ng-repeat="data in subDataArr track by $index">
+       <ion-radio ng-model="playerIn" value="{{data}}" name="playerIn" style="border-bottom: 1px solid #eeeeee;">{{data}}</ion-radio>
+    </ion-list>
+  </div>
   <div class="list">
   <!-- White area -->
   <div ng-hide="searchmessage"></div>
@@ -91,9 +112,26 @@
     </div>
   </a>
 </div>
-      <button class = "button"
-         ng-click = "addGoalHome()" style="top: 700px;left: 20px;background-color: #77d677; color: white;position: fixed;">Submit</button>
-      <button class = "button"
-         ng-click = "closeModalGoal()" style="top: 700px;right: 20px;background-color: #77d677; color: white;position: fixed;">Cancel</button>
+<button ng-show="status == 'goalHome'" class = "button" ng-click = "addGoalHome()" style="top: 700px;left: 20px;background-color: #77d677; color: white;position: fixed;">Submit</button>
+<button ng-show="status == 'goalAway'" class = "button" ng-click = "addGoalAway()" style="top: 700px;left: 20px;background-color: #77d677; color: white;position: fixed;">Submit</button>
+
+<button ng-show="status == 'ownGoalHome'" class = "button" ng-click = "addOwnGoalHome()" style="top: 700px;left: 20px;background-color: #77d677; color: white;position: fixed;">Submit</button>
+<button ng-show="status == 'ownGoalAway'" class = "button" ng-click = "addOwnGoalAway()" style="top: 700px;left: 20px;background-color: #77d677; color: white;position: fixed;">Submit</button>
+
+<button ng-show="status == 'penaltyGoalHome'" class = "button" ng-click = "addPenaltyGoalHome()" style="top: 700px;left: 20px;background-color: #77d677; color: white;position: fixed;">Submit</button>
+<button ng-show="status == 'penaltyGoalAway'" class = "button" ng-click = "addPenaltyGoalAway()" style="top: 700px;left: 20px;background-color: #77d677; color: white;position: fixed;">Submit</button>
+
+<button ng-show="status == 'yellowCardHome'" class = "button" ng-click = "addYellowCardHome()" style="top: 700px;left: 20px;background-color: #77d677; color: white;position: fixed;">Submit</button>
+<button ng-show="status == 'yellowCardAway'" class = "button" ng-click = "addYellowCardAway()" style="top: 700px;left: 20px;background-color: #77d677; color: white;position: fixed;">Submit</button>
+
+<button ng-show="status == 'redCardHome'" class = "button" ng-click = "addRedCardHome()" style="top: 700px;left: 20px;background-color: #77d677; color: white;position: fixed;">Submit</button>
+<button ng-show="status == 'redCardAway'" class = "button" ng-click = "addRedCardAway()" style="top: 700px;left: 20px;background-color: #77d677; color: white;position: fixed;">Submit</button>
+
+<button ng-show="status == 'subHome'" class = "button" ng-click = "addSubHome()" style="top: 700px;left: 20px;background-color: #77d677; color: white;position: fixed;">Submit</button>
+<button ng-show="status == 'subAway'" class = "button" ng-click = "addSubAway()" style="top: 700px;left: 20px;background-color: #77d677; color: white;position: fixed;">Submit</button>
+
+
+
+<button class = "button" ng-click = "closeModalGoal()" style="top: 700px;right: 20px;background-color: #77d677; color: white;position: fixed;">Cancel</button>
    </ion-content>
 </ion-modal-view>

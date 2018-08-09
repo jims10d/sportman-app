@@ -685,6 +685,11 @@ a.subdued{
   text-align: right;
 }
 
+.goal-left{
+  border-left: 1px solid #ddd !important;
+  border-right: none !important;
+}
+
 /* auto scrolling for chat function */
 [scroll-glue-top],
 [scroll-glue-bottom],
@@ -930,4 +935,28 @@ a.subdued{
     width: 0%;
     height: 4px;
     background-color: #4db6ac;
+}
+
+.activePenalty {
+  border-bottom: 1px solid grey;
+}
+
+.penaltyGoal {
+  color:#4db6ac;
+}
+
+.penaltyMiss {
+  color:#ef473a;
+}
+
+.penaltyStatus {
+  font-size:30px;
+  color:#cdcece;
+}
+
+.teamActive {
+  text-align:center !important;
+  color:white !important;
+  border-right: 1px solid white !important;
+  background-color: #4db6ac !important;
 }

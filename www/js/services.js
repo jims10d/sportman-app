@@ -108,6 +108,24 @@ angular.module('starter.services', [])
                 };
                 return promise;
             },
+            getAllReferees: function() {
+                var deferred = $q.defer();
+                var promise = deferred.promise;
+                $http.get(BACKEND.URL + '/users/getAllReferees').success(function(response) {
+                    deferred.resolve(response);
+                }).error(function(response) {
+                    deferred.reject(response);
+                });
+                promise.success = function(fn) {
+                    promise.then(fn);
+                    return promise;
+                };
+                promise.error = function(fn) {
+                    promise.then(null, fn);
+                    return promise;
+                };
+                return promise;
+            },
             getUserById: function(userId) {
                 var deferred = $q.defer();
                 var promise = deferred.promise;
@@ -1180,10 +1198,46 @@ angular.module('starter.services', [])
 				};
 				return promise;
 			},
+			getMatchesByCompetitionAndDate: function(compId, matchDate) {
+				var deferred = $q.defer();
+				var promise = deferred.promise;
+				$http.get(BACKEND.URL + '/competitions/' + compId + '/matches?filter=%7B%22where%22%3A%7B%22match_date%22%3A%22' + matchDate + '%22%7D%2C%20%22order%22%3A%22match_time%22%7D').success(function(response) {
+					deferred.resolve(response);
+				}).error(function(response) {
+					deferred.reject(response);
+				});
+				promise.success = function(fn) {
+					promise.then(fn);
+					return promise;
+				};
+				promise.error = function(fn) {
+					promise.then(null, fn);
+					return promise;
+				};
+				return promise;
+			},
 			getMatchesByFixture: function(compId,fixtureNum,tokens) {
 				var deferred = $q.defer();
 				var promise = deferred.promise;
 				$http.get(BACKEND.URL + 'competitions/'+ compId +'/matches?filter=%7B%22where%22%3A%7B%22fixture_number%22%3A%22'+ fixtureNum + '%22%7D%2C%20%22order%22%3A%22match_date%22%7D&access_token=' + tokens).success(function(response) {
+					deferred.resolve(response);
+				}).error(function(response) {
+					deferred.reject(response);
+				});
+				promise.success = function(fn) {
+					promise.then(fn);
+					return promise;
+				};
+				promise.error = function(fn) {
+					promise.then(null, fn);
+					return promise;
+				};
+				return promise;
+			},
+			getMatchesByMatchFixture: function(compId,matchFixture,tokens) {
+				var deferred = $q.defer();
+				var promise = deferred.promise;
+				$http.get(BACKEND.URL + 'competitions/'+ compId +'/matches?filter=%7B%22where%22%3A%7B%22match_fixture%22%3A%22'+ matchFixture + '%22%7D%2C%20%22order%22%3A%22match_date%22%7D&access_token=' + tokens).success(function(response) {
 					deferred.resolve(response);
 				}).error(function(response) {
 					deferred.reject(response);
@@ -1220,6 +1274,78 @@ angular.module('starter.services', [])
 				var deferred = $q.defer();
 				var promise = deferred.promise;
 				$http.get(BACKEND.URL + '/competitions/' + id + '?access_token=' + token).success(function(response) {
+					deferred.resolve(response);
+				}).error(function(response) {
+					deferred.reject(response);
+				});
+				promise.success = function(fn) {
+					promise.then(fn);
+					return promise;
+				};
+				promise.error = function(fn) {
+					promise.then(null, fn);
+					return promise;
+				};
+				return promise;
+			},
+			getCompetitionByOrganizerAndSchedule: function(organizer) {
+				var deferred = $q.defer();
+				var promise = deferred.promise;
+				$http.get(BACKEND.URL + '/competitions?filter=%7B%22where%22%3A%7B%22organizer%22%3A%22' + organizer + '%22%2C%22schedule_status%22%3A%22On%20Progress%22%7D%7D').success(function(response) {
+					deferred.resolve(response);
+				}).error(function(response) {
+					deferred.reject(response);
+				});
+				promise.success = function(fn) {
+					promise.then(fn);
+					return promise;
+				};
+				promise.error = function(fn) {
+					promise.then(null, fn);
+					return promise;
+				};
+				return promise;
+			},
+			getFinishedMatch: function(compId) {
+				var deferred = $q.defer();
+				var promise = deferred.promise;
+				$http.get(BACKEND.URL + 'competitions/' + compId + '/matches?filter=%7B%22where%22%3A%7B%22match_status%22%3A%20%22finished%22%2C%22match_refereeObj%22%3A%20null%7D%7D').success(function(response) {
+					deferred.resolve(response);
+				}).error(function(response) {
+					deferred.reject(response);
+				});
+				promise.success = function(fn) {
+					promise.then(fn);
+					return promise;
+				};
+				promise.error = function(fn) {
+					promise.then(null, fn);
+					return promise;
+				};
+				return promise;
+			},
+			getCompletedMatchesByCompId: function(compId) {
+				var deferred = $q.defer();
+				var promise = deferred.promise;
+				$http.get(BACKEND.URL + 'competitions/' + compId + '/matches?filter=%7B%22where%22%3A%7B%22fullTime%22%3Atrue%7D%7D').success(function(response) {
+					deferred.resolve(response);
+				}).error(function(response) {
+					deferred.reject(response);
+				});
+				promise.success = function(fn) {
+					promise.then(fn);
+					return promise;
+				};
+				promise.error = function(fn) {
+					promise.then(null, fn);
+					return promise;
+				};
+				return promise;
+			},
+			getClassementByCompIdAndTeam: function(compId,team) {
+				var deferred = $q.defer();
+				var promise = deferred.promise;
+				$http.get(BACKEND.URL + 'competitions/' + compId + '/classements?filter=%7B%22where%22%3A%7B%22team%22%3A%22' + team + '%22%7D%7D').success(function(response) {
 					deferred.resolve(response);
 				}).error(function(response) {
 					deferred.reject(response);
@@ -1466,7 +1592,34 @@ angular.module('starter.services', [])
 	                return promise;
 	            };
 	            return promise;
-        	}
+        	},
+        	editClassementById: function(classementId, data) {
+				var deferred = $q.defer();
+				var promise = deferred.promise;
+				$http.put(BACKEND.URL + '/classements/' + classementId, data, {
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				}).success(function(response) {
+					deferred.resolve(response);
+				}).error(function(response, error) {
+					if (error == 500) {
+						deferred.reject(error);
+					} else {
+
+						deferred.reject(error);
+					}
+				});
+				promise.success = function(fn) {
+					promise.then(fn);
+					return promise;
+				};
+				promise.error = function(fn) {
+					promise.then(null, fn);
+					return promise;
+				};
+				return promise;
+			}
 		};
 })
 
@@ -1707,10 +1860,10 @@ angular.module('starter.services', [])
             };
             return promise;
         	},
-        	getMatchById: function(id, token) {
+        	getMatchById: function(id) {
 				var deferred = $q.defer();
 				var promise = deferred.promise;
-				$http.get(BACKEND.URL + '/matches/' + id + '?access_token=' + token).success(function(response) {
+				$http.get(BACKEND.URL + 'matches/' + id).success(function(response) {
 					deferred.resolve(response);
 				}).error(function(response) {
 					deferred.reject(response);
@@ -1905,10 +2058,10 @@ angular.module('starter.services', [])
 	            };
 	            return promise;
         	},
-        	editMatchById: function(matchId, token, data) {
+        	editMatchById: function(matchId, data) {
 				var deferred = $q.defer();
 				var promise = deferred.promise;
-				$http.put(BACKEND.URL + '/matches/' + matchId + '?access_token=' + token, data, {
+				$http.put(BACKEND.URL + 'matches/' + matchId, data, {
 					headers: {
 						'Content-Type': 'application/json'
 					}

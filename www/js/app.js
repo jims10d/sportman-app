@@ -395,7 +395,7 @@ $stateProvider
 	}
 })
 .state('app.referee_rating', {
-	url: '/referee_rating',
+	url: '/referee_rating/:matchId',
 	views: {
 		'home': {
 			templateUrl: 'templates/Match/referee_rating.html',

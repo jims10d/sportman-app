@@ -110,10 +110,23 @@
       <input type="date" id="compStart" style="margin-right:-13px;padding-left:80px;" ng-model="data.comp_start">
   </label>
 
+  <!-- fixture break -->
+  <label ng-if="data.comp_type === 'GroupStage'" ng-show="data.comp_start !== undefined" class="item item-input item-select">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Break Between Fixture</div>
+    <select style="color:black;border-top: 1px solid #ddd;" ng-model="data.fixture_break" ng-options="break for break in breakBetweenFixture">
+    </select>
+  </label>
+
   <!-- end date -->
-  <label class="item item-input content-border" style="padding:0">
+  <label ng-hide="data.comp_type === 'GroupStage'" class="item item-input content-border" style="padding:0">
       <div class="input-label" style="font-weight:unset; padding-left:15px;padding-top: 10px;padding-bottom: 10px;">End Date</div>
       <input type="date" id="compEnd" style="margin-right:-13px;padding-left:80px;" ng-model="data.comp_finish">
+  </label>
+
+  <!-- end date -->
+  <label ng-if="data.comp_type === 'GroupStage'" ng-show="data.fixture_break !== undefined" class="item item-input content-border" style="padding: 0px;">
+    <div class="col input-label" style="font-weight:unset; padding-left:15px;padding-top: 10px;padding-bottom: 10px;">End Date</div>
+    <div class="col" style="text-align: right;margin-right: 12px;">{{data.comp_start | kDateAddFromDateISO8601 : data.fixture_break : data.comp_numOfTeam | date:'MM/dd/yyyy'}}</div>
   </label>
 
   <!-- competition rewards -->

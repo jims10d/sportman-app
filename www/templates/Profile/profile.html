@@ -30,7 +30,7 @@
   <div class="item item-text-wrap" style="padding:0px;">
     <div class="row">
       <div class="col">
-        <p style="text-align:center;border-bottom:1px solid #e1dddd;padding-bottom:2px;color:#000000;">{{teamData.team_play}} Games</p>
+        <p style="text-align:center;border-bottom:1px solid #e1dddd;padding-bottom:2px;color:#000000;">{{profile.play}} Games</p>
       </div>
     </div>
     <div class="row" style="text-align:center;">
@@ -165,8 +165,8 @@
   </div> -->
 </div>
 
-<div ng-show="competitionStatus === ''" ng-click="setDefaultCompStatus()" class="row" style="height: 600px;margin-top: -100px;"></div>
-<div ng-show="competitionStatus !== ''" ng-click="setDefaultCompStatus()" class="row" style="height: 550px;margin-top: -200px;"></div>
+<div ng-if="menuProfile.role == 'Organizer'" ng-show="competitionStatus === ''" ng-click="setDefaultCompStatus()" class="row" style="height: 600px;margin-top: -100px;"></div>
+<div ng-if="menuProfile.role == 'Organizer'" ng-show="competitionStatus !== ''" ng-click="setDefaultCompStatus()" class="row" style="height: 550px;margin-top: -200px;"></div>
 
 <!-- <div class="card" style="margin:0px;margin-top:5px;height: 420px;">
   <div class="item item-text-wrap" style="padding: 0px;">

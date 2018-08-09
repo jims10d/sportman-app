@@ -1,4 +1,4 @@
-<ion-view view-title="Schedule" cache-view="false">
+<ion-view view-title="Schedule" cache-view="true">
 <!-- Back Button -->
 <ion-nav-buttons side="left">
 <button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="back()" style="font-size:25px"></button>
@@ -13,7 +13,7 @@
 <!-- List of competitions joined -->
 <div class="list" ng-hide="showme" ng-hide="myCompetitionData.length === 0">
 	<!-- Data of competitions -->
-	<a ng-repeat="competition in myCompetitionData" class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;">
+	<a ng-repeat="competition in myCompetitionData | orderBy: 'comp_start'" class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;">
 		<div style="padding-top: 10px">
 		<h2 style="margin-left: -80px;">{{competition.comp_name}}</h2>
 		<p style="margin-left: -80px;font-size: 13px;color:#7c7878;">{{competition.comp_start | date:'dd MMM yy'}} - {{competition.comp_finish | date:'dd MMM yy'}}</p>

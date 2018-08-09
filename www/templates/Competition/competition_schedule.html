@@ -1,25 +1,25 @@
 <ion-view view-title="{{competition.comp_name}}" title-center cache-view="false">
 <!-- Back Button -->
 <ion-nav-buttons side="left">
-<button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="back()" style="font-size:25px"></button>
+<button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="backToSchedule()" style="font-size:25px"></button>
 </ion-nav-buttons>
 
+<!-- tab -->
+<div ng-show="(competition.comp_type == 'GroupStage') || (competition.comp_type == 'Combination')" class="row" ng-init="showme = 1" style="padding:0px;margin-top: 55px;">
+    <a class="col col-50" ng-click="showme=1" ng-class="{'activeTab-text':showme == 1}" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;z-index: 2;">Matches</a>
+    <a class="col col-50" ng-click="showme=2" ng-class="{'activeTab-text':showme == 2}" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;z-index: 2;">Classement</a>
+</div>
+<!-- tab -->
+
+<!-- tab -->
+<div ng-show="competition.comp_type == 'KnockoutSystem'" class="row" ng-init="showme = 1" style="padding:0px;margin-top: 55px;">
+    <a class="col" ng-click="showme=1" ng-class="{'activeTab-text':showme == 1}" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;z-index: 2;">Matches</a>
+</div>
+<!-- tab -->
+
 <ion-content class="hideScroll" overflow-scroll=false scroll-sista="tabs" style="background-color: #f8f8f8;">
-<!-- tab -->
-<div ng-show="(competition.comp_type == 'GroupStage') || (competition.comp_type == 'Combination')" class="row" ng-init="showme = 1" style="padding:0px;margin-top: 10px;">
-    <a class="col col-50" ng-click="showme=1" ng-class="{'activeTab-text':showme == 1}" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;">Matches</a>
-    <a class="col col-50" ng-click="showme=2" ng-class="{'activeTab-text':showme == 2}" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;">Classement</a>
-</div>
-<!-- tab -->
-
-<!-- tab -->
-<div ng-show="competition.comp_type == 'KnockoutSystem'" class="row" ng-init="showme = 1" style="padding:0px;margin-top: 10px;">
-    <a class="col" ng-click="showme=1" ng-class="{'activeTab-text':showme == 1}" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;">Matches</a>
-</div>
-<!-- tab -->
-
-<div class="list" ng-show="showme==1">
- <div ng-if="competition.comp_type == 'GroupStage'" class="item item-divider" style="padding:0px;margin:0px;border-bottom: 1px solid #e1e1e1;margin-bottom: 7px;">
+<div class="list" ng-show="showme==1" style="margin-top: 43px;">
+  <div ng-if="competition.comp_type == 'GroupStage'" class="item item-divider" style="padding:0px;margin:0px;border-bottom: 1px solid #e1e1e1;margin-bottom: 7px;">
    <div class="row" style="margin:0px;padding: 0px;">
       <div ng-show="prevStatus==true" ng-click="prev()" class="col col-10" style="text-align:center;padding: 0px;margin: 0px;background-color: #ffffff;"><i class="icon ion-arrow-left-b placeholder-icon" style="color: #515151;font-size: 20px;"></i></div>
       <div ng-hide="prevStatus==true" class="col col-10" style="text-align:center;padding: 0px;margin: 0px;background-color: #ffffff;"></div>
@@ -29,11 +29,11 @@
    </div>
   </div>
 
-   <div ng-if="competition.comp_type == 'KnockoutSystem'" class="item item-divider" style="padding:0px;margin:0px;border-bottom: 1px solid #e1e1e1;margin-bottom: 7px;">
+  <div ng-if="competition.comp_type == 'KnockoutSystem'" class="item item-divider" style="padding:0px;margin:0px;border-bottom: 1px solid #e1e1e1;margin-bottom: 7px;">
    <div class="row" style="margin:0px;padding: 0px;">
       <div ng-show="prevStatus==true" ng-click="knockoutPrev()" class="col col-10" style="text-align:center;padding: 0px;margin: 0px;background-color: #ffffff;"><i class="icon ion-arrow-left-b placeholder-icon" style="color: #515151;font-size: 20px;"></i></div>
       <div ng-hide="prevStatus==true" class="col col-10" style="text-align:center;padding: 0px;margin: 0px;background-color: #ffffff;"></div>
-      <div class="col col-80" style="text-align:center;padding: 0px;margin:0px;"><p style="padding-left:10px;font-weight:bold;color:#515151;text-align: center;margin:0px;padding: 0px;background-color: #ffffff;">{{match_status}}</p></div>
+      <div class="col col-80" style="text-align:center;padding: 0px;margin:0px;"><p style="padding-left:10px;font-weight:bold;color:#515151;text-align: center;margin:0px;padding: 0px;background-color: #ffffff;">{{matchFixture}}</p></div>
       <div ng-show="nextStatus==true" ng-click="knockoutNext()" class="col col-10" style="text-align:center;padding: 0px;margin: 0px;background-color: #ffffff;"><i class="icon ion-arrow-right-b placeholder-icon" style="color: #515151;font-size: 20px;"></i></div>
       <div ng-hide="nextStatus==true" class="col col-10" style="text-align:center;padding: 0px;margin: 0px;background-color: #ffffff;"></div>
    </div>
@@ -43,7 +43,8 @@
    <div class="row" style="margin:0px;padding: 0px;">
       <div ng-show="prevStatus==true" ng-click="prev()" class="col col-10" style="text-align:center;padding: 0px;margin: 0px;background-color: #ffffff;"><i class="icon ion-arrow-left-b placeholder-icon" style="color: #515151;font-size: 20px;"></i></div>
       <div ng-hide="prevStatus==true" class="col col-10" style="text-align:center;padding: 0px;margin: 0px;background-color: #ffffff;"></div>
-      <div class="col col-80" style="text-align:center;padding: 0px;margin:0px;"><p style="padding-left:10px;font-weight:bold;color:#515151;text-align: center;margin:0px;padding: 0px;background-color: #ffffff;">Fixture {{fixtureNumber}}</p></div>
+      <div ng-show="knockoutStatus=='false'" class="col col-80" style="text-align:center;padding: 0px;margin:0px;"><p style="padding-left:10px;font-weight:bold;color:#515151;text-align: center;margin:0px;padding: 0px;background-color: #ffffff;">Group Stage - Matchday {{fixtureNumber}}</p></div>
+      <div ng-show="knockoutStatus=='true'" class="col col-80" style="text-align:center;padding: 0px;margin:0px;"><p style="padding-left:10px;font-weight:bold;color:#515151;text-align: center;margin:0px;padding: 0px;background-color: #ffffff;">{{matchFixture}}</p></div>
       <div ng-show="nextStatus==true" ng-click="next()" class="col col-10" style="text-align:center;padding: 0px;margin: 0px;background-color: #ffffff;"><i class="icon ion-arrow-right-b placeholder-icon" style="color: #515151;font-size: 20px;"></i></div>
       <div ng-hide="nextStatus==true" class="col col-10" style="text-align:center;padding: 0px;margin: 0px;background-color: #ffffff;"></div>
    </div>
@@ -66,14 +67,14 @@
     </div>
   </div>
 
-  <div ng-if="kmLength != '0'" ng-show="competition.comp_type == 'KnockoutSystem'" ng-repeat="match in knockoutMatches" class="item item-text-wrap" style="padding:0px;width:auto;background-color:white;min-height:0px;border-bottom: #eeeeee 1px solid;margin-left: 8px;margin-right: 8px;">
+  <div ng-if="kmLength != '0'" ng-show="competition.comp_type == 'KnockoutSystem'" ng-repeat="match in knockoutMatchesArr | orderBy:['match_date','match_time','match_pair']" class="item item-text-wrap" style="padding:0px;width:auto;background-color:white;min-height:0px;border-bottom: #eeeeee 1px solid;margin-left: 8px;margin-right: 8px;">
     <div class="row" style="border-bottom:#e8e3e3 1px solid;margin:0px;border-bottom: #eeeeee 1px solid;">
      <div class="col" style="text-align:left;color: #808080;font-size: 11px;max-width: 15%;">{{match.match_date | date:'d/MM'}}</div>
       <div class="col" style="text-align:right;">{{match.match_homeTeam}}</div>
       <div ng-show="match.match_time === null" style="text-align:center;color:#4DB6AC;width: 70px;margin-top: 5px;">vs</div>
       <div ng-show="match.match_time !== null" style="text-align:center;color:#4DB6AC;width: 70px;margin-top: 5px;">{{match.match_time}}</div>
       <div class="col" style="text-align:left;">{{match.match_awayTeam}}</div>
-      <div class="col" style="text-align:right;color: #808080;font-size: 11px;max-width: 15%;">{{data.match_time}}</div>
+      <div class="col" style="text-align:right;color: #808080;font-size: 11px;max-width: 15%;">{{match.match_pair}}</div>
     </div>
   </div>
 
@@ -83,31 +84,51 @@
     </div>
   </div>
 
-  <div ng-show="competition.comp_type == 'Combination'" ng-repeat="match in matches" class="item item-text-wrap" style="padding:0px;width:auto;background-color:white;min-height:0px;border-bottom: #eeeeee 1px solid;margin-left: 8px;margin-right: 8px;">
+  <div ng-show="competition.comp_type == 'Combination'" ng-repeat="match in matchesArr | orderBy:['match_group','match_time']" class="item item-text-wrap" style="padding:0px;width:auto;background-color:white;min-height:0px;border-bottom: #eeeeee 1px solid;margin-left: 8px;margin-right: 8px;">
     <div class="row" style="border-bottom:#e8e3e3 1px solid;margin:0px;border-bottom: #eeeeee 1px solid;">
-     <div class="col" style="text-align:left;color: #808080;font-size: 11px;max-width: 15%;">{{match.match_date | date:'d/MM'}}</div>
-      <div class="col" style="text-align:right;">{{match.match_homeTeam}}</div>
-      <div ng-show="match.match_time !== ''" style="text-align:center;color:#4DB6AC;width: 70px;margin-top: 5px;">{{match.match_time}}</div>
-      <div ng-show="match.match_time === ''" style="text-align:center;color:#4DB6AC;width: 70px;margin-top: 5px;">vs</div>
-      <div class="col" style="text-align:left;">{{match.match_awayTeam}}</div>
-      <div class="col" style="text-align:right;color: #808080;font-size: 11px;max-width: 15%;">{{data.match_time}}</div>
+     <!-- <div class="col" style="text-align:left;color: #808080;font-size: 11px;max-width: 15%;">{{match.match_date | date:'d/MM'}}</div> -->
+
+      <div class="col col-10" style="text-align:right;color: #808080;font-size: 11px;max-width: 15%;">{{match.match_date | date:'d/MM'}}</div>
+
+      <div ng-if="match.match_winner === null" class="col" style="text-align:right;">{{match.match_homeTeam}}</div>
+      <div ng-if="match.match_winner !== null" ng-show="match.match_homeTeam === match.match_winner" class="col" style="text-align:right;color:black;font-weight: 600;">{{match.match_homeTeam}}</div>
+      <div ng-if="match.match_winner !== null" ng-show="match.match_homeTeam === match.match_loser" class="col" style="text-align:right;">{{match.match_homeTeam}}</div>
+
+      <div ng-show="match.timer_status == '' || match.timer_status == null" style="text-align:center;color:#4DB6AC;width: 70px;margin-top: 5px;">{{match.match_time}}</div>
+      <div ng-show="match.timer_status != null" style="text-align:center;color:black;font-weight: 600;width: 70px;margin-top: 5px;">{{match.match_homeTeamObj.score}} - {{match.match_awayTeamObj.score}}</div>
+    <!--   <div ng-show="match.match_time === ''" style="text-align:center;color:#4DB6AC;width: 70px;margin-top: 5px;">vs</div> -->
+
+      <div ng-if="match.match_winner === null" class="col" style="text-align:left;">{{match.match_awayTeam}}</div>
+      <div ng-if="match.match_winner !== null" ng-show="match.match_awayTeam === match.match_winner" class="col" style="text-align:left;color:black;font-weight: 600;">{{match.match_awayTeam}}</div>
+      <div ng-if="match.match_winner !== null" ng-show="match.match_awayTeam === match.match_loser" class="col" style="text-align:left;">{{match.match_awayTeam}}</div>
+
+      <div ng-if="knockoutStatus=='false'" ng-hide="(match.timer_status === '1st half stopped' || match.timer_status === '1st half started' || match.match_status === 'finished')" class="col col-10" style="text-align:left;color: #808080;font-size: 11px;max-width: 15%;">{{match.match_group}}</div>
+      <div ng-show="(match.timer_status == '1st half started' || match.timer_status == 'started' || match.timer_status == '2nd half started' || match.timer_status == '1st half started (ET)' || match.timer_status == '2nd half started (ET)')" class="col col-10" style="text-align:left;font-size: 11px;max-width: 15%;color:black;font-weight: 600;">{{match.timer}}'</div>
+      <div ng-show="match.timer_status == '1st half stopped'" class="col col-10" style="text-align:left;font-size: 11px;max-width: 15%;color:black;font-weight: 600;">HT</div>
+      <div ng-show="match.timer_status == '2nd half stopped' && match.match_status == 'finished'" class="col col-10" style="text-align:left;font-size: 11px;max-width: 15%;color:black;font-weight: 600;">FT</div>
+      <div ng-show="match.timer_status == '2nd half stopped (ET)' && match.match_status == 'finished'" class="col col-10" style="text-align:left;font-size: 11px;max-width: 15%;color:black;font-weight: 600;">ET</div>
+      <div ng-show="(match.timer_status == 'penalty shootout started' || match.timer_status == 'penalty shootout stopped') && match.match_status == 'finished'" class="col col-10" style="text-align:left;font-size: 11px;max-width: 15%;color:black;font-weight: 600;">PEN</div>
+<!--       <div ng-show="knockoutStatus=='true'" class="col" style="text-align:left;color: #808080;font-size: 11px;max-width: 15%;">{{match.match_pair}}</div> -->
+
     </div>
   </div>
+
 </div>
 
 <!-- List of schedules-->
-<div class="list" ng-show="showme==2">
+<div class="list" ng-show="showme==2" style="margin-top: 43px;">
 
 <!--  <div class="row" style="background-color:  white;text-align:  center;border-bottom: 1px solid #ddd;padding: 0px;">
    <div class="col" ng-repeat="group in groupArr" style="border-right: 1px solid #ddd;border-left: 1px solid #ddd;" ng-click="changeGroup('{{group}}')">{{group}}</div>
  </div> -->
 
-<div style="text-align: center;padding: 6px;" ng-show="groupA.length !== 0">Group A
-  <div class="card" style="margin-bottom:10px;height: auto;" >
+<div style="text-align: center;" ng-show="groupA.length !== 0">
+  <h5 style="text-transform: uppercase;color: grey;">Group A</h5>
+  <div class="card" style="margin:0px;height: auto;" >
     <div class="item item-divider" style="padding:0px;background-color: #4db6ac;">
        <div class="row" style="color: white;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
           <div class="col col-10" style="text-align:left;padding:0px;">Pos</div>
-          <div class="col col-30" style="text-align:center;padding:0px;">Team</div>
+          <div class="col col-30" style="text-align:left;padding:0px;">Team</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">P</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">W</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">D</div>
@@ -117,10 +138,23 @@
        </div>
     </div>
 
-    <div ng-repeat="classement in groupA | orderBy:'team'" class="item item-divider" style="padding:0px;background-color: #ffffff;">
+    <div ng-show="classement.points === 0" ng-repeat="classement in groupA | orderBy:'team'" class="item item-divider" style="padding:0px;background-color: #ffffff;">
        <div ng-click="goToTeamInfo()" class="row" style="color: #6a6969;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
           <div class="col col-10" style="text-align:left;padding:0px;">{{$index+1}}</div>
-          <div class="col col-30" style="text-align:center;padding:0px;">{{classement.team}}</div>
+          <div class="col col-30" style="text-align:left;padding:0px;">{{classement.team}}</div>
+          <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.play}}</div>
+          <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.win}}</div>
+          <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.draw}}</div>
+          <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.lose}}</div>
+          <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.goalDifference}}</div>
+          <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.points}}</div>
+       </div>
+    </div>   
+
+    <div ng-show="classement.points !== 0" ng-repeat="classement in groupA | orderBy: ['-points','-play','-goalDifference','team']" class="item item-divider" style="padding:0px;background-color: #ffffff;">
+       <div ng-click="goToTeamInfo()" class="row" style="color: #6a6969;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
+          <div class="col col-10" style="text-align:left;padding:0px;">{{$index+1}}</div>
+          <div class="col col-30" style="text-align:left;padding:0px;">{{classement.team}}</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.play}}</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.win}}</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.draw}}</div>
@@ -132,12 +166,13 @@
   </div>
 </div>
 
-<div style="text-align: center;padding: 6px;" ng-show="groupB.length !== 0">Group B
-  <div class="card" style="margin-bottom:10px;height: auto;" >
+<div style="text-align: center;" ng-show="groupB.length !== 0">
+  <h5 style="text-transform: uppercase;color: grey;">Group B</h5>
+  <div class="card" style="margin:0px;height: auto;" >
     <div class="item item-divider" style="padding:0px;background-color: #4db6ac;">
        <div class="row" style="color: white;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
           <div class="col col-10" style="text-align:left;padding:0px;">Pos</div>
-          <div class="col col-30" style="text-align:center;padding:0px;">Team</div>
+          <div class="col col-30" style="text-align:left;padding:0px;">Team</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">P</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">W</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">D</div>
@@ -150,7 +185,7 @@
     <div ng-repeat="classement in groupB | orderBy:'team'" class="item item-divider" style="padding:0px;background-color: #ffffff;">
        <div ng-click="goToTeamInfo()" class="row" style="color: #6a6969;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
           <div class="col col-10" style="text-align:left;padding:0px;">{{$index+1}}</div>
-          <div class="col col-30" style="text-align:center;padding:0px;">{{classement.team}}</div>
+          <div class="col col-30" style="text-align:left;padding:0px;">{{classement.team}}</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.play}}</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.win}}</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.draw}}</div>
@@ -162,12 +197,13 @@
   </div>
 </div>
 
-<div style="text-align: center;padding: 6px;" ng-show="groupC.length !== 0">Group C
-  <div class="card" style="margin-bottom:10px;height: auto;" >
+<div style="text-align: center;" ng-show="groupC.length !== 0">
+  <h5 style="text-transform: uppercase;color: grey;">Group C</h5>
+  <div class="card" style="margin:0px;height: auto;" >
     <div class="item item-divider" style="padding:0px;background-color: #4db6ac;">
        <div class="row" style="color: white;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
           <div class="col col-10" style="text-align:left;padding:0px;">Pos</div>
-          <div class="col col-30" style="text-align:center;padding:0px;">Team</div>
+          <div class="col col-30" style="text-align:left;padding:0px;">Team</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">P</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">W</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">D</div>
@@ -180,7 +216,7 @@
     <div ng-repeat="classement in groupC | orderBy:'team'" class="item item-divider" style="padding:0px;background-color: #ffffff;">
        <div ng-click="goToTeamInfo()" class="row" style="color: #6a6969;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
           <div class="col col-10" style="text-align:left;padding:0px;">{{$index+1}}</div>
-          <div class="col col-30" style="text-align:center;padding:0px;">{{classement.team}}</div>
+          <div class="col col-30" style="text-align:left;padding:0px;">{{classement.team}}</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.play}}</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.win}}</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.draw}}</div>
@@ -192,12 +228,13 @@
   </div>
 </div>
 
-<div style="text-align: center;padding: 6px;" ng-show="groupD.length !== 0">Group D
-  <div class="card" style="margin-bottom:10px;height: auto;" >
+<div style="text-align: center;" ng-show="groupD.length !== 0">
+  <h5 style="text-transform: uppercase;color: grey;">Group D</h5>
+  <div class="card" style="margin:0px;height: auto;" >
     <div class="item item-divider" style="padding:0px;background-color: #4db6ac;">
        <div class="row" style="color: white;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
           <div class="col col-10" style="text-align:left;padding:0px;">Pos</div>
-          <div class="col col-30" style="text-align:center;padding:0px;">Team</div>
+          <div class="col col-30" style="text-align:left;padding:0px;">Team</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">P</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">W</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">D</div>
@@ -210,7 +247,7 @@
     <div ng-repeat="classement in groupD | orderBy:'team'" class="item item-divider" style="padding:0px;background-color: #ffffff;">
        <div ng-click="goToTeamInfo()" class="row" style="color: #6a6969;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
           <div class="col col-10" style="text-align:left;padding:0px;">{{$index+1}}</div>
-          <div class="col col-30" style="text-align:center;padding:0px;">{{classement.team}}</div>
+          <div class="col col-30" style="text-align:left;padding:0px;">{{classement.team}}</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.play}}</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.win}}</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.draw}}</div>
@@ -222,12 +259,13 @@
   </div>
 </div>
 
-<div style="text-align: center;padding: 6px;" ng-show="groupE.length !== 0">Group E
-  <div class="card" style="margin-bottom:10px;height: auto;" >
+<div style="text-align: center;" ng-show="groupE.length !== 0">
+  <h5 style="text-transform: uppercase;color: grey;">Group E</h5>
+  <div class="card" style="margin:0px;height: auto;" >
     <div class="item item-divider" style="padding:0px;background-color: #4db6ac;">
        <div class="row" style="color: white;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
           <div class="col col-10" style="text-align:left;padding:0px;">Pos</div>
-          <div class="col col-30" style="text-align:center;padding:0px;">Team</div>
+          <div class="col col-30" style="text-align:left;padding:0px;">Team</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">P</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">W</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">D</div>
@@ -240,7 +278,7 @@
     <div ng-repeat="classement in groupE | orderBy:'team'" class="item item-divider" style="padding:0px;background-color: #ffffff;">
        <div ng-click="goToTeamInfo()" class="row" style="color: #6a6969;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
           <div class="col col-10" style="text-align:left;padding:0px;">{{$index+1}}</div>
-          <div class="col col-30" style="text-align:center;padding:0px;">{{classement.team}}</div>
+          <div class="col col-30" style="text-align:left;padding:0px;">{{classement.team}}</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.play}}</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.win}}</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.draw}}</div>
@@ -252,12 +290,13 @@
   </div>
 </div>
 
-<div style="text-align: center;padding: 6px;" ng-show="groupF.length !== 0">Group F
-  <div class="card" style="margin-bottom:10px;height: auto;" >
+<div style="text-align: center;" ng-show="groupF.length !== 0">
+  <h5 style="text-transform: uppercase;color: grey;">Group F</h5>
+  <div class="card" style="margin:0px;height: auto;" >
     <div class="item item-divider" style="padding:0px;background-color: #4db6ac;">
        <div class="row" style="color: white;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
           <div class="col col-10" style="text-align:left;padding:0px;">Pos</div>
-          <div class="col col-30" style="text-align:center;padding:0px;">Team</div>
+          <div class="col col-30" style="text-align:left;padding:0px;">Team</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">P</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">W</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">D</div>
@@ -270,7 +309,7 @@
     <div ng-repeat="classement in groupF | orderBy:'team'" class="item item-divider" style="padding:0px;background-color: #ffffff;">
        <div ng-click="goToTeamInfo()" class="row" style="color: #6a6969;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
           <div class="col col-10" style="text-align:left;padding:0px;">{{$index+1}}</div>
-          <div class="col col-30" style="text-align:center;padding:0px;">{{classement.team}}</div>
+          <div class="col col-30" style="text-align:left;padding:0px;">{{classement.team}}</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.play}}</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.win}}</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.draw}}</div>
@@ -282,12 +321,13 @@
   </div>
 </div>
 
-<div style="text-align: center;padding: 6px;" ng-show="groupG.length !== 0">Group G
-  <div class="card" style="margin-bottom:10px;height: auto;" >
+<div style="text-align: center;" ng-show="groupG.length !== 0">
+  <h5 style="text-transform: uppercase;color: grey;">Group G</h5>
+  <div class="card" style="margin:0px;height: auto;" >
     <div class="item item-divider" style="padding:0px;background-color: #4db6ac;">
        <div class="row" style="color: white;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
           <div class="col col-10" style="text-align:left;padding:0px;">Pos</div>
-          <div class="col col-30" style="text-align:center;padding:0px;">Team</div>
+          <div class="col col-30" style="text-align:left;padding:0px;">Team</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">P</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">W</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">D</div>
@@ -300,7 +340,7 @@
     <div ng-repeat="classement in groupG | orderBy:'team'" class="item item-divider" style="padding:0px;background-color: #ffffff;">
        <div ng-click="goToTeamInfo()" class="row" style="color: #6a6969;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
           <div class="col col-10" style="text-align:left;padding:0px;">{{$index+1}}</div>
-          <div class="col col-30" style="text-align:center;padding:0px;">{{classement.team}}</div>
+          <div class="col col-30" style="text-align:left;padding:0px;">{{classement.team}}</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.play}}</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.win}}</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.draw}}</div>
@@ -312,12 +352,13 @@
   </div>
 </div>
 
-<div style="text-align: center;padding: 6px;" ng-show="groupH.length !== 0">Group H
-  <div class="card" style="margin-bottom:10px;height: auto;" >
+<div style="text-align: center;" ng-show="groupH.length !== 0">
+  <h5 style="text-transform: uppercase;color: grey;">Group H</h5>
+  <div class="card" style="margin:0px;height: auto;" >
     <div class="item item-divider" style="padding:0px;background-color: #4db6ac;">
        <div class="row" style="color: white;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
           <div class="col col-10" style="text-align:left;padding:0px;">Pos</div>
-          <div class="col col-30" style="text-align:center;padding:0px;">Team</div>
+          <div class="col col-30" style="text-align:left;padding:0px;">Team</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">P</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">W</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">D</div>
@@ -329,8 +370,8 @@
 
     <div ng-repeat="classement in groupH | orderBy:'team'" class="item item-divider" style="padding:0px;background-color: #ffffff;">
        <div ng-click="goToTeamInfo()" class="row" style="color: #6a6969;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
-          <div class="col col-10" style="text-align:left;padding:0px;">{{classement.position}}</div>
-          <div class="col col-30" style="text-align:center;padding:0px;">{{classement.team}}</div>
+          <div class="col col-10" style="text-align:left;padding:0px;">{{$index+1}}</div>
+          <div class="col col-30" style="text-align:left;padding:0px;">{{classement.team}}</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.play}}</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.win}}</div>
           <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.draw}}</div>
@@ -356,9 +397,9 @@
      </div>
   </div>
 
-  <div ng-repeat="classement in classementsDataObj" class="item item-divider" style="padding:0px;background-color: #ffffff;">
+  <div ng-repeat="classement in classementDataArr | orderBy:'team'" class="item item-divider" style="padding:0px;background-color: #ffffff;">
      <div ng-click="goToTeamInfo()" class="row" style="color: #6a6969;padding-left: 4px;padding-right: 4px;padding-top: 0px;">
-        <div class="col col-10" style="text-align:left;padding:0px;">{{classement.position}}</div>
+        <div class="col col-10" style="text-align:left;padding:0px;">{{$index+1}}</div>
         <div class="col col-30" style="text-align:center;padding:0px;">{{classement.team}}</div>
         <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.play}}</div>
         <div class="col col-10" style="text-align:right;padding:0px;margin:1px;">{{classement.win}}</div>

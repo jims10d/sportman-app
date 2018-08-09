@@ -44,6 +44,20 @@
   <!-- White area -->
   <div ng-hide="searchmessage"></div>
   <!-- Data of chats -->
+  <a class="item item-avatar" style="border-bottom:1px solid #f0efef;" ng-click="goToChatDetail('{{teamManager.username}}')">
+   <img src="img/profile3.png" ng-src={{teamManager.photo}}>
+    <div style="padding-top: 3px;height:40px;">
+    <h2 style="margin-left: -26px; width:100px;">{{teamManager.username}}</h2>
+    <p style="margin-left: -26px; margin-top: -2px;">{{teamManager.role}}</p>
+    </div>
+  </a>
+  <a class="item item-avatar" style="border-bottom:1px solid #f0efef;" ng-click="goToChatDetail('{{teamCoach.username}}')">
+   <img src="img/profile3.png" ng-src={{teamCoach.photo}}>
+    <div style="padding-top: 3px;height:40px;">
+    <h2 style="margin-left: -26px; width:100px;">{{teamCoach.username}}</h2>
+    <p style="margin-left: -26px; margin-top: -2px;">{{teamCoach.role}}</p>
+    </div>
+  </a>
   <a ng-if="teamSquadArr.length != '0'" ng-repeat="data in teamSquadArr" class="item item-avatar" style="border-bottom:1px solid #f0efef;" ng-click="goToChatDetail('{{data.username}}')">
    <img src="img/profile3.png" ng-src={{data.photo}}>
     <div style="padding-top: 3px;height:40px;">

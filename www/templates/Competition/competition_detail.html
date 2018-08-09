@@ -7,8 +7,8 @@
 <button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="backToHome()" style="font-size:25px"></button>
 </ion-nav-buttons>
 <ion-nav-buttons side="right" style="margin-top: 13px;">
-<a class="button button-clear" ng-show="menuProfile.role == 'Organizer'" ng-click="goToEditCompetition()" style="margin-top: 8px;margin-left: 4px;margin-right: -12px;"><i class="ion-edit" style="font-size: 16px;"></i></a>
-<a class="button button-clear" ng-show="menuProfile.role == 'Organizer'" ng-click="delCompetition()" style="margin-top: 8px;"><i class="ion-android-delete" style="font-size: 18px;"></i></a>
+<a class="button button-clear" ng-show="rTeamLength == 0" ng-if="menuProfile.role == 'Organizer'" ng-click="goToEditCompetition()" style="margin-top: 8px;margin-left: 4px;margin-right: -12px;"><i class="ion-edit" style="font-size: 16px;"></i></a>
+<a class="button button-clear" ng-show="rTeamLength == 0" ng-if="menuProfile.role == 'Organizer'" ng-click="delCompetition()" style="margin-top: 8px;"><i class="ion-android-delete" style="font-size: 18px;"></i></a>
 </ion-nav-buttons>
 <!-- Shadow space -->
 <div class="bar item-input-inset" style="border:none;box-shadow: 0 1px 2px #aaa"></div>

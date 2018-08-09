@@ -16,6 +16,27 @@
   <!-- new referee tab -->
   <div ng-show="menuProfile.role == 'Referee'" class="row" ng-model="showme" ng-init="showme = 'available'" style="padding:0px;margin-top: 56px;">
       
+      <a class="col col-50" ng-click="showme1()" ng-class="{'tabActive':showme == 'available'}" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;z-index: 1;">All Matches</a>
+
+      <!-- Left Arrow -->
+      <a class="col col-10" ng-click="prev()" ng-class="{'tabActive':showme == 2}" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;z-index: 1;"> 
+        <i ng-class="{'top-tab-active':showme == 2}" class="icon ion-arrow-left-b placeholder-icon" style="color:rgba(255, 255, 255, 0.45);font-size: 20px;"></i>
+      </a>
+
+      <a ng-show="day === thisDay && monthName === thisMonthName" class="col col-30" ng-click="showme2()" ng-class="{'tabActive':showme == 2}" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;z-index: 1;">Today</a>
+      <a ng-hide="day === thisDay && monthName === thisMonthName" ng-show="" class="col col-30" ng-click="showme=2" ng-class="{'tabActive':showme == 2}" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;z-index: 1;">{{day}} {{monthName}} {{year}}</a>
+
+      <!-- Right Arrow -->
+      <a class="col col-10" ng-click="next()" ng-class="{'tabActive':showme == 2}" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;z-index: 1;">
+        <i ng-class="{'top-tab-active':showme == 2}" class="icon ion-arrow-right-b placeholder-icon" style="color:rgba(255, 255, 255, 0.45);font-size: 20px;"></i>
+      </a>
+
+  </div>
+  <!-- new referee tab -->
+
+   <!-- analyst tab -->
+  <div ng-show="menuProfile.role == 'Analyst'" class="row" ng-model="showme" ng-init="showme = 'available'" style="padding:0px;margin-top: 56px;">
+      
       <a class="col col-50" ng-click="showme='available'" ng-class="{'tabActive':showme == 'available'}" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;z-index: 1;">All Matches</a>
 
       <!-- Left Arrow -->
@@ -32,7 +53,7 @@
       </a>
 
   </div>
-  <!-- new referee tab -->
+  <!-- analyst tab -->
 
 <!-- Search box -->
 <div class="bar item-input-inset" style="border:none;margin-top: 55px !important;background-color: #ffffff !important;border-bottom: 1px solid #80808059;padding-top: 15px;" ng-show="searchmessage">
@@ -42,6 +63,7 @@
 <button ng-click="searchmessage = !searchmessage; filterbutton = false" id="searchmessage" style="display:none"></button>
 
 <ion-content overflow-scroll=false scroll-sista="tabs" style="background-color:#ececec;z-index:0;">
+<div ng-show="(menuProfile.role == 'Referee' && showme == 'available')" style="padding-top: 55px;"></div>
 <div ng-show="searchmessage" style="border:none;margin-top: 40px !important;background-color: #ffffff !important;border-bottom: 1px solid #80808059;padding-top: 15px;"></div>
 <!-- for refresh -->
 <ion-refresher ng-if="menuProfile.role != 'Referee'" pulling-text="Pull to refresh..." on-refresh="doRefresh()" refreshing-text="Fetching ..." refreshing-icon="ion-loading-b"></ion-refresher>
@@ -49,11 +71,11 @@
 <!-- Available Matches -->
 <p ng-if="(availableMatches.length == 0 ) && (menuProfile.role == 'Referee')" ng-show="(showme == 'available' && refMatches.length === 0)" style="text-align: center;padding-top: 200px;font-size:17px;margin-top: 52px;">No Match Available...</p>
 
-<!-- <div ng-if="menuProfile.role == 'Referee'" ng-show="(showme == 'available' && refMatches.length !== 0)" ng-repeat="match in refMatches" class="card" style="margin-bottom:10px;margin-top: 52px;">
+<div ng-if="menuProfile.role == 'Referee'" ng-show="(showme == 'available' && refMatches.length !== 0)" ng-repeat="match in refMatches" class="card" style="margin-bottom:10px;margin-top: 0px;">
   <div class="item item-divider" style="padding:0px;border-bottom: 1px solid #d0cece;">
     <div class="row" style="padding:0px;margin:0px;">
       <div class="col" style="padding-left:10px;font-weight:bold;color:#7c857e;text-align:left;margin-top:-4px;"> {{match.match_homeTeam}} vs {{match.match_awayTeam}}</div>
-      <div class="col" style="padding-right:10px;font-weight:bold;color:#7c857e;text-align:right;margin-top:-4px;">Rp. 100.000 Reward</div>
+      <div class="col" style="padding-right:10px;font-weight:bold;color:#7c857e;text-align:right;margin-top:-4px;">{{match.match_time}}</div>
     </div>  
   </div>
   <div class="item item-text-wrap" style="padding:0px;">
@@ -63,49 +85,61 @@
     </div>
     <div class="row" style="margin:0px;">
       <div class="col col-10"><i class="ion-location" style="font-size:21px;color:#f36f64;"></i></div>
-      <div class="col col-90" style="margin-left: 4px;">{{match.match_venue}}</div>
+      <div class="col col-90" style="margin-left: 4px;">
+        <p style="color: black;font-weight: 400;">{{match.match_venue}} (Field {{match.match_field}})</p>
+      </div>
     </div>
-    <div class="row" style="margin:0px;">
+  <!--   <div class="row" style="margin:0px;">
       <div class="col col-10"><i class="ion-location" style="font-size:21px;color:#f36f64;"></i></div>
       <div class="col col-90" style="margin-left: 4px;">{{countDownTimer.countDownTimer}}</div>
-    </div>
+    </div> -->
     <div class="row" style="margin:0px;">
       <div class="col" style="margin-left: 4px;margin-top:-15px;text-align: right;color: #4db6ac;" ng-click="viewMatchDetail('{{match.id}}')">See more</div>
     </div>
-  </div> -->
+  </div>
 <!--   <div ng-show="registeredTeamLength[data.id] === data.comp_numOfTeam" class="row" style="border-top: #ebebeb 1px solid;margin:0px;padding:0px;">
-    <div class="col cursor" style="background-color:#4DB6AC;text-align:center;font-weight:bold;color:#ffffff;padding:10px;" ng-click="goToTrackScore('{{match.id}}')"> 2 days left </div>
+    <div class="col cursor" style="background-color:#4DB6AC;text-align:center;font-weight:bold;color:#ffffff;padding:10px;" ng-click="goToTrackScore('{{match.id}}')">Match start {{refMatchesDays[match.id]}}</div>
   </div> -->
-<!--   <div class="row">
-    <div class="col">
-       <div class="col cursor" style="background-color:#4DB6AC;text-align:center;font-weight:bold;color:#ffffff;padding:10px;" ng-click="goToTrackScore('{{match.id}}')"> Track Score </div>
-    </div>
-    <div class="col">
-       <div class="col cursor" style="background-color:#4DB6AC;text-align:center;font-weight:bold;color:#ffffff;padding:10px;" ng-click="goToAnalyzeMatch('{{match.id}}')"> Analyze Match </div>
-    </div>
-    <div class="col">
-       <div class="col cursor" style="background-color:#4DB6AC;text-align:center;font-weight:bold;color:#ffffff;padding:10px;" ng-click="goToMatchDetail('{{match.id}}')"> View Match Detail </div>
+
+  <div ng-if="diffTime[match.id] > 1" ng-show="registeredTeamLength[data.id] === data.comp_numOfTeam" class="row" style="border-top: #ebebeb 1px solid;margin:0px;padding:0px;">
+    <div class="col cursor" style="background-color:#4DB6AC;text-align:center;font-weight:bold;color:#ffffff;padding:6px;" ng-click="goToTrackScore('{{match.id}}')">
+      <p style="font-weight: 500;margin-bottom:4px;">Match start in </p>
+      <p ng-show="d[match.id] !== '00'" style="padding-bottom: 0px;font-weight: 500;margin-bottom: 0px;">{{d[match.id]}} Day {{h[match.id]}} H {{m[match.id]}} m {{s[match.id]}} s</p>
+      <p ng-show="d[match.id] === '00' && h[match.id] !== '00'" style="padding-bottom: 0px;font-weight: 500;margin-bottom: 0px;">{{h[match.id]}} H {{m[match.id]}} m {{s[match.id]}} s</p>
+      <p ng-show="d[match.id] === '00' && h[match.id] === '00'" style="padding-bottom: 0px;font-weight: 500;margin-bottom: 0px;">{{m[match.id]}} m {{s[match.id]}} s</p>
     </div>
   </div>
 
-</div> -->
+  <div ng-if="diffTime[match.id] <= 1" class="row no-padding no-margin">
+    <div ng-show="match.match_status !== 'finished'" class="col no-padding no-margin">
+       <div class="col cursor" style="background-color:#4DB6AC;text-align:center;font-weight:bold;color:#ffffff;padding:10px;" ng-click="goToTrackScore('{{match.id}}')"> Track Score </div>
+    </div>
+    <!-- <div class="col">
+       <div class="col cursor" style="background-color:#4DB6AC;text-align:center;font-weight:bold;color:#ffffff;padding:10px;" ng-click="goToAnalyzeMatch('{{match.id}}')"> Analyze Match </div>
+    </div> -->
+    <div ng-show="match.match_status === 'finished'" class="col no-padding no-margin">
+       <div class="col cursor" style="background-color:#4DB6AC;text-align:center;font-weight:bold;color:#ffffff;padding:10px;" ng-click="goToMatchDetail('{{match.id}}')"> View Match Result </div>
+    </div>
+  </div>
+
+</div>
 
 <div ng-if="menuProfile.role == 'Referee'" style="margin-top: 55px;"></div>
 <!-- All Matches (Referee) -->
-<div ng-if="menuProfile.role == 'Referee'" ng-show="(showme == 'available' && refMatches.length !== 0)" class="item item-text-wrap" ng-repeat="data in allRefMatchesObj.date" style="padding:0px;margin-left: 4px;margin-right: 4px;margin-top:10px;width: auto;background-color: white;">
+<!-- <div ng-if="menuProfile.role == 'Referee'" ng-show="(showme == 'available' && refMatches.length !== 0)" class="item item-text-wrap" ng-repeat="data in allRefMatchesObj.date" style="padding:0px;margin-left: 4px;margin-right: 4px;margin-top:10px;width: auto;background-color: white;">
     <p style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;height:30px;text-align: center;padding-top: 5px;">{{data | date:'dd MMM yy'}}</p>
     <div class="row" ng-repeat="item in allRefMatchesObj.matches[$index] track by $index" style="border-bottom: #e8e3e3 1px solid;margin:0px;padding:0px;">
       <div class="col col-10" style="text-align:center;font-size: 13px;"></div>
       <div class="col" style="text-align:right;font-size: 13px;">{{item.match_homeTeam}}</div>
       <div ng-show="item.match_time != '18:00'" ng-hide="item.match_time == '18:00' || item.countDownStarted == true" ng-if="item.countDownStarted != 'true'" style="text-align:center;color:#4DB6AC;width: 70px;margin-top: 5px;">{{item.match_time}}</div>
-      <div ng-show="item.countDownStarted == true && item.countDownTimer > 0" ng-hide="item.countDownStarted == null || item.countDownTimer <= 0" ng-click="liveScore('{{item.id}}')" style="text-align:center;color:#4DB6AC;width: 70px;margin-top: 5px;">{{item.countDownTimer}}</div>
+      <div ng-show="item.countDownStarted == true && item.countDownTimer > 0" ng-hide="item.countDownStarted == null || item.countDownTimer <= 0" ng-click="liveScore('{{item.id}}')" style="text-align:center;color:#4DB6AC;width: 70px;margin-top: 5px;">{{item.countDownTimer}}</div> -->
       <!-- <div class="col col-20" ng-show="item.match_started == true" ng-hide="item.match_started == '' || item.timer_status == 'fulltime' || item.timer_status == 'halftime'" ng-click="liveScore('{{item.id}}')" style="text-align:center;color:#33cd5f;width: 70px;margin-top: 5px;font-size: 13px;">Start</div> -->
-      <div ng-show="item.timer_status == 'halftime'" ng-hide="item.timer_status != 'halftime'" ng-click="liveScore('{{item.id}}')" style="text-align:center;color:#ffc900;width: 70px;margin-top: 5px;">HT</div>
+    <!--   <div ng-show="item.timer_status == 'halftime'" ng-hide="item.timer_status != 'halftime'" ng-click="liveScore('{{item.id}}')" style="text-align:center;color:#ffc900;width: 70px;margin-top: 5px;">HT</div>
       <div class="col col-20" ng-show="item.timer_status == 'fulltime'" ng-hide="item.timer_status != 'fulltime'" ng-click="liveScore('{{item.id}}')" style="text-align:center;color:#111;width: 70px;font-size: 13px;">{{item.match_homeScore}} - {{item.match_awayScore}}</div>
       <div class="col" style="text-align:left;font-size: 13px;">{{item.match_awayTeam}}</div>
       <div class="col col-10" style="text-align:left;"></div>
     </div>
-</div>
+</div> -->
 <!-- All Matches (Referee) -->
 
 <!-- Matches Based On Date (Referee) -->
@@ -116,14 +150,20 @@
   <!-- Exist State -->
   <div ng-if="menuProfile.role == 'Referee'" ng-show="(showme == 2)" class="item item-text-wrap" ng-repeat="data in refMatchesByDateObj.competition" style="padding:0px;margin-left: 4px;margin-right: 4px;margin-top:10px;width: auto;background-color: white;">
       <p style="background-color:#4DB6AC;padding-left:10px;font-weight:bold;color:white;height:30px;text-align: center;padding-top: 5px;">{{data}}</p>
-      <div class="row" ng-repeat="item in refMatchesByDateObj.matches[$index] track by $index" style="border-bottom: #e8e3e3 1px solid;margin:0px;padding:0px;">
-        <div class="col col-10" style="text-align:center;font-size: 13px;"></div>
+      
+      <div class="row" ng-repeat="item in refMatchesByDateObj.matches[$index] track by $index" style="border-bottom: #e8e3e3 1px solid;margin:0px;padding:0px;" ng-click="goToMatchDetail('{{item.id}}')">
+        <div ng-show="(item.timer_status == '1st half started' || item.timer_status == 'started' || item.timer_status == '2nd half started' || item.timer_status == '1st half started (ET)' || item.timer_status == '2nd half started (ET)')" class="col col-10" style="text-align:center;font-size: 13px;">{{item.timer}}'</div>
+        <div ng-show="item.timer_status == '1st half stopped'" class="col col-10" style="text-align:center;font-size: 13px;">HT</div>
+        <div ng-show="item.timer_status == '2nd half stopped' && item.match_status == 'finished'" class="col col-10" style="text-align:center;font-size: 13px;">FT</div>
+        <div ng-show="(item.timer_status == '1st half stopped (ET)' || item.timer_status == '2nd half stopped (ET)') && item.match_status == 'finished'" class="col col-10" style="text-align:center;font-size: 13px;">ET</div>
+        <div ng-show="(item.timer_status == 'penalty shootout started' || item.timer_status == 'penalty shootout stopped') && item.match_status == 'finished'" class="col col-10" style="text-align:center;font-size: 13px;">PEN</div>
+
         <div class="col" style="text-align:right;font-size: 13px;">{{item.match_homeTeam}}</div>
-        <div ng-show="item.match_time != '18:00'" ng-hide="item.match_time == '18:00' || item.countDownStarted == true" ng-if="item.countDownStarted != 'true'" style="text-align:center;color:#4DB6AC;width: 70px;margin-top: 5px;">{{item.match_time}}</div>
-        <div ng-show="item.countDownStarted == true && item.countDownTimer > 0" ng-hide="item.countDownStarted == null || item.countDownTimer <= 0" ng-click="liveScore('{{item.id}}')" style="text-align:center;color:#4DB6AC;width: 70px;margin-top: 5px;">{{item.countDownTimer}}</div>
+        <div ng-show="item.timer_status == ''" style="text-align:center;color:#4DB6AC;width: 70px;margin-top: 5px;">{{item.match_time}}</div>
+       <!--  <div ng-show="item.countDownStarted == true && item.countDownTimer > 0" ng-hide="item.countDownStarted == null || item.countDownTimer <= 0" ng-click="liveScore('{{item.id}}')" style="text-align:center;color:#4DB6AC;width: 70px;margin-top: 5px;">{{item.countDownTimer}}</div> -->
         <!-- <div class="col col-20" ng-show="item.match_started == true" ng-hide="item.match_started == '' || item.timer_status == 'fulltime' || item.timer_status == 'halftime'" ng-click="liveScore('{{item.id}}')" style="text-align:center;color:#33cd5f;width: 70px;margin-top: 5px;font-size: 13px;">Start</div> -->
-        <div ng-show="item.timer_status == 'halftime'" ng-hide="item.timer_status != 'halftime'" ng-click="liveScore('{{item.id}}')" style="text-align:center;color:#ffc900;width: 70px;margin-top: 5px;">HT</div>
-        <div class="col col-20" ng-show="item.timer_status == 'fulltime'" ng-hide="item.timer_status != 'fulltime'" ng-click="liveScore('{{item.id}}')" style="text-align:center;color:#111;width: 70px;font-size: 13px;">{{item.match_homeScore}} - {{item.match_awayScore}}</div>
+       <!--  <div ng-show="item.timer_status == 'halftime'" ng-hide="item.timer_status != 'halftime'" ng-click="liveScore('{{item.id}}')" style="text-align:center;color:#ffc900;width: 70px;margin-top: 5px;">HT</div> -->
+        <div class="col col-20" ng-show="item.timer_status != ''" style="text-align:center;color:#111;width: 70px;font-size: 13px;">{{item.match_homeTeamObj.score}} - {{item.match_awayTeamObj.score}}</div>
         <div class="col" style="text-align:left;font-size: 13px;">{{item.match_awayTeam}}</div>
         <div class="col col-10" style="text-align:left;"></div>
       </div>
@@ -262,7 +302,7 @@
   <p>No Competition Yet</p>
   <p>Click + button to create competition</p>
 </div>
-<div class="card" style="margin-bottom:10px;" ng-repeat="data in competition | filter:search.comp_name" ng-if="hasCompetition == true;" ng-show="menuProfile.role === 'Organizer'">
+<div class="card" style="margin-bottom:10px;" ng-repeat="data in competition | filter:search" ng-if="hasCompetition == true;" ng-show="menuProfile.role === 'Organizer'">
   <div class="item item-divider" style="padding:0px;border-bottom: 1px solid #d0cece;">
     <div class="row" style="padding:0px;margin:0px;">
       <div class="col" style="padding-left:10px;font-weight:bold;color:#7c857e;text-align:left;margin-top:-4px;"> {{data.comp_name}} </div>
@@ -281,15 +321,17 @@
     </div>
     <div class="row" style="margin:0px;">
       <div class="col col-10"><i class="ion-cash" style="font-size:21px;color:#28a54c;"></i></div>
-      <div class="col col-90" style="margin-left: 4px;">Rp. {{data.comp_fee}} / Team</div>
+      <div ng-show="data.comp_fee !== null" class="col col-90" style="margin-left: 4px;">Rp. {{data.comp_fee}} / Team</div>
+      <div ng-hide="data.comp_fee !== null" class="col col-90" style="margin-left: 4px;">FREE</div>
     </div>
     <div class="row">
-      <div class="col col-10" style="margin-top: 3px;margin-right: 6px;" ng-click="goToEditCompetition('{{data.id}}')"><i class="ion-edit" style="font-size:16px;color:#838586;"></i></div>
-      <div class="col col-10" style="margin-top: 2px;" ng-click="delCompetition('{{data.id}}')"><i class="ion-android-delete" style="font-size:19px;color:#838586;"></i></div>
+      <div ng-hide="rteamLength[data.id] !== undefined" class="col col-10" style="margin-top: 3px;margin-right: 6px;" ng-click="goToEditCompetition('{{data.id}}')"><i class="ion-edit" style="font-size:16px;color:#838586;"></i></div>
+      <div ng-hide="rteamLength[data.id] !== undefined" class="col col-10" style="margin-top: 2px;" ng-click="delCompetition('{{data.id}}')"><i class="ion-android-delete" style="font-size:19px;color:#838586;"></i></div>
       <div class="col" style="margin-left: 4px;text-align: right;color: #0cafdd;" ng-click="more('{{data.id}}')">See more</div>
     </div>
   </div>
-  <div ng-show="data.schedule_status === null && registeredTeamLength[data.id] === data.comp_numOfTeam" class="row" style="border-top: #ebebeb 1px solid;border-bottom: #ebebeb 1px solid;margin:0px;padding:0px;">
+
+  <div ng-show="data.schedule_status === 'On Queue' && rteamLength[data.id] === data.comp_numOfTeam" class="row" style="border-top: #ebebeb 1px solid;border-bottom: #ebebeb 1px solid;margin:0px;padding:0px;">
       <div class="col cursor" style="background-color:#ffffff;text-align:center;font-weight:bold;color:#4DB6AC;padding:10px;"> Scheduling on progress...</div>
   </div>
 
@@ -297,13 +339,17 @@
       <div class="col cursor" style="background-color:#ffffff;text-align:center;font-weight:bold;color:#4DB6AC;padding:10px;" ng-click="completeScheduling('{{data.id}}')"> Complete Scheduling</div>
   </div>
 
-  <div ng-show="registeredTeamLength[data.id] === data.comp_numOfTeam" class="row" style="border-top: #ebebeb 1px solid;border-bottom: #ebebeb 1px solid;margin:0px;padding:0px;">
-      <div class="col cursor" style="background-color:#ffffff;text-align:center;font-weight:bold;color:#4DB6AC;padding:10px;" ng-click="viewMatches('{{data.id}}')"> Set Schedule </div>
+  <div ng-show="data.schedule_status === 'On Progress' || data.schedule_status === 'Completed'" class="row" style="border-top: #ebebeb 1px solid;border-bottom: #ebebeb 1px solid;margin:0px;padding:0px;">
+      <div class="col cursor" style="background-color:#ffffff;text-align:center;font-weight:bold;color:#4DB6AC;padding:10px;" ng-click="goToCompetitionSchedule('{{data.id}}')">View Schedule</div>
   </div>
 
-  <div id="myProgress">
+<!--   <div ng-show="rteamLength[data.id] === data.comp_numOfTeam" class="row" style="border-top: #ebebeb 1px solid;border-bottom: #ebebeb 1px solid;margin:0px;padding:0px;">
+      <div class="col cursor" style="background-color:#ffffff;text-align:center;font-weight:bold;color:#4DB6AC;padding:10px;" ng-click="viewMatches('{{data.id}}')"> Set Schedule </div>
+  </div> -->
+
+<!--   <div ng-show="rteamLength[data.id] !== data.comp_numOfTeam" id="myProgress">
     <div id="{{data.id}}" style=" width: 0%;height: 4px;background-color: #4db6ac;"></div>
-  </div>
+  </div> -->
 
 </div>
 <!--Created Competition -->
@@ -318,27 +364,27 @@
 
   <div class="row" style="padding: 0px;">
     <div class="col" style="padding: 0px;border-right: 1px solid #eceaea;">
-      <p style="text-align: center;font-size: 19px;font-weight: 500;color: #a2a2a2;margin: 0px;padding-top: 10px;">{{data.comp_start | date:'dd'}}</p>
-      <p style="text-align: center;font-size: 17px;font-weight: 400;color: #b2b2b2;margin-bottom: 20px;">{{data.comp_start | date:'MMM'}}</p>
-      <p style="text-align: center;font-size: 9px;margin:0px;height: 10px;margin-top: -10px;margin-bottom: 10px;"><i class="ion-record" style="font-size:5px;color:#4db6ac;"></i></p>
-      <p style="text-align: center;font-size: 9px;margin:0px;height: 10px;margin-bottom: 10px;"><i class="ion-record" style="font-size:5px;color:#4db6ac;"></i></p>
-      <p style="text-align: center;font-size: 9px;margin:0px;height: 10px;margin-top: 10px;margin-bottom: -10px;"><i class="ion-record" style="font-size:5px;color:#4db6ac;"></i></p>
-      <p style="text-align: center;font-size: 19px;font-weight: 500;color: #a2a2a2;margin-top: 20px;margin-bottom: 0px;padding-top: 10px;">{{data.comp_finish | date:'dd'}}</p>
-      <p style="text-align: center;font-size: 17px;font-weight: 400;color: #b2b2b2;">{{data.comp_finish | date:'MMM'}}</p>
+      <p style="text-align: center;font-size: 15px;font-weight: 500;color: #a2a2a2;margin: 0px;padding-top: 20px;">{{data.comp_start | date:'dd'}}</p><!-- #ff8c27 -->
+      <p style="text-align: center;font-size: 13px;font-weight: 400;color: #b2b2b2;margin-bottom: 25px;">{{data.comp_start | date:'MMM'}}</p><!-- #14332c -->
+      <p style="text-align: center;font-size: 9px;margin:0px;height: 10px;margin-top: -10px;margin-bottom: 10px;"><i class="ion-record" style="font-size:2px;color:#4db6ac;"></i></p>
+      <p style="text-align: center;font-size: 9px;margin:0px;height: 10px;margin-bottom: 10px;"><i class="ion-record" style="font-size:2px;color:#4db6ac;"></i></p>
+      <p style="text-align: center;font-size: 9px;margin:0px;height: 10px;margin-top: 10px;margin-bottom: -10px;"><i class="ion-record" style="font-size:2px;color:#4db6ac;"></i></p>
+      <p style="text-align: center;font-size: 15px;font-weight: 500;color: #a2a2a2;margin-top: 25px;margin-bottom: 0px;padding-top: 10px;">{{data.comp_finish | date:'dd'}}</p>
+      <p style="text-align: center;font-size: 13px;font-weight: 400;color: #b2b2b2;margin-bottom: 20px;">{{data.comp_finish | date:'MMM'}}</p>
     </div>
 
     <div class="col col-67">
 
-      <p style="font-size: 18px;font-weight: 600;color: #767676;padding-top: 15px;padding-left: 8px;">{{data.comp_name}}</p>
+      <p style="font-size: 17px;font-weight: 600;color: #767676;padding-top: 15px;padding-left: 8px;">{{data.comp_name}}</p>
 
       <div style="padding-top: 4px;padding-left: 8px;font-size: 15px;color: grey;font-weight: 400;">
         <i class="ion-location" style="font-size:21px;color:#4db6ac;"></i>
-        <p style="margin-top: -20px; margin-left: 20px;">{{data.comp_location}}</p>
+        <p style="margin-top: -20px; margin-left: 20px;">{{data.comp_address.venue.nama}}</p>
       </div>
 
       <div class="row">
-          <p ng-show="data.comp_fee !== null" style="letter-spacing: 2px;padding-top: 20px;padding-left: 8px;font-size: 19px;color: #4db6ac;font-weight: 500;">Rp. {{data.comp_fee}}</p>
-          <p ng-hide="data.comp_fee !== null" style="letter-spacing: 2px;padding-top: 20px;padding-left: 8px;font-size: 19px;color: #4db6ac;font-weight: 500;">FREE</p>
+          <p ng-show="data.comp_fee !== null" style="letter-spacing: 2px;padding-top: 30px;padding-left: 8px;font-size: 19px;color: #4db6ac;font-weight: 500;">Rp. {{data.comp_fee}}</p>
+          <p ng-hide="data.comp_fee !== null" style="letter-spacing: 2px;padding-top: 30px;padding-left: 8px;font-size: 19px;color: #4db6ac;font-weight: 500;">FREE</p>
       </div>
 
       <div ng-click="goToCompetitionSchedule('{{data.id}}')" ng-model="registered[data.id]" ng-if="registered[data.id]==true" ng-show="data.schedule_status == 'Completed'" ng-hide="data.schedule_status != 'Completed'" class="row" style="margin-top: 5px;">
@@ -372,7 +418,7 @@
       <div ng-model="registered[data.id]" ng-if="registered[data.id]==true" ng-show="data.schedule_status == 'On Progress'" ng-hide="data.schedule_status != 'On Progress'" class="row" style="margin-top: 5px;">
           <button class="button-register-competition" style="padding-top: 10px;padding-bottom: 25px;padding-left: 175px;padding-right: 30px;margin-top: 0px;margin-left: 65px;"></button>
       </div>
-      <div ng-model="registered[data.id]" ng-if="registered[data.id]==true" ng-show="data.schedule_status == 'On Progress'" ng-hide="data.schedule_status != 'On Progress'" class="row" style="margin-top: -30px;margin-left: 130px;">
+      <div ng-model="registered[data.id]" ng-if="registered[data.id]==true" ng-show="data.schedule_status == 'On Progress'" ng-hide="data.schedule_status != 'On Progress'" class="row" style="margin-top: -30px;margin-left: 90px;">
           <p style="z-index: 1;color: white;font-weight: 500;">Scheduling on progress...</p>
       </div>
 
@@ -556,14 +602,14 @@
 </div> -->
 
 
-<div class="card" style="margin-top:10px;border-radius: 10px;" ng-repeat="competition in allCompetition | filter:search" ng-if="menuProfile.role=='Player' || menuProfile.role=='Coach' || menuProfile.role=='Manager'">
+<!-- <div class="card" style="margin-top:10px;border-radius: 10px;" ng-repeat="competition in allCompetition | filter:search" ng-if="menuProfile.role=='Player' || menuProfile.role=='Coach' || menuProfile.role=='Manager'">
   <div class="item item-divider" style="padding:0px;border-bottom: 1px solid #d0cece;">
     <div class="row" style="padding:0px;margin:0px;">
       <div class="col" style="padding-left:10px;font-weight:bold;color:#7c857e;text-align:left;margin-top:-4px;"> {{competition.comp_name}} </div>
       <div class="col" style="padding-right:10px;font-weight:bold;color:#7c857e;text-align:right;margin-top:-4px;" ng-show="registeredTeamLength[competition.id] !== undefined"> {{registeredTeamLength[competition.id]}} / {{competition.comp_numOfTeam}} Teams </div>
       <div class="col" style="padding-right:10px;font-weight:bold;color:#7c857e;text-align:right;margin-top:-4px;" ng-hide="registeredTeamLength[competition.id] !== undefined"> 0 / {{competition.comp_numOfTeam}} Teams </div>
     </div>  
-  </div>
+  </div> -->
   <!-- <div class="row" style="border-left: 6px solid grey;">
     <div class="col col-20" style="border-right: 1px solid #8080801f;">
       <div class="row" style="margin-bottom: 50px;">
@@ -593,7 +639,7 @@
       </div>
     </div>
   </div> -->
-  <div class="item item-text-wrap" style="padding:0px;">
+<!--   <div class="item item-text-wrap" style="padding:0px;">
     <div class="row" style="margin:0px;">
       <div class="col col-10"><i class="ion-calendar" style="font-size:21px;color:#11c1f3;"></i></div>
       <div class="col col-90" style="margin-left: 4px;">{{competition.comp_start | date:'dd MMM yy'}} - {{competition.comp_finish | date:'dd MMM yy'}}</div>
@@ -610,9 +656,9 @@
     <div class="row">
       <div class="col" style="margin-left: 4px;text-align: right;color: #0cafdd;" ng-click="more('{{competition.id}}')">See more</div>
     </div>
-  </div>
+  </div> -->
   <!-- Register Status (registered, scheduling on progress, closed, view schedule) -->
-    <div class="row" style="margin:0px;padding:0px;">
+   <!--  <div class="row" style="margin:0px;padding:0px;">
 
       <div ng-model="registered[competition.id]" ng-show="registered[competition.id]==false" ng-hide="registered[competition.id]==true || registerStatus[competition.id]=='full'" class="col cursor" style="background-color:#33cd5f;text-align:center;font-weight:bold;color:#ffffff;padding:10px;" ng-click="registerCompetition('{{competition.id}}')"> Register </div>
 
@@ -625,7 +671,7 @@
       <div ng-click="goToCompetitionSchedule('{{competition.id}}')" ng-model="registered[competition.id]" ng-if="registered[competition.id]==true" ng-show="competition.schedule_status == 'Completed'" ng-hide="competition.schedule_status != 'Completed'"class="col cursor" style="background-color:#4db6ac;text-align:center;font-weight:bold;color:#ffffff;padding:10px;">View Schedule</div>
 
     </div>
-</div>
+</div> -->
 <!--All Competition -->
 
 <!--Live Score for Referee-->

@@ -2,7 +2,10 @@
 true" class="login">
 <ion-content class="hideScroll" overflow-scroll=false  scroll-sista="tabs" class="padding" style="background: url(img/bg.png) center; background-size: cover;">
 
-<form method="post" enctype="text/plain" style="margin-top: 50px;">
+<center><img src="img\sportmanLogo\sportman logo v1.1.7.png" ng-show="userDataParse.role === 'Player'" class="login-image" style="margin-top:25px;"></center>
+<p ng-show="userDataParse.role === 'Player'" style="color:white;font-size:25px;font-weight:bold;text-align:center;margin-bottom:65px;">SportMan</p>
+
+<form ng-show="userDataParse.role === 'Referee'" method="post" enctype="text/plain" style="margin-top: 50px;">
   <p style="color: white;font-weight: 600;text-align: center;font-size: 16px;">Choose Available Day And Time</p>
   <p style="color: white;font-weight: 500;font-size: 12px;margin-bottom: 20px;text-align: center;">Click on your available day and select your available time on that day</p>
 
@@ -23,37 +26,37 @@ true" class="login">
   <div class="row no-padding no-margin" ng-show="day == 'Mon'">
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="monday.eight" class="ion-checkbox-time">8</ion-checkbox>
-          <ion-checkbox ng-model="monday.thirteen" class="ion-checkbox-time">13</ion-checkbox>
-          <ion-checkbox ng-model="monday.eightteen" class="ion-checkbox-time">18</ion-checkbox>
+          <ion-checkbox ng-model="monday.eight" class="ion-checkbox-time" ng-true-value="'08:00'">8</ion-checkbox>
+          <ion-checkbox ng-model="monday.thirteen" class="ion-checkbox-time" ng-true-value="'13:00'">13</ion-checkbox>
+          <ion-checkbox ng-model="monday.eightteen" class="ion-checkbox-time" ng-true-value="'18:00'">18</ion-checkbox>
         </ion-list>
       </div>
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="monday.nine" class="ion-checkbox-time">9</ion-checkbox>
-          <ion-checkbox ng-model="monday.fourteen" class="ion-checkbox-time">14</ion-checkbox>
-          <ion-checkbox ng-model="monday.nineteen" class="ion-checkbox-time">19</ion-checkbox>
+          <ion-checkbox ng-model="monday.nine" class="ion-checkbox-time" ng-true-value="'09:00'">9</ion-checkbox>
+          <ion-checkbox ng-model="monday.fourteen" class="ion-checkbox-time" ng-true-value="'14:00'">14</ion-checkbox>
+          <ion-checkbox ng-model="monday.nineteen" class="ion-checkbox-time" ng-true-value="'19:00'">19</ion-checkbox>
         </ion-list>
       </div>
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="monday.ten" class="ion-checkbox-time">10</ion-checkbox>
-          <ion-checkbox ng-model="monday.fifthteen" class="ion-checkbox-time">15</ion-checkbox>
-          <ion-checkbox ng-model="monday.twenty" class="ion-checkbox-time">20</ion-checkbox>
+          <ion-checkbox ng-model="monday.ten" class="ion-checkbox-time" ng-true-value="'10:00'">10</ion-checkbox>
+          <ion-checkbox ng-model="monday.fifthteen" class="ion-checkbox-time" ng-true-value="'15:00'">15</ion-checkbox>
+          <ion-checkbox ng-model="monday.twenty" class="ion-checkbox-time" ng-true-value="'20:00'">20</ion-checkbox>
         </ion-list>
       </div>
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="monday.eleven" class="ion-checkbox-time">11</ion-checkbox>
-          <ion-checkbox ng-model="monday.sixteen" class="ion-checkbox-time">16</ion-checkbox>
-          <ion-checkbox ng-model="monday.twentyone" class="ion-checkbox-time">21</ion-checkbox>
+          <ion-checkbox ng-model="monday.eleven" class="ion-checkbox-time" ng-true-value="'11:00'">11</ion-checkbox>
+          <ion-checkbox ng-model="monday.sixteen" class="ion-checkbox-time" ng-true-value="'16:00'">16</ion-checkbox>
+          <ion-checkbox ng-model="monday.twentyone" class="ion-checkbox-time" ng-true-value="'21:00'">21</ion-checkbox>
         </ion-list>
       </div>
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="monday.twelve" class="ion-checkbox-time">12</ion-checkbox>
-          <ion-checkbox ng-model="monday.seventeen" class="ion-checkbox-time">17</ion-checkbox>
-          <ion-checkbox ng-model="monday.twentytwo" class="ion-checkbox-time">22</ion-checkbox>
+          <ion-checkbox ng-model="monday.twelve" class="ion-checkbox-time" ng-true-value="'12:00'">12</ion-checkbox>
+          <ion-checkbox ng-model="monday.seventeen" class="ion-checkbox-time" ng-true-value="'17:00'">17</ion-checkbox>
+          <ion-checkbox ng-model="monday.twentytwo" class="ion-checkbox-time" ng-true-value="'22:00'">22</ion-checkbox>
         </ion-list>
       </div>
   </div>
@@ -61,37 +64,37 @@ true" class="login">
   <div class="row no-padding no-margin" ng-show="day == 'Tue'">
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="tuesday.eight" class="ion-checkbox-time">8</ion-checkbox>
-          <ion-checkbox ng-model="tuesday.thirteen" class="ion-checkbox-time">13</ion-checkbox>
-          <ion-checkbox ng-model="tuesday.eightteen" class="ion-checkbox-time">18</ion-checkbox>
+          <ion-checkbox ng-model="tuesday.eight" class="ion-checkbox-time" ng-true-value="'08:00'">8</ion-checkbox>
+          <ion-checkbox ng-model="tuesday.thirteen" class="ion-checkbox-time" ng-true-value="'13:00'">13</ion-checkbox>
+          <ion-checkbox ng-model="tuesday.eightteen" class="ion-checkbox-time" ng-true-value="'18:00'">18</ion-checkbox>
         </ion-list>
       </div>
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="tuesday.nine" class="ion-checkbox-time">9</ion-checkbox>
-          <ion-checkbox ng-model="tuesday.fourteen" class="ion-checkbox-time">14</ion-checkbox>
-          <ion-checkbox ng-model="tuesday.nineteen" class="ion-checkbox-time">19</ion-checkbox>
+          <ion-checkbox ng-model="tuesday.nine" class="ion-checkbox-time" ng-true-value="'09:00'">9</ion-checkbox>
+          <ion-checkbox ng-model="tuesday.fourteen" class="ion-checkbox-time" ng-true-value="'14:00'">14</ion-checkbox>
+          <ion-checkbox ng-model="tuesday.nineteen" class="ion-checkbox-time" ng-true-value="'19:00'">19</ion-checkbox>
         </ion-list>
       </div>
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="tuesday.ten" class="ion-checkbox-time">10</ion-checkbox>
-          <ion-checkbox ng-model="tuesday.fifthteen" class="ion-checkbox-time">15</ion-checkbox>
-          <ion-checkbox ng-model="tuesday.twenty" class="ion-checkbox-time">20</ion-checkbox>
+          <ion-checkbox ng-model="tuesday.ten" class="ion-checkbox-time" ng-true-value="'10:00'">10</ion-checkbox>
+          <ion-checkbox ng-model="tuesday.fifthteen" class="ion-checkbox-time" ng-true-value="'15:00'">15</ion-checkbox>
+          <ion-checkbox ng-model="tuesday.twenty" class="ion-checkbox-time" ng-true-value="'20:00'">20</ion-checkbox>
         </ion-list>
       </div>
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="tuesday.eleven" class="ion-checkbox-time">11</ion-checkbox>
-          <ion-checkbox ng-model="tuesday.sixteen" class="ion-checkbox-time">16</ion-checkbox>
-          <ion-checkbox ng-model="tuesday.twentyone" class="ion-checkbox-time">21</ion-checkbox>
+          <ion-checkbox ng-model="tuesday.eleven" class="ion-checkbox-time" ng-true-value="'11:00'">11</ion-checkbox>
+          <ion-checkbox ng-model="tuesday.sixteen" class="ion-checkbox-time" ng-true-value="'16:00'">16</ion-checkbox>
+          <ion-checkbox ng-model="tuesday.twentyone" class="ion-checkbox-time" ng-true-value="'21:00'">21</ion-checkbox>
         </ion-list>
       </div>
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="tuesday.twelve" class="ion-checkbox-time">12</ion-checkbox>
-          <ion-checkbox ng-model="tuesday.seventeen" class="ion-checkbox-time">17</ion-checkbox>
-          <ion-checkbox ng-model="tuesday.twentytwo" class="ion-checkbox-time">22</ion-checkbox>
+          <ion-checkbox ng-model="tuesday.twelve" class="ion-checkbox-time" ng-true-value="'12:00'">12</ion-checkbox>
+          <ion-checkbox ng-model="tuesday.seventeen" class="ion-checkbox-time" ng-true-value="'17:00'">17</ion-checkbox>
+          <ion-checkbox ng-model="tuesday.twentytwo" class="ion-checkbox-time" ng-true-value="'22:00'">22</ion-checkbox>
         </ion-list>
       </div>
   </div>
@@ -99,37 +102,37 @@ true" class="login">
   <div class="row no-padding no-margin" ng-show="day == 'Wed'">
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="wednesday.eight" class="ion-checkbox-time">8</ion-checkbox>
-          <ion-checkbox ng-model="wednesday.thirteen" class="ion-checkbox-time">13</ion-checkbox>
-          <ion-checkbox ng-model="wednesday.eightteen" class="ion-checkbox-time">18</ion-checkbox>
+          <ion-checkbox ng-model="wednesday.eight" class="ion-checkbox-time" ng-true-value="'08:00'">8</ion-checkbox>
+          <ion-checkbox ng-model="wednesday.thirteen" class="ion-checkbox-time" ng-true-value="'13:00'">13</ion-checkbox>
+          <ion-checkbox ng-model="wednesday.eightteen" class="ion-checkbox-time" ng-true-value="'18:00'">18</ion-checkbox>
         </ion-list>
       </div>
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="wednesday.nine" class="ion-checkbox-time">9</ion-checkbox>
-          <ion-checkbox ng-model="wednesday.fourteen" class="ion-checkbox-time">14</ion-checkbox>
-          <ion-checkbox ng-model="wednesday.nineteen" class="ion-checkbox-time">19</ion-checkbox>
+          <ion-checkbox ng-model="wednesday.nine" class="ion-checkbox-time" ng-true-value="'09:00'">9</ion-checkbox>
+          <ion-checkbox ng-model="wednesday.fourteen" class="ion-checkbox-time" ng-true-value="'14:00'">14</ion-checkbox>
+          <ion-checkbox ng-model="wednesday.nineteen" class="ion-checkbox-time" ng-true-value="'19:00'">19</ion-checkbox>
         </ion-list>
       </div>
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="wednesday.ten" class="ion-checkbox-time">10</ion-checkbox>
-          <ion-checkbox ng-model="wednesday.fifthteen" class="ion-checkbox-time">15</ion-checkbox>
-          <ion-checkbox ng-model="wednesday.twenty" class="ion-checkbox-time">20</ion-checkbox>
+          <ion-checkbox ng-model="wednesday.ten" class="ion-checkbox-time" ng-true-value="'10:00'">10</ion-checkbox>
+          <ion-checkbox ng-model="wednesday.fifthteen" class="ion-checkbox-time" ng-true-value="'15:00'">15</ion-checkbox>
+          <ion-checkbox ng-model="wednesday.twenty" class="ion-checkbox-time" ng-true-value="'20:00'">20</ion-checkbox>
         </ion-list>
       </div>
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="wednesday.eleven" class="ion-checkbox-time">11</ion-checkbox>
-          <ion-checkbox ng-model="wednesday.sixteen" class="ion-checkbox-time">16</ion-checkbox>
-          <ion-checkbox ng-model="wednesday.twentyone" class="ion-checkbox-time">21</ion-checkbox>
+          <ion-checkbox ng-model="wednesday.eleven" class="ion-checkbox-time" ng-true-value="'11:00'">11</ion-checkbox>
+          <ion-checkbox ng-model="wednesday.sixteen" class="ion-checkbox-time" ng-true-value="'16:00'">16</ion-checkbox>
+          <ion-checkbox ng-model="wednesday.twentyone" class="ion-checkbox-time" ng-true-value="'21:00'">21</ion-checkbox>
         </ion-list>
       </div>
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="wednesday.twelve" class="ion-checkbox-time">12</ion-checkbox>
-          <ion-checkbox ng-model="wednesday.seventeen" class="ion-checkbox-time">17</ion-checkbox>
-          <ion-checkbox ng-model="wednesday.twentytwo" class="ion-checkbox-time">22</ion-checkbox>
+          <ion-checkbox ng-model="wednesday.twelve" class="ion-checkbox-time" ng-true-value="'12:00'">12</ion-checkbox>
+          <ion-checkbox ng-model="wednesday.seventeen" class="ion-checkbox-time" ng-true-value="'17:00'">17</ion-checkbox>
+          <ion-checkbox ng-model="wednesday.twentytwo" class="ion-checkbox-time" ng-true-value="'22:00'">22</ion-checkbox>
         </ion-list>
       </div>
   </div>
@@ -137,37 +140,37 @@ true" class="login">
   <div class="row no-padding no-margin" ng-show="day == 'Thu'">
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="thursday.eight" class="ion-checkbox-time">8</ion-checkbox>
-          <ion-checkbox ng-model="thursday.thirteen" class="ion-checkbox-time">13</ion-checkbox>
-          <ion-checkbox ng-model="thursday.eightteen" class="ion-checkbox-time">18</ion-checkbox>
+          <ion-checkbox ng-model="thursday.eight" class="ion-checkbox-time" ng-true-value="'08:00'">8</ion-checkbox>
+          <ion-checkbox ng-model="thursday.thirteen" class="ion-checkbox-time" ng-true-value="'13:00'">13</ion-checkbox>
+          <ion-checkbox ng-model="thursday.eightteen" class="ion-checkbox-time" ng-true-value="'18:00'">18</ion-checkbox>
         </ion-list>
       </div>
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="thursday.nine" class="ion-checkbox-time">9</ion-checkbox>
-          <ion-checkbox ng-model="thursday.fourteen" class="ion-checkbox-time">14</ion-checkbox>
-          <ion-checkbox ng-model="thursday.nineteen" class="ion-checkbox-time">19</ion-checkbox>
+          <ion-checkbox ng-model="thursday.nine" class="ion-checkbox-time" ng-true-value="'09:00'">9</ion-checkbox>
+          <ion-checkbox ng-model="thursday.fourteen" class="ion-checkbox-time" ng-true-value="'14:00'">14</ion-checkbox>
+          <ion-checkbox ng-model="thursday.nineteen" class="ion-checkbox-time" ng-true-value="'19:00'">19</ion-checkbox>
         </ion-list>
       </div>
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="thursday.ten" class="ion-checkbox-time">10</ion-checkbox>
-          <ion-checkbox ng-model="thursday.fifthteen" class="ion-checkbox-time">15</ion-checkbox>
-          <ion-checkbox ng-model="thursday.twenty" class="ion-checkbox-time">20</ion-checkbox>
+          <ion-checkbox ng-model="thursday.ten" class="ion-checkbox-time" ng-true-value="'10:00'">10</ion-checkbox>
+          <ion-checkbox ng-model="thursday.fifthteen" class="ion-checkbox-time" ng-true-value="'15:00'">15</ion-checkbox>
+          <ion-checkbox ng-model="thursday.twenty" class="ion-checkbox-time" ng-true-value="'20:00'">20</ion-checkbox>
         </ion-list>
       </div>
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="thursday.eleven" class="ion-checkbox-time">11</ion-checkbox>
-          <ion-checkbox ng-model="thursday.sixteen" class="ion-checkbox-time">16</ion-checkbox>
-          <ion-checkbox ng-model="thursday.twentyone" class="ion-checkbox-time">21</ion-checkbox>
+          <ion-checkbox ng-model="thursday.eleven" class="ion-checkbox-time" ng-true-value="'11:00'">11</ion-checkbox>
+          <ion-checkbox ng-model="thursday.sixteen" class="ion-checkbox-time" ng-true-value="'16:00'">16</ion-checkbox>
+          <ion-checkbox ng-model="thursday.twentyone" class="ion-checkbox-time" ng-true-value="'21:00'">21</ion-checkbox>
         </ion-list>
       </div>
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="thursday.twelve" class="ion-checkbox-time">12</ion-checkbox>
-          <ion-checkbox ng-model="thursday.seventeen" class="ion-checkbox-time">17</ion-checkbox>
-          <ion-checkbox ng-model="thursday.twentytwo" class="ion-checkbox-time">22</ion-checkbox>
+          <ion-checkbox ng-model="thursday.twelve" class="ion-checkbox-time" ng-true-value="'12:00'">12</ion-checkbox>
+          <ion-checkbox ng-model="thursday.seventeen" class="ion-checkbox-time" ng-true-value="'17:00'">17</ion-checkbox>
+          <ion-checkbox ng-model="thursday.twentytwo" class="ion-checkbox-time" ng-true-value="'22:00'">22</ion-checkbox>
         </ion-list>
       </div>
   </div>
@@ -175,37 +178,37 @@ true" class="login">
   <div class="row no-padding no-margin" ng-show="day == 'Fri'">
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="friday.eight" class="ion-checkbox-time">8</ion-checkbox>
-          <ion-checkbox ng-model="friday.thirteen" class="ion-checkbox-time">13</ion-checkbox>
-          <ion-checkbox ng-model="friday.eightteen" class="ion-checkbox-time">18</ion-checkbox>
+          <ion-checkbox ng-model="friday.eight" class="ion-checkbox-time" ng-true-value="'08:00'">8</ion-checkbox>
+          <ion-checkbox ng-model="friday.thirteen" class="ion-checkbox-time" ng-true-value="'13:00'">13</ion-checkbox>
+          <ion-checkbox ng-model="friday.eightteen" class="ion-checkbox-time" ng-true-value="'18:00'">18</ion-checkbox>
         </ion-list>
       </div>
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="friday.nine" class="ion-checkbox-time">9</ion-checkbox>
-          <ion-checkbox ng-model="friday.fourteen" class="ion-checkbox-time">14</ion-checkbox>
-          <ion-checkbox ng-model="friday.nineteen" class="ion-checkbox-time">19</ion-checkbox>
+          <ion-checkbox ng-model="friday.nine" class="ion-checkbox-time" ng-true-value="'09:00'">9</ion-checkbox>
+          <ion-checkbox ng-model="friday.fourteen" class="ion-checkbox-time" ng-true-value="'14:00'">14</ion-checkbox>
+          <ion-checkbox ng-model="friday.nineteen" class="ion-checkbox-time" ng-true-value="'19:00'">19</ion-checkbox>
         </ion-list>
       </div>
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="friday.ten" class="ion-checkbox-time">10</ion-checkbox>
-          <ion-checkbox ng-model="friday.fifthteen" class="ion-checkbox-time">15</ion-checkbox>
-          <ion-checkbox ng-model="friday.twenty" class="ion-checkbox-time">20</ion-checkbox>
+          <ion-checkbox ng-model="friday.ten" class="ion-checkbox-time" ng-true-value="'10:00'">10</ion-checkbox>
+          <ion-checkbox ng-model="friday.fifthteen" class="ion-checkbox-time" ng-true-value="'15:00'">15</ion-checkbox>
+          <ion-checkbox ng-model="friday.twenty" class="ion-checkbox-time" ng-true-value="'20:00'">20</ion-checkbox>
         </ion-list>
       </div>
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="friday.eleven" class="ion-checkbox-time">11</ion-checkbox>
-          <ion-checkbox ng-model="friday.sixteen" class="ion-checkbox-time">16</ion-checkbox>
-          <ion-checkbox ng-model="friday.twentyone" class="ion-checkbox-time">21</ion-checkbox>
+          <ion-checkbox ng-model="friday.eleven" class="ion-checkbox-time" ng-true-value="'11:00'">11</ion-checkbox>
+          <ion-checkbox ng-model="friday.sixteen" class="ion-checkbox-time" ng-true-value="'16:00'">16</ion-checkbox>
+          <ion-checkbox ng-model="friday.twentyone" class="ion-checkbox-time" ng-true-value="'21:00'">21</ion-checkbox>
         </ion-list>
       </div>
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="friday.twelve" class="ion-checkbox-time">12</ion-checkbox>
-          <ion-checkbox ng-model="friday.seventeen" class="ion-checkbox-time">17</ion-checkbox>
-          <ion-checkbox ng-model="friday.twentytwo" class="ion-checkbox-time">22</ion-checkbox>
+          <ion-checkbox ng-model="friday.twelve" class="ion-checkbox-time" ng-true-value="'12:00'">12</ion-checkbox>
+          <ion-checkbox ng-model="friday.seventeen" class="ion-checkbox-time" ng-true-value="'17:00'">17</ion-checkbox>
+          <ion-checkbox ng-model="friday.twentytwo" class="ion-checkbox-time" ng-true-value="'22:00'">22</ion-checkbox>
         </ion-list>
       </div>
   </div>
@@ -213,37 +216,37 @@ true" class="login">
   <div class="row no-padding no-margin" ng-show="day == 'Sat'">
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="saturday.eight" class="ion-checkbox-time">8</ion-checkbox>
-          <ion-checkbox ng-model="saturday.thirteen" class="ion-checkbox-time">13</ion-checkbox>
-          <ion-checkbox ng-model="saturday.eightteen" class="ion-checkbox-time">18</ion-checkbox>
+          <ion-checkbox ng-model="saturday.eight" class="ion-checkbox-time" ng-true-value="'08:00'">8</ion-checkbox>
+          <ion-checkbox ng-model="saturday.thirteen" class="ion-checkbox-time" ng-true-value="'13:00'">13</ion-checkbox>
+          <ion-checkbox ng-model="saturday.eightteen" class="ion-checkbox-time" ng-true-value="'18:00'">18</ion-checkbox>
         </ion-list>
       </div>
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="saturday.nine" class="ion-checkbox-time">9</ion-checkbox>
-          <ion-checkbox ng-model="saturday.fourteen" class="ion-checkbox-time">14</ion-checkbox>
-          <ion-checkbox ng-model="saturday.nineteen" class="ion-checkbox-time">19</ion-checkbox>
+          <ion-checkbox ng-model="saturday.nine" class="ion-checkbox-time" ng-true-value="'09:00'">9</ion-checkbox>
+          <ion-checkbox ng-model="saturday.fourteen" class="ion-checkbox-time" ng-true-value="'14:00'">14</ion-checkbox>
+          <ion-checkbox ng-model="saturday.nineteen" class="ion-checkbox-time" ng-true-value="'19:00'">19</ion-checkbox>
         </ion-list>
       </div>
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="saturday.ten" class="ion-checkbox-time">10</ion-checkbox>
-          <ion-checkbox ng-model="saturday.fifthteen" class="ion-checkbox-time">15</ion-checkbox>
-          <ion-checkbox ng-model="saturday.twenty" class="ion-checkbox-time">20</ion-checkbox>
+          <ion-checkbox ng-model="saturday.ten" class="ion-checkbox-time" ng-true-value="'10:00'">10</ion-checkbox>
+          <ion-checkbox ng-model="saturday.fifthteen" class="ion-checkbox-time" ng-true-value="'15:00'">15</ion-checkbox>
+          <ion-checkbox ng-model="saturday.twenty" class="ion-checkbox-time" ng-true-value="'20:00'">20</ion-checkbox>
         </ion-list>
       </div>
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="saturday.eleven" class="ion-checkbox-time">11</ion-checkbox>
-          <ion-checkbox ng-model="saturday.sixteen" class="ion-checkbox-time">16</ion-checkbox>
-          <ion-checkbox ng-model="saturday.twentyone" class="ion-checkbox-time">21</ion-checkbox>
+          <ion-checkbox ng-model="saturday.eleven" class="ion-checkbox-time" ng-true-value="'11:00'">11</ion-checkbox>
+          <ion-checkbox ng-model="saturday.sixteen" class="ion-checkbox-time" ng-true-value="'16:00'">16</ion-checkbox>
+          <ion-checkbox ng-model="saturday.twentyone" class="ion-checkbox-time" ng-true-value="'21:00'">21</ion-checkbox>
         </ion-list>
       </div>
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="saturday.twelve" class="ion-checkbox-time">12</ion-checkbox>
-          <ion-checkbox ng-model="saturday.seventeen" class="ion-checkbox-time">17</ion-checkbox>
-          <ion-checkbox ng-model="saturday.twentytwo" class="ion-checkbox-time">22</ion-checkbox>
+          <ion-checkbox ng-model="saturday.twelve" class="ion-checkbox-time" ng-true-value="'12:00'">12</ion-checkbox>
+          <ion-checkbox ng-model="saturday.seventeen" class="ion-checkbox-time" ng-true-value="'17:00'">17</ion-checkbox>
+          <ion-checkbox ng-model="saturday.twentytwo" class="ion-checkbox-time" ng-true-value="'22:00'">22</ion-checkbox>
         </ion-list>
       </div>
   </div>
@@ -251,37 +254,37 @@ true" class="login">
   <div class="row no-padding no-margin" ng-show="day == 'Sun'">
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="sunday.eight" class="ion-checkbox-time">8</ion-checkbox>
-          <ion-checkbox ng-model="sunday.thirteen" class="ion-checkbox-time">13</ion-checkbox>
-          <ion-checkbox ng-model="sunday.eightteen" class="ion-checkbox-time">18</ion-checkbox>
+          <ion-checkbox ng-model="sunday.eight" class="ion-checkbox-time" ng-true-value="'08:00'">8</ion-checkbox>
+          <ion-checkbox ng-model="sunday.thirteen" class="ion-checkbox-time" ng-true-value="'13:00'">13</ion-checkbox>
+          <ion-checkbox ng-model="sunday.eightteen" class="ion-checkbox-time" ng-true-value="'18:00'">18</ion-checkbox>
         </ion-list>
       </div>
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="sunday.nine" class="ion-checkbox-time">9</ion-checkbox>
-          <ion-checkbox ng-model="sunday.fourteen" class="ion-checkbox-time">14</ion-checkbox>
-          <ion-checkbox ng-model="sunday.nineteen" class="ion-checkbox-time">19</ion-checkbox>
+          <ion-checkbox ng-model="sunday.nine" class="ion-checkbox-time" ng-true-value="'09:00'">9</ion-checkbox>
+          <ion-checkbox ng-model="sunday.fourteen" class="ion-checkbox-time" ng-true-value="'14:00'">14</ion-checkbox>
+          <ion-checkbox ng-model="sunday.nineteen" class="ion-checkbox-time" ng-true-value="'19:00'">19</ion-checkbox>
         </ion-list>
       </div>
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="sunday.ten" class="ion-checkbox-time">10</ion-checkbox>
-          <ion-checkbox ng-model="sunday.fifthteen" class="ion-checkbox-time">15</ion-checkbox>
-          <ion-checkbox ng-model="sunday.twenty" class="ion-checkbox-time">20</ion-checkbox>
+          <ion-checkbox ng-model="sunday.ten" class="ion-checkbox-time" ng-true-value="'10:00'">10</ion-checkbox>
+          <ion-checkbox ng-model="sunday.fifthteen" class="ion-checkbox-time" ng-true-value="'15:00'">15</ion-checkbox>
+          <ion-checkbox ng-model="sunday.twenty" class="ion-checkbox-time" ng-true-value="'20:00'">20</ion-checkbox>
         </ion-list>
       </div>
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="sunday.eleven" class="ion-checkbox-time">11</ion-checkbox>
-          <ion-checkbox ng-model="sunday.sixteen" class="ion-checkbox-time">16</ion-checkbox>
-          <ion-checkbox ng-model="sunday.twentyone" class="ion-checkbox-time">21</ion-checkbox>
+          <ion-checkbox ng-model="sunday.eleven" class="ion-checkbox-time" ng-true-value="'11:00'">11</ion-checkbox>
+          <ion-checkbox ng-model="sunday.sixteen" class="ion-checkbox-time" ng-true-value="'16:00'">16</ion-checkbox>
+          <ion-checkbox ng-model="sunday.twentyone" class="ion-checkbox-time" ng-true-value="'21:00'">21</ion-checkbox>
         </ion-list>
       </div>
       <div class="col no-padding no-margin">
         <ion-list>
-          <ion-checkbox ng-model="sunday.twelve" class="ion-checkbox-time">12</ion-checkbox>
-          <ion-checkbox ng-model="sunday.seventeen" class="ion-checkbox-time">17</ion-checkbox>
-          <ion-checkbox ng-model="sunday.twentytwo" class="ion-checkbox-time">22</ion-checkbox>
+          <ion-checkbox ng-model="sunday.twelve" class="ion-checkbox-time" ng-true-value="'12:00'">12</ion-checkbox>
+          <ion-checkbox ng-model="sunday.seventeen" class="ion-checkbox-time" ng-true-value="'17:00'">17</ion-checkbox>
+          <ion-checkbox ng-model="sunday.twentytwo" class="ion-checkbox-time" ng-true-value="'22:00'">22</ion-checkbox>
         </ion-list>
       </div>
   </div>
@@ -292,8 +295,45 @@ true" class="login">
       <input type="submit" value="Register" class="button button-block button-calm-900 text-center" ng-click="registerReferee()" style="background-color:#1a6d65;border-radius: 25px !important;"></input>
     </div>
   </div>
-
 </form>
+
+<form ng-show="userDataParse.role === 'Player'" method="post" enctype="text/plain" style="margin-top: 50px;">
+  <div class="list login-list" style="margin-top:0px;margin-bottom: 5px;">  
+    <!-- Date of birth -->
+    <div class="list" style="margin-bottom: 0px;">
+      <label class="item item-input item-select">
+        <div class="input-label" style="font-weight:unset; padding-right:0px;">Date of birth</div>
+        <input type="date" id="dob" style="margin-right:-15px;padding-left:70px;" ng-model="userDataParse.dateOfBirth">
+      </label>
+    </div>
+    <!-- Address -->
+    <label class="item item-input register">
+      <input type="text" placeholder="Address" ng-model="userDataParse.address">
+    </label>
+    <!-- Phone Number -->
+    <label class="item item-input register" style="color: #ffffff;font-size: 1rem;">
+      +62 <input class="phoneValidation" style="padding-left: 4px;" type="text" placeholder="Phone Number" ng-model="profile.hp" maxlength="12">
+    </label>
+    <div class="list">
+      <label class="item item-input item-select">
+        <div class="input-label" style="font-weight:unset; padding-right:0px;">Position</div>
+        <select ng-model="userDataParse.position" style="background:transparent;padding:0px;margin-right:27px;">
+          <option value="Goal Keeper" style="color:black">Goal Keeper</option>
+          <option value="Defender" style="color:black">Defender</option>
+          <option value="Midfielder" style="color:black">Midfielder</option>
+          <option value="Attacker" style="color:black">Attacker</option>
+        </select>
+      </label>
+    </div>
+  </div>
+
+  <div class="row" style="margin-top: 10px;">
+    <div class="col">
+      <input type="submit" value="Register" class="button button-block button-calm-900 text-center" ng-click="registerPlayer()" style="background-color:#1a6d65;border-radius: 25px !important;"></input>
+    </div>
+  </div>
+</form>
+
 <div class="row">
   <div class="col">
     <p style="text-align:center; color:white;">Already have an account? Login <a style="color:#ffffff; font-weight:bold; text-decoration:none" ng-href="#/login">here</a></p>
