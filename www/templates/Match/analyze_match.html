@@ -1,142 +1,323 @@
-<ion-view view-title="Track Score" title-center cache-view="true">
-<ion-nav-buttons side="left">
-<button class="button button-clear icon-button mdi mdi-arrow-left" ng-click="back()"></button>
-</ion-nav-buttons>
-<!-- Right button -->
-<ion-nav-buttons side="right">
-<!-- Filter button -->
-<button class="button button-clear icon-button mdi mdi-send" ng-click="editMatchById()" style="min-height:44px;font-size:20px;margin-top:2px;"></button>
-</ion-nav-buttons>
-<!-- Fake button -->
-<button ng-click="searchbutton = !searchbutton; filterbutton = false" id="searchbutton" style="display:none"></button>
-<button ng-click="filterbutton = !filterbutton; searchbutton = false" id="filterbutton" style="display:none"></button>
-<!-- Search bar -->
-<div class="bar item-input-inset" style="border:none;margin-top:58px;margin-bottom:100px;position: fixed" ng-show="searchbutton">
-  <i class="icon ion-ios-search placeholder-icon" style="background:white; height:56px; padding-top:16px; padding-left:11px;"></i><input id="search" type="text" placeholder=" Search..." ng-model="search" style="width:100%; height:60px;" />
-</div>
-<!-- Shadow space -->
-<div class="bar item-input-inset" style="border:none;box-shadow: 0 1px 2px #aaa"></div>
-<ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color: #ececec; z-index:0; margin-top:12px;">
-<!-- for refresh -->
-<ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()" refreshing-text="Fetching ..." refreshing-icon="ion-loading-b"></ion-refresher>
-<div class="card" style="margin-bottom:10px;background-color:#4db6ac;">
-  <div class="item item-text-wrap" style="padding:0px;">
+<ion-view view-title="Analyze Match" title-center cache-view="false">
+
+  <ion-nav-buttons side="left">
+    <button class="button button-clear icon-button mdi mdi-arrow-left" ng-click="back()"></button>
+  </ion-nav-buttons>
+
+  <ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color: #ececec; z-index:0; margin-top:12px;">
+
+    <div class="card" style="margin-bottom:10px;background-color:#4db6ac;">
+
+      <div class="item item-text-wrap" style="padding:0px;padding-bottom: 10px;">
+
+         <!-- timer status -->
     <div class="row" style="margin:0px;padding:0px;">
-      <div ng-if="matchData.timer_status == null || matchData.timer_status == 'started'" class="col col-20" style="text-align:center;color:#4DB6AC;font-size:16px;background-color:white;margin:0 auto;border-bottom-left-radius:5px;border-bottom-right-radius:5px;">{{matchData.timer}}'</div>
-      <div ng-if="matchData.timer_status == 'halftime'"  class="col col-10" style="text-align:center;color:#4DB6AC;font-size:16px;background-color:white;margin:0 auto;border-bottom-left-radius:5px;border-bottom-right-radius:5px;">HT</div>
-      <div ng-if="matchData.timer_status == 'fulltime'"  class="col col-10" style="text-align:center;color:#4DB6AC;font-size:16px;background-color:white;margin:0 auto;border-bottom-left-radius:5px;border-bottom-right-radius:5px;"></div>
+      <div ng-if="matchData.timer_status == ''" class="col col-20" style="text-align:center;color:#4DB6AC;font-size:16px;background-color:white;margin:0 auto;border-bottom-left-radius:5px;border-bottom-right-radius:5px;padding: 10px;"></div>
+      <div ng-if="matchData.timer_status == 'paused'" class="col col-20" style="text-align:center;color:#4DB6AC;font-size:15px;background-color:white;margin:0 auto;border-bottom-left-radius:5px;border-bottom-right-radius:5px;padding: 10px;">paused</div>
+      <div ng-if="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')" class="col col-20" style="text-align:center;color:#4DB6AC;font-size:16px;background-color:white;margin:0 auto;border-bottom-left-radius:5px;border-bottom-right-radius:5px;">{{matchData.timer}}'</div>
+      <div ng-if="matchData.timer_status == '1st half stopped'"  class="col col-10" style="text-align:center;color:#4DB6AC;font-size:16px;background-color:white;margin:0 auto;border-bottom-left-radius:5px;border-bottom-right-radius:5px;">HT</div>
+      <div ng-if="matchData.timer_status == '2nd half stopped'"  class="col col-10" style="text-align:center;color:#4DB6AC;font-size:16px;background-color:white;margin:0 auto;border-bottom-left-radius:5px;border-bottom-right-radius:5px;">FT</div>
+      <div ng-if="matchData.timer_status == '1st half stopped (ET)'"  class="col col-10" style="text-align:center;color:#4DB6AC;font-size:16px;background-color:white;margin:0 auto;border-bottom-left-radius:5px;border-bottom-right-radius:5px;">ET</div>
+      <div ng-if="matchData.timer_status == '2nd half stopped (ET)'"  class="col col-10" style="text-align:center;color:#4DB6AC;font-size:11px;background-color:white;margin:0 auto;border-bottom-left-radius:5px;border-bottom-right-radius:5px;">PEN</div>
+      <div ng-if="matchData.timer_status == 'penalty shootout stopped' || matchData.timer_status == 'finished'"  class="col col-50" style="text-align:center;color:#4DB6AC;font-size:14px;background-color:white;margin:0 auto;border-bottom-left-radius:5px;border-bottom-right-radius:5px;">FINISHED</div>
     </div>
-    <div class="row" style="margin:0px;">
-      <div class="col col-35" style="text-align:center;color:white;"><center><img src="img\sportmanLogo\sportman logo v1.1.10.png" style="width: 70px;height: 70px;" class="avatar motion"></center></div>
-      <div class="col col-20" style="text-align:center;color:#4DB6AC;font-size:15px;color:white;margin-top:30px;">{{possessionTeamAPercentage}}%</div>
-      <div class="col col-10" style="text-align:center;color:#4DB6AC;font-size:30px;color:white;margin-top:30px;">-</div>
-      <div class="col col-20" style="text-align:center;color:#4DB6AC;font-size:15px;color:white;margin-top:30px;">{{possessionTeamBPercentage}}%</div>
-      <div class="col col-35" style="text-align:center;color:white;"><center><img src="img\sportmanLogo\sportman logo v1.1.10.png" style="width: 70px;height: 70px;" class="avatar motion"></center></div>
-    </div>
-    <div class="row" style="margin:0px;">
-      <div class="col col-50" style="text-align:left;color:#4DB6AC;font-size:16px;color:white;">
-        <div style="text-align: left;">{{matchData.match_homeTeam}}</div>
 
-      </div>
-      <div class="col col-50" style="text-align:right;color:#4DB6AC;font-size:16px;color:white;">
-        <div style="text-align: right;">{{matchData.match_awayTeam}}</div>
-       
-      </div>
-    </div>
-   <!--  <div class="row" style="margin:0px;">
-      <div class="col" style="text-align:center;color:#4DB6AC;font-size:16px;color:white;">
-        <div style="text-align: center;margin-top: 10px;">00:00</div>
-      </div>
-      <div class="col" style="text-align:center;color:#4DB6AC;font-size:16px;color:white;">
-        <div style="text-align: center;margin-top: 10px;"></div>
-      </div>
-      <div class="col" style="text-align:center;color:#4DB6AC;font-size:16px;color:white;">
-        <div style="text-align: center;margin-top: 10px;">00:00</div>
-      </div>
-    </div> -->
-  </div>
-</div>
+        <div class="row" style="margin:0px;">
+         <div class="col" style="text-align: center;color: #444242;border-radius: 50%;background-color: white;max-width: 65px !important;height: 60px;margin-left: 10px;">
+          <h1 style="font-size: 25px;text-align: center;margin-top: 11px;text-transform: uppercase;color: grey;">{{homeTeamAbr}}</h1>
+          <div style="text-align: center;color: #ffffff;padding-top: 10px;">{{matchData.match_homeTeam}}</div>
+          <div style="text-align: center;color: #ffffff;padding-top: 10px;font-size: 15px;">({{possessionTeamAPercentage}}%)</div>
 
-<div class="card" style="margin-bottom:10px;background-color:#FFFFFF;">
-  <div class="item item-text-wrap" style="padding:0px;">
+         </div>
+          <div class="col col-15" style="text-align:center;color:#4DB6AC;font-size:15px;color:white;margin-top:15px;">
+            <p style="color: white;font-size: 25px;padding-bottom: 10px;">{{matchData.match_homeTeamObj.score}}</p>
+            <!-- <p style="color: white;">{{possessionTeamAPercentage}}%</p> -->
+          </div>
 
-    <!-- Possession -->
-    <div class="row" style="margin:0px;padding:0px;height: 20px;">
-      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;" ng-click="goalHome()" ng-show="matchData.timer_status == 'started'">
-        <p>{{teamASecond}}</p>
-        <!-- <p ng-show="(teamAMinute < 10 && teamASecond < 10)">0{{teamAMinute}}:0{{teamASecond}}</p>
-        <p ng-show="(teamAMinute < 10 && teamASecond > 9)">0{{teamAMinute}}:{{teamASecond}}</p>
-        <p ng-show="(teamAMinute > 9 && teamASecond < 10)">{{teamAMinute}}:0{{teamASecond}}</p>
-        <p ng-show="(teamAMinute > 9 && teamASecond > 9)">{{teamAMinute}}:{{teamASecond}}</p> -->
-      </div>
+          <div class="col col-10" style="text-align:center;color:#4DB6AC;font-size:30px;color:white;margin-top:15px;">-</div>
 
-      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;" ng-show="matchData.timer_status == 'halftime' || matchData.timer_status == 'fulltime'">
-        <p>{{teamASecond}}</p>
-       <!--  <p ng-show="(teamAMinute < 10 && teamASecond < 10)">0{{teamAMinute}}:0{{teamASecond}}</p>
-        <p ng-show="(teamAMinute < 10 && teamASecond > 9)">0{{teamAMinute}}:{{teamASecond}}</p>
-        <p ng-show="(teamAMinute > 9 && teamASecond < 10)">{{teamAMinute}}:0{{teamASecond}}</p>
-        <p ng-show="(teamAMinute > 9 && teamASecond > 9)">{{teamAMinute}}:{{teamASecond}}</p> -->
-      </div>
+          <div class="col col-15" style="text-align:center;color:#4DB6AC;font-size:15px;color:white;margin-top:15px;">
+            <p style="color: white;font-size: 25px;padding-bottom: 10px;">{{matchData.match_awayTeamObj.score}}</p>
+            <!-- <p style="color: white;">{{possessionTeamBPercentage}}%</p> -->
+          </div>
+          <div class="col" style="text-align: center;color: #444242;border-radius: 50%;background-color: white;max-width: 65px !important;height: 60px;margin-right: 10px;">
+            <h1 style="font-size: 25px;text-align: center;margin-top: 11px;text-transform: uppercase;color: grey;">{{awayTeamAbr}}</h1>
+            <div style="text-align: center;color: #ffffff;padding-top: 10px;">{{matchData.match_awayTeam}}</div>
+            <div style="text-align: center;color: #ffffff;padding-top: 10px;font-size: 15px;">({{possessionTeamBPercentage}}%)</div>
+          </div>
+        </div>
 
-      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;" ng-click="goalHome()" ng-show="matchData.timer_status == 'started'">
-      </div>
+    <!--     <div class="row" style="margin:0px;">
+          <div class="col" style="text-align:left;color:#4DB6AC;font-size:16px;color:white;">
+            <div style="text-align: center;">team {{matchData.match_homeTeam}}</div>
+          </div>
 
-      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;" ng-show="matchData.timer_status == 'halftime' || matchData.timer_status == 'fulltime'">
-      </div>
+          <div class="col col-40"></div>
 
-      <div class="col" style="text-align:center;color:#26A69A;" ng-click="goalAway()" ng-show="matchData.timer_status == 'started'">
-        <p>{{teamBSecond}}</p>
-       <!--  <p ng-show="(teamBMinute < 10 && teamBSecond < 10)">0{{teamBMinute}}:0{{teamBSecond}}</p>
-        <p ng-show="(teamBMinute < 10 && teamBSecond > 9)">0{{teamBMinute}}:{{teamBSecond}}</p>
-        <p ng-show="(teamBMinute > 9 && teamBSecond < 10)">{{teamBMinute}}:0{{teamBSecond}}</p>
-        <p ng-show="(teamBMinute > 9 && teamBSecond > 9)">{{teamBMinute}}:{{teamBSecond}}</p> -->
-      </div
-      >
-      <div class="col" style="text-align:center;color:#26A69A;" ng-show="matchData.timer_status == 'halftime' || matchData.timer_status == 'fulltime'">
-        <p>{{teamBSecond}}</p>
-       <!--  <p ng-show="(teamBMinute < 10 && teamBSecond < 10)">0{{teamBMinute}}:0{{teamBSecond}}</p>
-        <p ng-show="(teamBMinute < 10 && teamBSecond > 9)">0{{teamBMinute}}:{{teamBSecond}}</p>
-        <p ng-show="(teamBMinute > 9 && teamBSecond < 10)">{{teamBMinute}}:0{{teamBSecond}}</p>
-        <p ng-show="(teamBMinute > 9 && teamBSecond > 9)">{{teamBMinute}}:{{teamBSecond}}</p> -->
+          <div class="col" style="text-align:right;color:#4DB6AC;font-size:16px;color:white;">
+            <div style="text-align: center;">team {{matchData.match_awayTeam}}</div>
+          </div>
+        </div> -->
+         <!-- timer button -->
+        <div class="row" style="padding:0px;margin-top: 40px;">
+          <div ng-if="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')" class="col col-20" style="text-align:center;color:#4DB6AC;font-size:16px;background-color:white;margin:0 auto;border-radius:5px;padding:10px;" ng-click="stopTimerAB()"><i class="ion-pause" style="font-size:20px;"></i>
+          </div>
+        </div>
+
       </div>
     </div>
 
-    <div class="row" style="margin:0px;padding:0px;">
-      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:20px;padding-bottom:20px;" ng-show="timerTeamAStat === true">
-        <i class="ion-ios-football" style="font-size:30px;color:#cdcece;"></i>
-        <p style="color: #b2b2b2;">Possession</p>
+    <!-- Match Statistics -->
+    <div class="card" style="margin-bottom:10px;background-color:#FFFFFF;">
+      <!-- Ball Possession -->
+      <div class="item item-text-wrap" style="padding:0px;">
+        <div class="row" style="margin:0px;padding:0px;height: 20px;">
+          <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;" ng-hide="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <p style="font-size: 20px;color: #ccc;">{{teamASecond}} s</p>
+            <!-- <p ng-show="(teamAMinute < 10 && teamASecond < 10)">0{{teamAMinute}}:0{{teamASecond}}</p>
+            <p ng-show="(teamAMinute < 10 && teamASecond > 9)">0{{teamAMinute}}:{{teamASecond}}</p>
+            <p ng-show="(teamAMinute > 9 && teamASecond < 10)">{{teamAMinute}}:0{{teamASecond}}</p>
+            <p ng-show="(teamAMinute > 9 && teamASecond > 9)">{{teamAMinute}}:{{teamASecond}}</p> -->
+          </div>
+
+          <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;" ng-if="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <p style="font-size: 20px;">{{teamASecond}} s</p>
+           <!--  <p ng-show="(teamAMinute < 10 && teamASecond < 10)">0{{teamAMinute}}:0{{teamASecond}}</p>
+            <p ng-show="(teamAMinute < 10 && teamASecond > 9)">0{{teamAMinute}}:{{teamASecond}}</p>
+            <p ng-show="(teamAMinute > 9 && teamASecond < 10)">{{teamAMinute}}:0{{teamASecond}}</p>
+            <p ng-show="(teamAMinute > 9 && teamASecond > 9)">{{teamAMinute}}:{{teamASecond}}</p> -->
+          </div>
+
+         <!--  <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;" ng-show="matchData.timer_status == ''">
+          </div>
+
+          <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;" ng-show="matchData.timer_status == 'halftime' || matchData.timer_status == 'fulltime'">
+          </div> -->
+
+          <div class="col" style="text-align:center;color:#26A69A;" ng-show="matchData.timer_status == ''" ng-hide="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <p style="font-size: 20px;color: #ccc;">{{teamBSecond}} s</p>
+           <!--  <p ng-show="(teamBMinute < 10 && teamBSecond < 10)">0{{teamBMinute}}:0{{teamBSecond}}</p>
+            <p ng-show="(teamBMinute < 10 && teamBSecond > 9)">0{{teamBMinute}}:{{teamBSecond}}</p>
+            <p ng-show="(teamBMinute > 9 && teamBSecond < 10)">{{teamBMinute}}:0{{teamBSecond}}</p>
+            <p ng-show="(teamBMinute > 9 && teamBSecond > 9)">{{teamBMinute}}:{{teamBSecond}}</p> -->
+          </div
+          >
+          <div class="col" style="text-align:center;color:#26A69A;" ng-if="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <p style="font-size: 20px;">{{teamBSecond}} s</p>
+           <!--  <p ng-show="(teamBMinute < 10 && teamBSecond < 10)">0{{teamBMinute}}:0{{teamBSecond}}</p>
+            <p ng-show="(teamBMinute < 10 && teamBSecond > 9)">0{{teamBMinute}}:{{teamBSecond}}</p>
+            <p ng-show="(teamBMinute > 9 && teamBSecond < 10)">{{teamBMinute}}:0{{teamBSecond}}</p>
+            <p ng-show="(teamBMinute > 9 && teamBSecond > 9)">{{teamBMinute}}:{{teamBSecond}}</p> -->
+          </div>
+        </div>
+
+        <div class="row" style="margin:0px;padding:0px;">
+          <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:10px;padding-bottom:20px;border-bottom: 1px solid #f8f8f8;" ng-show="timerTeamAStat === true" ng-hide="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <i class="ion-ios-football" style="font-size:30px;color:#cdcece;"></i>
+            <p style="color: #b2b2b2;">Possession</p>
+          </div>
+
+          <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:10px;padding-bottom:20px;border-bottom: 1px solid #f8f8f8;" ng-click="startTimerTeamA()" ng-show="timerTeamAStat === false"  ng-if="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <i class="ion-ios-football" style="font-size:30px;color:#444;"></i>
+            <p>Possession</p>
+          </div>
+
+         <!--  <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:25px;padding-bottom:20px;border-bottom: 1px solid #f8f8f8;" ng-show="matchData.timer_status == ''" ng-click="stopTimerAB()">
+            <i class="ion-pause" style="font-size:25px;" ng-click="stopTimerAB()"></i>
+          </div>
+
+          <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:25px;padding-bottom:20px;border-bottom: 1px solid #f8f8f8;" ng-show="matchData.timer_status == 'halftime' || matchData.timer_status == 'fulltime'" ng-click="stopTimerAB()">
+            <i class="ion-pause" style="font-size:25px;" ng-click="stopTimerAB()"></i>
+          </div> -->
+
+          <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:10px;padding-bottom:20px;border-bottom: 1px solid #f8f8f8;" ng-show="timerTeamBStat === true" ng-hide="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <i class="ion-ios-football" style="font-size:30px;color:#cdcece;"></i>
+            <p style="color: #b2b2b2;">Possession</p>
+          </div>
+
+          <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:10px;padding-bottom:20px;border-bottom: 1px solid #f8f8f8;" ng-click="startTimerTeamB()" ng-show="timerTeamBStat === false" ng-if="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <i class="ion-ios-football" style="font-size:30px;color:#444;"></i>
+            <p>Possession</p>
+          </div>
+        </div>
       </div>
 
-      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:20px;padding-bottom:20px;" ng-click="startTimerTeamA()" ng-show="timerTeamAStat === false">
-        <i class="ion-ios-football" style="font-size:30px;color:#444;"></i>
-        <p>Possession</p>
+      <!-- Shot On Target -->
+      <div class="item item-text-wrap" style="padding:0px;">
+        <div class="row" style="margin:0px;padding:0px;height: 20px;">
+          <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;" ng-hide="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <p style="font-size: 20px;color: #ccc;">{{matchData.match_stats.homeShotOnTarget}}</p>
+          </div>
+
+          <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;" ng-if="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <p style="font-size: 20px;">{{matchData.match_stats.homeShotOnTarget}}</p>
+          </div>
+
+          <div class="col" style="text-align:center;color:#26A69A;" ng-hide="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <p style="font-size: 20px;color: #ccc;">{{matchData.match_stats.awayShotOnTarget}}</p>
+          </div>
+          <div class="col" style="text-align:center;color:#26A69A;" ng-if="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <p style="font-size: 20px;">{{matchData.match_stats.awayShotOnTarget}}</p>
+          </div>
+        </div>
+
+        <div class="row" style="margin:0px;padding:0px;">
+          <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:10px;padding-bottom:20px;border-bottom: 1px solid #f8f8f8;" ng-hide="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <center><img src="img/iconFootball/shotontarget2.png" style="width: 40px;height: 40px;opacity: 0.2;" /></center>
+            <p style="color: #ccc;">Shot On Target</p>
+          </div>
+
+          <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:10px;padding-bottom:20px;border-bottom: 1px solid #f8f8f8;" ng-click="shotOnTargetHome()" ng-if="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <center><img src="img/iconFootball/shotontarget2.png" style="width: 40px;height: 40px;" /></center>
+            <p>Shot On Target</p>
+          </div>
+
+          <div class="col" style="text-align:center;color:#26A69A;padding-top:10px;padding-bottom:20px;border-bottom: 1px solid #f8f8f8;" ng-hide="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <center><img src="img/iconFootball/shotontarget2.png" style="width: 40px;height: 40px;opacity: 0.2;" /></center>
+            <p style="color: #ccc;">Shot On Target</p>
+          </div>
+
+          <div class="col" style="text-align:center;color:#26A69A;padding-top:10px;padding-bottom:20px;border-bottom: 1px solid #f8f8f8;" ng-click="shotOnTargetAway()" ng-if="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <center><img src="img/iconFootball/shotontarget2.png" style="width: 40px;height: 40px;" /></center>
+            <p>Shot On Target</p>
+          </div>
+        </div>
+      </div>  
+
+      <!-- Shot Off Target -->
+      <div class="item item-text-wrap" style="padding:0px;">
+        <div class="row" style="margin:0px;padding:0px;height: 20px;">
+          <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;" ng-hide="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <p style="font-size: 20px;color: #ccc;">{{matchData.match_stats.homeShotOffTarget}}</p>
+          </div>
+
+          <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;" ng-if="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <p style="font-size: 20px;">{{matchData.match_stats.homeShotOffTarget}}</p>
+          </div>
+
+          <div class="col" style="text-align:center;color:#26A69A;" ng-hide="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <p style="font-size: 20px;color: #ccc;">{{matchData.match_stats.awayShotOffTarget}}</p>
+          </div
+          >
+          <div class="col" style="text-align:center;color:#26A69A;" ng-if="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <p style="font-size: 20px;">{{matchData.match_stats.awayShotOffTarget}}</p>
+          </div>
+        </div>
+
+        <div class="row" style="margin:0px;padding:0px;">
+          <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:10px;padding-bottom:20px;border-bottom: 1px solid #f8f8f8;" ng-hide="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <center><img src="img/iconFootball/shotofftarget.png" style="width: 40px;height: 40px;margin-bottom: -40px;opacity: 0.2;" /></center>
+            <i class="ion-ios-football" style="font-size:11px;color:#cdcece;margin-left: 55px;"></i>
+            <p style="margin-top: 20px;color: #ccc;">Shot Off Target</p>
+          </div>
+
+           <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:10px;padding-bottom:20px;border-bottom: 1px solid #f8f8f8;" ng-click="shotOffTargetHome()" ng-if="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <center><img src="img/iconFootball/shotofftarget.png" style="width: 40px;height: 40px;margin-bottom: -40px;" /></center>
+            <i class="ion-ios-football" style="font-size:11px;color:#444;margin-left: 55px;"></i>
+            <p style="margin-top: 20px;">Shot Off Target</p>
+          </div>
+
+          <div class="col" style="text-align:center;color:#26A69A;padding-top:10px;padding-bottom:20px;border-bottom: 1px solid #f8f8f8;" ng-hide="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <center><img src="img/iconFootball/shotofftarget.png" style="width: 40px;height: 40px;margin-bottom: -40px;opacity: 0.2;" /></center>
+            <i class="ion-ios-football" style="font-size:11px;color:#cdcece;margin-left: 55px;"></i>
+            <p style="margin-top: 20px;color: #ccc;">Shot Off Target</p>
+          </div>
+
+          <div class="col" style="text-align:center;color:#26A69A;padding-top:10px;padding-bottom:20px;border-bottom: 1px solid #f8f8f8;" ng-click="shotOffTargetAway()" ng-if="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <center><img src="img/iconFootball/shotofftarget.png" style="width: 40px;height: 40px;margin-bottom: -40px;" /></center>
+            <i class="ion-ios-football" style="font-size:11px;color:#444;margin-left: 55px;"></i>
+            <p style="margin-top: 20px;">Shot Off Target</p>
+          </div>
+
+        </div>
       </div>
 
-      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:25px;padding-bottom:20px;" ng-click="goalHome()" ng-show="matchData.timer_status == 'started'" ng-click="stopTimerAB()">
-        <i class="ion-pause" style="font-size:25px;" ng-click="stopTimerAB()"></i>
+      <!-- Corner Kick -->
+      <div class="item item-text-wrap" style="padding:0px;">
+        <div class="row" style="margin:0px;padding:0px;height: 20px;">
+          <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;" ng-hide="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <p style="font-size: 20px;color: #ccc;">{{matchData.match_stats.homeCornerKicks}}</p>
+          </div>
+
+          <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;" ng-if="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <p style="font-size: 20px;">{{matchData.match_stats.homeCornerKicks}}</p>
+          </div>
+
+          <div class="col" style="text-align:center;color:#26A69A;" ng-hide="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <p style="font-size: 20px;color: #ccc;">{{matchData.match_stats.awayCornerKicks}}</p>
+          </div
+          >
+          <div class="col" style="text-align:center;color:#26A69A;" ng-if="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <p style="font-size: 20px;">{{matchData.match_stats.awayCornerKicks}}</p>
+          </div>
+        </div>
+
+        <div class="row" style="margin:0px;padding:0px;">
+          <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:10px;padding-bottom:20px;border-bottom: 1px solid #f8f8f8;" ng-hide="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <center><img src="img/iconFootball/cornerkick.png" style="width: 40px;height: 40px;opacity: 0.2;" /></center>
+            <p style="color: #ccc;">Corner Kick</p>
+          </div>
+
+          <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:10px;padding-bottom:20px;border-bottom: 1px solid #f8f8f8;" ng-click="cornerKickHome()" ng-if="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <center><img src="img/iconFootball/cornerkick.png" style="width: 40px;height: 40px;" /></center>
+            <p>Corner Kick</p>
+          </div>
+
+          <div class="col" style="text-align:center;color:#26A69A;padding-top:10px;padding-bottom:20px;border-bottom: 1px solid #f8f8f8;" ng-hide="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <center><img src="img/iconFootball/cornerkick.png" style="width: 40px;height: 40px;opacity: 0.2;" /></center>
+            <p style="color: #ccc;">Corner Kick</p>
+          </div>
+
+          <div class="col" style="text-align:center;color:#26A69A;padding-top:10px;padding-bottom:20px;border-bottom: 1px solid #f8f8f8;" ng-click="cornerKickAway()" ng-if="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <center><img src="img/iconFootball/cornerkick.png" style="width: 40px;height: 40px;" /></center>
+            <p>Corner Kick</p>
+          </div>
+        </div>
       </div>
 
-      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:25px;padding-bottom:20px;" ng-show="matchData.timer_status == 'halftime' || matchData.timer_status == 'fulltime'" ng-click="stopTimerAB()">
-        <i class="ion-pause" style="font-size:25px;" ng-click="stopTimerAB()"></i>
-      </div>
+      <!-- Foul -->
+      <div class="item item-text-wrap" style="padding:0px;">
+        <div class="row" style="margin:0px;padding:0px;height: 20px;">
+          <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;" ng-hide="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <p style="font-size: 20px;color: #ccc;">{{matchData.match_stats.homeFouls}}</p>
+          </div>
 
-      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:20px;padding-bottom:20px;" ng-show="timerTeamBStat === true">
-        <i class="ion-ios-football" style="font-size:30px;color:#cdcece;"></i>
-        <p style="color: #b2b2b2;">Possession</p>
-      </div>
+          <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;" ng-if="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <p style="font-size: 20px;">{{matchData.match_stats.homeFouls}}</p>
+          </div>
 
-      <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:20px;padding-bottom:20px;" ng-click="startTimerTeamB()" ng-show="timerTeamBStat === false">
-        <i class="ion-ios-football" style="font-size:30px;color:#444;"></i>
-        <p>Possession</p>
-      </div>
+          <div class="col" style="text-align:center;color:#26A69A;" ng-hide="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <p style="font-size: 20px;color: #ccc;">{{matchData.match_stats.awayFouls}}</p>
+          </div>
 
+          <div class="col" style="text-align:center;color:#26A69A;" ng-if="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <p style="font-size: 20px;">{{matchData.match_stats.awayFouls}}</p>
+          </div>
+        </div>
+
+        <div class="row" style="margin:0px;padding:0px;">
+          <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:10px;padding-bottom:20px;border-bottom: 1px solid #f8f8f8;" ng-hide="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <center><img src="img/iconFootball/foul.png" style="width: 40px;height: 40px;opacity: 0.2;" /></center>
+            <p style="color: #ccc;">Foul</p>
+          </div>
+
+          <div class="col" style="text-align:center;color:#26A69A;border-right:1px solid #e7e3e3;padding-top:10px;padding-bottom:20px;border-bottom: 1px solid #f8f8f8;" ng-click="foulHome()" ng-if="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <center><img src="img/iconFootball/foul.png" style="width: 40px;height: 40px;" /></center>
+            <p>Foul</p>
+          </div>
+
+          <div class="col" style="text-align:center;color:#26A69A;padding-top:10px;padding-bottom:20px;border-bottom: 1px solid #f8f8f8;" ng-hide="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <center><img src="img/iconFootball/foul.png" style="width: 40px;height: 40px;opacity: 0.2;" /></center>
+            <p style="color: #ccc;">Foul</p>
+          </div>
+
+          <div class="col" style="text-align:center;color:#26A69A;padding-top:10px;padding-bottom:20px;border-bottom: 1px solid #f8f8f8;" ng-click="foulAway()" ng-if="(matchData.timer_status == '1st half started' || matchData.timer_status == 'started' || matchData.timer_status == '2nd half started' || matchData.timer_status == '1st half started (ET)' || matchData.timer_status == '2nd half started (ET)' || matchData.timer_status == 'penalty shootout started')">
+            <center><img src="img/iconFootball/foul.png" style="width: 40px;height: 40px;" /></center>
+            <p>Foul</p>
+          </div>
+        </div>
+      </div>  
     </div>
 
-  </div>
-</div>
-<!-- White Space -->
-<div style="height:55px;background:transparent" ng-show="searchbutton"></div>
-<div style="height:200px;background:transparent" ng-show="filterbutton"></div>
-<!--List Posting-->
-</ion-content>
+  </ion-content>
 </ion-view>

@@ -1,4 +1,5 @@
-<ion-view view-title="Choose Lineup" hide-back-button="true" text-center cache-view="false">
+<ion-view view-title="Lineup" hide-back-button="true" text-center cache-view="false">
+
 <!-- Back Button -->
 <ion-nav-buttons side="left">
 <button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="backToMyTeam()" style="font-size:25px"></button>
@@ -11,7 +12,7 @@
 <ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color:#ffffff;">
 <div style="margin-top: 13px;"></div>
 
-<form method="post" enctype="text/plain" style="border:none;">
+<form ng-show="menuProfile.role === 'Coach'" method="post" enctype="text/plain" style="border:none;">
   <label class="item item-input item-select" style="border:none;border-bottom: 1px solid #80808014;">
     <div class="input-label" style="font-weight:unset; padding-right:0px;">Formation</div>
       <select ng-model="lineup.formation" style="padding-right:35px;font-size:16px;border-bottom: 1px solid #80808014;">
@@ -22,10 +23,10 @@
   </label>
 </form>
 
-<p style="padding-left: 16px;padding-top: 10px;font-size: 18px;font-weight: bold;background-color: #4db6ac;border: none;color: white;padding-bottom: 10px;" ng-show="lineup.formation !== ''">Line up</p>
+<p ng-show="menuProfile.role === 'Coach'" style="padding-left: 16px;padding-top: 10px;font-size: 18px;font-weight: bold;background-color: #4db6ac;border: none;color: white;padding-bottom: 10px;" ng-show="lineup.formation !== ''">Line up</p>
 
 <!-- Form post -->
-<form method="post" enctype="text/plain" style="border:none;" ng-show="lineup.formation == '1-2-1'">
+<form ng-show="menuProfile.role === 'Coach'" method="post" enctype="text/plain" style="border:none;" ng-show="lineup.formation == '1-2-1'">
   <label class="item item-input item-select" style="border:none;border-bottom: 1px solid #80808014;">
     <div class="input-label" style="font-weight:unset; padding-right:0px;">Goal Keeper</div>
     <select name="select121" style="color:black" ng-model="lineup121.goalkeeper" ng-init="lineup121.goalkeeper=goalkeeperData[0]" ng-options="goalkeeper.username for goalkeeper in goalkeeperData" ng-click="select()">
@@ -50,7 +51,7 @@
 </form>
 
 <!-- Form post -->
-<form method="post" enctype="text/plain" style="border:none;" ng-show="lineup.formation == '1-1-2'">
+<form ng-show="menuProfile.role === 'Coach'" method="post" enctype="text/plain" style="border:none;" ng-show="lineup.formation == '1-1-2'">
   <label class="item item-input item-select" style="border:none;border-bottom: 1px solid #80808014;">
     <div class="input-label" style="font-weight:unset; padding-right:0px;">Goal Keeper</div>
     <select name="select112" style="color:black" ng-model="lineup112.goalkeeper" ng-init="lineup112.goalkeeper=goalkeeperData[0]" ng-options="goalkeeper.username for goalkeeper in goalkeeperData">
@@ -75,7 +76,7 @@
 </form>
 
 <!-- Form post -->
-<form method="post" enctype="text/plain" style="border:none;" ng-show="lineup.formation == '2-1-1'">
+<form ng-show="menuProfile.role === 'Coach'" method="post" enctype="text/plain" style="border:none;" ng-show="lineup.formation == '2-1-1'">
   <label class="item item-input item-select" style="border:none;border-bottom: 1px solid #80808014;">
     <div class="input-label" style="font-weight:unset; padding-right:0px;">Goal Keeper</div>
     <select name="select211" style="color:black" ng-model="lineup211.goalkeeper" ng-init="lineup211.goalkeeper=goalkeeperData[0]" ng-options="goalkeeper.username for goalkeeper in goalkeeperData">
@@ -99,19 +100,57 @@
   </label>
 </form>
 
+
+ <!-- Exist State Line Up -->
+  <div ng-show="menuProfile.role === 'Player'" class="card" style="margin-bottom:10px;margin-top:20px;">
+      <!-- Formation -->
+      <div class="item item-text-wrap" style="margin:0px;padding:0px;">
+        <div class="row" style="margin:0px;padding:0px;">
+          <div class="col" style="text-align:left;font-size:14px;padding:10px;background-color: #4db6ac;color: white;">Line Up ({{choosedFormationData}})</div>
+        </div>
+      </div>
+      <!-- Line Up -->
+      <div ng-repeat="lineup in choosedLineupData" class="item item-text-wrap" style="margin:0px;padding: 5px 5px;border-bottom: 1px solid #ddd;">
+        <div class="row" style="margin:0px;padding:0px;">
+         <!--  <div class="col col-10" style="text-align: center;font-weight: bold;">{{lineup.shirtNumber}}</div> -->
+          <div class="col col-70">{{lineup}}</div>
+          <div class="col col-20" style="text-align: center;font-weight: bold;">{{lineup.position}}</div>
+        </div>
+      </div>
+  </div>
+  <!-- sub -->
+  <div ng-show="menuProfile.role === 'Player'" class="card" style="margin-bottom:10px;margin-top:15px;">
+      <!-- Substitutes -->
+      <div class="item item-text-wrap" style="margin-top:0px;padding:0px;">
+        <div class="row" style="margin:0px;padding:0px;">
+          <div class="col" style="text-align:left;font-size:14px;padding:10px;background-color: #4db6ac;color: white;">Substitutes</div>
+        </div>
+      </div>
+
+      <div ng-repeat="sub in choosedSubData" class="item item-text-wrap" style="margin:0px;padding: 5px 5px;border-bottom: 1px solid #ddd;">
+        <div class="row" style="margin:0px;padding:0px;">
+          <!-- <div class="col col-10" style="text-align: center;font-weight: bold;">{{sub.shirtNumber}}</div> -->
+          <div class="col col-70">{{sub}}</div>
+          <div class="col col-20" style="text-align: center;font-weight: bold;">{{sub.position}}</div>
+        </div>
+      </div> 
+  </div>
+
+
+
 </ion-content>
 
-<div style="text-align: center;display: block;margin: auto 0;">
+<div ng-show="menuProfile.role === 'Coach'" style="text-align: center;display: block;margin: auto 0;">
   <button ng-if="lineup.formation === '1-2-1'" ng-show="lineup121.goalkeeper !== undefined && lineup121.defender !== undefined && lineup121.leftMidfielder !== undefined && lineup121.rightMidfielder !== undefined && lineup121.attacker !== undefined" start id="floating-button" style="background-color: #ffffff;height: 50px;box-shadow: none !important;color: #4db6ac;font-weight: bold;font-size: 16px;margin-top: 580px;position: relative;right: 0px;" ng-click="next()">Next
   </button>
 </div>
 
-<div style="text-align: center;display: block;margin: auto 0;">
+<div ng-show="menuProfile.role === 'Coach'" style="text-align: center;display: block;margin: auto 0;">
   <button ng-if="lineup.formation === '1-1-2'" ng-show="lineup112.goalkeeper !== undefined && lineup112.defender !== undefined && lineup112.midfielder !== undefined && lineup112.leftAttacker !== undefined && lineup112.rightAttacker !== undefined" start id="floating-button" style="background-color: #ffffff;height: 50px;box-shadow: none !important;color: #4db6ac;font-weight: bold;font-size: 16px;margin-top: 580px;position: relative;right: 0px;" ng-click="next()">Next
   </button>
 </div>
 
-<div style="text-align: center;display: block;margin: auto 0;">
+<div ng-show="menuProfile.role === 'Coach'" style="text-align: center;display: block;margin: auto 0;">
   <button ng-if="lineup.formation === '2-1-1'" ng-show="lineup211.goalkeeper !== undefined && lineup211.leftDefender !== undefined && lineup211.rightDefender !== undefined && lineup211.midfielder !== undefined && lineup211.attacker !== undefined" start id="floating-button" style="background-color: #ffffff;height: 50px;box-shadow: none !important;color: #4db6ac;font-weight: bold;font-size: 16px;margin-top: 580px;position: relative;right: 0px;" ng-click="next()">Next
   </button>
 </div>

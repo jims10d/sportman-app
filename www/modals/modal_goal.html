@@ -1,137 +1,250 @@
 <ion-modal-view>
-  <!--  <ion-header-bar>
-      <h1 class = "title">Line Up</h1>
-   </ion-header-bar> -->
-	
 <ion-content class="hideScroll">
-  <!-- Goal Home -->
-  <div ng-hide="status == 'subHome' || status == 'subAway'">
-    <div style="color: white;padding: 10px;padding-left: 14px;background-color: #77d677;font-size: 16px;">Scorer</div>
-    <!-- Home -->
-    <ion-list ng-show="status == 'goalHome' || status == 'ownGoalHome' || status == 'penaltyGoalHome' || status == 'yellowCardHome' || status == 'redCardHome'" ng-repeat="data in lineupDataArr track by $index">
-      <ion-radio ng-model="scorer" value="{{data}}" name="scorer" style="border-bottom: 1px solid #eeeeee;" ng-click="showAssistPlayerHome()">{{data}}</ion-radio>
-    </ion-list>
-    <!-- Away -->
-    <ion-list ng-show="status == 'goalAway' || status == 'ownGoalAway' || status == 'penaltyGoalAway' || status == 'yellowCardAway' || status == 'redCardAway'" ng-repeat="data in lineupDataArr track by $index">
-      <ion-radio ng-model="scorer" value="{{data}}" name="scorer" style="border-bottom: 1px solid #eeeeee;" ng-click="showAssistPlayerAway()">{{data}}</ion-radio>
-    </ion-list>
+  <!-- Goal -->
+  <div ng-hide="status == 'subHome' || status == 'subAway' || status == 'yellowCardHome' || status == 'yellowCardAway' || status == 'redCardHome' || status == 'redCardAway'">
+    <div style="color: white;padding: 10px;padding-left: 14px;background-color: #4db6ac;font-size: 16px;">Scorer</div>
+      <!-- Home -->
+        <!-- Red Card -->
+        <div ng-repeat="player in redCardedPlayerHome track by $index" ng-if="redCardPlayerHome !== undefined" ng-show="status == 'goalHome' || status == 'ownGoalHome' || status == 'penaltyGoalHome' || status == 'yellowCardHome' || status == 'redCardHome' || status == 'subHome'" class="row" style="border-bottom: 1px solid #eeeeee;background-color: #ddd;color: #aaa;padding: 10px;">
+          <div class="col col-80">{{player}}</div>
+          <div class="col col-20">
+             <center style="padding-left: 20px;"><img src="img/iconFootball/red card2.png" style="width: 25px;height: 25px;" /></center>
+          </div>
+        </div>
 
-    <div ng-hide="status == 'subHome' || status == 'subAway'" style="color: white;padding: 10px;padding-left: 14px;background-color: #77d677;font-size: 16px;">Assist</div>
-    <ion-list ng-hide="status == 'subHome' || status == 'subAway'" ng-repeat="data in assistPlayerArr track by $index">
-       <ion-radio ng-model="assist" value="{{data}}" name="assist" style="border-bottom: 1px solid #eeeeee;">{{data}}</ion-radio>
-    </ion-list>
+        <!-- Second Yellow Card -->
+        <div ng-repeat="player in secondYellowCardPlayerHome track by $index" ng-if="redCardPlayerHome !== undefined" ng-show="status == 'goalHome' || status == 'ownGoalHome' || status == 'penaltyGoalHome' || status == 'yellowCardHome' || status == 'redCardHome' || status == 'subHome'" class="row" style="border-bottom: 1px solid #eeeeee;background-color: #ddd;color: #aaa;padding: 10px;">
+          <div class="col col-80">{{player}}</div>
+          <div class="col col-20">
+             <center style="padding-left: 20px;"><img src="img/iconFootball/second yellow card.png" style="width: 25px;height: 25px;" /></center>
+          </div>
+        </div>
+
+        <!-- Scorer -->
+        <ion-list ng-show="status == 'goalHome' || status == 'ownGoalHome' || status == 'penaltyGoalHome' || status == 'yellowCardHome' || status == 'redCardHome' || status == 'subHome'" ng-repeat="data in lineupDataArr track by $index">
+          <ion-radio ng-class="{'redCarded':redCardPlayer === data}" name="scorer" style="border-bottom: 1px solid #eeeeee;" ng-click="showAssistPlayerHome()">
+            {{data}}
+          </ion-radio>
+        </ion-list>      
+
+      <!-- Away -->
+        <!-- Red Card -->
+        <div ng-repeat="player in redCardedPlayerAway track by $index" ng-if="redCardPlayerAway !== undefined" ng-show="status == 'goalAway' || status == 'ownGoalAway' || status == 'penaltyGoalAway' || status == 'yellowCardAway' || status == 'redCardAway' || status == 'subAway'" class="row" style="border-bottom: 1px solid #eeeeee;background-color: #ddd;color: #aaa;padding: 10px;">
+          <div class="col col-80">{{player}}</div>
+          <div class="col col-20">
+             <center style="padding-left: 20px;"><img src="img/iconFootball/red card2.png" style="width: 25px;height: 25px;" /></center>
+          </div>
+        </div>
+
+        <!-- Second Yellow Card -->
+        <div ng-repeat="player in secondYellowCardPlayerAway track by $index" ng-if="redCardPlayerAway !== undefined" ng-show="status == 'goalAway' || status == 'ownGoalAway' || status == 'penaltyGoalAway' || status == 'yellowCardAway' || status == 'redCardAway' || status == 'subAway'" class="row" style="border-bottom: 1px solid #eeeeee;background-color: #ddd;color: #aaa;padding: 10px;">
+          <div class="col col-80">{{player}}</div>
+          <div class="col col-20">
+             <center style="padding-left: 20px;"><img src="img/iconFootball/second yellow card.png" style="width: 25px;height: 25px;" /></center>
+          </div>
+        </div>
+
+        <!-- Scorer -->
+        <ion-list ng-show="status == 'goalAway' || status == 'ownGoalAway' || status == 'penaltyGoalAway' || status == 'yellowCardAway' || status == 'redCardAway' || status == 'subAway'" ng-repeat="data in lineupDataArr track by $index">
+          <ion-radio name="scorer" style="border-bottom: 1px solid #eeeeee;" ng-click="showAssistPlayerAway()"> {{data}}
+          </ion-radio>
+        </ion-list>
+
+        <!-- Assist Home & Away -->
+        <div ng-show="status == 'goalHome' || status == 'goalAway'" style="color: white;padding: 10px;padding-left: 14px;background-color: #4db6ac;font-size: 16px;">Assist</div>
+        <ion-list ng-show="status == 'goalHome' || status == 'goalAway'" ng-repeat="data in assistPlayerArr track by $index">
+           <ion-radio ng-model="assist" value="{{data}}" name="assist" style="border-bottom: 1px solid #eeeeee;">{{data}}</ion-radio>
+        </ion-list>
+  </div>
+
+  <!-- Yellow Card -->
+  <div ng-show="status == 'yellowCardHome' || status == 'yellowCardAway'">
+    <div style="color: white;padding: 10px;padding-left: 14px;background-color: #4db6ac;font-size: 16px;">Player</div>
+      <!-- Home -->
+        <!-- Red Card -->
+        <div ng-repeat="player in redCardedPlayerHome track by $index" ng-if="redCardPlayerHome !== undefined" ng-show="status == 'goalHome' || status == 'ownGoalHome' || status == 'penaltyGoalHome' || status == 'yellowCardHome' || status == 'redCardHome' || status == 'subHome'" class="row" style="border-bottom: 1px solid #eeeeee;background-color: #ddd;color: #aaa;padding: 10px;">
+          <div class="col col-80">{{player}}</div>
+          <div class="col col-20">
+             <center style="padding-left: 20px;"><img src="img/iconFootball/red card2.png" style="width: 25px;height: 25px;" /></center>
+          </div>
+        </div>
+
+        <!-- Second Yellow Card -->
+        <div ng-repeat="player in secondYellowCardPlayerHome track by $index" ng-if="redCardPlayerHome !== undefined" ng-show="status == 'goalHome' || status == 'ownGoalHome' || status == 'penaltyGoalHome' || status == 'yellowCardHome' || status == 'redCardHome' || status == 'subHome'" class="row" style="border-bottom: 1px solid #eeeeee;background-color: #ddd;color: #aaa;padding: 10px;">
+          <div class="col col-80">{{player}}</div>
+          <div class="col col-20">
+             <center style="padding-left: 20px;"><img src="img/iconFootball/second yellow card.png" style="width: 25px;height: 25px;" /></center>
+          </div>
+        </div>
+
+        <!-- Yellow Card -->
+        <ion-list ng-show="status == 'yellowCardHome'" ng-repeat="data in lineupDataArr track by $index">
+          <ion-radio ng-click="showSelectedStatus()" name="scorer" style="border-bottom: 1px solid #eeeeee;">
+            {{data}}
+          </ion-radio>
+        </ion-list>
+
+      <!-- Away -->
+        <!-- Red Card -->
+        <div ng-repeat="player in redCardedPlayerAway track by $index" ng-if="redCardPlayerAway !== undefined" ng-show="status == 'goalAway' || status == 'ownGoalAway' || status == 'penaltyGoalAway' || status == 'yellowCardAway' || status == 'redCardAway' || status == 'subAway'" class="row" style="border-bottom: 1px solid #eeeeee;background-color: #ddd;color: #aaa;padding: 10px;">
+          <div class="col col-80">{{player}}</div>
+          <div class="col col-20">
+             <center style="padding-left: 20px;"><img src="img/iconFootball/red card2.png" style="width: 25px;height: 25px;" /></center>
+          </div>
+        </div>
+
+        <!-- Second Yellow Card -->
+        <div ng-repeat="player in secondYellowCardPlayerAway track by $index" ng-if="redCardPlayerAway !== undefined" ng-show="status == 'goalAway' || status == 'ownGoalAway' || status == 'penaltyGoalAway' || status == 'yellowCardAway' || status == 'redCardAway' || status == 'subAway'" class="row" style="border-bottom: 1px solid #eeeeee;background-color: #ddd;color: #aaa;padding: 10px;">
+          <div class="col col-80">{{player}}</div>
+          <div class="col col-20">
+             <center style="padding-left: 20px;"><img src="img/iconFootball/second yellow card.png" style="width: 25px;height: 25px;" /></center>
+          </div>
+        </div>
+
+        <!-- Yellow Card -->
+        <ion-list ng-show="status == 'yellowCardAway'" ng-repeat="data in lineupDataArr track by $index">
+          <ion-radio ng-click="showSelectedStatus()" name="scorer" style="border-bottom: 1px solid #eeeeee;">  {{data}}
+          </ion-radio>
+        </ion-list>
+  </div>
+
+  <!-- Red Card -->
+  <div ng-show="status == 'redCardHome' || status == 'redCardAway'">
+    <div style="color: white;padding: 10px;padding-left: 14px;background-color: #4db6ac;font-size: 16px;">Player</div>
+    <!-- Home -->
+      <!-- Red Card -->
+      <div ng-repeat="player in redCardedPlayerHome track by $index" ng-if="redCardPlayerHome !== undefined" ng-show="status == 'goalHome' || status == 'ownGoalHome' || status == 'penaltyGoalHome' || status == 'yellowCardHome' || status == 'redCardHome' || status == 'subHome'" class="row" style="border-bottom: 1px solid #eeeeee;background-color: #ddd;color: #aaa;padding: 10px;">
+        <div class="col col-80">{{player}}</div>
+        <div class="col col-20">
+           <center style="padding-left: 20px;"><img src="img/iconFootball/red card2.png" style="width: 25px;height: 25px;" /></center>
+        </div>
+      </div>
+
+      <!-- Second Yellow Card -->
+      <div ng-repeat="player in secondYellowCardPlayerHome track by $index" ng-if="redCardPlayerHome !== undefined" ng-show="status == 'goalHome' || status == 'ownGoalHome' || status == 'penaltyGoalHome' || status == 'yellowCardHome' || status == 'redCardHome' || status == 'subHome'" class="row" style="border-bottom: 1px solid #eeeeee;background-color: #ddd;color: #aaa;padding: 10px;">
+        <div class="col col-80">{{player}}</div>
+        <div class="col col-20">
+           <center style="padding-left: 20px;"><img src="img/iconFootball/second yellow card.png" style="width: 25px;height: 25px;" /></center>
+        </div>
+      </div>
+
+      <!-- Red Card -->
+      <ion-list ng-show="status == 'redCardHome'" ng-repeat="data in lineupDataArr track by $index">
+        <ion-radio ng-click="showSelectedStatus()" name="scorer" style="border-bottom: 1px solid #eeeeee;">
+          {{data}}
+        </ion-radio>
+      </ion-list>
+
+    <!-- Away -->
+      <!-- Red Card -->
+      <div ng-repeat="player in redCardedPlayerAway track by $index" ng-if="redCardPlayerAway !== undefined" ng-show="status == 'goalAway' || status == 'ownGoalAway' || status == 'penaltyGoalAway' || status == 'yellowCardAway' || status == 'redCardAway' || status == 'subAway'" class="row" style="border-bottom: 1px solid #eeeeee;background-color: #ddd;color: #aaa;padding: 10px;">
+        <div class="col col-80">{{player}}</div>
+        <div class="col col-20">
+           <center style="padding-left: 20px;"><img src="img/iconFootball/red card2.png" style="width: 25px;height: 25px;" /></center>
+        </div>
+      </div>
+
+      <!-- Second Yellow Card -->
+      <div ng-repeat="player in secondYellowCardPlayerAway track by $index" ng-if="redCardPlayerAway !== undefined" ng-show="status == 'goalAway' || status == 'ownGoalAway' || status == 'penaltyGoalAway' || status == 'yellowCardAway' || status == 'redCardAway' || status == 'subAway'" class="row" style="border-bottom: 1px solid #eeeeee;background-color: #ddd;color: #aaa;padding: 10px;">
+        <div class="col col-80">{{player}}</div>
+        <div class="col col-20">
+           <center style="padding-left: 20px;"><img src="img/iconFootball/second yellow card.png" style="width: 25px;height: 25px;" /></center>
+        </div>
+      </div>
+
+      <!-- Red Card -->
+      <ion-list ng-show="status == 'redCardAway'" ng-repeat="data in lineupDataArr track by $index">
+        <ion-radio ng-click="showSelectedStatus()" name="scorer" style="border-bottom: 1px solid #eeeeee;">{{data}}
+        </ion-radio>
+      </ion-list>
   </div>
 
   <!-- Substitute -->
   <div ng-show="status == 'subHome' || status == 'subAway'">
-    <div style="color: white;padding: 10px;padding-left: 14px;background-color: #77d677;font-size: 16px;">Player Out</div>
-    <ion-list ng-repeat="data in lineupDataArr track by $index">
-      <ion-radio ng-model="playerOut" value="{{data}}" name="playerOut" style="border-bottom: 1px solid #eeeeee;">{{data}}</ion-radio>
-    </ion-list>
-    <div style="color: white;padding: 10px;padding-left: 14px;background-color: #77d677;font-size: 16px;">Player In</div>
-    <ion-list ng-repeat="data in subDataArr track by $index">
-       <ion-radio ng-model="playerIn" value="{{data}}" name="playerIn" style="border-bottom: 1px solid #eeeeee;">{{data}}</ion-radio>
-    </ion-list>
+    <div style="color: white;padding: 10px;padding-left: 14px;background-color: #4db6ac;font-size: 16px;">Player Out</div>
+      <!-- Home -->
+        <!-- Red Card -->
+        <div ng-repeat="player in redCardedPlayerHome track by $index" ng-if="redCardPlayerHome !== undefined" ng-show="status == 'subHome'" class="row" style="border-bottom: 1px solid #eeeeee;background-color: #ddd;color: #aaa;padding: 10px;">
+          <div class="col col-80">{{player}}</div>
+          <div class="col col-20">
+             <center style="padding-left: 20px;"><img src="img/iconFootball/red card2.png" style="width: 25px;height: 25px;" /></center>
+          </div>
+        </div>
+
+        <!-- Second Yellow Card -->
+        <div ng-repeat="player in secondYellowCardPlayerHome track by $index" ng-if="redCardPlayerHome !== undefined" ng-show="status == 'subHome'" class="row" style="border-bottom: 1px solid #eeeeee;background-color: #ddd;color: #aaa;padding: 10px;">
+          <div class="col col-80">{{player}}</div>
+          <div class="col col-20">
+             <center style="padding-left: 20px;"><img src="img/iconFootball/second yellow card.png" style="width: 25px;height: 25px;" /></center>
+          </div>
+        </div>
+
+      <!-- Away -->
+        <!-- Red Card -->
+        <div ng-repeat="player in redCardedPlayerAway track by $index" ng-if="redCardPlayerAway !== undefined" ng-show="status == 'subAway'" class="row" style="border-bottom: 1px solid #eeeeee;background-color: #ddd;color: #aaa;padding: 10px;">
+          <div class="col col-80">{{player}}</div>
+          <div class="col col-20">
+             <center style="padding-left: 20px;"><img src="img/iconFootball/red card2.png" style="width: 25px;height: 25px;" /></center>
+          </div>
+        </div>
+
+        <!-- Second Yellow Card -->
+        <div ng-repeat="player in secondYellowCardPlayerAway track by $index" ng-if="redCardPlayerAway !== undefined" ng-show="status == 'subAway'" class="row" style="border-bottom: 1px solid #eeeeee;background-color: #ddd;color: #aaa;padding: 10px;">
+          <div class="col col-80">{{player}}</div>
+          <div class="col col-20">
+             <center style="padding-left: 20px;"><img src="img/iconFootball/second yellow card.png" style="width: 25px;height: 25px;" /></center>
+          </div>
+        </div>
+
+        <!-- Player Out -->
+        <ion-list ng-repeat="data in lineupDataArr track by $index">
+          <ion-radio ng-click="setPlayerOutStatus()" name="playerOut" style="border-bottom: 1px solid #eeeeee;">{{data}}</ion-radio>
+        </ion-list>
+
+        <!-- Player In -->
+        <div style="color: white;padding: 10px;padding-left: 14px;background-color: #4db6ac;font-size: 16px;">Player In</div>
+        <ion-list ng-repeat="data in subDataArr track by $index">
+           <ion-radio ng-click="setPlayerInStatus()" name="playerIn" style="border-bottom: 1px solid #eeeeee;">{{data}}</ion-radio>
+        </ion-list>
   </div>
-  <div class="list">
-  <!-- White area -->
-  <div ng-hide="searchmessage"></div>
-  <!-- Data of chats -->
-<!--   <a ng-if="status == 'goalHome'" ng-repeat="data in squadDataArr track by $index" class="item item-avatar" style="border-bottom:2px solid #f0efef;" ng-click="addScoreHome('{{data.username}}')">
-   <img src="img/profile3.png" ng-if="data !== null">
-    <div style="padding-top: 3px;height:40px;" ng-if="data !== null">
-    <h2 style="margin-left: -26px; width:100px;" ng-if="data !== null">{{data.username}}</h2>
-    <p style="margin-left: -26px; margin-top: -2px;" ng-if="data !== null">{{data.email}}</p>
-    </div>
-  </a> -->
-  <a ng-if="status == 'goalAway'" ng-repeat="data in squadDataArr track by $index" class="item item-avatar" style="border-bottom:2px solid #f0efef;" ng-click="addScoreAway('{{data.username}}')">
-   <img src="img/profile3.png" ng-if="data !== null">
-    <div style="padding-top: 3px;height:40px;" ng-if="data !== null">
-    <h2 style="margin-left: -26px; width:100px;" ng-if="data !== null">{{data.username}}</h2>
-    <p style="margin-left: -26px; margin-top: -2px;" ng-if="data !== null">{{data.email}}</p>
-    </div>
-  </a>
 
-  <!-- <a ng-if="status == 'assistHome'" ng-repeat="data in squadDataArr track by $index" class="item item-avatar" style="border-bottom:2px solid #f0efef;" ng-click="addAssistHome('{{data.username}}')">
-   <img src="img/profile3.png" ng-if="data !== null">
-    <div style="padding-top: 3px;height:40px;" ng-if="data !== null">
-    <h2 style="margin-left: -26px; width:100px;" ng-if="data !== null">{{data.username}}</h2>
-    <p style="margin-left: -26px; margin-top: -2px;" ng-if="data !== null">{{data.email}}</p>
-    </div>
-  </a> -->
-<!--   <a ng-if="status == 'assistAway'" ng-repeat="data in squadDataArr track by $index" class="item item-avatar" style="border-bottom:2px solid #f0efef;" ng-click="addAssistAway('{{data.username}}')">
-   <img src="img/profile3.png" ng-if="data !== null">
-    <div style="padding-top: 3px;height:40px;" ng-if="data !== null">
-    <h2 style="margin-left: -26px; width:100px;" ng-if="data !== null">{{data.username}}</h2>
-    <p style="margin-left: -26px; margin-top: -2px;" ng-if="data !== null">{{data.email}}</p>
-    </div>
-  </a> -->
-
-  <a ng-if="status == 'yelCardHome'" ng-repeat="data in squadDataArr track by $index" class="item item-avatar" style="border-bottom:2px solid #f0efef;" ng-click="addYelCardHome('{{data.username}}')">
-   <img src="img/profile3.png" ng-if="data !== null">
-    <div style="padding-top: 3px;height:40px;" ng-if="data !== null">
-    <h2 style="margin-left: -26px; width:100px;" ng-if="data !== null">{{data.username}}</h2>
-    <p style="margin-left: -26px; margin-top: -2px;" ng-if="data !== null">{{data.email}}</p>
-    </div>
-  </a>
-  <a ng-if="status == 'yelCardAway'" ng-repeat="data in squadDataArr track by $index" class="item item-avatar" style="border-bottom:2px solid #f0efef;" ng-click="addYelCardAway('{{data.username}}')">
-   <img src="img/profile3.png" ng-if="data !== null">
-    <div style="padding-top: 3px;height:40px;" ng-if="data !== null">
-    <h2 style="margin-left: -26px; width:100px;" ng-if="data !== null">{{data.username}}</h2>
-    <p style="margin-left: -26px; margin-top: -2px;" ng-if="data !== null">{{data.email}}</p>
-    </div>
-  </a>
-
-  <a ng-if="status == 'redCardHome'" ng-repeat="data in squadDataArr track by $index" class="item item-avatar" style="border-bottom:2px solid #f0efef;" ng-click="addRedCardHome('{{data.username}}')">
-   <img src="img/profile3.png" ng-if="data !== null">
-    <div style="padding-top: 3px;height:40px;" ng-if="data !== null">
-    <h2 style="margin-left: -26px; width:100px;" ng-if="data !== null">{{data.username}}</h2>
-    <p style="margin-left: -26px; margin-top: -2px;" ng-if="data !== null">{{data.email}}</p>
-    </div>
-  </a>
-  <a ng-if="status == 'redCardAway'" ng-repeat="data in squadDataArr track by $index" class="item item-avatar" style="border-bottom:2px solid #f0efef;" ng-click="addRedCardAway('{{data.username}}')">
-   <img src="img/profile3.png" ng-if="data !== null">
-    <div style="padding-top: 3px;height:40px;" ng-if="data !== null">
-    <h2 style="margin-left: -26px; width:100px;" ng-if="data !== null">{{data.username}}</h2>
-    <p style="margin-left: -26px; margin-top: -2px;" ng-if="data !== null">{{data.email}}</p>
-    </div>
-  </a>
-
-  <a ng-if="status == 'subHome'" ng-repeat="data in squadDataArr track by $index" class="item item-avatar" style="border-bottom:2px solid #f0efef;" ng-click="addSubHome('{{data.username}}')">
-   <img src="img/profile3.png" ng-if="data !== null">
-    <div style="padding-top: 3px;height:40px;" ng-if="data !== null">
-    <h2 style="margin-left: -26px; width:100px;" ng-if="data !== null">{{data.username}}</h2>
-    <p style="margin-left: -26px; margin-top: -2px;" ng-if="data !== null">{{data.email}}</p>
-    </div>
-  </a>
-  <a ng-if="status == 'subAway'" ng-repeat="data in squadDataArr track by $index" class="item item-avatar" style="border-bottom:2px solid #f0efef;" ng-click="addSubAway('{{data.username}}')">
-   <img src="img/profile3.png" ng-if="data !== null">
-    <div style="padding-top: 3px;height:40px;" ng-if="data !== null">
-    <h2 style="margin-left: -26px; width:100px;" ng-if="data !== null">{{data.username}}</h2>
-    <p style="margin-left: -26px; margin-top: -2px;" ng-if="data !== null">{{data.email}}</p>
-    </div>
-  </a>
-</div>
-<button ng-show="status == 'goalHome'" class = "button" ng-click = "addGoalHome()" style="top: 700px;left: 20px;background-color: #77d677; color: white;position: fixed;">Submit</button>
-<button ng-show="status == 'goalAway'" class = "button" ng-click = "addGoalAway()" style="top: 700px;left: 20px;background-color: #77d677; color: white;position: fixed;">Submit</button>
-
-<button ng-show="status == 'ownGoalHome'" class = "button" ng-click = "addOwnGoalHome()" style="top: 700px;left: 20px;background-color: #77d677; color: white;position: fixed;">Submit</button>
-<button ng-show="status == 'ownGoalAway'" class = "button" ng-click = "addOwnGoalAway()" style="top: 700px;left: 20px;background-color: #77d677; color: white;position: fixed;">Submit</button>
-
-<button ng-show="status == 'penaltyGoalHome'" class = "button" ng-click = "addPenaltyGoalHome()" style="top: 700px;left: 20px;background-color: #77d677; color: white;position: fixed;">Submit</button>
-<button ng-show="status == 'penaltyGoalAway'" class = "button" ng-click = "addPenaltyGoalAway()" style="top: 700px;left: 20px;background-color: #77d677; color: white;position: fixed;">Submit</button>
-
-<button ng-show="status == 'yellowCardHome'" class = "button" ng-click = "addYellowCardHome()" style="top: 700px;left: 20px;background-color: #77d677; color: white;position: fixed;">Submit</button>
-<button ng-show="status == 'yellowCardAway'" class = "button" ng-click = "addYellowCardAway()" style="top: 700px;left: 20px;background-color: #77d677; color: white;position: fixed;">Submit</button>
-
-<button ng-show="status == 'redCardHome'" class = "button" ng-click = "addRedCardHome()" style="top: 700px;left: 20px;background-color: #77d677; color: white;position: fixed;">Submit</button>
-<button ng-show="status == 'redCardAway'" class = "button" ng-click = "addRedCardAway()" style="top: 700px;left: 20px;background-color: #77d677; color: white;position: fixed;">Submit</button>
-
-<button ng-show="status == 'subHome'" class = "button" ng-click = "addSubHome()" style="top: 700px;left: 20px;background-color: #77d677; color: white;position: fixed;">Submit</button>
-<button ng-show="status == 'subAway'" class = "button" ng-click = "addSubAway()" style="top: 700px;left: 20px;background-color: #77d677; color: white;position: fixed;">Submit</button>
+  <button ng-show="status == 'goalHome' && selectedStatus === false" class = "button" style="top: 550px;left: 20px;background-color: #ddd; color: white;position: fixed;">Submit</button>
+  <button ng-show="status == 'goalHome' && selectedStatus === true" class = "button" ng-click = "addGoalHome()" style="top: 550px;left: 20px;background-color: #444; color: white;position: fixed;">Submit</button>
+  <button ng-show="status == 'goalAway' && selectedStatus === false" class = "button" style="top: 550px;left: 20px;background-color: #ddd; color: white;position: fixed;">Submit</button>
+  <button ng-show="status == 'goalAway' && selectedStatus === true" class = "button" ng-click = "addGoalAway()" style="top: 550px;left: 20px;background-color: #444; color: white;position: fixed;">Submit</button>
 
 
+  <button ng-show="status == 'ownGoalHome' && selectedStatus === false" class = "button" style="top: 550px;left: 20px;background-color: #ddd; color: white;position: fixed;">Submit</button>
+  <button ng-show="status == 'ownGoalHome' && selectedStatus === true" class = "button" ng-click = "addOwnGoalHome()" style="top: 550px;left: 20px;background-color: #444; color: white;position: fixed;">Submit</button>
+  <button ng-show="status == 'ownGoalAway' && selectedStatus === false" class = "button" style="top: 550px;left: 20px;background-color: #ddd; color: white;position: fixed;">Submit</button>
+  <button ng-show="status == 'ownGoalAway' && selectedStatus === true" class = "button" ng-click = "addOwnGoalAway()" style="top: 550px;left: 20px;background-color: #444; color: white;position: fixed;">Submit</button>
 
-<button class = "button" ng-click = "closeModalGoal()" style="top: 700px;right: 20px;background-color: #77d677; color: white;position: fixed;">Cancel</button>
-   </ion-content>
+
+  <button ng-show="status == 'penaltyGoalHome' && selectedStatus === false" class = "button" style="top: 550px;left: 20px;background-color: #ddd; color: white;position: fixed;">Submit</button>
+  <button ng-show="status == 'penaltyGoalHome' && selectedStatus === true" class = "button" ng-click = "addPenaltyGoalHome()" style="top: 550px;left: 20px;background-color: #444; color: white;position: fixed;">Submit</button>
+  <button ng-show="status == 'penaltyGoalAway' && selectedStatus === false" class = "button" style="top: 550px;left: 20px;background-color: #ddd; color: white;position: fixed;">Submit</button>
+  <button ng-show="status == 'penaltyGoalAway' && selectedStatus === true" class = "button" ng-click = "addPenaltyGoalAway()" style="top: 550px;left: 20px;background-color: #444; color: white;position: fixed;">Submit</button>
+
+
+  <button ng-show="status == 'yellowCardHome' && selectedStatus === false" class = "button" style="top: 550px;left: 20px;background-color: #ddd; color: white;position: fixed;">Submit</button>
+  <button ng-show="status == 'yellowCardHome' && selectedStatus === true" class = "button" ng-click = "addYellowCardHome()" style="top: 550px;left: 20px;background-color: #444; color: white;position: fixed;">Submit</button>
+  <button ng-show="status == 'yellowCardAway' && selectedStatus === false" class = "button" style="top: 550px;left: 20px;background-color: #ddd; color: white;position: fixed;">Submit</button>
+  <button ng-show="status == 'yellowCardAway' && selectedStatus === true" class = "button" ng-click = "addYellowCardAway()" style="top: 550px;left: 20px;background-color: #444; color: white;position: fixed;">Submit</button>
+
+
+  <button ng-show="status == 'redCardHome' && selectedStatus === false" class = "button" style="top: 550px;left: 20px;background-color: #ddd; color: white;position: fixed;">Submit</button>
+  <button ng-show="status == 'redCardHome' && selectedStatus === true" class = "button" ng-click = "addRedCardHome()" style="top: 550px;left: 20px;background-color: #444; color: white;position: fixed;">Submit</button>
+  <button ng-show="status == 'redCardAway' && selectedStatus === false" class = "button" style="top: 550px;left: 20px;background-color: #ddd; color: white;position: fixed;">Submit</button>
+  <button ng-show="status == 'redCardAway' && selectedStatus === true" class = "button" ng-click = "addRedCardAway()" style="top: 550px;left: 20px;background-color: #444; color: white;position: fixed;">Submit</button>
+
+
+  <button ng-show="status == 'subHome'" ng-if="playerOutStatus === false || playerInStatus === false" class = "button" style="top: 550px;left: 20px;background-color: #ddd; color: white;position: fixed;">Submit</button>
+  <button ng-show="status == 'subHome' && playerOutStatus === true && playerInStatus === true" class = "button" ng-click = "addSubHome()" style="top: 550px;left: 20px;background-color: #444; color: white;position: fixed;">Submit</button>
+  <button ng-show="status == 'subAway'" ng-if="playerOutStatus === false || playerInStatus === false" class = "button" style="top: 550px;left: 20px;background-color: #ddd; color: white;position: fixed;">Submit</button>
+  <button ng-show="status == 'subAway' && playerOutStatus === true && playerInStatus === true" class = "button" ng-click = "addSubAway()" style="top: 550px;left: 20px;background-color: #444; color: white;position: fixed;">Submit</button>
+
+
+  <button class = "button" ng-click = "closeModalGoal()" style="top: 550px;right: 20px;background-color: #ef473a; color: white;position: fixed;">Cancel</button>
+
+</ion-content>
 </ion-modal-view>

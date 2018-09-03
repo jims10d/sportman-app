@@ -24,7 +24,7 @@
 </p>
 
   <a ng-repeat="data in teamArr" class="item item-avatar" style="margin: 6px; background-color: #ffffff; width: auto; border:1px solid #e6e6e6;">
-    <img src="img/icon.png">
+    <img ng-src="{{data.team_logo}}" src="img\sportmanLogo\sportman logo v1.1.5.png" style="margin-top: 3px;">
     <div class="col" style="margin-top: 3px">
       <h2 style="margin-left: -26px;">
         {{data.team_name}}
@@ -33,10 +33,10 @@
         {{data.team_manager}}
       </p>
     </div>
-    <p ng-show="menuProfile.role == 'Player'" style="margin-top:-38px; margin-left:170px; border-left:1px solid #e3e3e3; text-align: center; color: #4DB6AC; font-size:15px;" ng-click="JoinTeam()">
+    <p ng-show="menuProfile.role == 'Player'" style="margin-top:-38px; margin-left:170px;text-align: center; color: #4DB6AC; font-size:18px;" ng-click="JoinTeam()">
       Join
     </p>
-    <p ng-show="menuProfile.role == 'Coach'" style="margin-top:-38px; margin-left:170px; border-left:1px solid #e3e3e3; text-align: center; color: #4DB6AC; font-size:15px;" ng-click="ManageTeam()">
+    <p ng-show="menuProfile.role == 'Coach'" style="margin-top:-38px; margin-left:170px;text-align: center; color: #4DB6AC; font-size:18px;" ng-click="ManageTeam()">
       Manage
     </p>
   </a>

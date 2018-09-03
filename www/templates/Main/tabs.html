@@ -26,7 +26,7 @@
 					<ion-item class="item item-complex" nav-clear="" menu-close="" ng-href="#/app/home">
 						<i class="mdi mdi-home" style="margin-right:10px; font-size:18px;"></i>   Home
 					</ion-item>
-					<ion-item class="item item-complex" nav-clear="" menu-close="" ng-hide="menuProfile.role == 'Organizer' || menuProfile.role == 'Referee'" ng-href="" ng-click="viewChat()">
+					<ion-item class="item item-complex" nav-clear="" menu-close="" ng-hide="menuProfile.role == 'Organizer' || menuProfile.role == 'Referee' || menuProfile.role == 'Analyst'" ng-href="" ng-click="viewChat()">
 						<i class="mdi mdi-message" style="margin-right:10px; font-size:18px;"></i>   Chat
 					</ion-item>
 					<ion-item class="item item-complex" nav-clear="" menu-close="" ng-href="" ng-click="viewProfile()">
@@ -35,29 +35,29 @@
 			<!-- 		<ion-item class="item item-complex" ng-show="menuProfile.role == 'Referee'" nav-clear="" menu-close="" ng-href="#/app/competition">
 						<i class="mdi mdi-trophy-variant" style="margin-right:10px; font-size:20px;"></i> Task
 					</ion-item> -->
-					<ion-item class="item item-complex" ng-show="menuProfile.role == 'Referee'" nav-clear="" menu-close="" ng-href="" ng-click="viewTrackScore()">
+				<!-- 	<ion-item class="item item-complex" ng-show="menuProfile.role == 'Referee'" nav-clear="" menu-close="" ng-href="" ng-click="viewTrackScore()">
 						<i class="mdi mdi-trophy-variant" style="margin-right:10px; font-size:20px;"></i> Track Score
-					</ion-item>
-					<!-- <ion-item class="item item-complex" ng-show="menuProfile.role == 'Referee'" nav-clear="" menu-close="" ng-href="#/app/history">
+					</ion-item> -->
+					<ion-item class="item item-complex" ng-show="menuProfile.role == 'Referee' || menuProfile.role == 'Analyst'" nav-clear="" menu-close="" ng-href="#/app/history">
 						<i class="mdi mdi-history" style="margin-right:10px; font-size:20px;"></i>   History
 					</ion-item>
-					<ion-item class="item item-complex" ng-show="menuProfile.role == 'Referee'" nav-clear="" menu-close="" ng-href="#/app/leaderboard">
+				<!-- 	<ion-item class="item item-complex" ng-show="menuProfile.role == 'Referee'" nav-clear="" menu-close="" ng-href="#/app/leaderboard">
 						<i class="mdi mdi-chart-bar" style="margin-right:10px; font-size:20px;"></i>   Leaderboard
 					</ion-item> -->
 					<!-- <ion-item class="item item-complex" ng-show="menuProfile.role == 'Coach'" nav-clear="" menu-close="" ng-href="#/app/lineup">
 						<i class="mdi mdi-trophy-variant" style="margin-right:10px; font-size:20px;"></i> Line Up
 					</ion-item> -->
-					<ion-item class="item item-complex" ng-show="menuProfile.role != 'Referee'" nav-clear="" menu-close="" ng-href="" ng-click="viewLiveScore()">
+					<ion-item class="item item-complex" ng-hide="menuProfile.role == 'Referee' || menuProfile.role == 'Analyst'" nav-clear="" menu-close="" ng-href="" ng-click="viewLiveScore()">
 						<i class="mdi mdi-trophy-variant" style="margin-right:10px; font-size:20px;"></i> Matches
 					</ion-item>
-					<ion-item class="item item-complex" nav-clear="" menu-close="" ng-hide="menuProfile.role == 'Organizer' || menuProfile.role == 'Referee'" ng-href="" ng-click="viewTeam()">
+					<ion-item class="item item-complex" nav-clear="" menu-close="" ng-hide="menuProfile.role == 'Organizer' || menuProfile.role == 'Referee' || menuProfile.role == 'Analyst'" ng-href="" ng-click="viewTeam()">
 						<i class="mdi mdi-account-multiple" style="margin-right:10px; font-size:20px;"></i>   Team
 					</ion-item>
 					<!-- <ion-item class="item item-complex" nav-clear="" menu-close="" ng-show="menuProfile.role == 'Coach'" ng-href="#/app/training">
 						<i class="mdi mdi-account-multiple" style="margin-right:10px; font-size:20px;"></i>   Training
 					</ion-item> -->
 					
-					<ion-item class="item item-complex" nav-clear="" menu-close="" ng-href="" ng-click="viewSchedule()">
+					<ion-item class="item item-complex" ng-hide="menuProfile.role == 'Referee' || menuProfile.role == 'Analyst'" nav-clear="" menu-close="" ng-href="" ng-click="viewSchedule()">
 						<i class="mdi mdi-calendar" style="margin-right:10px; font-size:20px;"></i>   Schedule
 					</ion-item>
 					<!-- <ion-item class="item item-complex" nav-clear="" menu-close="" ng-href="#/app/classement">
@@ -69,12 +69,12 @@
 					<ion-item class="item item-complex" nav-clear="" menu-close="" ng-href="" ng-click="logout()">
 						<i class="mdi mdi-logout" style="margin-right:10px; font-size:20px;"></i>    Logout
 					</ion-item>
-					<ion-item class="item item-complex" nav-clear="" menu-close="" ng-hide="menuProfile.role == 'Referee' || menuProfile.role == 'Player' || menuProfile.role == 'Organizer' || menuProfile.role == 'Manager'" ng-href="#/app/referee_rating" ng-click="rating()">
+				<!-- 	<ion-item class="item item-complex" nav-clear="" menu-close="" ng-hide="menuProfile.role == 'Referee' || menuProfile.role == 'Player' || menuProfile.role == 'Organizer' || menuProfile.role == 'Manager'" ng-href="#/app/referee_rating" ng-click="rating()">
 						<i class="mdi mdi-logout" style="margin-right:10px; font-size:20px;"></i>    Referee Rating
 					</ion-item>
 					<ion-item class="item item-complex" nav-clear="" menu-close="" ng-hide="menuProfile.role == 'Referee' || menuProfile.role == 'Player' || menuProfile.role == 'Organizer' || menuProfile.role == 'Manager'" ng-href="#/app/player_rating" ng-click="rating()">
 						<i class="mdi mdi-logout" style="margin-right:10px; font-size:20px;"></i>    Player Rating
-					</ion-item>
+					</ion-item> -->
 				</div>
 			</ion-list>
 		</ion-content>

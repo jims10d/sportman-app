@@ -7,7 +7,7 @@
 <div class="bar item-input-inset" style="border:none;box-shadow: 0 1px 2px #aaa"></div>
 <ion-content overflow-scroll=true scroll-sista="tabs" style="background-color: white;">
 <!-- History Matches -->
- <a class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;border-right: none;">
+ <!-- <a class="item item-avatar" style="border-bottom:2px solid #f8f8f8; background:white; padding-bottom: 0px; margin-bottom: 0px;border-right: none;">
     <div style="padding-top: 10px">
     <h2 style="margin-left: -80px;">Arsenal vs Chelsea (1 - 0)</h2>
     <p style="margin-left: -80px;font-size: 13px;color:#7c7878;">24 Aug 2017</p>
@@ -34,7 +34,30 @@
     <p style="margin-left: -80px;font-size: 13px;color:#7c7878;">24 Aug 2017</p>
     <h2 style="font-size:15px;color:#0a9dc7;margin-top:-30px;padding:0px;text-align:right;">100 Point</h2>
     </div>
+  </a> -->
+
+  <div style="padding-top:10px;"></div>
+
+  <div ng-show="completedMatches.length === 0" style="text-align: center;margin-top: 100px;">
+    <p>Your history is empty</p>
+    <p>All matches that you have been managed will appear in here...</p>
+  </div>
+
+  <a ng-repeat="match in completedMatches" class="item item-avatar" style="border-right: none;padding: 0px;min-height: 0px;">
+    <div class="row no-padding">
+      <div class="col col-20" style="text-align: center;padding-left: 0px;padding-right: 0px;background-color: grey;color: white;padding-top: 15px;padding-bottom: 10px;">
+        <h2 style="font-size: 20px;font-weight: 400;padding: 0px;margin: 0px;color: white;">{{match.match_date | date: 'dd'}}</h2>
+        <p class="no-margin" style="color: white;">{{match.match_date | date: 'MMM'}}</p>
+      </div>
+      <div class="col" style="padding-left: 10px;padding-top: 15px">
+        <h2>{{match.match_homeTeam}} vs {{match.match_awayTeam}} ({{match.match_homeTeamObj.score}} - {{match.match_awayTeamObj.score}})</h2>
+        <p>{{compName[match.id]}}</p>
+      </div>
+      <div class="col col-10" style="margin-top: 6px;">
+        <button class="button button-clear icon-button mdi mdi-chevron-right" ng-click="goToMatchDetail('{{match.id}}')" style="font-size:22px;color:#808a89;margin-left: -20px;padding: 0px;"></button>
+      </div>
+    </div>
   </a>
-<!-- History Matches -->
+
 </ion-content>
 </ion-view>

@@ -637,6 +637,9 @@ a.subdued{
   color: #ffffff !important;
   font-weight: bold;
   border-top: 1px solid #4DB6AC !important;
+  /*border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  margin-bottom: -5px;*/
 }
 
 .top-tab-active{
@@ -722,7 +725,8 @@ a.subdued{
 }
 
 .team-content {
-  background-color:#f8f8f8; 
+  /*background-color:#f8f8f8; */
+  background-color: #fff;
   z-index:0;
 }
 
@@ -889,6 +893,11 @@ a.subdued{
   color: #fff;
 }
 
+.popup-buttons .button {
+  padding: 0px;
+  min-width: 110px;
+}
+
 .ion-checkbox-day {
   padding-left: 50px !important;
   color: white;
@@ -958,5 +967,116 @@ a.subdued{
   text-align:center !important;
   color:white !important;
   border-right: 1px solid white !important;
-  background-color: #4db6ac !important;
+  /*background-color: #4db6ac !important;*/
+  background-color: #707777 !important;
 }
+
+/*background-color:#00000080;text-align:center;font-weight:bold;color:#ffffff;padding:10px;*/
+.clicked-button-effect {
+    background-color: grey;
+    color: #FFFFFF;
+    padding: 10px;
+    text-align: center;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    text-decoration: none;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.clicked-button-effect:after {
+    content: "";
+    background: white;
+    display: block;
+    position: absolute;
+    padding-top: 300%;
+    padding-left: 350%;
+    margin-left: -20px!important;
+    margin-top: -120%;
+    opacity: 0;
+    transition: all 0.8s
+}
+
+.clicked-button-effect:active:after {
+    padding: 0;
+    margin: 0;
+    opacity: 1;
+    transition: 0s
+}
+
+.winner {
+  text-align:left;
+  color:black;
+  font-weight: 600;
+}
+
+/* Material style */
+/*button {
+  border: none;
+  cursor: pointer;
+  color: white;
+  padding: 10px 30px;
+  border-radius: 2px;
+  font-size: 22px;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, .4);
+  
+}
+
+.button-view-schedule {
+  background: #a2a2a2;
+  color: #ffffff;
+  border-radius: 50px;
+  margin-top: -5px;
+  margin-left: 120px;
+  font-size: 12px;
+}
+
+.button-view-schedule:hover {
+  background: #a2a2a2;
+  color: #ffffff;
+  border-radius: 50px;
+  margin-top: -5px;
+  margin-left: 120px;
+  font-size: 12px;
+}*/
+
+
+/* Ripple magic */
+/*button{
+  position: relative;
+  overflow: hidden;
+  margin :10px;
+}
+
+button:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, .5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1, 1) translate(-50%);
+  transform-origin: 50% 50%;
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0, 0);
+    opacity: 1;
+  }
+  20% {
+    transform: scale(25, 25);
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(40, 40);
+  }
+}
+
+button:focus:not(:active)::after {
+  animation: ripple 1s ease-out;
+}*/

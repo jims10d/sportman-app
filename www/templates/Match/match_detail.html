@@ -1,6 +1,6 @@
 <ion-view view-title="Match Result" title-center cache-view="false">
 <ion-nav-buttons side="left">
-<button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="back()" style="font-size:25px"></button>
+<button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="back()" href="#/live_score" style="font-size:25px"></button>
 </ion-nav-buttons>
 
 <!-- tab -->
@@ -8,18 +8,29 @@
     <a class="col" ng-click="showme=1" ng-class="{'activeTab-text':showme == 1}" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;z-index: 2;">Results</a>
     <a class="col" ng-click="showme=2" ng-class="{'activeTab-text':showme == 2}" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;z-index: 2;">Stats</a>
     <a class="col" ng-click="showme=3" ng-class="{'activeTab-text':showme == 3}" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;z-index: 2;">Lineup</a>
+    <a class="col" ng-click="showme=4" ng-class="{'activeTab-text':showme == 4}" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;z-index: 2;">Details</a>
 </div>
 <!-- tab -->
 
 <ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color: #ececec; z-index:0; margin-top:12px;">
+
 <!-- Results -->
-<div ng-show="showme == 1" style="margin-top: 40px;">
+<!-- Empty State -->
+<div ng-if="showme == 1" ng-show="match.timer_status === null || match.timer_status === ''" style="text-align: center;margin-top: 150px;">
+    <p>The match hasn't started yet</p>
+    <p>Check back later...</p>
+</div>
+<!-- Empty State -->
+
+<div ng-if="showme == 1" ng-hide="match.timer_status === null || match.timer_status === ''" style="margin-top: 40px;">
   <div class="card" style="margin-bottom:10px;background-color:#26A69A;">
     <div class="item item-text-wrap" style="padding:0px;">
       <div class="row" style="margin:0px;">
-        <div ng-if="match.timer_status == 'halftime'" class="col" style="text-align:center;margin:0px;font-size:13px;color:white;">HT</div>
-        <div ng-if="match.timer_status == 'fulltime'" class="col" style="text-align:center;margin:0px;font-size:13px;color:white;">FT</div>
-        <div ng-if="match.timer_status == null || match.timer_status == 'started'" class="col" style="text-align:center;margin:0px;font-size:13px;color:white;">{{match.timer}}'</div>
+        <div ng-if="match.timer_status == '1st half stopped'" class="col" style="text-align:center;margin:0px;font-size:13px;color:white;">HT</div>
+        <div ng-if="match.timer_status == '2nd half stopped'" class="col" style="text-align:center;margin:0px;font-size:13px;color:white;">FT</div>
+        <div ng-if="match.timer_status == '2nd half stopped (ET)'" class="col" style="text-align:center;margin:0px;font-size:13px;color:white;">AET</div>
+        <div ng-if="match.timer_status == 'penalty shootout stopped'" class="col" style="text-align:center;margin:0px;font-size:13px;color:white;">PEN</div>
+        <div ng-hide="match.timer_status == '' || match.timer_status == '1st half stopped' || match.timer_status == '2nd half stopped' || match.timer_status == '1st half stopped (ET)' || match.timer_status == '2nd half stopped (ET)' || match.timer_status == 'penalty shootout stopped' || match.match_status == 'finished'" class="col" style="text-align:center;margin:0px;font-size:13px;color:white;">{{match.timer}}'</div>
       </div>
       <div class="row" style="margin:0px;">
         <div class="col" style="text-align:center;color:white;">{{match.match_homeTeam}}</div>
@@ -30,6 +41,9 @@
       </div>
       <div class="row" style="margin:0px;">
         <div class="col" style="text-align:center;margin:0px;font-size:13px;color:white;">(HT {{match.halfTime.homeTeamScore}} - {{match.halfTime.awayTeamScore}})</div>
+        <div class="col" ng-show="match.extraTime.status === true" style="text-align:center;margin:0px;font-size:13px;color:white;">(ET {{match.extraTime.homeTeamScore}} - {{match.extraTime.awayTeamScore}})</div>
+        <div class="col" ng-show="match.penalty.status === true" style="text-align:center;margin:0px;font-size:13px;color:white;">(PEN {{match.penalty.homeTeamScore}} - {{match.penalty.awayTeamScore}})</div>
+
       </div>
     </div>
   </div>
@@ -39,7 +53,7 @@
       <div class="row" style="margin:0px;">
         <div class="col" style="text-align:center;margin:0px;font-size:12px;"><center><img src="img/whistle.png" style="width:16px;height:16px;"></center>Kick Off</div>
       </div>
-       <div class="row" style="margin:0px;" ng-repeat="data in goalsArr | orderBy:['time','goalH','goalA']">
+       <div class="row" style="margin:0px;" ng-repeat="data in goalsArr">
         <div class="col scorer-right" ng-class="{'scorer-right':data.status == 'away'}">
           <p ng-show="data.status == 'home'" style="font-size:11px;">{{data.time}}'</p>
           <p ng-show="data.status == 'home'" style="font-size:14px;color: black;font-weight: 400;">{{data.scorer}}</p>
@@ -102,14 +116,22 @@
 </div>
 
 <!-- Stats -->
-<div ng-show="showme == 2" style="margin-top: 40px;">
+  <!-- Empty State -->
+  <div ng-if="showme == 2" ng-show="match.timer_status === null || match.timer_status === ''" style="text-align: center;margin-top: 150px;">
+      <p>The match hasn't started yet</p>
+      <p>Check back later...</p>
+  </div>
+  <!-- Empty State -->
 
-  <div class="card" style="margin-bottom:10px;background-color:#26A69A;">
+<div ng-if="showme == 2" ng-hide="match.timer_status === null || match.timer_status === ''" style="margin-top: 40px;">
+<!--   <div class="card" style="margin-bottom:10px;background-color:#26A69A;">
     <div class="item item-text-wrap" style="padding:0px;">
       <div class="row" style="margin:0px;">
-        <div ng-if="match.timer_status == 'halftime'" class="col" style="text-align:center;margin:0px;font-size:13px;color:white;">HT</div>
-        <div ng-if="match.timer_status == 'fulltime'" class="col" style="text-align:center;margin:0px;font-size:13px;color:white;">FT</div>
-        <div ng-if="match.timer_status == null || match.timer_status == 'started'" class="col" style="text-align:center;margin:0px;font-size:13px;color:white;">{{match.timer}}'</div>
+        <div ng-if="match.timer_status == '1st half stopped'" class="col" style="text-align:center;margin:0px;font-size:13px;color:white;">HT</div>
+        <div ng-if="match.timer_status == '2nd half stopped'" class="col" style="text-align:center;margin:0px;font-size:13px;color:white;">FT</div>
+        <div ng-if="match.timer_status == '2nd half stopped (ET)'" class="col" style="text-align:center;margin:0px;font-size:13px;color:white;">AET</div>
+        <div ng-if="match.timer_status == 'penalty shootout stopped'" class="col" style="text-align:center;margin:0px;font-size:13px;color:white;">PEN</div>
+        <div ng-hide="match.timer_status == '' || match.timer_status == '1st half stopped' || match.timer_status == '2nd half stopped' || match.timer_status == '1st half stopped (ET)' || match.timer_status == '2nd half stopped (ET)' || match.timer_status == 'penalty shootout stopped' || match.match_status == 'finished'" class="col" style="text-align:center;margin:0px;font-size:13px;color:white;">{{match.timer}}'</div>
       </div>
       <div class="row" style="margin:0px;">
         <div class="col" style="text-align:center;color:white;">{{match.match_homeTeam}}</div>
@@ -120,94 +142,163 @@
       </div>
       <div class="row" style="margin:0px;">
         <div class="col" style="text-align:center;margin:0px;font-size:13px;color:white;">(HT {{match.halfTime.homeTeamScore}} - {{match.halfTime.awayTeamScore}})</div>
+        <div class="col" ng-show="match.extraTime.status === true" style="text-align:center;margin:0px;font-size:13px;color:white;">(ET {{match.extraTime.homeTeamScore}} - {{match.extraTime.awayTeamScore}})</div>
+        <div class="col" ng-show="match.penalty.status === true" style="text-align:center;margin:0px;font-size:13px;color:white;">(PEN {{match.penalty.homeTeamScore}} - {{match.penalty.awayTeamScore}})</div>
+      </div>
+    </div>
+  </div> -->
+
+  <p style="text-align:center;font-weight:bold;color:grey;">STATISTICS</p>
+
+
+  <div class="card" style="margin-bottom:0px;border-bottom: 0px;box-shadow: none;padding: 0px;">
+    <div class="item item-text-wrap" style="padding:0px;">
+      <div class="row" ng-model="activeTeam" ng-init="activeTeam = 1" style="margin:0px;padding:0px;">
+        <div class="col" style="padding:10px 5px;text-align:center;color:white;background-color: #4d6764;">{{match.match_homeTeam}}</div>
+        <div class="col" style="padding:10px 5px;text-align:center;color:white;background-color: #ffc900;">{{match.match_awayTeam}}</div>
       </div>
     </div>
   </div>
-
-  <p style="text-align:center;font-weight:bold;color:grey;">Ball Possession</p>
+ <div style="background-color: white;margin: 8px;padding: 4px;margin-top: 0px;">
+  <div class="row">
+    <div class="col col-20" style="text-align: left;margin-left: 10px;font-weight: 400;">{{match.match_stats.homePossession}}%</div>
+    <div class="col">
+      <p style="text-align:center;font-weight:600;color:grey;">Ball Possession</p>
+    </div>
+    <div class="col col-20" style="text-align: right;margin-right: 10px;font-weight: 400;">{{match.match_stats.awayPossession}}%</div>
+  </div>
   <div class="card" style="margin-bottom:10px;margin-top:-5px;">
     <div class="item item-text-wrap" style="padding:0px;">
       <div class="row no-padding no-margin">
-        <div style="width: 70%;background-color: #4db6ac;color: white;padding:8px;margin: 0px;padding-left: 8px;text-align: left;">70%</div>
-        <div style="width: 30%;padding:8px;margin: 0px;padding-right: 8px;text-align: right;">30%</div>
+        <div id="ballPossessionHome" style="background-color: #4d6764;color: white;padding: 5px 0px;text-align: left;"></div>
+        <div id="ballPossessionAway" style="background-color: #ffc900;padding: 5px 0px;text-align: right;"></div>
       </div>
     </div>
   </div>
 
-  <p style="text-align:center;font-weight:bold;color:grey;">Total shots</p>
+  <div class="row">
+    <div class="col col-20" style="text-align: left;margin-left: 10px;font-weight: 400;">{{match.match_stats.homeTotalShots}}</div>
+    <div class="col">
+      <p style="text-align:center;font-weight:600;color:grey;">Total shots</p>
+    </div>
+    <div class="col col-20" style="text-align: right;margin-right: 10px;font-weight: 400;">{{match.match_stats.awayTotalShots}}</div>
+  </div>
   <div class="card" style="margin-bottom:10px;margin-top:-5px;">
     <div class="item item-text-wrap" style="padding:0px;">
       <div class="row no-padding no-margin" style="margin:0px;">
-        <div style="width: 70%;background-color:#4db6ac;color: white;padding:8px;margin: 0px;padding-left: 8px;text-align: left;">10</div>
-        <div style="width: 30%;padding:8px;margin: 0px;padding-right: 8px;text-align: right;">3</div>
+        <div id="totalShotsHome" style="background-color:#4d6764;color: white;padding: 5px 0px;margin: 0px;text-align: left;"></div>
+        <div id="totalShotsAway" style="background-color: #ffc900;padding: 5px 0px;margin: 0px;text-align: right;"></div>
       </div>
     </div>
   </div>
 
-  <p style="text-align:center;font-weight:bold;color:grey;">Shot On Target</p>
+  <div class="row">
+    <div class="col col-20" style="text-align: left;margin-left: 10px;font-weight: 400;">{{match.match_stats.homeShotOnTarget}}</div>
+    <div class="col">
+      <p style="text-align:center;font-weight:600;color:grey;">Shot On Target</p>
+    </div>
+    <div class="col col-20" style="text-align: right;margin-right: 10px;font-weight: 400;">{{match.match_stats.awayShotOnTarget}}</div>
+  </div>
   <div class="card" style="margin-bottom:10px;margin-top:-5px;">
     <div class="item item-text-wrap" style="padding:0px;">
       <div class="row no-padding no-margin" style="margin:0px;">
-        <div style="width: 70%;background-color:#4db6ac;color: white;padding:8px;margin: 0px;padding-left: 8px;text-align: left;">7</div>
-        <div style="width: 30%;padding:8px;margin: 0px;padding-right: 8px;text-align: right;">1</div>
+        <div id="shotOnTargetHome" style="background-color:#4d6764;color: white;padding: 5px 0px;margin: 0px;text-align: left;"></div>
+        <div id="shotOnTargetAway" style="background-color: #ffc900;padding: 5px 0px;margin: 0px;text-align: right;"></div>
       </div>
     </div>
   </div>
 
-  <p style="text-align:center;font-weight:bold;color:grey;">Shot Off Target</p>
+  <div class="row">
+    <div class="col col-20" style="text-align: left;margin-left: 10px;font-weight: 400;">{{match.match_stats.homeShotOffTarget}}</div>
+    <div class="col">
+       <p style="text-align:center;font-weight:600;color:grey;">Shot Off Target</p>
+    </div>
+    <div class="col col-20" style="text-align: right;margin-right: 10px;font-weight: 400;">{{match.match_stats.awayShotOffTarget}}</div>
+  </div>
   <div class="card" style="margin-bottom:10px;margin-top:-5px;">
     <div class="item item-text-wrap" style="padding:0px;">
       <div class="row no-padding no-margin" style="margin:0px;">
-        <div style="width: 70%;background-color:#4db6ac;color: white;padding:8px;margin: 0px;padding-left: 8px;text-align: left;">3</div>
-        <div style="width: 30%;padding:8px;margin: 0px;padding-right: 8px;text-align: right;">2</div>
+        <div id="shotOffTargetHome" style="background-color:#4d6764;color: white;padding: 5px 0px;margin: 0px;text-align: left;"></div>
+        <div id="shotOffTargetAway" style="background-color: #ffc900;padding: 5px 0px;margin: 0px;text-align: right;"></div>
       </div>
     </div>
   </div>
 
-  <p style="text-align:center;font-weight:bold;color:grey;">Corner Kicks</p>
+  <div class="row">
+    <div class="col col-20" style="text-align: left;margin-left: 10px;font-weight: 400;">{{match.match_stats.homeCornerKicks}}</div>
+    <div class="col">
+      <p style="text-align:center;font-weight:600;color:grey;">Corner Kicks</p>
+    </div>
+    <div class="col col-20" style="text-align: right;margin-right: 10px;font-weight: 400;">{{match.match_stats.awayCornerKicks}}</div>
+  </div>
   <div class="card" style="margin-bottom:10px;margin-top:-5px;">
     <div class="item item-text-wrap" style="padding:0px;">
       <div class="row no-padding no-margin" style="margin:0px;">
-        <div style="width: 70%;background-color:#4db6ac;color: white;padding:8px;margin: 0px;padding-left: 8px;text-align: left;">9</div>
-        <div style="width: 30%;padding:8px;margin: 0px;padding-right: 8px;text-align: right;">6</div>
+        <div id="cornerKicksHome" style="background-color:#4d6764;color: white;padding: 5px 0px;margin: 0px;text-align: left;"></div>
+        <div id="cornerKicksAway" style="background-color: #ffc900;padding: 5px 0px;margin: 0px;text-align: right;"></div>
       </div>
     </div>
   </div>
 
-  <p style="text-align:center;font-weight:bold;color:grey;">Fouls</p>
+  <div class="row">
+    <div class="col col-20" style="text-align: left;margin-left: 10px;font-weight: 400;">{{match.match_stats.homeFouls}}</div>
+    <div class="col">
+      <p style="text-align:center;font-weight:600;color:grey;">Fouls</p>
+    </div>
+    <div class="col col-20" style="text-align: right;margin-right: 10px;font-weight: 400;">{{match.match_stats.awayFouls}}</div>
+  </div>
   <div class="card" style="margin-bottom:10px;margin-top:-5px;">
     <div class="item item-text-wrap" style="padding:0px;">
       <div class="row no-padding no-margin" style="margin:0px;">
-        <div style="width: 70%;background-color:#4db6ac;color: white;padding:8px;margin: 0px;padding-left: 8px;text-align: left;">12</div>
-        <div style="width: 30%;padding:8px;margin: 0px;padding-right: 8px;text-align: right;">6</div>
+        <div id="foulsHome" style="background-color:#4d6764;color: white;padding: 5px 0px;margin: 0px;text-align: left;"></div>
+        <div id="foulsAway" style="background-color: #ffc900;padding: 5px 0px;margin: 0px;text-align: right;"></div>
       </div>
     </div>
   </div>
 
-  <p style="text-align:center;font-weight:bold;color:grey;">Yellow Card</p>
+  <div class="row">
+    <div class="col col-20" style="text-align: left;margin-left: 10px;font-weight: 400;">{{match.match_stats.homeYellowCard}}</div>
+    <div class="col">
+       <p style="text-align:center;font-weight:600;color:grey;">Yellow Card</p>
+    </div>
+    <div class="col col-20" style="text-align: right;margin-right: 10px;font-weight: 400;">{{match.match_stats.awayYellowCard}}</div>
+  </div>
   <div class="card" style="margin-bottom:10px;margin-top:-5px;">
     <div class="item item-text-wrap" style="padding:0px;">
       <div class="row no-padding no-margin" style="margin:0px;">
-        <div style="width: 70%;background-color:#4db6ac;color: white;padding:8px;margin: 0px;padding-left: 8px;text-align: left;">7</div>
-        <div style="width: 30%;padding:8px;margin: 0px;padding-right: 8px;text-align: right;">3</div>
+        <div id="yellowCardHome" style="background-color:#4d6764;color: white;padding: 5px 0px;margin: 0px;text-align: left;"></div>
+        <div id="yellowCardAway" style="background-color: #ffc900;padding: 5px 0px;margin: 0px;text-align: right;"></div>
       </div>
     </div>
   </div>
 
-  <p style="text-align:center;font-weight:bold;color:grey;">Red Card</p>
+  <div class="row">
+    <div class="col col-20" style="text-align: left;margin-left: 10px;font-weight: 400;">{{match.match_stats.homeRedCard}}</div>
+    <div class="col">
+      <p style="text-align:center;font-weight:600;color:grey;">Red Card</p>
+    </div>
+    <div class="col col-20" style="text-align: right;margin-right: 10px;font-weight: 400;">{{match.match_stats.awayRedCard}}</div>
+  </div>
   <div class="card" style="margin-bottom:10px;margin-top:-5px;">
     <div class="item item-text-wrap" style="padding:0px;">
       <div class="row no-padding no-margin" style="margin:0px;">
-        <div style="width: 70%;background-color:#4db6ac;color: white;padding:8px;margin: 0px;padding-left: 8px;text-align: left;">0</div>
-        <div class="col">0</div>
+        <div id="redCardHome" style="background-color:#4d6764;color: white;padding: 5px 0px;margin: 0px;text-align: left;"></div>
+        <div id="redCardAway" style="background-color: #ffc900;padding: 5px 0px;margin: 0px;text-align: right;"></div>
       </div>
     </div>
   </div>
-
+ </div> 
 </div>
 
 <!-- Lineup -->
-<div ng-show="showme == 3" style="margin-top: 40px;">
+  <!-- Empty State -->
+  <div ng-if="showme == 3" ng-show="match.timer_status === null || match.timer_status === ''" style="text-align: center;margin-top: 150px;">
+      <p>Line up not available yet</p>
+      <p>Check back later...</p>
+  </div>
+  <!-- Empty State -->
+
+<div ng-if="showme == 3" ng-hide="match.timer_status === null || match.timer_status === ''" style="margin-top: 40px;">
 
   <div class="card" style="margin-bottom:0px;background-color:#26A69A;border-bottom: 0px;box-shadow: none;padding: 0px;">
     <div class="item item-text-wrap" style="padding:0px;">
@@ -303,7 +394,7 @@
   </div>
 
    <!-- Exist State Line Up -->
-  <div ng-if="(match.match_awayTeamObj.formation !== '' && match.match_awayTeamObj.formation !== '')" class="card" ng-show="activeTeam == 2" style="margin-bottom:10px;margin-top:15px;">
+  <div ng-if="(match.match_homeTeamObj.formation !== '' && match.match_awayTeamObj.formation !== '')" class="card" ng-show="activeTeam == 2" style="margin-bottom:10px;margin-top:15px;">
       <!-- Formation -->
       <div class="item item-text-wrap" style="margin:0px;padding:0px;">
         <div class="row" style="margin:0px;padding:0px;">
@@ -345,7 +436,7 @@
       </div>
   </div>
   <!-- sub -->
-  <div ng-if="(match.match_awayTeamObj.formation !== '' && match.match_awayTeamObj.formation !== '')" class="card" ng-show="activeTeam == 2" style="margin-bottom:10px;margin-top:15px;">
+  <div ng-if="(match.match_homeTeamObj.formation !== '' && match.match_awayTeamObj.formation !== '')" class="card" ng-show="activeTeam == 2" style="margin-bottom:10px;margin-top:15px;">
       <!-- Substitutes -->
       <div class="item item-text-wrap" style="margin-top:0px;padding:0px;">
         <div class="row" style="margin:0px;padding:0px;">
@@ -385,10 +476,62 @@
         </div>
       </div>   
   </div>
-
-<!-- Detail Maybe -->
-
 </div>
+
+<!-- Details -->
+<div ng-show="showme == 4" style="margin-top: 40px;">
+  <div class="card" style="margin-bottom:0px;background-color:#26A69A;border-bottom: 0px;box-shadow: none;padding: 10px;">
+    <div class="item item-text-wrap" style="padding:0px;">
+      <div class="row" style="margin:0px;">
+        <div class="col" style="text-align:center;color:#4DB6AC;font-size:15px;color:white;">{{day}}</div>
+      </div>
+      <div class="row" style="margin:0px;">
+        <div class="col" style="text-align:center;color:white;margin-top: -20px;">{{match.match_homeTeam}}</div>
+        <div class="col col-30" style="text-align:center;color:#4DB6AC;font-size:15px;color:white;margin-top: -10px;">{{match.match_date | date:'dd MMM'}}</div>
+        <div class="col" style="text-align:center;color:white;margin-top: -20px;">{{match.match_awayTeam}}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:10px;margin-top:-5px;">
+    <div class="item item-text-wrap" style="padding:0px;">
+      <div class="row" style="margin:0px;padding-bottom: 0px;">
+        <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 0px;"><i class="mdi mdi-trophy-variant" style="font-size:20px;"></i></div>
+      </div>
+      <div class="row" style="margin:0px;">
+        <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 10px;border-bottom: 1px solid #ddd;">
+          <p style="color: black;font-weight: 400;padding-bottom: 2px;">{{compName}}<p>
+          <p style="color: black;font-weight: 400;">( {{match.match_fixture}} )</p>
+        </div>
+      </div>
+    </div>
+    <div class="item item-text-wrap" style="padding:0px;">
+      <div class="row" style="margin:0px;padding-bottom: 0px;">
+        <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 0px;"><i class="mdi mdi-calendar" style="font-size:20px;"></i></div>
+      </div>
+      <div class="row" style="margin:0px;">
+        <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 10px;border-bottom: 1px solid #ddd;">{{match.match_date | date:'dd MMMM yyyy'}}, {{match.match_time}}</div>
+      </div>
+    </div>
+    <div class="item item-text-wrap" style="padding:0px;">
+      <div class="row" style="margin:0px;padding-bottom: 0px;">
+        <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 0px;"><i class="mdi mdi-home" style="font-size:20px;"></i></div>
+      </div>
+      <div class="row" style="margin:0px;">
+        <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 10px;border-bottom: 1px solid #ddd;">{{match.match_venue}} (Field {{match.match_field}})</div>
+      </div>
+    </div>
+    <div class="item item-text-wrap" style="padding:0px;">
+      <div class="row" style="margin:0px;padding-bottom: 0px;">
+        <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 0px;"><i class="mdi mdi-account" style="font-size:20px;"></i></div>
+      </div>
+      <div class="row" style="margin:0px;">
+        <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 10px;">{{match.match_referee}}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- White Space -->
 <div style="height:55px;background:transparent" ng-show="searchbutton"></div>
 <div style="height:200px;background:transparent" ng-show="filterbutton"></div>

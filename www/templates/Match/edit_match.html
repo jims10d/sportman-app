@@ -1,7 +1,7 @@
-<ion-view view-title="Match Detail" title-center cache-view="true">
+<ion-view view-title="Edit Match" title-center cache-view="true">
 <!-- Back Button -->
 <ion-nav-buttons side="left">
-<button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="backToFixture('{{fixtureId}}')" style="font-size:25px"></button>
+<button class="button button-clear icon-button mdi mdi-chevron-left" ng-click="backToCompetitionSchedule()" style="font-size:25px"></button>
 </ion-nav-buttons>
 <!-- Right button -->
 <ion-nav-buttons side="right">
@@ -17,37 +17,61 @@
 </div>
 <!-- Shadow space -->
 <div class="bar item-input-inset" style="border:none;box-shadow: 0 1px 2px #aaa"></div>
-<ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color: #ececec; z-index:0; margin-top:12px;">
-<!-- for refresh -->
-<ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()" refreshing-text="Fetching ..." refreshing-icon="ion-loading-b"></ion-refresher>
+<ion-content class="hideScroll" overflow-scroll=false scroll-sista="tabs" style="background-color: #ececec; z-index:0; margin-top:12px;">
+
 <div class="card" style="margin-bottom:0px;background-color:#26A69A;">
   <div class="item item-text-wrap" style="padding:0px;">
-    <div class="row" style="margin:0px;" onclick="location.href='#/app/match_detail'">
-      <div class="col" style="text-align:right;color:white;">{{matchData.match_homeTeam}}</div>
+    <div class="row" style="margin:0px;">
+      <div class="col" style="text-align:right;color:white;">{{currentMatchData.match_homeTeam}}</div>
       <div class="col" style="text-align:center;color:#4DB6AC;font-size:16px;color:white;">VS</div>
-      <div class="col" style="text-align:left;color:white;">{{matchData.match_awayTeam}}</div>
+      <div class="col" style="text-align:left;color:white;">{{currentMatchData.match_awayTeam}}</div>
     </div>
   </div>
 </div>
 <!-- Form post -->
 <form method="post" enctype="text/plain" style="background: white;margin:8px;height: 540px;margin-top: 2px;">
-  <label class="item item-input content-border" style="padding:0;border: none;">
-      <!-- <input type="text" id="compName" style="font-size:16px;resize:none;margin-top:2px;padding-left:16px;padding-right:16px;background-color: white;" placeholder="Match Date" ng-model="match.match_date"> -->
-       <div class="input-label" style="font-weight:unset; padding-left:15px;">Match Date :  </div>
-       <input type="date" id="compStart" style="margin-right:-20px;padding-left:16px;" ng-model="match.match_date">
+
+  <!-- match date -->
+  <label class="item item-input content-border" style="border:none;padding-left: 0px;">
+       <div class="input-label" style="font-weight:unset; padding-left:18px;">Match Date</div>
+       <input type="date" id="compStart" style="margin-right:-13px;margin-left:60px;" ng-model="matchData.match_date" value="{{matchData.match_date | date:'yyyy-MM-dd'}}" min="{{minDate}}" max="{{maxDate}}" ng-change="changeDate(matchData.match_date)">
   </label>
-  <label class="item item-input content-border" style="padding:0;border-left: none;border-right: none;">
-      <input type="text" id="compName" style="font-size:16px;resize:none;margin-top:2px;padding-left:16px;padding-right:16px;background-color: white;" placeholder="Match Time (ex: 14:00)" value="{{matchData.match_time}}"  ng-model="match.match_time">
+
+  <!-- match time -->
+  <label class="item item-input item-select no-margin" style="border: none;border-top: 1px solid #f8f8f8;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Match Time</div>
+    <select style="color:black;" ng-model="matchData.match_time" ng-options="time for time in availableTimeArr">
+    </select>
   </label>
-  <label class="item item-input content-border" style="padding:0;border-left: none;border-right: none;">
+
+   <!-- match venue -->
+  <label class="item item-input no-margin" style="border: none;border-top: 1px solid #f8f8f8;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Match Venue</div>
+     <div class="input-label" style="font-weight:unset; padding-right:0px;margin-left: 75px;color: grey;">{{currentMatchData.match_venue}}</div>
+  </label>
+
+  <!-- match venue -->
+<!--   <label class="item item-input content-border no-margin" style="border: none;border-top: 1px solid #f8f8f8;background-color: #ddd;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">{{matchData.match_venue}}</div>
+  </label> -->
+
+  <!-- match field -->
+  <label class="item item-input item-select no-margin" style="border: none;border-top: 1px solid #f8f8f8;">
+    <div class="input-label" style="font-weight:unset; padding-right:0px;">Match Field</div>
+    <select style="color:black;" ng-model="matchData.match_field" ng-options="field for field in availableFieldArr">
+    </select>
+  </label>
+
+
+<!--   <label class="item item-input content-border" style="padding:0;border-left: none;border-right: none;">
       <input type="text" id="compName" style="font-size:16px;resize:none;margin-top:2px;padding-left:16px;padding-right:16px;background-color: white;" placeholder="Match Length (in minutes)" value="{{matchData.match_Length}}"  ng-model="match.match_length">
+  </label> -->
+<!--   <label class="item item-input content-border" style="padding:0;border-left: none;border-right: none;">
+      <input type="text" id="compName" style="font-size:16px;resize:none;margin-top:2px;padding-left:16px;padding-right:16px;background-color: white;" placeholder="Match Venue" ng-model="matchData.match_venue">
   </label>
   <label class="item item-input content-border" style="padding:0;border-left: none;border-right: none;">
-      <input type="text" id="compName" style="font-size:16px;resize:none;margin-top:2px;padding-left:16px;padding-right:16px;background-color: white;" placeholder="Match Venue" ng-model="match.match_venue">
-  </label>
-  <label class="item item-input content-border" style="padding:0;border-left: none;border-right: none;">
-      <input type="text" id="compName" style="font-size:16px;resize:none;margin-top:2px;padding-left:16px;padding-right:16px;background-color: white;" placeholder="Referee" ng-model="match.match_referee">
-  </label>
+      <input type="text" id="compName" style="font-size:16px;resize:none;margin-top:2px;padding-left:16px;padding-right:16px;background-color: white;" placeholder="Referee" ng-model="matchData.match_referee">
+  </label> -->
 </form>
 <!-- White Space -->
 <div style="height:55px;background:transparent" ng-show="searchbutton"></div>

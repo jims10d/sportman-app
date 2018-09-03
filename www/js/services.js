@@ -126,6 +126,24 @@ angular.module('starter.services', [])
                 };
                 return promise;
             },
+             getAllAnalysts: function() {
+                var deferred = $q.defer();
+                var promise = deferred.promise;
+                $http.get(BACKEND.URL + '/users/getAllAnalysts').success(function(response) {
+                    deferred.resolve(response);
+                }).error(function(response) {
+                    deferred.reject(response);
+                });
+                promise.success = function(fn) {
+                    promise.then(fn);
+                    return promise;
+                };
+                promise.error = function(fn) {
+                    promise.then(null, fn);
+                    return promise;
+                };
+                return promise;
+            },
             getUserById: function(userId) {
                 var deferred = $q.defer();
                 var promise = deferred.promise;
@@ -230,6 +248,33 @@ angular.module('starter.services', [])
 
                 return promise;
             },
+            addBookedDate: function(data) {
+				var deferred = $q.defer();
+				var promise = deferred.promise;
+				$http.put(BACKEND.URL + 'users/addBookedDate', data, {
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				}).success(function(response) {
+					deferred.resolve(response);
+				}).error(function(response, error) {
+					if (error == 500) {
+						deferred.reject(error);
+					} else {
+
+						deferred.reject(error);
+					}
+				});
+				promise.success = function(fn) {
+					promise.then(fn);
+					return promise;
+				};
+				promise.error = function(fn) {
+					promise.then(null, fn);
+					return promise;
+				};
+				return promise;
+			},
 			uploadImage: function(data, path) {
                 var deferred = $q.defer();
                 var promise = deferred.promise;
@@ -945,10 +990,10 @@ angular.module('starter.services', [])
 				};
 				return promise;
 		},
-		delUserRequest: function(data) {
+		delPlayerRequest: function(data) {
 				var deferred = $q.defer();
 				var promise = deferred.promise;
-				$http.put(BACKEND.URL + '/teams/delUserRequest', data, {
+				$http.put(BACKEND.URL + '/teams/delPlayerRequest', data, {
 					headers: {
 						'Content-Type': 'application/json'
 					}
@@ -1309,7 +1354,7 @@ angular.module('starter.services', [])
 			getFinishedMatch: function(compId) {
 				var deferred = $q.defer();
 				var promise = deferred.promise;
-				$http.get(BACKEND.URL + 'competitions/' + compId + '/matches?filter=%7B%22where%22%3A%7B%22match_status%22%3A%20%22finished%22%2C%22match_refereeObj%22%3A%20null%7D%7D').success(function(response) {
+				$http.get(BACKEND.URL + 'competitions/' + compId + '/matches?filter=%7B%22where%22%3A%7B%22match_status%22%3A%20%22finished%22%2C%22referee_ratingStatus%22%3A%20false%7D%7D').success(function(response) {
 					deferred.resolve(response);
 				}).error(function(response) {
 					deferred.reject(response);
@@ -1360,6 +1405,24 @@ angular.module('starter.services', [])
 				};
 				return promise;
 			},
+			getClassementByCompIdAndTeamName: function(compId,teamName) {
+				var deferred = $q.defer();
+				var promise = deferred.promise;
+				$http.get(BACKEND.URL + 'classements/getClassementByCompIdAndTeamName?compId=' + compId + '&teamName=' + teamName).success(function(response) {
+					deferred.resolve(response);
+				}).error(function(response) {
+					deferred.reject(response);
+				});
+				promise.success = function(fn) {
+					promise.then(fn);
+					return promise;
+				};
+				promise.error = function(fn) {
+					promise.then(null, fn);
+					return promise;
+				};
+				return promise;
+			},
 			getCompetitionByDate: function(compId, date, token) {
 				var deferred = $q.defer();
 				var promise = deferred.promise;
@@ -1382,6 +1445,24 @@ angular.module('starter.services', [])
 				var deferred = $q.defer();
 				var promise = deferred.promise;
 				$http.get(BACKEND.URL + 'competitions/' + compId + '/matches?filter=%7B%22where%22%3A%7B%22live_status%22%3A%22true%22%7D%7D&access_token=' + token).success(function(response) {
+					deferred.resolve(response);
+				}).error(function(response) {
+					deferred.reject(response);
+				});
+				promise.success = function(fn) {
+					promise.then(fn);
+					return promise;
+				};
+				promise.error = function(fn) {
+					promise.then(null, fn);
+					return promise;
+				};
+				return promise;
+			},
+			getMatchByCompIdFixtureAndLastPair: function(compId, fixture, lastPair) {
+				var deferred = $q.defer();
+				var promise = deferred.promise;
+				$http.get(BACKEND.URL + 'competitions/' + compId + '/matches?filter=%7B%22where%22%3A%7B%22match_fixture%22%3A%22' + fixture + '%22%2C%22last_pair%22%3A%20%22' + lastPair + '%22%7D%7D').success(function(response) {
 					deferred.resolve(response);
 				}).error(function(response) {
 					deferred.reject(response);
@@ -1968,10 +2049,82 @@ angular.module('starter.services', [])
 	            };
 	            return promise;
         	},
+        	getCompletedMatchesByRef: function(referee) {
+	            var deferred = $q.defer();
+	            var promise = deferred.promise;
+	            $http.get(BACKEND.URL + 'matches?filter=%7B%22where%22%3A%7B%22match_referee%22%3A%20%22' + referee + '%22%2C%20%22match_status%22%3A%20%22finished%22%7D%7D').success(function(response) {
+	                deferred.resolve(response);
+	            }).error(function(response) {
+	                deferred.reject(response);
+	            });
+	            promise.success = function(fn) {
+	                promise.then(fn);
+	                return promise;
+	            };
+	            promise.error = function(fn) {
+	                promise.then(null, fn);
+	                return promise;
+	            };
+	            return promise;
+        	},
+        	getCompletedMatchesByAnalyst: function(analyst) {
+	            var deferred = $q.defer();
+	            var promise = deferred.promise;
+	            $http.get(BACKEND.URL + 'matches?filter=%7B%22where%22%3A%7B%22match_analyst%22%3A%20%22' + analyst + '%22%2C%20%22match_status%22%3A%20%22finished%22%7D%7D').success(function(response) {
+	                deferred.resolve(response);
+	            }).error(function(response) {
+	                deferred.reject(response);
+	            });
+	            promise.success = function(fn) {
+	                promise.then(fn);
+	                return promise;
+	            };
+	            promise.error = function(fn) {
+	                promise.then(null, fn);
+	                return promise;
+	            };
+	            return promise;
+        	},
+        	getMatchesByAnalyst: function(analyst) {
+	            var deferred = $q.defer();
+	            var promise = deferred.promise;
+	            $http.get(BACKEND.URL + '/matches?filter=%7B%22where%22%3A%7B%22match_analyst%22%3A%22' + analyst + '%22%7D%7D').success(function(response) {
+	                deferred.resolve(response);
+	            }).error(function(response) {
+	                deferred.reject(response);
+	            });
+	            promise.success = function(fn) {
+	                promise.then(fn);
+	                return promise;
+	            };
+	            promise.error = function(fn) {
+	                promise.then(null, fn);
+	                return promise;
+	            };
+	            return promise;
+        	},
         	getMatchesByRefereeAndDate: function(referee, date) {
 	            var deferred = $q.defer();
 	            var promise = deferred.promise;
 	            $http.get(BACKEND.URL + '/matches?filter=%7B%22where%22%3A%7B%22match_referee%22%3A%22' + referee + '%22%2C%20%22match_date%22%3A%22' + date + '%22%7D%2C%20%22order%22%3A%22match_date%22%7D').success(function(response) {
+	                deferred.resolve(response);
+	            }).error(function(response) {
+	                deferred.reject(response);
+	            });
+	            promise.success = function(fn) {
+	                promise.then(fn);
+	                return promise;
+	            };
+	            promise.error = function(fn) {
+	                promise.then(null, fn);
+	                return promise;
+	            };
+	            return promise;
+        	},
+        	getMatchesByAnalystAndDate: function(analyst, date) {
+	            var deferred = $q.defer();
+	            var promise = deferred.promise;
+	            $http.get(BACKEND.URL + '/matches?filter=%7B%22where%22%3A%7B%22match_analyst%22%3A%22' + analyst + '%22%2C%20%22match_date%22%3A%22' + date + '%22%7D%2C%20%22order%22%3A%22match_date%22%7D').success(function(response) {
 	                deferred.resolve(response);
 	            }).error(function(response) {
 	                deferred.reject(response);
@@ -2145,7 +2298,61 @@ angular.module('starter.services', [])
 				return promise;
 			};
 			return promise;
-		}
+		},
+		addRefereeRating: function(data) {
+			var deferred = $q.defer();
+			var promise = deferred.promise;
+			$http.put(BACKEND.URL + 'users/addRefereeRating', data, {
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			}).success(function(response) {
+				deferred.resolve(response);
+			}).error(function(response, error) {
+				if (error == 500) {
+					deferred.reject(error);
+				} else {
+
+					deferred.reject(error);
+				}
+			});
+			promise.success = function(fn) {
+				promise.then(fn);
+				return promise;
+			};
+			promise.error = function(fn) {
+				promise.then(null, fn);
+				return promise;
+			};
+			return promise;
+		},
+		addRefereeRatingById: function(userId, data) {
+			var deferred = $q.defer();
+			var promise = deferred.promise;
+			$http.put(BACKEND.URL + 'users/' + userId, data, {
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			}).success(function(response) {
+				deferred.resolve(response);
+			}).error(function(response, error) {
+				if (error == 500) {
+					deferred.reject(error);
+				} else {
+
+					deferred.reject(error);
+				}
+			});
+			promise.success = function(fn) {
+				promise.then(fn);
+				return promise;
+			};
+			promise.error = function(fn) {
+				promise.then(null, fn);
+				return promise;
+			};
+			return promise;
+		},
 	};
 })
 

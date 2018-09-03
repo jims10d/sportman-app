@@ -10,7 +10,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	$ionicLoading.hide();
 	$scope.login = function() { // Fungsi login
 	// utk menampilkan efek loading pada saat app dibuka
-	// $rootScope.showLoading($ionicLoading);
+	$rootScope.showLoading($ionicLoading);
 
 	// validasi input dari user
 	if ($scope.data.username === undefined && $scope.data.password === undefined) {
@@ -25,7 +25,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	} else if ($scope.data.username !== undefined && $scope.data.password !== undefined) {
 		// jika input dari user sudah benar, maka sistem akan melakukan login ke server dgn parameter username dan password
 		LoginService.login($scope.data.username, $scope.data.password).success(function(data) {
-			console.log(data);
+			// console.log(data);
 			ls.setItem("userid", data.userId); // menyimpan data user id kedalam local storage
 			ls.setItem("token", data.id); // menyimpan data id yg akan digunakan sbg token kedalam local storage
 			
@@ -53,7 +53,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				}else if($scope.profile.role === "Player"){
 					if($scope.profile.profileCompleted === "" || $scope.profile.profileCompleted === null){
 						$scope.profileCompleted = false;
-						console.log("profile completed false");
+						// console.log("profile completed false");
 					}
 					$ionicLoading.hide();
 					$state.go('app.home');
@@ -72,7 +72,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			});
 			$ionicLoading.hide(); // menghilangkan efek loading jika semua proses sudah selesai
 		}).error(function(data) {
-			console.log(data);
+			// console.log(data);
 			$ionicLoading.hide();
 			// menampilkan alert ke user jika proses login tidak berhasil
 			if(data == 'Error 500'){
@@ -322,7 +322,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$scope.userDataParse.availableDayAndTime.sunday = Object.values($scope.sunday);
 		}
 
-		console.log($scope.userDataParse);
+		// console.log($scope.userDataParse);
 
 		RegisterService.tambahUser($scope.userDataParse).success(function(data) {
 			$ionicLoading.hide();
@@ -378,11 +378,11 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		$scope.validatePhone2 = phoneRe2.test($scope.profile.hp);
 		$scope.validateAddress = addressRe.test($scope.userDataParse.address);
 
-		console.log($scope.validateAddress);
+		// console.log($scope.validateAddress);
 
 		$scope.userDataParse.hp = "+62" + $scope.profile.hp;
 	
-		console.log($scope.userDataParse);
+		// console.log($scope.userDataParse);
 
 		if ($scope.userDataParse.dateOfBirth === undefined && $scope.userDataParse.address === undefined && $scope.profile.hp === undefined && $scope.userDataParse.position === undefined) {
 			$rootScope.showPopup($ionicPopup,'Register failed!','Please fill all the fields', 'popup-error');
@@ -439,15 +439,25 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 							ls.setItem("myTeamId", $scope.myTeam.id);
 							ls.setItem("myCompetitionId", $scope.myTeam.competitionId);
 
-							if($scope.myTeam.team_coach !== null){
+							if($scope.myTeam.team_coach !== null || $scope.myTeam.team_coach !== ''){
 								ls.setItem("myTeamCoach", $scope.myTeam.team_coach);
+							}else{
+								ls.setItem("myTeamCoach", "");
 							}
 							
 							if($scope.myTeam.team_squad !== null){
 								ls.setItem("myTeamSquad", $scope.myTeam.team_squad);
+							}else{
+								ls.setItem("myTeamSquad", "");
 							}
 							
 						}).error(function(data) {});
+					}else{
+						ls.setItem("myTeamId", "");
+						ls.setItem("myCompetitionId", "");
+						ls.setItem("myTeamCoach", "");
+						ls.setItem("myTeamSquad", "");
+						ls.setItem("team", "");
 					}			
 				}else if(ls.getItem("role")==='Organizer'){
 
@@ -457,7 +467,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 					myCompetitionNameArr.forEach(function(comp){
 						CompetitionService.getCompetitionId(comp).success(function(data) {
 							myCompetitionId.push(data);
-							console.log(data);
+							// console.log(data);
 							$ionicLoading.hide();
 						}).error(function(data) {
 							$ionicLoading.hide();
@@ -465,9 +475,9 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 					});
 				
 					setTimeout(function(){
-						console.log(myCompetitionId);
-					myCompetitionIdArr = myCompetitionId.join();
-					console.log(myCompetitionIdArr);
+						// console.log(myCompetitionId);
+						myCompetitionIdArr = myCompetitionId.join();
+						// console.log(myCompetitionIdArr);
 						ls.setItem("myCompetitionId", myCompetitionIdArr);	
 					},5000);
 					
@@ -557,6 +567,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		$scope.viewTeam = function(){
 			console.log("view team");
 			clearInterval(window.loadRefMatches);
+			localStorage.setItem("showme", 1);
 			$state.go('app.my_team');
 		};
 		$scope.viewAbout = function(){
@@ -569,22 +580,21 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 .controller('HomeCtrl', function($scope, $compile, $state, $stateParams, $rootScope, $ionicPopup, $ionicPlatform, $ionicLoading, LoginService, ClassementService, TeamService, CompetitionService, MatchService, PostService, ProfileService, $cordovaSocialSharing, $window, $ionicModal) {
 		
 	var ls = localStorage;
-	$rootScope.showLoading();
+	// $rootScope.showLoading();
 	$scope.loadCompetition = setInterval($scope.getCompetitionByOrganizer, 3000);	
 
 	// for closing the complete profile card
-	$scope.closeDiv = function() {
-	    var x = document.getElementById("profileDiv");
-	    if (x.style.display === "none") {
-	        x.style.display = "block";
-	    } else {
-	        x.style.display = "none";
-	    }
-	};
+	// $scope.closeDiv = function() {
+	//     var x = document.getElementById("profileDiv");
+	//     if (x.style.display === "none") {
+	//         x.style.display = "block";
+	//     } else {
+	//         x.style.display = "none";
+	//     }
+	// };
 
-	console.log(ls.getItem("role"));
+	// console.log(ls.getItem("role"));
 
-	// get all referees
 	$scope.allRefereesArr = [];
 	$scope.availableRefMonday = [];
 	$scope.availableRefTuesday = [];
@@ -594,13 +604,25 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	$scope.availableRefSaturday = [];
 	$scope.availableRefSunday = [];
 
+	$scope.allAnalystsArr = [];
+	$scope.avAnalystsMonday = [];
+	$scope.avAnalystsTuesday = [];
+	$scope.avAnalystsWednesday = [];
+	$scope.avAnalystsThursday = [];
+	$scope.avAnalystsFriday = [];
+	$scope.avAnalystsSaturday = [];
+	$scope.avAnalystsSunday = [];
+
+	// Get all referees
 	LoginService.getAllReferees().success(function(data) {
 		$scope.allRefereesArr = data;
-		console.log(data);
-		// $ionicLoading.hide();
-	}).error(function(data) {
-		// $ionicLoading.hide();
-	});
+	}).error(function(data) {});
+
+	// Get all analysts
+	LoginService.getAllAnalysts().success(function(data) {
+		$scope.allAnalystsArr = data;
+		// console.log(data);
+	}).error(function(data) {});
 
 	setTimeout(function(){
 
@@ -611,49 +633,132 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				if(ref.availableDayAndTime.monday !== undefined){
 					// console.log(ref.availableDayAndTime.monday.length);
 					if(ref.availableDayAndTime.monday.length !== 0){
-						$scope.availableRefMonday.push(ref);
+						// if(ref.bookedDate === '' || ref.bookedDate === null){
+							$scope.availableRefMonday.push(ref);
+						// }
 					}
 				}
 
 				if(ref.availableDayAndTime.tuesday !== undefined){
 					// console.log(ref.availableDayAndTime.tuesday.length);
 					if(ref.availableDayAndTime.tuesday.length !== 0){
-						$scope.availableRefTuesday.push(ref);
+						// if(ref.bookedDate === '' || ref.bookedDate === null){
+							$scope.availableRefTuesday.push(ref);
+						// }
 					}
 				}
 
 				if(ref.availableDayAndTime.wednesday !== undefined){
 					// console.log(ref.availableDayAndTime.wednesday.length);
 					if(ref.availableDayAndTime.wednesday.length !== 0){
-						$scope.availableRefWednesday.push(ref);
+						// if(ref.bookedDate === '' || ref.bookedDate === null){
+							$scope.availableRefWednesday.push(ref);
+						// }
 					}
 				}
 
 				if(ref.availableDayAndTime.thursday !== undefined){
 					// console.log(ref.availableDayAndTime.thursday.length);
 					if(ref.availableDayAndTime.thursday.length !== 0){
-						$scope.availableRefThursday.push(ref);
+						// if(ref.bookedDate === '' || ref.bookedDate === null){
+							$scope.availableRefThursday.push(ref);
+						// }
 					}
 				}
 
 				if(ref.availableDayAndTime.friday !== undefined){
 					// console.log(ref.availableDayAndTime.friday.length);
 					if(ref.availableDayAndTime.friday.length !== 0){
-						$scope.availableRefFriday.push(ref);
+						// if(ref.bookedDate === '' || ref.bookedDate === null){
+							$scope.availableRefFriday.push(ref);
+						// }
 					}
 				}
 
 				if(ref.availableDayAndTime.saturday !== undefined){
 					// console.log(ref.availableDayAndTime.saturday.length);
 					if(ref.availableDayAndTime.saturday.length !== 0){
-						$scope.availableRefSaturday.push(ref);
+						// if(ref.bookedDate === '' || ref.bookedDate === null){
+							$scope.availableRefSaturday.push(ref);
+						// }
 					}
 				}
 
 				if(ref.availableDayAndTime.sunday !== undefined){
 					// console.log(ref.availableDayAndTime.sunday.length);
 					if(ref.availableDayAndTime.sunday.length !== 0){
-						$scope.availableRefSunday.push(ref);
+						// if(ref.bookedDate === '' || ref.bookedDate === null){
+							$scope.availableRefSunday.push(ref);
+						// }
+					}
+				}
+			}
+		});
+
+		$scope.allAnalystsArr.forEach(function(analyst){
+
+			if(analyst.availableDayAndTime !== null){
+			
+				if(analyst.availableDayAndTime.monday !== undefined){
+					// console.log(analyst.availableDayAndTime.monday.length);
+					if(analyst.availableDayAndTime.monday.length !== 0){
+						// if(analyst.bookedDate === '' || analyst.bookedDate === null){
+							$scope.avAnalystsMonday.push(analyst);
+						// }
+					}
+				}
+
+				if(analyst.availableDayAndTime.tuesday !== undefined){
+					// console.log(analyst.availableDayAndTime.tuesday.length);
+					if(analyst.availableDayAndTime.tuesday.length !== 0){
+						// if(analyst.bookedDate === '' || analyst.bookedDate === null){
+							$scope.avAnalystsTuesday.push(analyst);
+						// }
+					}
+				}
+
+				if(analyst.availableDayAndTime.wednesday !== undefined){
+					// console.log(analyst.availableDayAndTime.wednesday.length);
+					if(analyst.availableDayAndTime.wednesday.length !== 0){
+						// if(analyst.bookedDate === '' || analyst.bookedDate === null){
+							$scope.avAnalystsWednesday.push(analyst);
+						// }
+					}
+				}
+
+				if(analyst.availableDayAndTime.thursday !== undefined){
+					// console.log(analyst.availableDayAndTime.thursday.length);
+					if(analyst.availableDayAndTime.thursday.length !== 0){
+						// if(analyst.bookedDate === '' || analyst.bookedDate === null){
+							$scope.avAnalystsThursday.push(analyst);
+						// }
+					}
+				}
+
+				if(analyst.availableDayAndTime.friday !== undefined){
+					// console.log(analyst.availableDayAndTime.friday.length);
+					if(analyst.availableDayAndTime.friday.length !== 0){
+						// if(analyst.bookedDate === '' || analyst.bookedDate === null){
+							$scope.avAnalystsFriday.push(analyst);
+						// }
+					}
+				}
+
+				if(analyst.availableDayAndTime.saturday !== undefined){
+					// console.log(analyst.availableDayAndTime.saturday.length);
+					if(analyst.availableDayAndTime.saturday.length !== 0){
+						// if(analyst.bookedDate === '' || analyst.bookedDate === null){
+							$scope.avAnalystsSaturday.push(analyst);
+						// }
+					}
+				}
+
+				if(analyst.availableDayAndTime.sunday !== undefined){
+					// console.log(analyst.availableDayAndTime.sunday.length);
+					if(analyst.availableDayAndTime.sunday.length !== 0){
+						// if(analyst.bookedDate === '' || analyst.bookedDate === null){
+							$scope.avAnalystsSunday.push(analyst);
+						// }
 					}
 				}
 			}
@@ -668,6 +773,14 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	$scope.avFriRef = [];
 	$scope.avSatRef = [];
 	$scope.avSunRef = [];
+
+	$scope.avMonAnalysts = [];
+	$scope.avTueAnalysts = [];
+	$scope.avWedAnalysts = [];
+	$scope.avThuAnalysts = [];
+	$scope.avFriAnalysts = [];
+	$scope.avSatAnalysts = [];
+	$scope.avSunAnalysts = [];
 
 	setTimeout(function(){
 		// Monday
@@ -740,13 +853,97 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				}
 			});
 		}
-		// console.log($scope.avMonRef);
-		// console.log($scope.avTueRef);
-		// console.log($scope.avWedRef);
-		// console.log($scope.avThuRef);
-		// console.log($scope.avFriRef);
-		// console.log($scope.avSatRef);
-		// console.log($scope.avSunRef);
+
+		// Monday
+		for(var t = 0; t < timeArr.length; t++){
+			$scope.avMonAnalysts[t] = [];
+			$scope.avAnalystsMonday.forEach(function(analyst){
+				// console.log(ref.availableDayAndTime.monday);
+				if(analyst.availableDayAndTime.monday.indexOf(timeArr[t]) !== -1){
+					$scope.avMonAnalysts[t].push(analyst);
+				}
+			});
+		}
+		// Tuesday
+		for(var t = 0; t < timeArr.length; t++){
+			$scope.avTueAnalysts[t] = [];
+			$scope.avAnalystsTuesday.forEach(function(analyst){
+				// console.log(ref.availableDayAndTime.monday);
+				if(analyst.availableDayAndTime.tuesday.indexOf(timeArr[t]) !== -1){
+					$scope.avTueAnalysts[t].push(analyst);
+				}
+			});
+		}
+		// Wednesday
+		for(var t = 0; t < timeArr.length; t++){
+			$scope.avWedAnalysts[t] = [];
+			$scope.avAnalystsWednesday.forEach(function(analyst){
+				// console.log(ref.availableDayAndTime.wednesday);
+				if(analyst.availableDayAndTime.wednesday.indexOf(timeArr[t]) !== -1){
+					$scope.avWedAnalysts[t].push(analyst);
+				}
+			});
+		}
+		// Thursday
+		for(var t = 0; t < timeArr.length; t++){
+			$scope.avThuAnalysts[t] = [];
+			$scope.avAnalystsThursday.forEach(function(analyst){
+				// console.log(ref.availableDayAndTime.thursday);
+				if(analyst.availableDayAndTime.thursday.indexOf(timeArr[t]) !== -1){
+					$scope.avThuAnalysts[t].push(analyst);
+				}
+			});
+		}
+		// Friday
+		for(var t = 0; t < timeArr.length; t++){
+			$scope.avFriAnalysts[t] = [];
+			$scope.avAnalystsFriday.forEach(function(analyst){
+				// console.log(ref.availableDayAndTime.friday);
+				if(analyst.availableDayAndTime.friday.indexOf(timeArr[t]) !== -1){
+					$scope.avFriAnalysts[t].push(analyst);
+				}
+			});
+		}
+		// Saturday
+		for(var t = 0; t < timeArr.length; t++){
+			$scope.avSatAnalysts[t] = [];
+			$scope.avAnalystsSaturday.forEach(function(analyst){
+				// console.log(ref.availableDayAndTime.saturday);
+				if(analyst.availableDayAndTime.saturday.indexOf(timeArr[t]) !== -1){
+					$scope.avSatAnalysts[t].push(analyst);
+				}
+			});
+		}
+		// Sunday
+		for(var t = 0; t < timeArr.length; t++){
+			$scope.avSunAnalysts[t] = [];
+			$scope.avAnalystsSunday.forEach(function(analyst){
+				// console.log(ref.availableDayAndTime.sunday);
+				if(analyst.availableDayAndTime.sunday.indexOf(timeArr[t]) !== -1){
+					$scope.avSunAnalysts[t].push(analyst);
+				}
+			});
+		}
+		// console.log($scope.avMonRef[0][0]);
+		// console.log($scope.avWedRef[0][0]);
+		// console.log($scope.avMonAnalysts);
+
+		// Put the object into storage
+		localStorage.setItem('avMonRef', JSON.stringify($scope.avMonRef));
+		localStorage.setItem('avTueRef', JSON.stringify($scope.avTueRef));
+		localStorage.setItem('avWedRef', JSON.stringify($scope.avWedRef));
+		localStorage.setItem('avThuRef', JSON.stringify($scope.avThuRef));
+		localStorage.setItem('avFriRef', JSON.stringify($scope.avFriRef));
+		localStorage.setItem('avSatRef', JSON.stringify($scope.avSatRef));
+		localStorage.setItem('avSunRef', JSON.stringify($scope.avSunRef));
+		localStorage.setItem('avMonAnalysts', JSON.stringify($scope.avMonAnalysts));
+		localStorage.setItem('avTueAnalysts', JSON.stringify($scope.avTueAnalysts));
+		localStorage.setItem('avWedAnalysts', JSON.stringify($scope.avWedAnalysts));
+		localStorage.setItem('avThuAnalysts', JSON.stringify($scope.avThuAnalysts));
+		localStorage.setItem('avFriAnalysts', JSON.stringify($scope.avFriAnalysts));
+		localStorage.setItem('avSatAnalysts', JSON.stringify($scope.avSatAnalysts));
+		localStorage.setItem('avSunAnalysts', JSON.stringify($scope.avSunAnalysts));
+
 	},5000);
 
 	// get all competitions created by the organizer
@@ -765,7 +962,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$scope.registered = [];
 
 			CompetitionService.getCompetitionByOrganizer(ls.getItem("username")).success(function(data) {
-				console.log(data);
+				// console.log(data);
 				$scope.competition = {};
 				$scope.competition = data;
 				// $ionicLoading.hide();
@@ -783,12 +980,15 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 				data.forEach(function(entry){
 
-
 					// get finished match 
-					
+					if(entry.match_status === 'finished' && entry.referee_ratingStatus === false){
+						// console.log("true");
+					}else{
+						// console.log("false");
+					}
 					CompetitionService.getFinishedMatch(entry.id).success(function(data){
 						// $scope.finishedMatch[entry.id = data;
-						console.log(data.length);
+						// console.log(data.length);
 						if(data.length !== 0){
 							
 							var matchId = entry.id;
@@ -825,7 +1025,44 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 						
 						if(entry.schedule_status === 'On Queue' && $scope.registerArr.length === entry.comp_numOfTeam){
 							clearInterval($scope.loadCompetition);
-							console.log("do the scheduling");	
+							console.log("do the scheduling");
+
+							// Retrieve the object from storage
+							var avMonRefObj = localStorage.getItem('avMonRef');
+							var avMonRefObjData = JSON.parse(avMonRefObj);
+							var avMonAnalystObj = localStorage.getItem('avMonAnalysts');
+							var avMonAnalystObjData = JSON.parse(avMonAnalystObj);
+
+							var avTueRefObj = localStorage.getItem('avTueRef');
+							var avTueRefObjData = JSON.parse(avTueRefObj);
+							var avTueAnalystObj = localStorage.getItem('avTueAnalysts');
+							var avTueAnalystObjData = JSON.parse(avTueAnalystObj);
+
+							var avWedRefObj = localStorage.getItem('avWedRef');
+							var avWedRefObjData = JSON.parse(avWedRefObj);
+							var avWedAnalystObj = localStorage.getItem('avWedAnalysts');
+							var avWedAnalystObjData = JSON.parse(avWedAnalystObj);
+
+							var avThuRefObj = localStorage.getItem('avThuRef');
+							var avThuRefObjData = JSON.parse(avThuRefObj);
+							var avThuAnalystObj = localStorage.getItem('avThuAnalysts');
+							var avThuAnalystObjData = JSON.parse(avThuAnalystObj);
+
+							var avFriRefObj = localStorage.getItem('avFriRef');
+							var avFriRefObjData = JSON.parse(avFriRefObj);
+							var avFriAnalystObj = localStorage.getItem('avFriAnalysts');
+							var avFriAnalystObjData = JSON.parse(avFriAnalystObj);
+
+							var avSatRefObj = localStorage.getItem('avSatRef');
+							var avSatRefObjData = JSON.parse(avSatRefObj);
+							var avSatAnalystObj = localStorage.getItem('avSatAnalysts');
+							var avSatAnalystObjData = JSON.parse(avSatAnalystObj);
+
+							var avSunRefObj = localStorage.getItem('avSunRef');
+							var avSunRefObjData = JSON.parse(avSunRefObj);
+							var avSunAnalystObj = localStorage.getItem('avSunAnalysts');
+							var avSunAnalystObjData = JSON.parse(avSunAnalystObj);
+
 							// Scheduling
 							// Group Stage
 							if(entry.comp_type == "GroupStage"){
@@ -848,32 +1085,32 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 										$scope.classementForm.status = "";
 										$scope.classementForm.competition_id = entry.id;
 										$scope.classementForm.team = team;
-										console.log($scope.classementForm);
+										// console.log($scope.classementForm);
 										
 										$scope.classementArr.push($scope.classementForm);
 									},1000);
 								});
 								$scope.savedClassementArr = [];
 								// localStorage.setItem("groupStageClassementStatus", 'On Progress');
-								if(entry.classement_status === null){
+								if(entry.classement_status === null || entry.classement_status === ''){
 
 									setTimeout(function(){
 										// console.log($scope.classementArr);
 										$scope.classementArr.forEach(function(classement){
-											if(localStorage.getItem("groupStageClassementStatus") === 'On Progress'){
-												console.log($scope.savedClassementArr);
-												console.log(classement.id);
+											// if(localStorage.getItem("groupStageClassementStatus") === 'On Progress'){
+												// console.log($scope.savedClassementArr);
+												// console.log(classement.id);
 												if($scope.savedClassementArr.indexOf(classement.id) === -1){
 													addClassementDelay(classement);
 													$scope.savedClassementArr.push(classement.id);
 												}
-											}
+											// }
 										});
 
-										if($scope.savedClassementArr.length === $scope.classementArr.length){
-											console.log("sudah ad");
-											localStorage.setItem("groupStageClassementStatus", 'Completed');
-										}
+										// if($scope.savedClassementArr.length === $scope.classementArr.length){
+										// 	console.log("sudah ad");
+										// 	localStorage.setItem("groupStageClassementStatus", 'Completed');
+										// }
 
 										function addClassementDelay(classement){
 											setTimeout(function(){
@@ -881,18 +1118,18 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 												ClassementService.addClassement(classement).success(function(data){
 													// $ionicLoading.hide();
 													console.log("create classement");
-													console.log(data);
+													// console.log(data);
 													$scope.savedClassementArr.push(classement.id);
 												}).error(function(data){
 													// $ionicLoading.hide();
 												});
 												//insert data to database
-											},2000);
+											},3000);
 										}
 									},10000);
 								}
 
-								if(entry.classement_status === null){
+								if(entry.classement_status === null || entry.classement_status === ''){
 									setTimeout(function(){
 										console.log("change classement status to completed");
 											$scope.formCompetition = {};
@@ -986,7 +1223,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 									$scope.fixture = [];
 									var fixtureNumber = 0;
 									// $rootScope.showLoading();
-									console.log($scope.registerArrLength);
+									// console.log($scope.registerArrLength);
 									for(p = 0; p < $scope.registerArrLength; p++){
 										fixtureNumber++;
 										
@@ -997,56 +1234,444 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 											$scope.fixture[p].push($scope.fixtureObj[u]);
 										}
 										$scope.fixtureObj.splice(0,$scope.matchPerDay);
-										console.log($scope.fixture[p]);
-									
+										// console.log($scope.fixture[p]);
+									}
+
+
+									// all fixtures
+									setTimeout(function(){
+										var startDate = moment(new Date(entry.comp_start));
+										if(entry.fixture_break === 0){
+											var fixtureBreak = 1;	
+										}else{
+											var fixtureBreak = (entry.fixture_break + 1);
+										}
+										
+										var allFixturesDate = [];
+										var dayCounter = fixtureBreak;
+										allFixturesDate.push(startDate.toISOString());
+										// console.log(startDate);
+										// console.log(fixtureBreak);
+										// console.log($scope.fixture.length);
+										for(var i = 1; i < $scope.fixture.length; i++){
+											// console.log(i);
+											allFixturesDate.push(moment(new Date(entry.comp_start)).add(dayCounter, 'days').toISOString());
+											dayCounter += fixtureBreak;
+										}
+										// console.log(allFixturesDate);
+										// var allFixturesDateArr = allFixturesDate.split(",");
+										
+										setTimeout(function(){
+											$scope.allFixturesObj = [];
+											
+											var timeArr = ["08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00","22:00"];
+											var fieldArr = [1,2,3];
+											for(var m = 0; m < $scope.fixture.length; m++){
+												// console.log(m);
+												$scope.allFixturesObj[m] = [];
+												timeIndex = 0;
+												fieldIndex = 0;
+												
+												for(t = 0; t < $scope.fixture[m].length; t++){
+													// console.log(timeIndex);
+													// console.log(fieldIndex);
+													// console.log($scope.fixture[m][t].match_homeTeam);
+													$scope.allFixturesObj[m][t] = {};
+													$scope.allFixturesObj[m][t].match_homeTeamObj = {};
+													$scope.allFixturesObj[m][t].match_homeTeamObj.team_name = $scope.fixture[m][t].match_homeTeam;
+													$scope.allFixturesObj[m][t].match_homeTeamObj.score = 0;
+													$scope.allFixturesObj[m][t].match_homeTeamObj.formation = '';
+													$scope.allFixturesObj[m][t].match_homeTeamObj.lineup = '';
+													$scope.allFixturesObj[m][t].match_homeTeamObj.lastLineup = '';
+													$scope.allFixturesObj[m][t].match_homeTeamObj.sub = '';
+													$scope.allFixturesObj[m][t].match_homeTeamObj.lastSub = '';
+													$scope.allFixturesObj[m][t].match_homeTeamObj.player = '';
+
+													$scope.allFixturesObj[m][t].match_awayTeamObj = {};
+													$scope.allFixturesObj[m][t].match_awayTeamObj.team_name = $scope.fixture[m][t].match_awayTeam;
+													$scope.allFixturesObj[m][t].match_awayTeamObj.score = 0;
+													$scope.allFixturesObj[m][t].match_awayTeamObj.formation = '';
+													$scope.allFixturesObj[m][t].match_awayTeamObj.lineup = '';
+													$scope.allFixturesObj[m][t].match_awayTeamObj.lastLineup = '';
+													$scope.allFixturesObj[m][t].match_awayTeamObj.sub = '';
+													$scope.allFixturesObj[m][t].match_awayTeamObj.lastSub = '';
+													$scope.allFixturesObj[m][t].match_awayTeamObj.player = '';
+
+													$scope.allFixturesObj[m][t].id = "MA" + $rootScope.randomString + 0 + t;
+													$scope.allFixturesObj[m][t].match_homeTeam = $scope.fixture[m][t].match_homeTeam;
+													$scope.allFixturesObj[m][t].match_awayTeam = $scope.fixture[m][t].match_awayTeam;
+													$scope.allFixturesObj[m][t].match_date = allFixturesDate[m];
+													$scope.allFixturesObj[m][t].match_time = timeArr[timeIndex];
+													$scope.allFixturesObj[m][t].match_fixture = "fixture " + (m+1); 
+													$scope.allFixturesObj[m][t].match_field = fieldArr[fieldIndex];
+													$scope.allFixturesObj[m][t].match_started = "";
+													$scope.allFixturesObj[m][t].fixture_number = (m+1);
+													$scope.allFixturesObj[m][t].competition_id = entry.id;
+													$scope.allFixturesObj[m][t].match_venue = entry.comp_address.venue.nama;
+
+
+
+													// console.log(timeIndex);
+													// console.log(refereeIndex);
+													// console.log($scope.avSunRef);
+													// console.log($scope.avSunRef[timeIndex][refereeIndex]);
+
+										
+													if(moment(allFixturesDate[m]).format('dddd') === 'Monday'){
+														refereeIndex = 0;
+														analystIndex = 0;
+														// console.log(refereeIndex);
+														// console.log(avMonRefObjData);
+														selectReferee(refereeIndex);
+														selectAnalyst(analystIndex);
+
+														function selectReferee(refereeIndex){
+															var bookedDate = avMonRefObjData[timeIndex][refereeIndex].bookedDate.toString();
+															if (bookedDate.indexOf(allFixturesDate[m]) === -1) {
+													            $scope.allFixturesObj[m][t].match_referee = avMonRefObjData[timeIndex][refereeIndex].username;
+													        	avMonRefObjData[timeIndex].splice(refereeIndex, 1);
+													        } else {
+													            return selectReferee(refereeIndex + 1);
+													        }
+														}
+														function selectAnalyst(analystIndex){
+															var bookedDate = avMonAnalystObjData[timeIndex][analystIndex].bookedDate.toString();
+															if (bookedDate.indexOf(allFixturesDate[m]) === -1) {
+													            $scope.allFixturesObj[m][t].match_analyst = avMonAnalystObjData[timeIndex][analystIndex].username;
+													        	avMonAnalystObjData[timeIndex].splice(analystIndex, 1);
+													        } else {
+													            return selectAnalyst(analystIndex + 1);
+													        }
+														}
+													}else if(moment(allFixturesDate[m]).format('dddd') === 'Tuesday'){
+														refereeIndex = 0;
+														analystIndex = 0;
+														// console.log(refereeIndex);
+														// console.log(avTueRefObjData);
+														selectReferee(refereeIndex);
+														selectAnalyst(analystIndex);
+
+														function selectReferee(refereeIndex){
+															var bookedDate = avTueRefObjData[timeIndex][refereeIndex].bookedDate.toString();
+															if (bookedDate.indexOf(allFixturesDate[m]) === -1) {
+													            $scope.allFixturesObj[m][t].match_referee = avTueRefObjData[timeIndex][refereeIndex].username;
+													        	avTueRefObjData[timeIndex].splice(refereeIndex, 1);
+													        } else {
+													            return selectReferee(refereeIndex + 1);
+													        }
+														}
+														function selectAnalyst(analystIndex){
+															var bookedDate = avTueAnalystObjData[timeIndex][analystIndex].bookedDate.toString();
+															if (bookedDate.indexOf(allFixturesDate[m]) === -1) {
+													            $scope.allFixturesObj[m][t].match_analyst = avTueAnalystObjData[timeIndex][analystIndex].username;
+													        	avTueAnalystObjData[timeIndex].splice(analystIndex, 1);
+													        } else {
+													            return selectAnalyst(analystIndex + 1);
+													        }
+														}
+													}else if(moment(allFixturesDate[m]).format('dddd') === 'Wednesday'){
+														refereeIndex = 0;
+														analystIndex = 0;
+														// console.log(refereeIndex);
+														// console.log(avWedRefObjData);
+														selectReferee(refereeIndex);
+														selectAnalyst(analystIndex);
+
+														function selectReferee(refereeIndex){
+															var bookedDate = avWedRefObjData[timeIndex][refereeIndex].bookedDate.toString();
+															if (bookedDate.indexOf(allFixturesDate[m]) === -1) {
+													            $scope.allFixturesObj[m][t].match_referee = avWedRefObjData[timeIndex][refereeIndex].username;
+													        	avWedRefObjData[timeIndex].splice(refereeIndex, 1);
+													        } else {
+													            return selectReferee(refereeIndex + 1);
+													        }
+														}
+														function selectAnalyst(analystIndex){
+															var bookedDate = avWedAnalystObjData[timeIndex][analystIndex].bookedDate.toString();
+															if (bookedDate.indexOf(allFixturesDate[m]) === -1) {
+													            $scope.allFixturesObj[m][t].match_analyst = avWedAnalystObjData[timeIndex][analystIndex].username;
+													        	avWedAnalystObjData[timeIndex].splice(analystIndex, 1);
+													        } else {
+													            return selectAnalyst(analystIndex + 1);
+													        }
+														}
+													}else if(moment(allFixturesDate[m]).format('dddd') === 'Thursday'){
+														refereeIndex = 0;
+														analystIndex = 0;
+														// console.log(refereeIndex);
+														// console.log(avThuRefObjData);
+														selectReferee(refereeIndex);
+														selectAnalyst(analystIndex);
+
+														function selectReferee(refereeIndex){
+															var bookedDate = avThuRefObjData[timeIndex][refereeIndex].bookedDate.toString();
+															if (bookedDate.indexOf(allFixturesDate[m]) === -1) {
+													            $scope.allFixturesObj[m][t].match_referee = avThuRefObjData[timeIndex][refereeIndex].username;
+													        	avThuRefObjData[timeIndex].splice(refereeIndex, 1);
+													        } else {
+													            return selectReferee(refereeIndex + 1);
+													        }
+														}
+														function selectAnalyst(analystIndex){
+															var bookedDate = avThuAnalystObjData[timeIndex][analystIndex].bookedDate.toString();
+															if (bookedDate.indexOf(allFixturesDate[m]) === -1) {
+													            $scope.allFixturesObj[m][t].match_analyst = avThuAnalystObjData[timeIndex][analystIndex].username;
+													        	avThuAnalystObjData[timeIndex].splice(analystIndex, 1);
+													        } else {
+													            return selectAnalyst(analystIndex + 1);
+													        }
+														}
+													}else if(moment(allFixturesDate[m]).format('dddd') === 'Friday'){
+														refereeIndex = 0;
+														analystIndex = 0;
+														// console.log(refereeIndex);
+														// console.log(avFriRefObjData);
+														selectReferee(refereeIndex);
+														selectAnalyst(analystIndex);
+
+														function selectReferee(refereeIndex){
+															var bookedDate = avFriRefObjData[timeIndex][refereeIndex].bookedDate.toString();
+															if (bookedDate.indexOf(allFixturesDate[m]) === -1) {
+													            $scope.allFixturesObj[m][t].match_referee = avFriRefObjData[timeIndex][refereeIndex].username;
+													        	avFriRefObjData[timeIndex].splice(refereeIndex, 1);
+													        } else {
+													            return selectReferee(refereeIndex + 1);
+													        }
+														}
+														function selectAnalyst(analystIndex){
+															var bookedDate = avFriAnalystObjData[timeIndex][analystIndex].bookedDate.toString();
+															if (bookedDate.indexOf(allFixturesDate[m]) === -1) {
+													            $scope.allFixturesObj[m][t].match_analyst = avFriAnalystObjData[timeIndex][analystIndex].username;
+													        	avFriAnalystObjData[timeIndex].splice(analystIndex, 1);
+													        } else {
+													            return selectAnalyst(analystIndex + 1);
+													        }
+														}
+													}else if(moment(allFixturesDate[m]).format('dddd') === 'Saturday'){
+														refereeIndex = 0;
+														analystIndex = 0;
+														// console.log(refereeIndex);
+														// console.log(avSatRefObjData);
+														selectReferee(refereeIndex);
+														selectAnalyst(analystIndex);
+
+														function selectReferee(refereeIndex){
+															var bookedDate = avSatRefObjData[timeIndex][refereeIndex].bookedDate.toString();
+															if (bookedDate.indexOf(allFixturesDate[m]) === -1) {
+													            $scope.allFixturesObj[m][t].match_referee = avSatRefObjData[timeIndex][refereeIndex].username;
+													        	avSatRefObjData[timeIndex].splice(refereeIndex, 1);
+													        } else {
+													            return selectReferee(refereeIndex + 1);
+													        }
+														}
+														function selectAnalyst(analystIndex){
+															var bookedDate = avSatAnalystObjData[timeIndex][analystIndex].bookedDate.toString();
+															if (bookedDate.indexOf(allFixturesDate[m]) === -1) {
+													            $scope.allFixturesObj[m][t].match_analyst = avSatAnalystObjData[timeIndex][analystIndex].username;
+													        	avSatAnalystObjData[timeIndex].splice(analystIndex, 1);
+													        } else {
+													            return selectAnalyst(analystIndex + 1);
+													        }
+														}
+													}else if(moment(allFixturesDate[m]).format('dddd') === 'Sunday'){
+														refereeIndex = 0;
+														analystIndex = 0;
+														// console.log(refereeIndex);
+														// console.log(avSunRefObjData);
+														selectReferee(refereeIndex);
+														selectAnalyst(analystIndex);
+
+														function selectReferee(refereeIndex){
+															var bookedDate = avSunRefObjData[timeIndex][refereeIndex].bookedDate.toString();
+															if (bookedDate.indexOf(allFixturesDate[m]) === -1) {
+													            $scope.allFixturesObj[m][t].match_referee = avSunRefObjData[timeIndex][refereeIndex].username;
+													        	avSunRefObjData[timeIndex].splice(refereeIndex, 1);
+													        } else {
+													            return selectReferee(refereeIndex + 1);
+													        }
+														}
+														function selectAnalyst(analystIndex){
+															var bookedDate = avSunAnalystObjData[timeIndex][analystIndex].bookedDate.toString();
+															if (bookedDate.indexOf(allFixturesDate[m]) === -1) {
+													            $scope.allFixturesObj[m][t].match_analyst = avSunAnalystObjData[timeIndex][analystIndex].username;
+													        	avSunAnalystObjData[timeIndex].splice(analystIndex, 1);
+													        } else {
+													            return selectAnalyst(analystIndex + 1);
+													        }
+														}
+													}
+														// $scope.allFixturesObj[m][t].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+													// }else if(moment(allFixturesDate[m]).format('dddd') === 'Tuesday'){
+													// 	selectReferee(refereeIndex);
+													// 	function selectReferee(refereeIndex){
+													// 		var bookedDate = $scope.avTueRef[timeIndex][refereeIndex].bookedDate.toString();
+													// 		if (bookedDate.indexOf(allFixturesDate[m]) === -1) {
+													//             $scope.allFixturesObj[m][t].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+													//         } else {
+													//             return selectReferee(refereeIndex + 1);
+													//         }
+													// 	}
+													// 	// $scope.allFixturesObj[m][t].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+													// 	// $scope.allFixturesObj[m][t].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+													// }else if(moment(allFixturesDate[m]).format('dddd') === 'Wednesday'){
+													// 	selectReferee(refereeIndex);
+													// 	function selectReferee(refereeIndex){
+													// 		var bookedDate = $scope.avWedRef[timeIndex][refereeIndex].bookedDate.toString();
+													// 		if (bookedDate.indexOf(allFixturesDate[m]) === -1) {
+													//             $scope.allFixturesObj[m][t].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+													//         } else {
+													//             return selectReferee(refereeIndex + 1);
+													//         }
+													// 	}
+													// 	// $scope.allFixturesObj[m][t].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+													// 	// $scope.allFixturesObj[m][t].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+													// }else if(moment(allFixturesDate[m]).format('dddd') === 'Thursday'){
+													// 	selectReferee(refereeIndex);
+													// 	function selectReferee(refereeIndex){
+													// 		var bookedDate = $scope.avThuRef[timeIndex][refereeIndex].bookedDate.toString();
+													// 		if (bookedDate.indexOf(allFixturesDate[m]) === -1) {
+													//             $scope.allFixturesObj[m][t].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+													//         } else {
+													//             return selectReferee(refereeIndex + 1);
+													//         }
+													// 	}
+													// 	// $scope.allFixturesObj[m][t].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+													// 	// $scope.allFixturesObj[m][t].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+													// }else if(moment(allFixturesDate[m]).format('dddd') === 'Friday'){
+													// 	selectReferee(refereeIndex);
+													// 	function selectReferee(refereeIndex){
+													// 		var bookedDate = $scope.avFriRef[timeIndex][refereeIndex].bookedDate.toString();
+													// 		if (bookedDate.indexOf(allFixturesDate[m]) === -1) {
+													//             $scope.allFixturesObj[m][t].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+													//         } else {
+													//             return selectReferee(refereeIndex + 1);
+													//         }
+													// 	}
+													// 	// $scope.allFixturesObj[m][t].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+													// 	// $scope.allFixturesObj[m][t].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+													// }else if(moment(allFixturesDate[m]).format('dddd') === 'Saturday'){
+													// 	selectReferee(refereeIndex);
+													// 	function selectReferee(refereeIndex){
+													// 		var bookedDate = $scope.avSatRef[timeIndex][refereeIndex].bookedDate.toString();
+													// 		if (bookedDate.indexOf(allFixturesDate[m]) === -1) {
+													//             $scope.allFixturesObj[m][t].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+													//         } else {
+													//             return selectReferee(refereeIndex + 1);
+													//         }
+													// 	}
+													// 	// $scope.allFixturesObj[m][t].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+													// 	// $scope.allFixturesObj[m][t].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+													// }else if(moment(allFixturesDate[m]).format('dddd') === 'Sunday'){
+													// 	selectReferee(refereeIndex);
+													// 	function selectReferee(refereeIndex){
+													// 		var bookedDate = $scope.avSunRef[timeIndex][refereeIndex].bookedDate.toString();
+													// 		if (bookedDate.indexOf(allFixturesDate[m]) === -1) {
+													//             $scope.allFixturesObj[m][t].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+													//         } else {
+													//             return selectReferee(refereeIndex + 1);
+													//         }
+													// 	}
+													// 	// $scope.allFixturesObj[m][t].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+													// 	// $scope.allFixturesObj[m][t].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+													// }
+
+													// refereeIndex++;
+													// analystIndex++;
+													fieldIndex++;
+													
+													if((t+1) % 2 == 0){
+														timeIndex++;
+														fieldIndex = 0;
+													}
+												}
+											}
+											// console.log($scope.allFixturesObj);
+										},10000);
+		
 										// check if the schedule status is on queue
 										if(entry.schedule_status === 'On Queue'){
-										// 	if true save the data to database
-											console.log("save data to database");
+					
+											setTimeout(function(){
+												// console.log($scope.allFixturesObj);
+												var timeoutTime = 1000;
+												for(var f = 0; f < $scope.allFixturesObj.length; f++){
+													// console.log($scope.allFixturesObj[f]);
+													$scope.allFixturesObj[f].forEach(function(entry){
+														$scope.bookedDateRefForm = {};
+														$scope.bookedDateRefForm.Username = entry.match_referee;
+														$scope.bookedDateRefForm.BookedDate = entry.match_date;
+														$scope.bookedDateAnaForm = {};
+														$scope.bookedDateAnaForm.Username = entry.match_analyst;
+														$scope.bookedDateAnaForm.BookedDate = entry.match_date;
 
-											$scope.savedEntryArr = [];
-											$scope.fixture[p].forEach(function(entry){
-												addMatchDelay(entry);
-											});
-
-										// 	set timer to addMatch function to minimize the number of request per second to prevent failed request
-											function addMatchDelay(entry){
-												setTimeout(function(){
-													//insert data to database
-													MatchService.addMatch(entry).success(function(data){
-														// $ionicLoading.hide();
-														console.log("add match");
-														console.log(data);
-													}).error(function(data){
-														// $ionicLoading.hide();
+														addMatchDelay(entry,timeoutTime);
+														addBookedDate($scope.bookedDateRefForm,$scope.bookedDateAnaForm,timeoutTime);
+														timeoutTime += 10;
 													});
-													//insert data to database
-												},15000);
-											}
-										}											
-									}
-									// another timer to change the schedule status to on progress
-									// if didn't change the status than it will save the data endlessly
-									setTimeout(function(){
-										if(entry.schedule_status === 'On Queue'){
-											console.log("change schedule status to on progress");
-											$scope.formCompetition = {};
-											// schedule status (on queue, on progress, completed)
-											// on queue (team just registered)
-											// on progress (competition already has full team and auto scheduling completed)
-											// completed (match date and referee has been selected)
-											$scope.formCompetition.schedule_status = "On Progress";
-											
-											CompetitionService.editCompetition(entry.id, localStorage.getItem("token"), $scope.formCompetition).success(function(data) {
-												// $ionicLoading.hide();
-												console.log("berhasil");
-												$scope.loadCompetition = setInterval($scope.getCompetitionByOrganizer, 3000);	
-											}).error(function(data) {
-												// $ionicLoading.hide();
-												console.log("gagal");
-											});
-										}	
-									},20000);
+												}
+
+												// set timer to addMatch function to minimize the number of request per second to prevent failed request
+												function addMatchDelay(entry,timeoutTime){
+													setTimeout(function(){
+														//insert data to database
+														MatchService.addMatch(entry).success(function(data){
+															// $ionicLoading.hide();
+															console.log("add match");
+															// console.log(data);
+														}).error(function(data){
+															// $ionicLoading.hide();
+														});
+														//insert data to database
+													},timeoutTime);
+												}
+
+												// set timer to addBookedDate function to minimize the number of request per second to prevent failed request
+												function addBookedDate(bookedDateRefForm,bookedDateAnaForm,timeOutTime){
+													setTimeout(function(){
+														LoginService.addBookedDate(bookedDateRefForm).success(function(data) {
+															console.log('berhasil melakukan perubahan data referee');
+															// console.log(data);
+															$ionicLoading.hide();
+														}).error(function(data) {
+															$ionicLoading.hide();
+														});
+
+														LoginService.addBookedDate(bookedDateAnaForm).success(function(data) {
+															console.log('berhasil melakukan perubahan data analyst');
+															// console.log(data);
+															$ionicLoading.hide();
+														}).error(function(data) {
+															$ionicLoading.hide();
+														});
+													},timeOutTime);
+												}
+									
+												// another timer to change the schedule status to on progress
+												// if didn't change the status than it will save the data endlessly
+												setTimeout(function(){
+													if(entry.schedule_status === 'On Queue'){
+														console.log("change schedule status to on progress");
+														$scope.formCompetition = {};
+														// schedule status (on queue, on progress, completed)
+														// on queue (team just registered)
+														// on progress (competition already has full team and auto scheduling completed)
+														// completed (match date and referee has been selected)
+														$scope.formCompetition.schedule_status = "On Progress";
+														
+														CompetitionService.editCompetition(entry.id, localStorage.getItem("token"), $scope.formCompetition).success(function(data) {
+															// $ionicLoading.hide();
+															console.log("berhasil");
+															$scope.loadCompetition = setInterval($scope.getCompetitionByOrganizer, 3000);	
+														}).error(function(data) {
+															// $ionicLoading.hide();
+															console.log("gagal");
+														});
+													}	
+												},20000);
+
+											},15000);
+										}
+									},4000);
 								  },15000);
 								// Round Robin Scheduling
 							}
@@ -1090,6 +1715,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 								var numOfDays = endDate.diff(startDate, 'days')+1;
 								
 								console.log(numOfDays);
+								// 7 Days
 								if(numOfDays === 7){
 									if(entry.comp_numOfTeam === 8){
 										var playOffDate1 = moment(new Date(entry.comp_start));
@@ -1120,7 +1746,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 
 									console.log($scope.pairs);
-									if(localStorage.getItem("knockoutSchedulingStat") === 'On Progress'){
+									// if(localStorage.getItem("knockoutSchedulingStat") === 'On Progress'){
 										// play off
 										for(var i = 1; i <= $scope.pairs; i++){
 										    for(var j = 1; j <= 2; j++){
@@ -1138,25 +1764,27 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 									        $scope.matchArr[1].match_homeTeam = $scope.registerArr[0];
 									        $scope.matchArr[1].match_awayTeam = $scope.registerArr[1];
 									        $scope.matchArr[1].match_pair = i;
+									        $scope.matchArr[1].pair_status = "home";
 									        $scope.matchArr[1].match_date = moment(playOffDate).toISOString();	
 									        $scope.matchArr[1].match_time = timeArr[timeIndex];
-									        $scope.matchArr[1].field = fieldArr[0];
+									        $scope.matchArr[1].match_field = fieldArr[0];
 									        if(entry.comp_numOfTeam === 8){
 									        	$scope.matchArr[1].match_date = moment(playOffDateArr[playOffIndex]).toISOString();	
 									        	$scope.matchArr[1].match_time = timeArr[0];
-									        	$scope.matchArr[1].field = fieldArr[0];
+									        	$scope.matchArr[1].match_field = fieldArr[0];
 									        }
 									       
 									        $scope.matchArr[2].match_homeTeam = $scope.registerArr[2];
 									        $scope.matchArr[2].match_awayTeam = $scope.registerArr[3];
 									        $scope.matchArr[2].match_pair = i;
+									        $scope.matchArr[2].pair_status = "away";
 									        $scope.matchArr[2].match_date = moment(playOffDate).toISOString();
 									        $scope.matchArr[2].match_time = timeArr[timeIndex];
-									        $scope.matchArr[2].field = fieldArr[1];
+									        $scope.matchArr[2].match_field = fieldArr[1];
 									        if(entry.comp_numOfTeam === 8){
 									        	$scope.matchArr[2].match_date = moment(playOffDateArr[playOffIndex]).toISOString();
 									        	$scope.matchArr[2].match_time = timeArr[1];
-									        	$scope.matchArr[2].field = fieldArr[0];
+									        	$scope.matchArr[2].match_field = fieldArr[0];
 									        }
 
 									        $scope.matchesArr.push($scope.matchArr[1]);
@@ -1166,88 +1794,545 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 										    timeIndex++;
 										    playOffIndex++;
 										}
+
+										// play off
+										$scope.playOffFixtureObj = [];
+										if(entry.comp_numOfTeam === 32){
+											setTimeout(function(){
+												timeIndex = 0;
+												fieldIndex = 0;
+												refereeIndex = 0;
+												analystIndex = 0;
+												for(var m = 0; m < $scope.matchesArr.length; m++){
+													$scope.playOffFixtureObj[m] = {};
+													$scope.playOffFixtureObj[m].match_homeTeamObj = {};
+													$scope.playOffFixtureObj[m].match_homeTeamObj.team_name = $scope.matchesArr[m].match_homeTeam;
+													$scope.playOffFixtureObj[m].match_homeTeamObj.score = 0;
+													$scope.playOffFixtureObj[m].match_homeTeamObj.formation = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.lineup = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.lastLineup = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.sub = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.lastSub = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.player = '';
+
+													$scope.playOffFixtureObj[m].match_awayTeamObj = {};
+													$scope.playOffFixtureObj[m].match_awayTeamObj.team_name = $scope.matchesArr[m].match_awayTeam;
+													$scope.playOffFixtureObj[m].match_awayTeamObj.score = 0;
+													$scope.playOffFixtureObj[m].match_awayTeamObj.formation = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.lineup = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.lastLineup = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.sub = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.lastSub = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.player = '';
+
+													$scope.playOffFixtureObj[m].id = "MA" + $rootScope.randomString + 16 + m;
+													$scope.playOffFixtureObj[m].match_homeTeam = $scope.matchesArr[m].match_homeTeam;
+													$scope.playOffFixtureObj[m].match_awayTeam = $scope.matchesArr[m].match_awayTeam;
+													$scope.playOffFixtureObj[m].match_pair = $scope.matchesArr[m].match_pair;
+													$scope.playOffFixtureObj[m].pair_status = $scope.matchesArr[m].pair_status;
+													$scope.playOffFixtureObj[m].match_date = moment(playOffDate).toISOString();
+													$scope.playOffFixtureObj[m].match_time = timeArr[timeIndex];
+													$scope.playOffFixtureObj[m].match_fixture = "play off";
+													$scope.playOffFixtureObj[m].match_field = fieldArr[fieldIndex];
+													$scope.playOffFixtureObj[m].match_started = "";
+													$scope.playOffFixtureObj[m].competition_id = entry.id;
+													$scope.playOffFixtureObj[m].match_venue = entry.comp_address.venue.nama;
+										
+													if(moment(playOffDate).format('dddd') === 'Monday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDate).format('dddd') === 'Tuesday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDate).format('dddd') === 'Wednesday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDate).format('dddd') === 'Thursday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDate).format('dddd') === 'Friday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDate).format('dddd') === 'Saturday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDate).format('dddd') === 'Sunday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+													}
+											
+													refereeIndex++;
+													analystIndex++;
+													fieldIndex++;
+													if(m % 2 !== 0){
+														timeIndex = timeIndex + 2;
+														fieldIndex = 0;
+													}
+												}
+												console.log($scope.playOffFixtureObj);
+											},6000);
+										}else if(entry.comp_numOfTeam === 16){
+											setTimeout(function(){
+												timeIndex = 0;
+												playOffIndex = 0;
+												refereeIndex = 0;
+												analystIndex = 0;
+												fieldIndex = 0;
+												for(var m = 0; m < $scope.matchesArr.length; m++){
+													$scope.playOffFixtureObj[m] = {};
+													$scope.playOffFixtureObj[m].match_homeTeamObj = {};
+													$scope.playOffFixtureObj[m].match_homeTeamObj.team_name =  $scope.matchesArr[m].match_homeTeam;
+													$scope.playOffFixtureObj[m].match_homeTeamObj.score = 0;
+													$scope.playOffFixtureObj[m].match_homeTeamObj.formation = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.lineup = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.lastLineup = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.sub = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.lastSub = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.player = '';
+
+													$scope.playOffFixtureObj[m].match_awayTeamObj = {};
+													$scope.playOffFixtureObj[m].match_awayTeamObj.team_name = $scope.matchesArr[m].match_awayTeam;
+													$scope.playOffFixtureObj[m].match_awayTeamObj.score = 0;
+													$scope.playOffFixtureObj[m].match_awayTeamObj.formation = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.lineup = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.lastLineup = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.sub = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.lastSub = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.player = '';
+
+													$scope.playOffFixtureObj[m].id = "MA" + $rootScope.randomString + 16 + m;
+													$scope.playOffFixtureObj[m].match_homeTeam = $scope.matchesArr[m].match_homeTeam;
+													$scope.playOffFixtureObj[m].match_awayTeam = $scope.matchesArr[m].match_awayTeam;
+													$scope.playOffFixtureObj[m].match_pair = $scope.matchesArr[m].match_pair;
+													$scope.playOffFixtureObj[m].pair_status = $scope.matchesArr[m].pair_status;
+													$scope.playOffFixtureObj[m].match_date = moment(playOffDate).toISOString();
+													$scope.playOffFixtureObj[m].match_time = timeArr[timeIndex];
+													$scope.playOffFixtureObj[m].match_fixture = "play off";
+													$scope.playOffFixtureObj[m].match_field = fieldArr[fieldIndex];
+													$scope.playOffFixtureObj[m].match_started = "";
+													$scope.playOffFixtureObj[m].competition_id = entry.id;
+													$scope.playOffFixtureObj[m].match_venue = entry.comp_address.venue.nama;
+										
+													if(moment(playOffDate).format('dddd') === 'Monday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDate).format('dddd') === 'Tuesday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDate).format('dddd') === 'Wednesday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDate).format('dddd') === 'Thursday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDate).format('dddd') === 'Friday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDate).format('dddd') === 'Saturday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDate).format('dddd') === 'Sunday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+													}
+													
+													fieldIndex++;
+													refereeIndex++;
+													analystIndex++;
+													
+													if(m % 2 !== 0){
+														fieldIndex = 0;
+														timeIndex = timeIndex + 2;
+													}
+												}
+												console.log($scope.playOffFixtureObj);
+											},6000);
+										}else{
+											setTimeout(function(){
+												refereeIndex = 0;
+												analystIndex = 0;
+												playOffIndex = 0;
+												timeIndex = 0;
+												for(var m = 0; m < $scope.matchesArr.length; m++){
+													$scope.playOffFixtureObj[m] = {};
+													$scope.playOffFixtureObj[m].match_homeTeamObj = {};
+													$scope.playOffFixtureObj[m].match_homeTeamObj.team_name =  $scope.matchesArr[m].match_homeTeam;
+													$scope.playOffFixtureObj[m].match_homeTeamObj.score = 0;
+													$scope.playOffFixtureObj[m].match_homeTeamObj.formation = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.lineup = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.lastLineup = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.sub = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.lastSub = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.player = '';
+
+													$scope.playOffFixtureObj[m].match_awayTeamObj = {};
+													$scope.playOffFixtureObj[m].match_awayTeamObj.team_name =  $scope.matchesArr[m].match_awayTeam;
+													$scope.playOffFixtureObj[m].match_awayTeamObj.score = 0;
+													$scope.playOffFixtureObj[m].match_awayTeamObj.formation = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.lineup = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.lastLineup = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.sub = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.lastSub = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.player = '';
+
+													$scope.playOffFixtureObj[m].id = "MA" + $rootScope.randomString + 16 + m;
+													$scope.playOffFixtureObj[m].match_homeTeam = $scope.matchesArr[m].match_homeTeam;
+													$scope.playOffFixtureObj[m].match_awayTeam = $scope.matchesArr[m].match_awayTeam;
+													$scope.playOffFixtureObj[m].match_pair = $scope.matchesArr[m].match_pair;
+													$scope.playOffFixtureObj[m].pair_status = $scope.matchesArr[m].pair_status;
+													$scope.playOffFixtureObj[m].match_date = moment(playOffDateArr[playOffIndex]).toISOString();
+													$scope.playOffFixtureObj[m].match_time = timeArr[timeIndex];
+													$scope.playOffFixtureObj[m].match_fixture = "play off";
+													$scope.playOffFixtureObj[m].match_field = fieldArr[0];
+													$scope.playOffFixtureObj[m].match_started = "";
+													$scope.playOffFixtureObj[m].competition_id = entry.id;
+													$scope.playOffFixtureObj[m].match_venue = entry.comp_address.venue.nama;
+										
+													if(moment(playOffDateArr[playOffIndex]).format('dddd') === 'Monday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDateArr[playOffIndex]).format('dddd') === 'Tuesday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDateArr[playOffIndex]).format('dddd') === 'Wednesday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDateArr[playOffIndex]).format('dddd') === 'Thursday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDateArr[playOffIndex]).format('dddd') === 'Friday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDateArr[playOffIndex]).format('dddd') === 'Saturday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDateArr[playOffIndex]).format('dddd') === 'Sunday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+													}
+													timeIndex = timeIndex + 2;
+													refereeIndex++;
+													analystIndex++;
+													if((m+1) % 2 === 0){
+														playOffIndex++;
+														timeIndex = 0;
+													}
+												}
+												console.log($scope.playOffFixtureObj);
+											},6000);
+										}
+
 										// round of 16
 										var pair = 1;
+										var pairStatusArr = ["home","away"];
+										var pairStatusIndex = 0;
 										if(entry.comp_numOfTeam === 32){
-											timeIndex = 0;
-											for(var m = 0; m < 8; m++){
-												$scope.roundOf16FixtureObj[m] = {};
-												$scope.roundOf16FixtureObj[m].id = "MA" + $rootScope.randomString + 16 + m;
-												$scope.roundOf16FixtureObj[m].match_homeTeam = "";
-												$scope.roundOf16FixtureObj[m].match_awayTeam = "";
-												$scope.roundOf16FixtureObj[m].match_date = moment(roundOf16Date).toISOString();
-												$scope.roundOf16FixtureObj[m].match_time = timeArr[timeIndex];
-												$scope.roundOf16FixtureObj[m].match_fixture = "round of 16";
-												$scope.roundOf16FixtureObj[m].field = 1;
-												$scope.roundOf16FixtureObj[m].match_pair = pair;
-												$scope.roundOf16FixtureObj[m].match_started = "";
-												$scope.roundOf16FixtureObj[m].competition_id = entry.id;
+											setTimeout(function(){
+												timeIndex = 0;
+												refereeIndex = 0;
+												analystIndex = 0;
+												for(var m = 0; m < 8; m++){
+													$scope.roundOf16FixtureObj[m] = {};
+													$scope.roundOf16FixtureObj[m].match_homeTeamObj = {};
+													$scope.roundOf16FixtureObj[m].match_homeTeamObj.team_name = '';
+													$scope.roundOf16FixtureObj[m].match_homeTeamObj.score = 0;
+													$scope.roundOf16FixtureObj[m].match_homeTeamObj.formation = '';
+													$scope.roundOf16FixtureObj[m].match_homeTeamObj.lineup = '';
+													$scope.roundOf16FixtureObj[m].match_homeTeamObj.lastLineup = '';
+													$scope.roundOf16FixtureObj[m].match_homeTeamObj.sub = '';
+													$scope.roundOf16FixtureObj[m].match_homeTeamObj.lastSub = '';
+													$scope.roundOf16FixtureObj[m].match_homeTeamObj.player = '';
 
-												timeIndex++;
-												if((m+1) % 4 === 0){
-													roundOf16Index++;
+													$scope.roundOf16FixtureObj[m].match_awayTeamObj = {};
+													$scope.roundOf16FixtureObj[m].match_awayTeamObj.team_name = '';
+													$scope.roundOf16FixtureObj[m].match_awayTeamObj.score = 0;
+													$scope.roundOf16FixtureObj[m].match_awayTeamObj.formation = '';
+													$scope.roundOf16FixtureObj[m].match_awayTeamObj.lineup = '';
+													$scope.roundOf16FixtureObj[m].match_awayTeamObj.lastLineup = '';
+													$scope.roundOf16FixtureObj[m].match_awayTeamObj.sub = '';
+													$scope.roundOf16FixtureObj[m].match_awayTeamObj.lastSub = '';
+													$scope.roundOf16FixtureObj[m].match_awayTeamObj.player = '';
+
+													$scope.roundOf16FixtureObj[m].id = "MA" + $rootScope.randomString + 16 + m;
+													$scope.roundOf16FixtureObj[m].match_homeTeam = "";
+													$scope.roundOf16FixtureObj[m].match_awayTeam = "";
+													$scope.roundOf16FixtureObj[m].match_pair = pair;
+													$scope.roundOf16FixtureObj[m].pair_status = pairStatusArr[pairStatusIndex];
+													$scope.roundOf16FixtureObj[m].last_pair = m+1;
+													$scope.roundOf16FixtureObj[m].match_date = moment(roundOf16Date).toISOString();
+													$scope.roundOf16FixtureObj[m].match_time = timeArr[timeIndex];
+													$scope.roundOf16FixtureObj[m].match_fixture = "round of 16";
+													$scope.roundOf16FixtureObj[m].match_field = 1;
+													$scope.roundOf16FixtureObj[m].match_started = "";
+													$scope.roundOf16FixtureObj[m].competition_id = entry.id;
+													$scope.roundOf16FixtureObj[m].match_venue = entry.comp_address.venue.nama;
+										
+													if(moment(roundOf16Date).format('dddd') === 'Monday'){
+														$scope.roundOf16FixtureObj[m].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+														$scope.roundOf16FixtureObj[m].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(roundOf16Date).format('dddd') === 'Tuesday'){
+														$scope.roundOf16FixtureObj[m].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+														$scope.roundOf16FixtureObj[m].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(roundOf16Date).format('dddd') === 'Wednesday'){
+														$scope.roundOf16FixtureObj[m].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+														$scope.roundOf16FixtureObj[m].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(roundOf16Date).format('dddd') === 'Thursday'){
+														$scope.roundOf16FixtureObj[m].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+														$scope.roundOf16FixtureObj[m].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(roundOf16Date).format('dddd') === 'Friday'){
+														$scope.roundOf16FixtureObj[m].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+														$scope.roundOf16FixtureObj[m].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(roundOf16Date).format('dddd') === 'Saturday'){
+														$scope.roundOf16FixtureObj[m].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+														$scope.roundOf16FixtureObj[m].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(roundOf16Date).format('dddd') === 'Sunday'){
+														$scope.roundOf16FixtureObj[m].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+														$scope.roundOf16FixtureObj[m].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+													}
+
+													refereeIndex++;
+													analystIndex++;
+													timeIndex = timeIndex + 2;
+													pairStatusIndex++;
+													if((m+1) % 2 === 0){
+														pairStatusIndex = 0;
+													}
+													if((m+1) % 4 === 0){
+														roundOf16Index++;
+													}
+													if(m % 2 !== 0){
+														pair++;
+													}
 												}
-												if(m % 2 !== 0){
-													pair++;
-												}
-											}
+												console.log($scope.roundOf16FixtureObj);
+											},6000);
 										}
 
 										// quarter final
 										var pair = 1;
+										var pairStatusArr = ["home","away"];
+										var pairStatusIndex = 0;
 										if(entry.comp_numOfTeam !== 8){
-											timeIndex = 0;
-											for(var m = 0; m < 4; m++){
-												$scope.quarterFinalFixtureObj[m] = {};
-												$scope.quarterFinalFixtureObj[m].id = "MA" + $rootScope.randomString + 16 + m;
-												$scope.quarterFinalFixtureObj[m].match_homeTeam = "";
-												$scope.quarterFinalFixtureObj[m].match_awayTeam = "";
-												$scope.quarterFinalFixtureObj[m].match_date = moment(quarterFinalDate).toISOString();
-												$scope.quarterFinalFixtureObj[m].match_time = timeArr[timeIndex];
-												$scope.quarterFinalFixtureObj[m].match_fixture = "quarter final";
-												$scope.quarterFinalFixtureObj[m].field = 1;
-												$scope.quarterFinalFixtureObj[m].match_pair = pair;
-												$scope.quarterFinalFixtureObj[m].match_started = "";
-												$scope.quarterFinalFixtureObj[m].competition_id = entry.id;
+											setTimeout(function(){
+												timeIndex = 0;
+												refereeIndex = 0;
+												analystIndex = 0;
+												for(var m = 0; m < 4; m++){
+													$scope.quarterFinalFixtureObj[m] = {};
+													$scope.quarterFinalFixtureObj[m].match_homeTeamObj = {};
+													$scope.quarterFinalFixtureObj[m].match_homeTeamObj.team_name = '';
+													$scope.quarterFinalFixtureObj[m].match_homeTeamObj.score = 0;
+													$scope.quarterFinalFixtureObj[m].match_homeTeamObj.formation = '';
+													$scope.quarterFinalFixtureObj[m].match_homeTeamObj.lineup = '';
+													$scope.quarterFinalFixtureObj[m].match_homeTeamObj.lastLineup = '';
+													$scope.quarterFinalFixtureObj[m].match_homeTeamObj.sub = '';
+													$scope.quarterFinalFixtureObj[m].match_homeTeamObj.lastSub = '';
+													$scope.quarterFinalFixtureObj[m].match_homeTeamObj.player = '';
 
-												timeIndex++;
-												if(m % 2 !== 0){
-													pair++;
+													$scope.quarterFinalFixtureObj[m].match_awayTeamObj = {};
+													$scope.quarterFinalFixtureObj[m].match_awayTeamObj.team_name = '';
+													$scope.quarterFinalFixtureObj[m].match_awayTeamObj.score = 0;
+													$scope.quarterFinalFixtureObj[m].match_awayTeamObj.formation = '';
+													$scope.quarterFinalFixtureObj[m].match_awayTeamObj.lineup = '';
+													$scope.quarterFinalFixtureObj[m].match_awayTeamObj.lastLineup = '';
+													$scope.quarterFinalFixtureObj[m].match_awayTeamObj.sub = '';
+													$scope.quarterFinalFixtureObj[m].match_awayTeamObj.lastSub = '';
+													$scope.quarterFinalFixtureObj[m].match_awayTeamObj.player = '';
+
+													$scope.quarterFinalFixtureObj[m].id = "MA" + $rootScope.randomString + 8 + m;
+													$scope.quarterFinalFixtureObj[m].match_homeTeam = "";
+													$scope.quarterFinalFixtureObj[m].match_awayTeam = "";
+													$scope.quarterFinalFixtureObj[m].match_pair = pair;
+													$scope.quarterFinalFixtureObj[m].pair_status = pairStatusArr[pairStatusIndex];
+													$scope.quarterFinalFixtureObj[m].last_pair = m+1;
+													$scope.quarterFinalFixtureObj[m].match_date = moment(quarterFinalDate).toISOString();
+													$scope.quarterFinalFixtureObj[m].match_time = timeArr[timeIndex];
+													$scope.quarterFinalFixtureObj[m].match_fixture = "quarter final";
+													$scope.quarterFinalFixtureObj[m].match_field = 1;
+													$scope.quarterFinalFixtureObj[m].match_started = "";
+													$scope.quarterFinalFixtureObj[m].competition_id = entry.id;
+													$scope.quarterFinalFixtureObj[m].match_venue = entry.comp_address.venue.nama;
+										
+													if(moment(quarterFinalDate).format('dddd') === 'Monday'){
+														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(quarterFinalDate).format('dddd') === 'Tuesday'){
+														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(quarterFinalDate).format('dddd') === 'Wednesday'){
+														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(quarterFinalDate).format('dddd') === 'Thursday'){
+														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(quarterFinalDate).format('dddd') === 'Friday'){
+														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(quarterFinalDate).format('dddd') === 'Saturday'){
+														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(quarterFinalDate).format('dddd') === 'Sunday'){
+														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+													}
+
+													refereeIndex++;
+													analystIndex++;
+													timeIndex = timeIndex + 2;
+													pairStatusIndex++;
+													if((m+1) % 2 === 0){
+														pairStatusIndex = 0;
+													}
+													if(m % 2 !== 0){
+														pair++;
+													}
 												}
-											}
+												console.log($scope.quarterFinalFixtureObj);
+											},6000);
+											
 										}
 
 										// semi final
-										timeIndex = 1;
-										for(var m = 0; m < 2; m++){
-											$scope.semiFinalFixtureObj[m] = {};
-											$scope.semiFinalFixtureObj[m].id = "MA" + $rootScope.randomString + 16 + m;
-											$scope.semiFinalFixtureObj[m].match_homeTeam = "";
-											$scope.semiFinalFixtureObj[m].match_awayTeam = "";
-											$scope.semiFinalFixtureObj[m].match_date = moment(semiFinalDate).toISOString();
-											$scope.semiFinalFixtureObj[m].match_time = timeArr[timeIndex];
-											$scope.semiFinalFixtureObj[m].match_fixture = "semi final";
-											$scope.semiFinalFixtureObj[m].field = 1;
-											$scope.semiFinalFixtureObj[m].match_pair = 1;
-											$scope.semiFinalFixtureObj[m].match_started = "";
-											$scope.semiFinalFixtureObj[m].competition_id = entry.id;
+										setTimeout(function(){
+											timeIndex = 1;
+											refereeIndex = 0;
+											analystIndex = 0;
+											var pairStatusArr = ["home","away"];
+											var pairStatusIndex = 0;
+											for(var m = 0; m < 2; m++){
+												$scope.semiFinalFixtureObj[m] = {};
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj = {};
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.team_name = '';
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.score = 0;
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.formation = '';
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.lineup = '';
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.lastLineup = '';
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.sub = '';
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.lastSub = '';
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.player = '';
 
-											timeIndex++;
-										}
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj = {};
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.team_name = '';
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.score = 0;
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.formation = '';
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.lineup = '';
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.lastLineup = '';
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.sub = '';
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.lastSub = '';
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.player = '';
+
+												$scope.semiFinalFixtureObj[m].id = "MA" + $rootScope.randomString + 4 + m;
+												$scope.semiFinalFixtureObj[m].match_homeTeam = "";
+												$scope.semiFinalFixtureObj[m].match_awayTeam = "";
+												$scope.semiFinalFixtureObj[m].match_pair = 1;
+												$scope.semiFinalFixtureObj[m].pair_status = pairStatusArr[pairStatusIndex];
+												$scope.semiFinalFixtureObj[m].last_pair = m+1;
+												$scope.semiFinalFixtureObj[m].match_date = moment(semiFinalDate).toISOString();
+												$scope.semiFinalFixtureObj[m].match_time = timeArr[timeIndex];
+												$scope.semiFinalFixtureObj[m].match_fixture = "semi final";
+												$scope.semiFinalFixtureObj[m].match_field = 1;
+												$scope.semiFinalFixtureObj[m].match_started = "";
+												$scope.semiFinalFixtureObj[m].competition_id = entry.id;
+												$scope.semiFinalFixtureObj[m].match_venue = entry.comp_address.venue.nama;
+									
+												if(moment(semiFinalDate).format('dddd') === 'Monday'){
+													$scope.semiFinalFixtureObj[m].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+													$scope.semiFinalFixtureObj[m].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(semiFinalDate).format('dddd') === 'Tuesday'){
+													$scope.semiFinalFixtureObj[m].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+													$scope.semiFinalFixtureObj[m].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(semiFinalDate).format('dddd') === 'Wednesday'){
+													$scope.semiFinalFixtureObj[m].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+													$scope.semiFinalFixtureObj[m].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(semiFinalDate).format('dddd') === 'Thursday'){
+													$scope.semiFinalFixtureObj[m].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+													$scope.semiFinalFixtureObj[m].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(semiFinalDate).format('dddd') === 'Friday'){
+													$scope.semiFinalFixtureObj[m].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+													$scope.semiFinalFixtureObj[m].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(semiFinalDate).format('dddd') === 'Saturday'){
+													$scope.semiFinalFixtureObj[m].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+													$scope.semiFinalFixtureObj[m].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(semiFinalDate).format('dddd') === 'Sunday'){
+													$scope.semiFinalFixtureObj[m].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+													$scope.semiFinalFixtureObj[m].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+												}
+
+												refereeIndex++;
+												analystIndex++;
+												timeIndex = timeIndex + 2;
+												pairStatusIndex++;
+												if((m+1) % 2 === 0){
+													pairStatusIndex = 0;
+												}
+											}
+											console.log($scope.semiFinalFixtureObj);
+										},6000);
+										
 
 										// final
-										$scope.finalFixtureObj = {};
-										$scope.finalFixtureObj.id = "MA" + $rootScope.randomString;
-										$scope.finalFixtureObj.match_homeTeam = "";
-										$scope.finalFixtureObj.match_awayTeam = "";
-										$scope.finalFixtureObj.match_date = moment(finalDate).toISOString();
-										$scope.finalFixtureObj.match_time = timeArr[1];
-										$scope.finalFixtureObj.match_fixture = "final";
-										$scope.finalFixtureObj.field = 1;
-										$scope.finalFixtureObj.match_started = "";
-										$scope.finalFixtureObj.competition_id = entry.id;
-									}
+										setTimeout(function(){
+											refereeIndex = 0;
+											analystIndex = 0;
+											$scope.finalFixtureObj = {};
+											$scope.finalFixtureObj.match_homeTeamObj = {};
+											$scope.finalFixtureObj.match_homeTeamObj.team_name = '';
+											$scope.finalFixtureObj.match_homeTeamObj.score = 0;
+											$scope.finalFixtureObj.match_homeTeamObj.formation = '';
+											$scope.finalFixtureObj.match_homeTeamObj.lineup = '';
+											$scope.finalFixtureObj.match_homeTeamObj.lastLineup = '';
+											$scope.finalFixtureObj.match_homeTeamObj.sub = '';
+											$scope.finalFixtureObj.match_homeTeamObj.lastSub = '';
+											$scope.finalFixtureObj.match_homeTeamObj.player = '';
+
+											$scope.finalFixtureObj.match_awayTeamObj = {};
+											$scope.finalFixtureObj.match_awayTeamObj.team_name = '';
+											$scope.finalFixtureObj.match_awayTeamObj.score = 0;
+											$scope.finalFixtureObj.match_awayTeamObj.formation = '';
+											$scope.finalFixtureObj.match_awayTeamObj.lineup = '';
+											$scope.finalFixtureObj.match_awayTeamObj.lastLineup = '';
+											$scope.finalFixtureObj.match_awayTeamObj.sub = '';
+											$scope.finalFixtureObj.match_awayTeamObj.lastSub = '';
+											$scope.finalFixtureObj.match_awayTeamObj.player = '';
+
+											$scope.finalFixtureObj.id = "MA" + $rootScope.randomString;
+											$scope.finalFixtureObj.match_homeTeam = "";
+											$scope.finalFixtureObj.match_awayTeam = "";
+											$scope.finalFixtureObj.match_date = moment(finalDate).toISOString();
+											$scope.finalFixtureObj.match_time = timeArr[1];
+											$scope.finalFixtureObj.match_fixture = "final";
+											$scope.finalFixtureObj.match_field = 1;
+											$scope.finalFixtureObj.match_started = "";
+											$scope.finalFixtureObj.competition_id = entry.id;
+											$scope.finalFixtureObj.match_venue = entry.comp_address.venue.nama;
 								
+											if(moment(finalDate).format('dddd') === 'Monday'){
+												$scope.finalFixtureObj.match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+												$scope.finalFixtureObj.match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(finalDate).format('dddd') === 'Tuesday'){
+												$scope.finalFixtureObj.match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+												$scope.finalFixtureObj.match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(finalDate).format('dddd') === 'Wednesday'){
+												$scope.finalFixtureObj.match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+												$scope.finalFixtureObj.match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(finalDate).format('dddd') === 'Thursday'){
+												$scope.finalFixtureObj.match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+												$scope.finalFixtureObj.match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(finalDate).format('dddd') === 'Friday'){
+												$scope.finalFixtureObj.match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+												$scope.finalFixtureObj.match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(finalDate).format('dddd') === 'Saturday'){
+												$scope.finalFixtureObj.match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+												$scope.finalFixtureObj.match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(finalDate).format('dddd') === 'Sunday'){
+												$scope.finalFixtureObj.match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+												$scope.finalFixtureObj.match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+											}									
+											console.log($scope.finalFixtureObj);
+										},6000);
+									
+									// }
+								// 14 Days (done) 
 								}else if(numOfDays === 14){
 									if(entry.comp_numOfTeam === 8){
 										var playOffDate1 = moment(new Date(entry.comp_start));
@@ -1293,6 +2378,8 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 									var timeIndex = 0;
 									var fieldIndex = 0;
+									var refereeIndex = 0;
+									var analystIndex = 0;
 									$scope.playOffFixtureObj = [];
 									$scope.roundOf16FixtureObj = [];
 									$scope.quarterFinalFixtureObj = [];
@@ -1300,8 +2387,9 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 
 									console.log($scope.pairs);
-									if(localStorage.getItem("knockoutSchedulingStat") === 'On Progress'){
-									
+									// if(localStorage.getItem("knockoutSchedulingStat") === 'On Progress'){
+										console.log(entry.comp_numOfTeam);
+										console.log(numOfDays);
 										for(var i = 1; i <= $scope.pairs; i++){
 										    for(var j = 1; j <= 2; j++){
 										        $scope.matchArr[j] = {
@@ -1318,15 +2406,17 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 									        $scope.matchArr[1].match_homeTeam = $scope.registerArr[0];
 									        $scope.matchArr[1].match_awayTeam = $scope.registerArr[1];
 									        $scope.matchArr[1].match_pair = i;
+									        $scope.matchArr[1].pair_status = "home";
 									        // $scope.matchArr[1].match_date = moment(playOffDate).toISOString();
 									        // $scope.matchArr[1].match_time = timeArr[timeIndex];
-									        // $scope.matchArr[1].field = fieldArr[0];
+									        // $scope.matchArr[1].match_field = fieldArr[0];
 									        $scope.matchArr[2].match_homeTeam = $scope.registerArr[2];
 									        $scope.matchArr[2].match_awayTeam = $scope.registerArr[3];
 									        $scope.matchArr[2].match_pair = i;
+									        $scope.matchArr[2].pair_status = "away";
 									        // $scope.matchArr[2].match_date = moment(playOffDate).toISOString();
 									        // $scope.matchArr[2].match_time = timeArr[timeIndex];
-									        // $scope.matchArr[2].field = fieldArr[1];
+									        // $scope.matchArr[2].match_field = fieldArr[1];
 
 									        $scope.matchesArr.push($scope.matchArr[1]);
 									        $scope.matchesArr.push($scope.matchArr[2]);
@@ -1337,190 +2427,566 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 										// play off
 										if(entry.comp_numOfTeam === 32){
-											timeIndex = 0;
-											fieldIndex = 0;
-											for(var m = 0; m < $scope.matchesArr.length; m++){
-												$scope.playOffFixtureObj[m] = {};
-												$scope.playOffFixtureObj[m].id = "MA" + $rootScope.randomString + 16 + m;
-												$scope.playOffFixtureObj[m].match_date = moment(playOffDate).toISOString();
-												$scope.playOffFixtureObj[m].match_time = timeArr[timeIndex];
-												$scope.playOffFixtureObj[m].match_homeTeam = $scope.matchesArr[m].match_homeTeam;
-									        	$scope.playOffFixtureObj[m].match_awayTeam = $scope.matchesArr[m].match_awayTeam;
-									        	$scope.playOffFixtureObj[m].match_pair = $scope.matchesArr[m].match_pair;
-									        	$scope.playOffFixtureObj[m].match_started = "";
-												$scope.playOffFixtureObj[m].match_fixture = "play off";
-												$scope.playOffFixtureObj[m].field = fieldArr[fieldIndex];
-												$scope.playOffFixtureObj[m].competition_id = entry.id;
-												fieldIndex++;
-												if(m % 2 !== 0){
-													timeIndex++;
-													fieldIndex = 0;
-												}
-											};
+											setTimeout(function(){
+												timeIndex = 0;
+												fieldIndex = 0;
+												refereeIndex = 0;
+												analystIndex = 0;
+												for(var m = 0; m < $scope.matchesArr.length; m++){
+													$scope.playOffFixtureObj[m] = {};
+													$scope.playOffFixtureObj[m].match_homeTeamObj = {};
+													$scope.playOffFixtureObj[m].match_homeTeamObj.team_name = $scope.matchesArr[m].match_homeTeam;
+													$scope.playOffFixtureObj[m].match_homeTeamObj.score = 0;
+													$scope.playOffFixtureObj[m].match_homeTeamObj.formation = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.lineup = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.lastLineup = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.sub = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.lastSub = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.player = '';
+
+													$scope.playOffFixtureObj[m].match_awayTeamObj = {};
+													$scope.playOffFixtureObj[m].match_awayTeamObj.team_name = $scope.matchesArr[m].match_awayTeam;
+													$scope.playOffFixtureObj[m].match_awayTeamObj.score = 0;
+													$scope.playOffFixtureObj[m].match_awayTeamObj.formation = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.lineup = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.lastLineup = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.sub = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.lastSub = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.player = '';
+
+													$scope.playOffFixtureObj[m].id = "MA" + $rootScope.randomString + 16 + m;
+													$scope.playOffFixtureObj[m].match_homeTeam = $scope.matchesArr[m].match_homeTeam;
+													$scope.playOffFixtureObj[m].match_awayTeam = $scope.matchesArr[m].match_awayTeam;
+													$scope.playOffFixtureObj[m].match_pair = $scope.matchesArr[m].match_pair;
+													$scope.playOffFixtureObj[m].pair_status = $scope.matchesArr[m].pair_status;
+													$scope.playOffFixtureObj[m].match_date = moment(playOffDate).toISOString();
+													$scope.playOffFixtureObj[m].match_time = timeArr[timeIndex];
+													$scope.playOffFixtureObj[m].match_fixture = "play off";
+													$scope.playOffFixtureObj[m].match_field = fieldArr[fieldIndex];
+													$scope.playOffFixtureObj[m].match_started = "";
+													$scope.playOffFixtureObj[m].competition_id = entry.id;
+													$scope.playOffFixtureObj[m].match_venue = entry.comp_address.venue.nama;
+										
+													if(moment(playOffDate).format('dddd') === 'Monday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDate).format('dddd') === 'Tuesday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDate).format('dddd') === 'Wednesday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDate).format('dddd') === 'Thursday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDate).format('dddd') === 'Friday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDate).format('dddd') === 'Saturday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDate).format('dddd') === 'Sunday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+													}
+											
+													refereeIndex++;
+													analystIndex++;
+													fieldIndex++;
+													if(m % 2 !== 0){
+														timeIndex = timeIndex + 2;
+														fieldIndex = 0;
+													}
+												};
+												console.log($scope.playOffFixtureObj);
+											},6000);
 										}else if(entry.comp_numOfTeam === 16){
-											timeIndex = 0;
-											playOffIndex = 0;
-											for(var m = 0; m < $scope.matchesArr.length; m++){
-												$scope.playOffFixtureObj[m] = {};
-												$scope.playOffFixtureObj[m].id = "MA" + $rootScope.randomString + 16 + m;
-												$scope.playOffFixtureObj[m].match_date = moment(playOffDateArr[playOffIndex]).toISOString();
-												$scope.playOffFixtureObj[m].match_time = timeArr[timeIndex];
-												$scope.playOffFixtureObj[m].match_homeTeam = $scope.matchesArr[m].match_homeTeam;
-									        	$scope.playOffFixtureObj[m].match_awayTeam = $scope.matchesArr[m].match_awayTeam;
-									        	$scope.playOffFixtureObj[m].match_pair = $scope.matchesArr[m].match_pair;
-									        	$scope.playOffFixtureObj[m].match_started = "";
-												$scope.playOffFixtureObj[m].match_fixture = "play off";
-												$scope.playOffFixtureObj[m].field = fieldArr[0];
-												$scope.playOffFixtureObj[m].competition_id = entry.id;
-												timeIndex++;
-												if((m+1) % 4 === 0){
-													playOffIndex++;
-													timeIndex = 0;
-												}
-											};
+											setTimeout(function(){
+												timeIndex = 0;
+												playOffIndex = 0;
+												refereeIndex = 0;
+												analystIndex = 0;
+												for(var m = 0; m < $scope.matchesArr.length; m++){
+													$scope.playOffFixtureObj[m] = {};
+													$scope.playOffFixtureObj[m].match_homeTeamObj = {};
+													$scope.playOffFixtureObj[m].match_homeTeamObj.team_name =  $scope.matchesArr[m].match_homeTeam;
+													$scope.playOffFixtureObj[m].match_homeTeamObj.score = 0;
+													$scope.playOffFixtureObj[m].match_homeTeamObj.formation = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.lineup = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.lastLineup = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.sub = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.lastSub = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.player = '';
+
+													$scope.playOffFixtureObj[m].match_awayTeamObj = {};
+													$scope.playOffFixtureObj[m].match_awayTeamObj.team_name = $scope.matchesArr[m].match_awayTeam;
+													$scope.playOffFixtureObj[m].match_awayTeamObj.score = 0;
+													$scope.playOffFixtureObj[m].match_awayTeamObj.formation = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.lineup = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.lastLineup = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.sub = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.lastSub = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.player = '';
+
+													$scope.playOffFixtureObj[m].id = "MA" + $rootScope.randomString + 16 + m;
+													$scope.playOffFixtureObj[m].match_homeTeam = $scope.matchesArr[m].match_homeTeam;
+													$scope.playOffFixtureObj[m].match_awayTeam = $scope.matchesArr[m].match_awayTeam;
+													$scope.playOffFixtureObj[m].match_pair = $scope.matchesArr[m].match_pair;
+													$scope.playOffFixtureObj[m].pair_status = $scope.matchesArr[m].pair_status;
+													$scope.playOffFixtureObj[m].match_date = moment(playOffDateArr[playOffIndex]).toISOString();
+													$scope.playOffFixtureObj[m].match_time = timeArr[timeIndex];
+													$scope.playOffFixtureObj[m].match_fixture = "play off";
+													$scope.playOffFixtureObj[m].match_field = fieldArr[0];
+													$scope.playOffFixtureObj[m].match_started = "";
+													$scope.playOffFixtureObj[m].competition_id = entry.id;
+													$scope.playOffFixtureObj[m].match_venue = entry.comp_address.venue.nama;
+										
+													if(moment(playOffDateArr[playOffIndex]).format('dddd') === 'Monday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDateArr[playOffIndex]).format('dddd') === 'Tuesday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDateArr[playOffIndex]).format('dddd') === 'Wednesday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDateArr[playOffIndex]).format('dddd') === 'Thursday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDateArr[playOffIndex]).format('dddd') === 'Friday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDateArr[playOffIndex]).format('dddd') === 'Saturday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDateArr[playOffIndex]).format('dddd') === 'Sunday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+													}
+												
+													refereeIndex++;
+													analystIndex++;
+													timeIndex = timeIndex + 2;
+													if((m+1) % 4 === 0){
+														playOffIndex++;
+														timeIndex = 0;
+													}
+												};
+												console.log($scope.playOffFixtureObj);
+											},6000);
 										}else{
-											playOffIndex = 0;
-											for(var m = 0; m < $scope.matchesArr.length; m++){
-												$scope.playOffFixtureObj[m].id = "MA" + $rootScope.randomString + 16 + m;
-												$scope.playOffFixtureObj[m].match_date = moment(playOffDateArr[playOffIndex]).toISOString();
-												$scope.playOffFixtureObj[m].match_time = timeArr[0];
-												$scope.playOffFixtureObj[m].match_homeTeam = $scope.matchesArr[m].match_homeTeam;
-									        	$scope.playOffFixtureObj[m].match_awayTeam = $scope.matchesArr[m].match_awayTeam;
-									        	$scope.playOffFixtureObj[m].match_pair = $scope.matchesArr[m].match_pair;
-									        	$scope.playOffFixtureObj[m].match_started = "";
-												$scope.playOffFixtureObj[m].match_fixture = "play off";
-												$scope.playOffFixtureObj[m].field = fieldArr[0];
-												$scope.playOffFixtureObj[m].competition_id = entry.id;
-												playOffIndex++;
-											};
+											setTimeout(function(){
+												refereeIndex = 0;
+												analystIndex = 0;
+												playOffIndex = 0;
+												for(var m = 0; m < $scope.matchesArr.length; m++){
+													$scope.playOffFixtureObj[m] = {};
+													$scope.playOffFixtureObj[m].match_homeTeamObj = {};
+													$scope.playOffFixtureObj[m].match_homeTeamObj.team_name =  $scope.matchesArr[m].match_homeTeam;
+													$scope.playOffFixtureObj[m].match_homeTeamObj.score = 0;
+													$scope.playOffFixtureObj[m].match_homeTeamObj.formation = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.lineup = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.lastLineup = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.sub = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.lastSub = '';
+													$scope.playOffFixtureObj[m].match_homeTeamObj.player = '';
+
+													$scope.playOffFixtureObj[m].match_awayTeamObj = {};
+													$scope.playOffFixtureObj[m].match_awayTeamObj.team_name =  $scope.matchesArr[m].match_awayTeam;
+													$scope.playOffFixtureObj[m].match_awayTeamObj.score = 0;
+													$scope.playOffFixtureObj[m].match_awayTeamObj.formation = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.lineup = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.lastLineup = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.sub = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.lastSub = '';
+													$scope.playOffFixtureObj[m].match_awayTeamObj.player = '';
+
+													$scope.playOffFixtureObj[m].id = "MA" + $rootScope.randomString + 16 + m;
+													$scope.playOffFixtureObj[m].match_homeTeam = $scope.matchesArr[m].match_homeTeam;
+													$scope.playOffFixtureObj[m].match_awayTeam = $scope.matchesArr[m].match_awayTeam;
+													$scope.playOffFixtureObj[m].match_pair = $scope.matchesArr[m].match_pair;
+													$scope.playOffFixtureObj[m].pair_status = $scope.matchesArr[m].pair_status;
+													$scope.playOffFixtureObj[m].match_date = moment(playOffDateArr[playOffIndex]).toISOString();
+													$scope.playOffFixtureObj[m].match_time = timeArr[0];
+													$scope.playOffFixtureObj[m].match_fixture = "play off";
+													$scope.playOffFixtureObj[m].match_field = fieldArr[0];
+													$scope.playOffFixtureObj[m].match_started = "";
+													$scope.playOffFixtureObj[m].competition_id = entry.id;
+													$scope.playOffFixtureObj[m].match_venue = entry.comp_address.venue.nama;
+										
+													if(moment(playOffDateArr[playOffIndex]).format('dddd') === 'Monday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDateArr[playOffIndex]).format('dddd') === 'Tuesday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDateArr[playOffIndex]).format('dddd') === 'Wednesday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDateArr[playOffIndex]).format('dddd') === 'Thursday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDateArr[playOffIndex]).format('dddd') === 'Friday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDateArr[playOffIndex]).format('dddd') === 'Saturday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(playOffDateArr[playOffIndex]).format('dddd') === 'Sunday'){
+														$scope.playOffFixtureObj[m].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+														$scope.playOffFixtureObj[m].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+													}
+													refereeIndex++;
+													analystIndex++;
+													playOffIndex++;
+												};
+												console.log($scope.playOffFixtureObj);
+											},6000);
 										}
-	
 
 										// round of 16
 										var pair = 1;
+										var pairStatusArr = ["home","away"];
+										var pairStatusIndex = 0;
 										var roundOf16Index = 0;
 										if(entry.comp_numOfTeam === 32){
-											timeIndex = 0;
-											for(var m = 0; m < 8; m++){
-												$scope.roundOf16FixtureObj[m] = {};
-												$scope.roundOf16FixtureObj[m].id = "MA" + $rootScope.randomString + 16 + m;
-												$scope.roundOf16FixtureObj[m].match_homeTeam = "";
-												$scope.roundOf16FixtureObj[m].match_awayTeam = "";
-												$scope.roundOf16FixtureObj[m].match_date = moment(roundOf16DateArr[roundOf16Index]).toISOString();
-												$scope.roundOf16FixtureObj[m].match_time = timeArr[timeIndex];
-												$scope.roundOf16FixtureObj[m].match_fixture = "round of 16";
-												$scope.roundOf16FixtureObj[m].field = 1;
-												$scope.roundOf16FixtureObj[m].match_pair = pair;
-												$scope.roundOf16FixtureObj[m].match_started = "";
-												$scope.roundOf16FixtureObj[m].competition_id = entry.id;
+											setTimeout(function(){
+												timeIndex = 0;
+												refereeIndex = 0;
+												analystIndex = 0;
+												for(var m = 0; m < 8; m++){
+													$scope.roundOf16FixtureObj[m] = {};
+													$scope.roundOf16FixtureObj[m].match_homeTeamObj = {};
+													$scope.roundOf16FixtureObj[m].match_homeTeamObj.team_name = '';
+													$scope.roundOf16FixtureObj[m].match_homeTeamObj.score = 0;
+													$scope.roundOf16FixtureObj[m].match_homeTeamObj.formation = '';
+													$scope.roundOf16FixtureObj[m].match_homeTeamObj.lineup = '';
+													$scope.roundOf16FixtureObj[m].match_homeTeamObj.lastLineup = '';
+													$scope.roundOf16FixtureObj[m].match_homeTeamObj.sub = '';
+													$scope.roundOf16FixtureObj[m].match_homeTeamObj.lastSub = '';
+													$scope.roundOf16FixtureObj[m].match_homeTeamObj.player = '';
 
-												timeIndex++;
-												if((m+1) % 4 === 0){
-													roundOf16Index++;
-													timeIndex = 0;
+													$scope.roundOf16FixtureObj[m].match_awayTeamObj = {};
+													$scope.roundOf16FixtureObj[m].match_awayTeamObj.team_name = '';
+													$scope.roundOf16FixtureObj[m].match_awayTeamObj.score = 0;
+													$scope.roundOf16FixtureObj[m].match_awayTeamObj.formation = '';
+													$scope.roundOf16FixtureObj[m].match_awayTeamObj.lineup = '';
+													$scope.roundOf16FixtureObj[m].match_awayTeamObj.lastLineup = '';
+													$scope.roundOf16FixtureObj[m].match_awayTeamObj.sub = '';
+													$scope.roundOf16FixtureObj[m].match_awayTeamObj.lastSub = '';
+													$scope.roundOf16FixtureObj[m].match_awayTeamObj.player = '';
+
+													$scope.roundOf16FixtureObj[m].id = "MA" + $rootScope.randomString + 16 + m;
+													$scope.roundOf16FixtureObj[m].match_homeTeam = "";
+													$scope.roundOf16FixtureObj[m].match_awayTeam = "";
+													$scope.roundOf16FixtureObj[m].match_pair = pair;
+													$scope.roundOf16FixtureObj[m].pair_status = pairStatusArr[pairStatusIndex];
+													$scope.roundOf16FixtureObj[m].last_pair = m+1;
+													$scope.roundOf16FixtureObj[m].match_date = moment(roundOf16DateArr[roundOf16Index]).toISOString();
+													$scope.roundOf16FixtureObj[m].match_time = timeArr[timeIndex];
+													$scope.roundOf16FixtureObj[m].match_fixture = "round of 16";
+													$scope.roundOf16FixtureObj[m].match_field = 1;
+													$scope.roundOf16FixtureObj[m].match_started = "";
+													$scope.roundOf16FixtureObj[m].competition_id = entry.id;
+													$scope.roundOf16FixtureObj[m].match_venue = entry.comp_address.venue.nama;
+										
+													if(moment(roundOf16DateArr[roundOf16Index]).format('dddd') === 'Monday'){
+														$scope.roundOf16FixtureObj[m].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+														$scope.roundOf16FixtureObj[m].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(roundOf16DateArr[roundOf16Index]).format('dddd') === 'Tuesday'){
+														$scope.roundOf16FixtureObj[m].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+														$scope.roundOf16FixtureObj[m].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(roundOf16DateArr[roundOf16Index]).format('dddd') === 'Wednesday'){
+														$scope.roundOf16FixtureObj[m].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+														$scope.roundOf16FixtureObj[m].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(roundOf16DateArr[roundOf16Index]).format('dddd') === 'Thursday'){
+														$scope.roundOf16FixtureObj[m].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+														$scope.roundOf16FixtureObj[m].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(roundOf16DateArr[roundOf16Index]).format('dddd') === 'Friday'){
+														$scope.roundOf16FixtureObj[m].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+														$scope.roundOf16FixtureObj[m].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(roundOf16DateArr[roundOf16Index]).format('dddd') === 'Saturday'){
+														$scope.roundOf16FixtureObj[m].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+														$scope.roundOf16FixtureObj[m].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(roundOf16DateArr[roundOf16Index]).format('dddd') === 'Sunday'){
+														$scope.roundOf16FixtureObj[m].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+														$scope.roundOf16FixtureObj[m].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+													}
+												
+													refereeIndex++;
+													analystIndex++;
+													timeIndex = timeIndex + 2;
+													pairStatusIndex++;
+													if((m+1) % 2 === 0){
+														pairStatusIndex = 0;
+													}
+													if((m+1) % 4 === 0){
+														roundOf16Index++;
+														timeIndex = 0;
+													}
+													if(m % 2 !== 0){
+														pair++;
+													}
 												}
-												if(m % 2 !== 0){
-													pair++;
-												}
-											}
+												console.log($scope.roundOf16FixtureObj);
+											},6000);
 										}
 
 										// quarter final
 										var pair = 1;
+										var pairStatusArr = ["home","away"];
+										var pairStatusIndex = 0;
 										var quarterFinalIndex = 0;
 										if(entry.comp_numOfTeam !== 8){
-											timeIndex = 0;
-											for(var m = 0; m < 4; m++){
-												$scope.quarterFinalFixtureObj[m] = {};
-												$scope.quarterFinalFixtureObj[m].id = "MA" + $rootScope.randomString + 16 + m;
-												$scope.quarterFinalFixtureObj[m].match_homeTeam = "";
-												$scope.quarterFinalFixtureObj[m].match_awayTeam = "";
-												$scope.quarterFinalFixtureObj[m].match_date = moment(quarterFinalDateArr[quarterFinalIndex]).toISOString();
-												if(entry.comp_numOfTeam === 16){
-													$scope.quarterFinalFixtureObj[m].match_time = timeArr[0];
-												}
-												$scope.quarterFinalFixtureObj[m].match_time = timeArr[timeIndex];
-												$scope.quarterFinalFixtureObj[m].match_fixture = "quarter final";
-												$scope.quarterFinalFixtureObj[m].field = 1;
-												$scope.quarterFinalFixtureObj[m].match_pair = pair;
-												$scope.quarterFinalFixtureObj[m].match_started = "";
-												$scope.quarterFinalFixtureObj[m].competition_id = entry.id;
+											setTimeout(function(){
+												refereeIndex = 0;
+												analystIndex = 0;
+												timeIndex = 0;
+												for(var m = 0; m < 4; m++){
+													$scope.quarterFinalFixtureObj[m] = {};
+													$scope.quarterFinalFixtureObj[m].match_homeTeamObj = {};
+													$scope.quarterFinalFixtureObj[m].match_homeTeamObj.team_name = '';
+													$scope.quarterFinalFixtureObj[m].match_homeTeamObj.score = 0;
+													$scope.quarterFinalFixtureObj[m].match_homeTeamObj.formation = '';
+													$scope.quarterFinalFixtureObj[m].match_homeTeamObj.lineup = '';
+													$scope.quarterFinalFixtureObj[m].match_homeTeamObj.lastLineup = '';
+													$scope.quarterFinalFixtureObj[m].match_homeTeamObj.sub = '';
+													$scope.quarterFinalFixtureObj[m].match_homeTeamObj.lastSub = '';
+													$scope.quarterFinalFixtureObj[m].match_homeTeamObj.player = '';
 
-												
-												if(entry.comp_numOfTeam === 16){
-													quarterFinalIndex++;	
-												}
-												
-												if(m % 2 !== 0){
-													pair++;
-												}
-												if(entry.comp_numOfTeam === 32){
-													timeIndex++;
+													$scope.quarterFinalFixtureObj[m].match_awayTeamObj = {};
+													$scope.quarterFinalFixtureObj[m].match_awayTeamObj.team_name = '';
+													$scope.quarterFinalFixtureObj[m].match_awayTeamObj.score = 0;
+													$scope.quarterFinalFixtureObj[m].match_awayTeamObj.formation = '';
+													$scope.quarterFinalFixtureObj[m].match_awayTeamObj.lineup = '';
+													$scope.quarterFinalFixtureObj[m].match_awayTeamObj.lastLineup = '';
+													$scope.quarterFinalFixtureObj[m].match_awayTeamObj.sub = '';
+													$scope.quarterFinalFixtureObj[m].match_awayTeamObj.lastSub = '';
+													$scope.quarterFinalFixtureObj[m].match_awayTeamObj.player = '';
+
+													$scope.quarterFinalFixtureObj[m].id = "MA" + $rootScope.randomString + 16 + m;
+													$scope.quarterFinalFixtureObj[m].match_homeTeam = "";
+													$scope.quarterFinalFixtureObj[m].match_awayTeam = "";
+													$scope.quarterFinalFixtureObj[m].match_pair = pair;
+													$scope.quarterFinalFixtureObj[m].pair_status = pairStatusArr[pairStatusIndex];
+													$scope.quarterFinalFixtureObj[m].last_pair = m+1;
+													$scope.quarterFinalFixtureObj[m].match_date = moment(quarterFinalDateArr[quarterFinalIndex]).toISOString();
+													$scope.quarterFinalFixtureObj[m].match_time = timeArr[timeIndex];
+													$scope.quarterFinalFixtureObj[m].match_fixture = "quarter final";
+													$scope.quarterFinalFixtureObj[m].match_field = 1;
+													$scope.quarterFinalFixtureObj[m].match_started = "";
+													$scope.quarterFinalFixtureObj[m].competition_id = entry.id;
+													$scope.quarterFinalFixtureObj[m].match_venue = entry.comp_address.venue.nama;
+										
+													if(moment(quarterFinalDateArr[quarterFinalIndex]).format('dddd') === 'Monday'){
+														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(quarterFinalDateArr[quarterFinalIndex]).format('dddd') === 'Tuesday'){
+														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(quarterFinalDateArr[quarterFinalIndex]).format('dddd') === 'Wednesday'){
+														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(quarterFinalDateArr[quarterFinalIndex]).format('dddd') === 'Thursday'){
+														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(quarterFinalDateArr[quarterFinalIndex]).format('dddd') === 'Friday'){
+														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(quarterFinalDateArr[quarterFinalIndex]).format('dddd') === 'Saturday'){
+														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(quarterFinalDateArr[quarterFinalIndex]).format('dddd') === 'Sunday'){
+														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+													}
+
+													refereeIndex++;
+													analystIndex++;
+													pairStatusIndex++;
 													if((m+1) % 2 === 0){
-														quarterFinalIndex++;
-														timeIndex = 0;
+														pairStatusIndex = 0;
+													}
+
+													if(entry.comp_numOfTeam === 16){
+														$scope.quarterFinalFixtureObj[m].match_time = timeArr[0];
+													}
+																										
+													if(entry.comp_numOfTeam === 16){
+														quarterFinalIndex++;	
+													}
+													
+													if(m % 2 !== 0){
+														pair++;
+													}
+													if(entry.comp_numOfTeam === 32){
+														timeIndex = timeIndex + 2;
+														if((m+1) % 2 === 0){
+															quarterFinalIndex++;
+															timeIndex = 0;
+														}
 													}
 												}
-											}
+												console.log($scope.quarterFinalFixtureObj);			
+											},6000);
 										}
 
 										// semi final
-										var semiFinalIndex = 0;
-										for(var m = 0; m < 2; m++){
-											$scope.semiFinalFixtureObj[m] = {};
-											$scope.semiFinalFixtureObj[m].id = "MA" + $rootScope.randomString + 16 + m;
-											$scope.semiFinalFixtureObj[m].match_homeTeam = "";
-											$scope.semiFinalFixtureObj[m].match_awayTeam = "";
-											$scope.semiFinalFixtureObj[m].match_date = moment(semiFinalDateArr[semiFinalIndex]).toISOString();
-											$scope.semiFinalFixtureObj[m].match_time = timeArr[1];
-											$scope.semiFinalFixtureObj[m].match_fixture = "semi final";
-											$scope.semiFinalFixtureObj[m].field = 1;
-											$scope.semiFinalFixtureObj[m].match_pair = 1;
-											$scope.semiFinalFixtureObj[m].match_started = "";
-											$scope.semiFinalFixtureObj[m].competition_id = entry.id;
+										setTimeout(function(){
+											var semiFinalIndex = 0;
+											refereeIndex = 0;
+											analystIndex = 0;
+											var pairStatusArr = ["home","away"];
+											var pairStatusIndex = 0;
+											for(var m = 0; m < 2; m++){
+												$scope.semiFinalFixtureObj[m] = {};
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj = {};
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.team_name = '';
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.score = 0;
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.formation = '';
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.lineup = '';
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.lastLineup = '';
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.sub = '';
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.lastSub = '';
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.player = '';
 
-											semiFinalIndex++;
-										}
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj = {};
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.team_name = '';
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.score = 0;
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.formation = '';
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.lineup = '';
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.lastLineup = '';
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.sub = '';
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.lastSub = '';
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.player = '';
 
+												$scope.semiFinalFixtureObj[m].id = "MA" + $rootScope.randomString + 16 + m;
+												$scope.semiFinalFixtureObj[m].match_homeTeam = "";
+												$scope.semiFinalFixtureObj[m].match_awayTeam = "";
+												$scope.semiFinalFixtureObj[m].match_pair = 1;
+												$scope.semiFinalFixtureObj[m].pair_status = pairStatusArr[pairStatusIndex];
+												$scope.semiFinalFixtureObj[m].last_pair = m+1;
+												$scope.semiFinalFixtureObj[m].match_date = moment(semiFinalDateArr[semiFinalIndex]).toISOString();
+												$scope.semiFinalFixtureObj[m].match_time = timeArr[1];
+												$scope.semiFinalFixtureObj[m].match_fixture = "semi final";
+												$scope.semiFinalFixtureObj[m].match_field = 1;
+												$scope.semiFinalFixtureObj[m].match_started = "";
+												$scope.semiFinalFixtureObj[m].competition_id = entry.id;
+												$scope.semiFinalFixtureObj[m].match_venue = entry.comp_address.venue.nama;
+									
+												if(moment(semiFinalDateArr[semiFinalIndex]).format('dddd') === 'Monday'){
+													$scope.semiFinalFixtureObj[m].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+													$scope.semiFinalFixtureObj[m].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(semiFinalDateArr[semiFinalIndex]).format('dddd') === 'Tuesday'){
+													$scope.semiFinalFixtureObj[m].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+													$scope.semiFinalFixtureObj[m].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(semiFinalDateArr[semiFinalIndex]).format('dddd') === 'Wednesday'){
+													$scope.semiFinalFixtureObj[m].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+													$scope.semiFinalFixtureObj[m].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(semiFinalDateArr[semiFinalIndex]).format('dddd') === 'Thursday'){
+													$scope.semiFinalFixtureObj[m].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+													$scope.semiFinalFixtureObj[m].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(semiFinalDateArr[semiFinalIndex]).format('dddd') === 'Friday'){
+													$scope.semiFinalFixtureObj[m].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+													$scope.semiFinalFixtureObj[m].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(semiFinalDateArr[semiFinalIndex]).format('dddd') === 'Saturday'){
+													$scope.semiFinalFixtureObj[m].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+													$scope.semiFinalFixtureObj[m].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(semiFinalDateArr[semiFinalIndex]).format('dddd') === 'Sunday'){
+													$scope.semiFinalFixtureObj[m].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+													$scope.semiFinalFixtureObj[m].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+												}
+											
+												refereeIndex++;
+												analystIndex++;
+												semiFinalIndex++;
+												pairStatusIndex++;
+												if((m+1) % 2 === 0){
+													pairStatusIndex = 0;
+												}
+											}
+											console.log($scope.semiFinalFixtureObj);			
+										},6000);
+									
 										// final
-										$scope.finalFixtureObj = {};
-										$scope.finalFixtureObj.id = "MA" + $rootScope.randomString;
-										$scope.finalFixtureObj.match_homeTeam = "";
-										$scope.finalFixtureObj.match_awayTeam = "";
-										$scope.finalFixtureObj.match_date = moment(finalDate).toISOString();
-										$scope.finalFixtureObj.match_time = timeArr[1];
-										$scope.finalFixtureObj.match_fixture = "final";
-										$scope.finalFixtureObj.field = 1;
-										$scope.finalFixtureObj.match_started = "";
-										$scope.finalFixtureObj.competition_id = entry.id;
-									}
+										setTimeout(function(){
+											refereeIndex = 0;
+											analystIndex = 0;
+											$scope.finalFixtureObj = {};
+											$scope.finalFixtureObj.match_homeTeamObj = {};
+											$scope.finalFixtureObj.match_homeTeamObj.team_name = '';
+											$scope.finalFixtureObj.match_homeTeamObj.score = 0;
+											$scope.finalFixtureObj.match_homeTeamObj.formation = '';
+											$scope.finalFixtureObj.match_homeTeamObj.lineup = '';
+											$scope.finalFixtureObj.match_homeTeamObj.lastLineup = '';
+											$scope.finalFixtureObj.match_homeTeamObj.sub = '';
+											$scope.finalFixtureObj.match_homeTeamObj.lastSub = '';
+											$scope.finalFixtureObj.match_homeTeamObj.player = '';
+
+											$scope.finalFixtureObj.match_awayTeamObj = {};
+											$scope.finalFixtureObj.match_awayTeamObj.team_name = '';
+											$scope.finalFixtureObj.match_awayTeamObj.score = 0;
+											$scope.finalFixtureObj.match_awayTeamObj.formation = '';
+											$scope.finalFixtureObj.match_awayTeamObj.lineup = '';
+											$scope.finalFixtureObj.match_awayTeamObj.lastLineup = '';
+											$scope.finalFixtureObj.match_awayTeamObj.sub = '';
+											$scope.finalFixtureObj.match_awayTeamObj.lastSub = '';
+											$scope.finalFixtureObj.match_awayTeamObj.player = '';
+
+											$scope.finalFixtureObj.id = "MA" + $rootScope.randomString;
+											$scope.finalFixtureObj.match_homeTeam = "";
+											$scope.finalFixtureObj.match_awayTeam = "";
+											$scope.finalFixtureObj.match_pair = 1;
+											$scope.finalFixtureObj.match_date = moment(finalDate).toISOString();
+											$scope.finalFixtureObj.match_time = timeArr[1];
+											$scope.finalFixtureObj.match_fixture = "final";
+											$scope.finalFixtureObj.match_field = 1;
+											$scope.finalFixtureObj.match_started = "";
+											$scope.finalFixtureObj.competition_id = entry.id;
+											$scope.finalFixtureObj.match_venue = entry.comp_address.venue.nama;
+								
+											if(moment(finalDate).format('dddd') === 'Monday'){
+												$scope.finalFixtureObj.match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+												$scope.finalFixtureObj.match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(finalDate).format('dddd') === 'Tuesday'){
+												$scope.finalFixtureObj.match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+												$scope.finalFixtureObj.match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(finalDate).format('dddd') === 'Wednesday'){
+												$scope.finalFixtureObj.match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+												$scope.finalFixtureObj.match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(finalDate).format('dddd') === 'Thursday'){
+												$scope.finalFixtureObj.match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+												$scope.finalFixtureObj.match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(finalDate).format('dddd') === 'Friday'){
+												$scope.finalFixtureObj.match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+												$scope.finalFixtureObj.match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(finalDate).format('dddd') === 'Saturday'){
+												$scope.finalFixtureObj.match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+												$scope.finalFixtureObj.match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(finalDate).format('dddd') === 'Sunday'){
+												$scope.finalFixtureObj.match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+												$scope.finalFixtureObj.match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+											}
+											console.log($scope.finalFixtureObj);										
+										},6000);
+									// }
 								}
 								
-								localStorage.setItem("knockoutSchedulingStat", "Completed");
+								// localStorage.setItem("knockoutSchedulingStat", "Completed");
+								
+								// var savedMatchesPlayOff = [];
+								// var savedMatchesRoundOf16 = [];
+								// var savedMatchesQuarterFinal = [];
+								// var savedMatchesSemiFinal = [];
+								// var savedMatchesThirdPlace = [];
+								// var savedMatchesFinal = [];
 
-								console.log($scope.playOffFixtureObj);
-								console.log($scope.roundOf16FixtureObj);
-								console.log($scope.quarterFinalFixtureObj);
-								console.log($scope.semiFinalFixtureObj);
-								console.log($scope.finalFixtureObj);
-
-								// $scope.matchesArr.forEach(function(match){
-								// 	console.log(match);
-								// });
-
-								var savedMatchesPlayOff = [];
-								var savedMatchesRoundOf16 = [];
-								var savedMatchesQuarterFinal = [];
-								var savedMatchesSemiFinal = [];
-								var savedMatchesThirdPlace = [];
-								var savedMatchesFinal = [];
-
-								localStorage.setItem("playOffMatchesStatus", "On Progress");
-								localStorage.setItem("roundOf16MatchesStatus", "On Progress");
-								localStorage.setItem("quarterFinalMatchesStatus", "On Progress");
-								localStorage.setItem("semiFinalMatchesStatus", "On Progress");
-								localStorage.setItem("thirdPlaceMatchesStatus", "On Progress");
-								localStorage.setItem("finalMatchesStatus", "On Progress");
+								// localStorage.setItem("playOffMatchesStatus", "On Progress");
+								// localStorage.setItem("roundOf16MatchesStatus", "On Progress");
+								// localStorage.setItem("quarterFinalMatchesStatus", "On Progress");
+								// localStorage.setItem("semiFinalMatchesStatus", "On Progress");
+								// localStorage.setItem("thirdPlaceMatchesStatus", "On Progress");
+								// localStorage.setItem("finalMatchesStatus", "On Progress");
 
 								// check if the schedule status is on queue
 								if(entry.schedule_status === 'On Queue'){
@@ -1529,166 +2995,115 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 									console.log("save data to database");
 
 									setTimeout(function(){
+										console.log($scope.playOffFixtureObj);
+									
+										var timeoutTime = 1000;
 
 										$scope.playOffFixtureObj.forEach(function(entry){
-											if(localStorage.getItem("playOffMatchesStatus") === 'On Progress'){
-												console.log(savedMatchesPlayOff);
-												console.log(entry.id);
-												if(savedMatchesPlayOff.indexOf(entry.id) === -1){
-													addMatchDelay(entry);
-													savedMatchesPlayOff.push(entry.id);
-												}else{
-													console.log("sudah ad");
-													localStorage.setItem("playOffMatchesStatus", "Completed");
-												}
-											}
+											addMatchDelay(entry,timeoutTime);										
+											timeoutTime += 10;
 										});
 
 										// 	set timer to addMatch function to minimize the number of request per second to prevent failed request
-										function addMatchDelay(entry){
+										function addMatchDelay(entry,timeoutTime){
 											setTimeout(function(){
 												//insert data to database
 												console.log("blm ad");
 												MatchService.addMatch(entry).success(function(data){
-													// $ionicLoading.hide();
 													console.log("add match");
 													console.log(data);
-													savedMatchesPlayOff.push(entry.id);
 												}).error(function(data){
-													// $ionicLoading.hide();
+													$ionicLoading.hide();
 												});
 												//insert data to database
-											},2000);
+											},timeoutTime);
 										}
 
 										if(entry.comp_numOfTeam === 32){
-
+											var timeoutTime = 1000;
 											$scope.roundOf16FixtureObj.forEach(function(entry){
-												if(localStorage.getItem("roundOf16MatchesStatus") === 'On Progress'){
-													console.log(savedMatchesRoundOf16);
-													console.log(entry.id);
-													if(savedMatchesRoundOf16.indexOf(entry.id) === -1){
-														addMatchDelay(entry);
-														savedMatchesRoundOf16.push(entry.id);
-													}else{
-														console.log("sudah ad");
-														localStorage.setItem("roundOf16MatchesStatus", "Completed");
-													}
-												}
+												addMatchDelay(entry,timeoutTime);
+												timeoutTime += 10;
 											});
 
 											//	set timer to addMatch function to minimize the number of request per second to prevent failed request
-											function addMatchDelay(entry){
+											function addMatchDelay(entry,timeoutTime){
 												setTimeout(function(){
 													//insert data to database
 													console.log("blm ad");
 													MatchService.addMatch(entry).success(function(data){
-														// $ionicLoading.hide();
 														console.log("add match");
 														console.log(data);
-														savedMatchesRoundOf16.push(entry.id);
 													}).error(function(data){
-														// $ionicLoading.hide();
+														$ionicLoading.hide();
 													});
 													//insert data to database
-												},2000);
+												},timeoutTime);
 											}
 										}
 
 										if(entry.comp_numOfTeam !== 8){
-
+											var timeoutTime = 1000;
 											$scope.quarterFinalFixtureObj.forEach(function(entry){
-												if(localStorage.getItem("quarterFinalMatchesStatus") === 'On Progress'){
-													console.log(savedMatchesQuarterFinal);
-													console.log(entry.id);
-													if(savedMatchesQuarterFinal.indexOf(entry.id) === -1){
-														addMatchDelay(entry);
-														savedMatchesQuarterFinal.push(entry.id);
-													}else{
-														console.log("sudah ad");
-														localStorage.setItem("quarterFinalMatchesStatus", "Completed");
-													}
-												}
+												addMatchDelay(entry,timeoutTime);
+												timeoutTime += 10;
 											});
 
 											//	set timer to addMatch function to minimize the number of request per second to prevent failed request
-											function addMatchDelay(entry){
+											function addMatchDelay(entry,timeoutTime){
 												setTimeout(function(){
 													//insert data to database
 													console.log("blm ad");
 													MatchService.addMatch(entry).success(function(data){
-														// $ionicLoading.hide();
 														console.log("add match");
 														console.log(data);
-														savedMatchesQuarterFinal.push(entry.id);
 													}).error(function(data){
-														// $ionicLoading.hide();
+														$ionicLoading.hide();
 													});
 													//insert data to database
-												},2000);
+												},timeoutTime);
 											}
 										}
 
 										$scope.semiFinalFixtureObj.forEach(function(entry){
-											if(localStorage.getItem("semiFinalMatchesStatus") === 'On Progress'){
-												console.log(savedMatchesSemiFinal);
-												console.log(entry.id);
-												if(savedMatchesSemiFinal.indexOf(entry.id) === -1){
-													addMatchDelay(entry);
-													savedMatchesSemiFinal.push(entry.id);
-												}else{
-													console.log("sudah ad");
-													localStorage.setItem("semiFinalMatchesStatus", "Completed");
-												}
-											}
+											addMatchDelay(entry,timeoutTime);
+											timeoutTime += 10;
 										});
 
-										//	set timer to addMatch function to minimize the number of request per second to prevent failed request
-										function addMatchDelay(entry){
+										// set timer to addMatch function to minimize the number of request per second to prevent failed request
+										function addMatchDelay(entry,timeoutTime){
 											setTimeout(function(){
 												//insert data to database
 												console.log("blm ad");
 												MatchService.addMatch(entry).success(function(data){
-													// $ionicLoading.hide();
 													console.log("add match");
 													console.log(data);
-													savedMatchesSemiFinal.push(entry.id);
 												}).error(function(data){
-													// $ionicLoading.hide();
+													$ionicLoading.hide();
 												});
 												//insert data to database
-											},2000);
+											},timeoutTime);
 										}							
 										
-										if(localStorage.getItem("finalMatchesStatus") === 'On Progress'){
-											console.log(savedMatchesFinal);
-											if(savedMatchesFinal.indexOf($scope.finalFixtureObj.id) === -1){
-												addMatchDelay($scope.finalFixtureObj);
-												savedMatchesFinal.push($scope.finalFixtureObj.id);
-											}else{
-												console.log("sudah ad");
-												localStorage.setItem("finalMatchesStatus", "Completed");
-											}
-										}
-
+										addMatchDelay($scope.finalFixtureObj,timeoutTime);
+										timeoutTime += 10;
+									
 										//	set timer to addMatch function to minimize the number of request per second to prevent failed request
-										function addMatchDelay(entry){
+										function addMatchDelay(entry,timeoutTime){
 											setTimeout(function(){
 												//insert data to database
 												console.log("blm ad");
 												MatchService.addMatch(entry).success(function(data){
-													// $ionicLoading.hide();
 													console.log("add match");
 													console.log(data);
-													savedMatchesFinal.push(entry.id);
 												}).error(function(data){
-													// $ionicLoading.hide();
+													$ionicLoading.hide();
 												});
 												//insert data to database
-											},2000);
+											},timeoutTime);
 										}			
 
-									},50000);
+									},15000);
 								}
 
 								// another timer to change the schedule status to on progress
@@ -1712,7 +3127,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 											console.log("gagal");
 										});
 									}
-								},100000);
+								},20000);
 								
 							// Combination System	
 							}else{
@@ -1842,13 +3257,13 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 									$scope.savedClassementArr = [];
 									localStorage.setItem("classementStatus", 'On Progress');
-									if(entry.classement_status === null){
+									if(entry.classement_status === null || entry.classement_status === ''){
 										
 											setTimeout(function(){
 												$scope.classementArr.forEach(function(classement){
 													if(localStorage.getItem("classementStatus") === 'On Progress'){
-														console.log($scope.savedClassementArr);
-														console.log(classement.id);
+														// console.log($scope.savedClassementArr);
+														// console.log(classement.id);
 														if($scope.savedClassementArr.indexOf(classement.id) === -1){
 															addClassementDelay(classement);
 															$scope.savedClassementArr.push(classement.id);
@@ -1866,19 +3281,19 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 															ClassementService.addClassement(classement).success(function(data){
 																// $ionicLoading.hide();
 																console.log("create classement");
-																console.log(data);
+																// console.log(data);
 																$scope.savedClassementArr.push(classement.id);
 															}).error(function(data){
 																// $ionicLoading.hide();
 															});
 														//insert data to database
-													},2000);
+													},4000);
 												}
 											},10000);
 										
 									}
 
-									if(entry.classement_status === null){
+									if(entry.classement_status === null || entry.classement_status === ''){
 										setTimeout(function(){
 											console.log("change classement status to completed");
 												$scope.formCompetition = {};
@@ -1953,7 +3368,6 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 								        var fixture = round + 1;
 								        // console.log("Round " + fixture + " : " + $scope.matches[round]);
 								    }
-
 								}
 								console.log($scope.classementArr);
 								console.log($scope.matchesGroupA.matches);
@@ -2128,8 +3542,10 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 								
 								console.log(numOfDays);
 
-								setTimeout(function(){
-									if(numOfDays === 21){
+							setTimeout(function(){
+
+								// 21 Days
+								if(numOfDays === 21){
 									console.log("21");
 									if(entry.comp_numOfTeam === 32){
 										console.log("32");
@@ -2170,191 +3586,590 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 										quarterFinalDateArr.push(quarterFinalDate1,quarterFinalDate2,quarterFinalDate3);
 										semiFinalDateArr.push(semiFinalDate1,semiFinalDate2);
 
-
 										// Fixture 1
-										var timeIndex = 0;
-										var fieldIndex = 0;
+										setTimeout(function(){
+											var timeIndex = 0;
+											var fieldIndex = 0;
+											var refereeIndex = 0;
+											var analystIndex = 0;
 
-										for(t = 0; t < $scope.firstRoundHomeTeam.length; t++){
-											$scope.firstRoundFixtureObj[t] = {};
-											$scope.firstRoundFixtureObj[t].id = "MA" + $rootScope.randomString + 1 + firstRoundGroupIndex + t;
-											$scope.firstRoundFixtureObj[t].match_homeTeam = $scope.firstRoundHomeTeam[t];
-											$scope.firstRoundFixtureObj[t].match_awayTeam = $scope.firstRoundAwayTeam[t];
-											$scope.firstRoundFixtureObj[t].match_group = $scope.firstRoundMatches.group[firstRoundGroupIndex];
-											$scope.firstRoundFixtureObj[t].match_date = moment(fixture1Date).toISOString();
-											$scope.firstRoundFixtureObj[t].match_time = timeArr[timeIndex];
-											$scope.firstRoundFixtureObj[t].match_fixture = "fixture 1";
-											$scope.firstRoundFixtureObj[t].field = fieldArr[fieldIndex];
-											$scope.firstRoundFixtureObj[t].match_started = "";
-											$scope.firstRoundFixtureObj[t].fixture_number = 1;
-											$scope.firstRoundFixtureObj[t].competition_id = entry.id;
-											
-											fieldIndex++;
-											if(t % 2 != 0){
-												firstRoundGroupIndex++;
-											}
-											if((t+1) % 3 == 0){
-												timeIndex++;
-												fieldIndex = 0;
-											}
+											for(t = 0; t < $scope.firstRoundHomeTeam.length; t++){
+												$scope.firstRoundFixtureObj[t] = {};
+												$scope.firstRoundFixtureObj[t].match_homeTeamObj = {};
+												$scope.firstRoundFixtureObj[t].match_homeTeamObj.team_name = $scope.firstRoundHomeTeam[t];
+												$scope.firstRoundFixtureObj[t].match_homeTeamObj.score = 0;
+												$scope.firstRoundFixtureObj[t].match_homeTeamObj.formation = '';
+												$scope.firstRoundFixtureObj[t].match_homeTeamObj.lineup = '';
+												$scope.firstRoundFixtureObj[t].match_homeTeamObj.lastLineup = '';
+												$scope.firstRoundFixtureObj[t].match_homeTeamObj.sub = '';
+												$scope.firstRoundFixtureObj[t].match_homeTeamObj.lastSub = '';
+												$scope.firstRoundFixtureObj[t].match_homeTeamObj.player = '';
 
-										}
+												$scope.firstRoundFixtureObj[t].match_awayTeamObj = {};
+												$scope.firstRoundFixtureObj[t].match_awayTeamObj.team_name = $scope.firstRoundAwayTeam[t];
+												$scope.firstRoundFixtureObj[t].match_awayTeamObj.score = 0;
+												$scope.firstRoundFixtureObj[t].match_awayTeamObj.formation = '';
+												$scope.firstRoundFixtureObj[t].match_awayTeamObj.lineup = '';
+												$scope.firstRoundFixtureObj[t].match_awayTeamObj.lastLineup = '';
+												$scope.firstRoundFixtureObj[t].match_awayTeamObj.sub = '';
+												$scope.firstRoundFixtureObj[t].match_awayTeamObj.lastSub = '';
+												$scope.firstRoundFixtureObj[t].match_awayTeamObj.player = '';
+
+												$scope.firstRoundFixtureObj[t].id = "MA" + $rootScope.randomString + 1 + firstRoundGroupIndex + t;
+												$scope.firstRoundFixtureObj[t].match_homeTeam = $scope.firstRoundHomeTeam[t];
+												$scope.firstRoundFixtureObj[t].match_awayTeam = $scope.firstRoundAwayTeam[t];
+												$scope.firstRoundFixtureObj[t].match_group = $scope.firstRoundMatches.group[firstRoundGroupIndex];
+												$scope.firstRoundFixtureObj[t].match_date = moment(fixture1Date).toISOString();
+												$scope.firstRoundFixtureObj[t].match_time = timeArr[timeIndex];
+												$scope.firstRoundFixtureObj[t].match_fixture = "fixture 1";
+												$scope.firstRoundFixtureObj[t].match_field = fieldArr[fieldIndex];
+												$scope.firstRoundFixtureObj[t].match_started = "";
+												$scope.firstRoundFixtureObj[t].fixture_number = 1;
+												$scope.firstRoundFixtureObj[t].competition_id = entry.id;
+												$scope.firstRoundFixtureObj[t].match_venue = entry.comp_address.venue.nama;
+
+									
+												if(moment(fixture1Date).format('dddd') === 'Monday'){
+													$scope.firstRoundFixtureObj[t].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+													$scope.firstRoundFixtureObj[t].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture1Date).format('dddd') === 'Tuesday'){
+													$scope.firstRoundFixtureObj[t].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+													$scope.firstRoundFixtureObj[t].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture1Date).format('dddd') === 'Wednesday'){
+													$scope.firstRoundFixtureObj[t].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+													$scope.firstRoundFixtureObj[t].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture1Date).format('dddd') === 'Thursday'){
+													$scope.firstRoundFixtureObj[t].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+													$scope.firstRoundFixtureObj[t].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture1Date).format('dddd') === 'Friday'){
+													$scope.firstRoundFixtureObj[t].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+													$scope.firstRoundFixtureObj[t].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture1Date).format('dddd') === 'Saturday'){
+													$scope.firstRoundFixtureObj[t].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+													$scope.firstRoundFixtureObj[t].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture1Date).format('dddd') === 'Sunday'){
+													$scope.firstRoundFixtureObj[t].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+													$scope.firstRoundFixtureObj[t].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+												}
+
+												refereeIndex++;
+												analystIndex++;
+												fieldIndex++;
+												if(t % 2 != 0){
+													firstRoundGroupIndex++;
+												}
+												if((t+1) % 3 == 0){
+													timeIndex++;
+													fieldIndex = 0;
+												}
+											}
+											console.log($scope.firstRoundFixtureObj);
+										},6000);
 
 										// Fixture 2
-										timeIndex = 0;
-										fieldIndex = 0;
-										for(t = 0; t < $scope.secondRoundHomeTeam.length; t++){
-											$scope.secondRoundFixtureObj[t] = {};
-											$scope.secondRoundFixtureObj[t].id = "MA" + $rootScope.randomString + 2 + secondRoundGroupIndex + t;
-											$scope.secondRoundFixtureObj[t].match_homeTeam = $scope.secondRoundHomeTeam[t];
-											$scope.secondRoundFixtureObj[t].match_awayTeam = $scope.secondRoundAwayTeam[t];
-											$scope.secondRoundFixtureObj[t].match_group = $scope.firstRoundMatches.group[secondRoundGroupIndex];
-											$scope.secondRoundFixtureObj[t].match_date = moment(fixture2Date).toISOString();
-											$scope.secondRoundFixtureObj[t].match_time = timeArr[timeIndex];
-											$scope.secondRoundFixtureObj[t].match_fixture = "fixture 2";
-											$scope.secondRoundFixtureObj[t].field = fieldArr[fieldIndex];
-											$scope.secondRoundFixtureObj[t].match_started = "";
-											$scope.secondRoundFixtureObj[t].fixture_number = 2;
-											$scope.secondRoundFixtureObj[t].competition_id = entry.id;
+										setTimeout(function(){
+											timeIndex = 0;
+											fieldIndex = 0;
+											refereeIndex = 0;
+											analystIndex = 0;
 
-											fieldIndex++;
-											if(t % 2 != 0){
-												secondRoundGroupIndex++;
-											}
-											if((t+1) % 3 == 0){
-												timeIndex++;
-												fieldIndex = 0;
-											}
-										}
+											for(t = 0; t < $scope.secondRoundHomeTeam.length; t++){
+												$scope.secondRoundFixtureObj[t] = {};
+												$scope.secondRoundFixtureObj[t].match_homeTeamObj = {};
+												$scope.secondRoundFixtureObj[t].match_homeTeamObj.team_name = $scope.secondRoundHomeTeam[t];
+												$scope.secondRoundFixtureObj[t].match_homeTeamObj.score = 0;
+												$scope.secondRoundFixtureObj[t].match_homeTeamObj.formation = '';
+												$scope.secondRoundFixtureObj[t].match_homeTeamObj.lineup = '';
+												$scope.secondRoundFixtureObj[t].match_homeTeamObj.lastLineup = '';
+												$scope.secondRoundFixtureObj[t].match_homeTeamObj.sub = '';
+												$scope.secondRoundFixtureObj[t].match_homeTeamObj.lastSub = '';
+												$scope.secondRoundFixtureObj[t].match_homeTeamObj.player = '';
 
+												$scope.secondRoundFixtureObj[t].match_awayTeamObj = {};
+												$scope.secondRoundFixtureObj[t].match_awayTeamObj.team_name = $scope.secondRoundAwayTeam[t];
+												$scope.secondRoundFixtureObj[t].match_awayTeamObj.score = 0;
+												$scope.secondRoundFixtureObj[t].match_awayTeamObj.formation = '';
+												$scope.secondRoundFixtureObj[t].match_awayTeamObj.lineup = '';
+												$scope.secondRoundFixtureObj[t].match_awayTeamObj.lastLineup = '';
+												$scope.secondRoundFixtureObj[t].match_awayTeamObj.sub = '';
+												$scope.secondRoundFixtureObj[t].match_awayTeamObj.lastSub = '';
+												$scope.secondRoundFixtureObj[t].match_awayTeamObj.player = '';
+
+												$scope.secondRoundFixtureObj[t].id = "MA" + $rootScope.randomString + 2 + secondRoundGroupIndex + t;
+												$scope.secondRoundFixtureObj[t].match_homeTeam = $scope.secondRoundHomeTeam[t];
+												$scope.secondRoundFixtureObj[t].match_awayTeam = $scope.secondRoundAwayTeam[t];
+												$scope.secondRoundFixtureObj[t].match_group = $scope.secondRoundMatches.group[secondRoundGroupIndex];
+												$scope.secondRoundFixtureObj[t].match_date = moment(fixture2Date).toISOString();
+												$scope.secondRoundFixtureObj[t].match_time = timeArr[timeIndex];
+												$scope.secondRoundFixtureObj[t].match_fixture = "fixture 2";
+												$scope.secondRoundFixtureObj[t].match_field = fieldArr[fieldIndex];
+												$scope.secondRoundFixtureObj[t].match_started = "";
+												$scope.secondRoundFixtureObj[t].fixture_number = 2;
+												$scope.secondRoundFixtureObj[t].competition_id = entry.id;
+												$scope.secondRoundFixtureObj[t].match_venue = entry.comp_address.venue.nama;
+
+									
+												if(moment(fixture2Date).format('dddd') === 'Monday'){
+													$scope.secondRoundFixtureObj[t].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+													$scope.secondRoundFixtureObj[t].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture2Date).format('dddd') === 'Tuesday'){
+													$scope.secondRoundFixtureObj[t].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+													$scope.secondRoundFixtureObj[t].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture2Date).format('dddd') === 'Wednesday'){
+													$scope.secondRoundFixtureObj[t].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+													$scope.secondRoundFixtureObj[t].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture2Date).format('dddd') === 'Thursday'){
+													$scope.secondRoundFixtureObj[t].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+													$scope.secondRoundFixtureObj[t].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture2Date).format('dddd') === 'Friday'){
+													$scope.secondRoundFixtureObj[t].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+													$scope.secondRoundFixtureObj[t].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture2Date).format('dddd') === 'Saturday'){
+													$scope.secondRoundFixtureObj[t].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+													$scope.secondRoundFixtureObj[t].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture2Date).format('dddd') === 'Sunday'){
+													$scope.secondRoundFixtureObj[t].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+													$scope.secondRoundFixtureObj[t].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+												}
+										
+												refereeIndex++;
+												analystIndex++;
+												fieldIndex++;
+												if(t % 2 != 0){
+													secondRoundGroupIndex++;
+												}
+												if((t+1) % 3 == 0){
+													timeIndex++;
+													fieldIndex = 0;
+												}
+											}
+											console.log($scope.secondRoundFixtureObj);
+										},6000);
+										
 										// Fixture 3
-										timeIndex = 0;
-										fieldIndex = 0;
-										for(t = 0; t < $scope.thirdRoundHomeTeam.length; t++){
-											$scope.thirdRoundFixtureObj[t] = {};
-											$scope.thirdRoundFixtureObj[t].id = "MA" + $rootScope.randomString + 3 + secondRoundGroupIndex + t;
-											$scope.thirdRoundFixtureObj[t].match_homeTeam = $scope.thirdRoundHomeTeam[t];
-											$scope.thirdRoundFixtureObj[t].match_awayTeam = $scope.thirdRoundAwayTeam[t];
-											$scope.thirdRoundFixtureObj[t].match_group = $scope.thirdRoundMatches.group[thirdRoundGroupIndex];
-											$scope.thirdRoundFixtureObj[t].match_date = moment(fixture3Date).toISOString();
-											$scope.thirdRoundFixtureObj[t].match_time = timeArr[timeIndex];
-											$scope.thirdRoundFixtureObj[t].match_fixture = "fixture 3";
-											$scope.thirdRoundFixtureObj[t].field = fieldArr[fieldIndex];
-											$scope.thirdRoundFixtureObj[t].match_started = "";
-											$scope.thirdRoundFixtureObj[t].fixture_number = 3;
-											$scope.thirdRoundFixtureObj[t].competition_id = entry.id;
+										setTimeout(function(){
+											timeIndex = 0;
+											fieldIndex = 0;
+											refereeIndex = 0;
+											analystIndex = 0;
 
-											fieldIndex++;
-											if(t % 2 != 0){
-												thirdRoundGroupIndex++;
-											}
-											if((t+1) % 3 == 0){
-												timeIndex++;
-												fieldIndex = 0;
-											}
-										}
+											for(t = 0; t < $scope.thirdRoundHomeTeam.length; t++){
+												$scope.thirdRoundFixtureObj[t] = {};
+												$scope.thirdRoundFixtureObj[t].match_homeTeamObj = {};
+												$scope.thirdRoundFixtureObj[t].match_homeTeamObj.team_name = $scope.thirdRoundHomeTeam[t];
+												$scope.thirdRoundFixtureObj[t].match_homeTeamObj.score = 0;
+												$scope.thirdRoundFixtureObj[t].match_homeTeamObj.formation = '';
+												$scope.thirdRoundFixtureObj[t].match_homeTeamObj.lineup = '';
+												$scope.thirdRoundFixtureObj[t].match_homeTeamObj.lastLineup = '';
+												$scope.thirdRoundFixtureObj[t].match_homeTeamObj.sub = '';
+												$scope.thirdRoundFixtureObj[t].match_homeTeamObj.lastSub = '';
+												$scope.thirdRoundFixtureObj[t].match_homeTeamObj.player = '';
 
+												$scope.thirdRoundFixtureObj[t].match_awayTeamObj = {};
+												$scope.thirdRoundFixtureObj[t].match_awayTeamObj.team_name = $scope.thirdRoundAwayTeam[t];
+												$scope.thirdRoundFixtureObj[t].match_awayTeamObj.score = 0;
+												$scope.thirdRoundFixtureObj[t].match_awayTeamObj.formation = '';
+												$scope.thirdRoundFixtureObj[t].match_awayTeamObj.lineup = '';
+												$scope.thirdRoundFixtureObj[t].match_awayTeamObj.lastLineup = '';
+												$scope.thirdRoundFixtureObj[t].match_awayTeamObj.sub = '';
+												$scope.thirdRoundFixtureObj[t].match_awayTeamObj.lastSub = '';
+												$scope.thirdRoundFixtureObj[t].match_awayTeamObj.player = '';
+
+												$scope.thirdRoundFixtureObj[t].id = "MA" + $rootScope.randomString + 3 + thirdRoundGroupIndex + t;
+												$scope.thirdRoundFixtureObj[t].match_homeTeam = $scope.thirdRoundHomeTeam[t];
+												$scope.thirdRoundFixtureObj[t].match_awayTeam = $scope.thirdRoundAwayTeam[t];
+												$scope.thirdRoundFixtureObj[t].match_group = $scope.thirdRoundMatches.group[thirdRoundGroupIndex];
+												$scope.thirdRoundFixtureObj[t].match_date = moment(fixture3Date).toISOString();
+												$scope.thirdRoundFixtureObj[t].match_time = timeArr[timeIndex];
+												$scope.thirdRoundFixtureObj[t].match_fixture = "fixture 3";
+												$scope.thirdRoundFixtureObj[t].match_field = fieldArr[fieldIndex];
+												$scope.thirdRoundFixtureObj[t].match_started = "";
+												$scope.thirdRoundFixtureObj[t].fixture_number = 3;
+												$scope.thirdRoundFixtureObj[t].competition_id = entry.id;
+												$scope.thirdRoundFixtureObj[t].match_venue = entry.comp_address.venue.nama;
+
+									
+												if(moment(fixture2Date).format('dddd') === 'Monday'){
+													$scope.thirdRoundFixtureObj[t].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+													$scope.thirdRoundFixtureObj[t].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture2Date).format('dddd') === 'Tuesday'){
+													$scope.thirdRoundFixtureObj[t].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+													$scope.thirdRoundFixtureObj[t].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture2Date).format('dddd') === 'Wednesday'){
+													$scope.thirdRoundFixtureObj[t].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+													$scope.thirdRoundFixtureObj[t].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture2Date).format('dddd') === 'Thursday'){
+													$scope.thirdRoundFixtureObj[t].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+													$scope.thirdRoundFixtureObj[t].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture2Date).format('dddd') === 'Friday'){
+													$scope.thirdRoundFixtureObj[t].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+													$scope.thirdRoundFixtureObj[t].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture2Date).format('dddd') === 'Saturday'){
+													$scope.thirdRoundFixtureObj[t].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+													$scope.thirdRoundFixtureObj[t].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture2Date).format('dddd') === 'Sunday'){
+													$scope.thirdRoundFixtureObj[t].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+													$scope.thirdRoundFixtureObj[t].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+												}
+
+												refereeIndex++;
+												analystIndex++;
+												fieldIndex++;
+												if(t % 2 != 0){
+													thirdRoundGroupIndex++;
+												}
+												if((t+1) % 3 == 0){
+													timeIndex++;
+													fieldIndex = 0;
+												}
+											}
+											console.log($scope.thirdRoundFixtureObj);
+										},6000);
+										
 										// Round of 16
-										timeIndex = 0;
-										var pair = 1;
-										for(var m = 0; m < 8; m++){
-											$scope.roundOf16FixtureObj[m] = {};
-											$scope.roundOf16FixtureObj[m].id = "MA" + $rootScope.randomString + 16 + m;
-											$scope.roundOf16FixtureObj[m].match_homeTeam = "";
-											$scope.roundOf16FixtureObj[m].match_awayTeam = "";
-											$scope.roundOf16FixtureObj[m].match_date = moment(roundOf16DateArr[roundOf16Index]).toISOString();
-											$scope.roundOf16FixtureObj[m].match_time = timeArr[timeIndex];
-											$scope.roundOf16FixtureObj[m].match_fixture = "round of 16";
-											$scope.roundOf16FixtureObj[m].field = 1;
-											$scope.roundOf16FixtureObj[m].match_pair = pair;
-											$scope.roundOf16FixtureObj[m].match_started = "";
-											$scope.roundOf16FixtureObj[m].competition_id = entry.id;
+										setTimeout(function(){
+											timeIndex = 0;
+											refereeIndex = 0;
+											analystIndex = 0;
+											var pair = 1;
 
-											timeIndex++;
-											if(m % 2 != 0){
-												roundOf16Index++;
-												timeIndex = 0;
-												pair++;
+											for(var m = 0; m < 8; m++){
+												$scope.roundOf16FixtureObj[m] = {};
+												$scope.roundOf16FixtureObj[m].match_homeTeamObj = {};
+												$scope.roundOf16FixtureObj[m].match_homeTeamObj.team_name = "";
+												$scope.roundOf16FixtureObj[m].match_homeTeamObj.score = 0;
+												$scope.roundOf16FixtureObj[m].match_homeTeamObj.formation = '';
+												$scope.roundOf16FixtureObj[m].match_homeTeamObj.lineup = '';
+												$scope.roundOf16FixtureObj[m].match_homeTeamObj.lastLineup = '';
+												$scope.roundOf16FixtureObj[m].match_homeTeamObj.sub = '';
+												$scope.roundOf16FixtureObj[m].match_homeTeamObj.lastSub = '';
+												$scope.roundOf16FixtureObj[m].match_homeTeamObj.player = '';
+
+												$scope.roundOf16FixtureObj[m].match_awayTeamObj = {};
+												$scope.roundOf16FixtureObj[m].match_awayTeamObj.team_name = "";
+												$scope.roundOf16FixtureObj[m].match_awayTeamObj.score = 0;
+												$scope.roundOf16FixtureObj[m].match_awayTeamObj.formation = '';
+												$scope.roundOf16FixtureObj[m].match_awayTeamObj.lineup = '';
+												$scope.roundOf16FixtureObj[m].match_awayTeamObj.lastLineup = '';
+												$scope.roundOf16FixtureObj[m].match_awayTeamObj.sub = '';
+												$scope.roundOf16FixtureObj[m].match_awayTeamObj.lastSub = '';
+												$scope.roundOf16FixtureObj[m].match_awayTeamObj.player = '';
+
+												$scope.roundOf16FixtureObj[m].id = "MA" + $rootScope.randomString + 16 + m;
+												$scope.roundOf16FixtureObj[m].match_homeTeam = "";
+												$scope.roundOf16FixtureObj[m].match_awayTeam = "";
+												$scope.roundOf16FixtureObj[m].match_date = moment(roundOf16DateArr[roundOf16Index]).toISOString();
+												$scope.roundOf16FixtureObj[m].match_time = timeArr[timeIndex];
+												$scope.roundOf16FixtureObj[m].match_fixture = "round of 16";
+												$scope.roundOf16FixtureObj[m].match_field = 1;
+												$scope.roundOf16FixtureObj[m].match_pair = pair;
+												$scope.roundOf16FixtureObj[m].match_started = "";
+												$scope.roundOf16FixtureObj[m].competition_id = entry.id;
+												$scope.roundOf16FixtureObj[m].match_venue = entry.comp_address.venue.nama;
+
+												if(moment(roundOf16DateArr[roundOf16Index]).format('dddd') === 'Monday'){
+													$scope.roundOf16FixtureObj[m].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+													$scope.roundOf16FixtureObj[m].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(roundOf16DateArr[roundOf16Index]).format('dddd') === 'Tuesday'){
+													$scope.roundOf16FixtureObj[m].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+													$scope.roundOf16FixtureObj[m].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(roundOf16DateArr[roundOf16Index]).format('dddd') === 'Wednesday'){
+													$scope.roundOf16FixtureObj[m].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+													$scope.roundOf16FixtureObj[m].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(roundOf16DateArr[roundOf16Index]).format('dddd') === 'Thursday'){
+													$scope.roundOf16FixtureObj[m].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+													$scope.roundOf16FixtureObj[m].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(roundOf16DateArr[roundOf16Index]).format('dddd') === 'Friday'){
+													$scope.roundOf16FixtureObj[m].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+													$scope.roundOf16FixtureObj[m].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(roundOf16DateArr[roundOf16Index]).format('dddd') === 'Saturday'){
+													$scope.roundOf16FixtureObj[m].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+													$scope.roundOf16FixtureObj[m].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(roundOf16DateArr[roundOf16Index]).format('dddd') === 'Sunday'){
+													$scope.roundOf16FixtureObj[m].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+													$scope.roundOf16FixtureObj[m].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+												}
+						
+												refereeIndex++;
+												analystIndex++;
+												timeIndex++;
+												if(m % 2 != 0){
+													roundOf16Index++;
+													timeIndex = 0;
+													pair++;
+												}
 											}
-										}
-
+											console.log($scope.roundOf16FixtureObj);
+										},6000);
+										
 										// Quarter Final
-										timeIndex = 0;
-										pair = 1;
-										for(m = 0; m < 4; m++){
-											$scope.quarterFinalFixtureObj[m] = {};
-											$scope.quarterFinalFixtureObj[m].id = "MA" + $rootScope.randomString + 8 + m;
-											$scope.quarterFinalFixtureObj[m].match_homeTeam = "";
-											$scope.quarterFinalFixtureObj[m].match_awayTeam = "";
-											$scope.quarterFinalFixtureObj[m].match_date = moment(quarterFinalDateArr[quarterFinalIndex]).toISOString();
-											$scope.quarterFinalFixtureObj[m].match_time = timeArr[timeIndex];
-											$scope.quarterFinalFixtureObj[m].match_fixture = "quarter final";
-											$scope.quarterFinalFixtureObj[m].field = 1;
-											$scope.quarterFinalFixtureObj[m].match_pair = pair;
-											$scope.quarterFinalFixtureObj[m].match_started = "";
-											$scope.quarterFinalFixtureObj[m].competition_id = entry.id;
+										setTimeout(function(){
+											timeIndex = 0;
+											refereeIndex = 0;
+											analystIndex = 0;
+											pair = 1;
 
-											timeIndex++;
-											if(m % 2 == 0){
-												quarterFinalIndex++;
-												timeIndex = 0;
-											}
-											if(m % 2 != 0){
-												pair++;
-											}
-											
-										}
+											for(m = 0; m < 4; m++){
+												$scope.quarterFinalFixtureObj[m] = {};
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj = {};
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.team_name = "";
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.score = 0;
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.formation = '';
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.lineup = '';
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.lastLineup = '';
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.sub = '';
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.lastSub = '';
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.player = '';
 
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj = {};
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.team_name = "";
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.score = 0;
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.formation = '';
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.lineup = '';
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.lastLineup = '';
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.sub = '';
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.lastSub = '';
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.player = '';
+
+												$scope.quarterFinalFixtureObj[m].id = "MA" + $rootScope.randomString + 8 + m;
+												$scope.quarterFinalFixtureObj[m].match_homeTeam = "";
+												$scope.quarterFinalFixtureObj[m].match_awayTeam = "";
+												$scope.quarterFinalFixtureObj[m].match_date = moment(quarterFinalDateArr[quarterFinalIndex]).toISOString();
+												$scope.quarterFinalFixtureObj[m].match_time = timeArr[timeIndex];
+												$scope.quarterFinalFixtureObj[m].match_fixture = "quarter final";
+												$scope.quarterFinalFixtureObj[m].match_field = 1;
+												$scope.quarterFinalFixtureObj[m].match_pair = pair;
+												$scope.quarterFinalFixtureObj[m].match_started = "";
+												$scope.quarterFinalFixtureObj[m].competition_id = entry.id;
+												$scope.quarterFinalFixtureObj[m].match_venue = entry.comp_address.venue.nama;
+
+												if(moment(quarterFinalDateArr[quarterFinalIndex]).format('dddd') === 'Monday'){
+													$scope.quarterFinalFixtureObj[m].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+													$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(quarterFinalDateArr[quarterFinalIndex]).format('dddd') === 'Tuesday'){
+													$scope.quarterFinalFixtureObj[m].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+													$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(quarterFinalDateArr[quarterFinalIndex]).format('dddd') === 'Wednesday'){
+													$scope.quarterFinalFixtureObj[m].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+													$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(quarterFinalDateArr[quarterFinalIndex]).format('dddd') === 'Thursday'){
+													$scope.quarterFinalFixtureObj[m].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+													$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(quarterFinalDateArr[quarterFinalIndex]).format('dddd') === 'Friday'){
+													$scope.quarterFinalFixtureObj[m].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+													$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(quarterFinalDateArr[quarterFinalIndex]).format('dddd') === 'Saturday'){
+													$scope.quarterFinalFixtureObj[m].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+													$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(quarterFinalDateArr[quarterFinalIndex]).format('dddd') === 'Sunday'){
+													$scope.quarterFinalFixtureObj[m].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+													$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+												}
+							
+												refereeIndex++;
+												analystIndex++;
+												timeIndex++;
+												if(m % 2 == 0){
+													quarterFinalIndex++;
+													timeIndex = 0;
+												}
+												if(m % 2 != 0){
+													pair++;
+												}
+											}
+											console.log($scope.quarterFinalFixtureObj);
+										},6000);
+										
 										// Semi Final
-										for(m = 0; m < 2; m++){
-											$scope.semiFinalFixtureObj[m] = {};
-											$scope.semiFinalFixtureObj[m].id = "MA" + $rootScope.randomString + 4 + m;
-											$scope.semiFinalFixtureObj[m].match_homeTeam = "";
-											$scope.semiFinalFixtureObj[m].match_awayTeam = "";
-											$scope.semiFinalFixtureObj[m].match_date = moment(semiFinalDateArr[semiFinalIndex]).toISOString();
-											$scope.semiFinalFixtureObj[m].match_time = timeArr[1];
-											$scope.semiFinalFixtureObj[m].match_fixture = "semi final";
-											$scope.semiFinalFixtureObj[m].field = 1;
-											$scope.semiFinalFixtureObj[m].match_pair = 1;
-											$scope.semiFinalFixtureObj[m].match_started = "";
-											$scope.semiFinalFixtureObj[m].competition_id = entry.id;
+										setTimeout(function(){
+											refereeIndex = 0;
+											analystIndex = 0;
+											for(m = 0; m < 2; m++){
+												$scope.semiFinalFixtureObj[m] = {};
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj = {};
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.team_name = "";
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.score = 0;
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.formation = '';
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.lineup = '';
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.lastLineup = '';
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.sub = '';
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.lastSub = '';
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.player = '';
 
-											semiFinalIndex++;
-										}
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj = {};
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.team_name = "";
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.score = 0;
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.formation = '';
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.lineup = '';
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.lastLineup = '';
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.sub = '';
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.lastSub = '';
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.player = '';
+
+												$scope.semiFinalFixtureObj[m].id = "MA" + $rootScope.randomString + 4 + m;
+												$scope.semiFinalFixtureObj[m].match_homeTeam = "";
+												$scope.semiFinalFixtureObj[m].match_awayTeam = "";
+												$scope.semiFinalFixtureObj[m].match_date = moment(semiFinalDateArr[semiFinalIndex]).toISOString();
+												$scope.semiFinalFixtureObj[m].match_time = timeArr[1];
+												$scope.semiFinalFixtureObj[m].match_fixture = "semi final";
+												$scope.semiFinalFixtureObj[m].match_field = 1;
+												$scope.semiFinalFixtureObj[m].match_pair = 1;
+												$scope.semiFinalFixtureObj[m].match_started = "";
+												$scope.semiFinalFixtureObj[m].competition_id = entry.id;
+												$scope.semiFinalFixtureObj[m].match_venue = entry.comp_address.venue.nama;
+
+												if(moment(semiFinalDateArr[semiFinalIndex]).format('dddd') === 'Monday'){
+													$scope.semiFinalFixtureObj[m].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+													$scope.semiFinalFixtureObj[m].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(semiFinalDateArr[semiFinalIndex]).format('dddd') === 'Tuesday'){
+													$scope.semiFinalFixtureObj[m].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+													$scope.semiFinalFixtureObj[m].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(semiFinalDateArr[semiFinalIndex]).format('dddd') === 'Wednesday'){
+													$scope.semiFinalFixtureObj[m].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+													$scope.semiFinalFixtureObj[m].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(semiFinalDateArr[semiFinalIndex]).format('dddd') === 'Thursday'){
+													$scope.semiFinalFixtureObj[m].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+													$scope.semiFinalFixtureObj[m].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(semiFinalDateArr[semiFinalIndex]).format('dddd') === 'Friday'){
+													$scope.semiFinalFixtureObj[m].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+													$scope.semiFinalFixtureObj[m].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(semiFinalDateArr[semiFinalIndex]).format('dddd') === 'Saturday'){
+													$scope.semiFinalFixtureObj[m].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+													$scope.semiFinalFixtureObj[m].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(semiFinalDateArr[semiFinalIndex]).format('dddd') === 'Sunday'){
+													$scope.semiFinalFixtureObj[m].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+													$scope.semiFinalFixtureObj[m].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+												}
+							
+												semiFinalIndex++;
+												refereeIndex++;
+												analystIndex++;
+											}
+											console.log($scope.semiFinalFixtureObj);
+										},6000);
+										
 										// Third Place
-										$scope.thirdPlaceFixtureObj = {};
-										$scope.thirdPlaceFixtureObj.id = "MA" + $rootScope.randomString + 3 + m;
-										$scope.thirdPlaceFixtureObj.match_homeTeam = "";
-										$scope.thirdPlaceFixtureObj.match_awayTeam = "";
-										$scope.thirdPlaceFixtureObj.match_date = moment(thirdPlaceDate).toISOString();
-										$scope.thirdPlaceFixtureObj.match_time = timeArr[1];
-										$scope.thirdPlaceFixtureObj.match_fixture = "third place";
-										$scope.thirdPlaceFixtureObj.field = 1;
-										$scope.thirdPlaceFixtureObj.match_started = "";
-										$scope.thirdPlaceFixtureObj.competition_id = entry.id;
+										setTimeout(function(){
+											refereeIndex = 0;
+											analystIndex = 0;
+											$scope.thirdPlaceFixtureObj = {};
+											$scope.thirdPlaceFixtureObj.match_homeTeamObj = {};
+											$scope.thirdPlaceFixtureObj.match_homeTeamObj.team_name = "";
+											$scope.thirdPlaceFixtureObj.match_homeTeamObj.score = 0;
+											$scope.thirdPlaceFixtureObj.match_homeTeamObj.formation = '';
+											$scope.thirdPlaceFixtureObj.match_homeTeamObj.lineup = '';
+											$scope.thirdPlaceFixtureObj.match_homeTeamObj.lastLineup = '';
+											$scope.thirdPlaceFixtureObj.match_homeTeamObj.sub = '';
+											$scope.thirdPlaceFixtureObj.match_homeTeamObj.lastSub = '';
+											$scope.thirdPlaceFixtureObj.match_homeTeamObj.player = '';
 
+											$scope.thirdPlaceFixtureObj.match_awayTeamObj = {};
+											$scope.thirdPlaceFixtureObj.match_awayTeamObj.team_name = "";
+											$scope.thirdPlaceFixtureObj.match_awayTeamObj.score = 0;
+											$scope.thirdPlaceFixtureObj.match_awayTeamObj.formation = '';
+											$scope.thirdPlaceFixtureObj.match_awayTeamObj.lineup = '';
+											$scope.thirdPlaceFixtureObj.match_awayTeamObj.lastLineup = '';
+											$scope.thirdPlaceFixtureObj.match_awayTeamObj.sub = '';
+											$scope.thirdPlaceFixtureObj.match_awayTeamObj.lastSub = '';
+											$scope.thirdPlaceFixtureObj.match_awayTeamObj.player = '';
+
+											$scope.thirdPlaceFixtureObj.id = "MA" + $rootScope.randomString + 3 + m;
+											$scope.thirdPlaceFixtureObj.match_homeTeam = "";
+											$scope.thirdPlaceFixtureObj.match_awayTeam = "";
+											$scope.thirdPlaceFixtureObj.match_date = moment(thirdPlaceDate).toISOString();
+											$scope.thirdPlaceFixtureObj.match_time = timeArr[1];
+											$scope.thirdPlaceFixtureObj.match_fixture = "third place";
+											$scope.thirdPlaceFixtureObj.match_field = 1;
+											$scope.thirdPlaceFixtureObj.match_started = "";
+											$scope.thirdPlaceFixtureObj.competition_id = entry.id;
+											$scope.thirdPlaceFixtureObj.match_venue = entry.comp_address.venue.nama;
+
+											if(moment(thirdPlaceDate).format('dddd') === 'Monday'){
+												$scope.thirdPlaceFixtureObj.match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+												$scope.thirdPlaceFixtureObj.match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(thirdPlaceDate).format('dddd') === 'Tuesday'){
+												$scope.thirdPlaceFixtureObj.match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+												$scope.thirdPlaceFixtureObj.match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(thirdPlaceDate).format('dddd') === 'Wednesday'){
+												$scope.thirdPlaceFixtureObj.match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+												$scope.thirdPlaceFixtureObj.match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(thirdPlaceDate).format('dddd') === 'Thursday'){
+												$scope.thirdPlaceFixtureObj.match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+												$scope.thirdPlaceFixtureObj.match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(thirdPlaceDate).format('dddd') === 'Friday'){
+												$scope.thirdPlaceFixtureObj.match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+												$scope.thirdPlaceFixtureObj.match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(thirdPlaceDate).format('dddd') === 'Saturday'){
+												$scope.thirdPlaceFixtureObj.match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+												$scope.thirdPlaceFixtureObj.match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(thirdPlaceDate).format('dddd') === 'Sunday'){
+												$scope.thirdPlaceFixtureObj.match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+												$scope.thirdPlaceFixtureObj.match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+											}
+											console.log($scope.thirdPlaceFixtureObj);
+										},6000);
+										
 										// Final
-										$scope.finalFixtureObj = {};
-										$scope.finalFixtureObj.id = "MA" + $rootScope.randomString + 1 + m;
-										$scope.finalFixtureObj.match_homeTeam = "";
-										$scope.finalFixtureObj.match_awayTeam = "";
-										$scope.finalFixtureObj.match_date = moment(finalDate).toISOString();
-										$scope.finalFixtureObj.match_time = timeArr[1];
-										$scope.finalFixtureObj.match_fixture = "final";
-										$scope.finalFixtureObj.field = 1;
-										$scope.finalFixtureObj.match_started = "";
-										$scope.finalFixtureObj.competition_id = entry.id;
+										setTimeout(function(){
+											refereeIndex = 1;
+											analystIndex = 1;
+											$scope.finalFixtureObj = {};
+											$scope.finalFixtureObj.match_homeTeamObj = {};
+											$scope.finalFixtureObj.match_homeTeamObj.team_name = "";
+											$scope.finalFixtureObj.match_homeTeamObj.score = 0;
+											$scope.finalFixtureObj.match_homeTeamObj.formation = '';
+											$scope.finalFixtureObj.match_homeTeamObj.lineup = '';
+											$scope.finalFixtureObj.match_homeTeamObj.lastLineup = '';
+											$scope.finalFixtureObj.match_homeTeamObj.sub = '';
+											$scope.finalFixtureObj.match_homeTeamObj.lastSub = '';
+											$scope.finalFixtureObj.match_homeTeamObj.player = '';
 
+											$scope.finalFixtureObj.match_awayTeamObj = {};
+											$scope.finalFixtureObj.match_awayTeamObj.team_name = "";
+											$scope.finalFixtureObj.match_awayTeamObj.score = 0;
+											$scope.finalFixtureObj.match_awayTeamObj.formation = '';
+											$scope.finalFixtureObj.match_awayTeamObj.lineup = '';
+											$scope.finalFixtureObj.match_awayTeamObj.lastLineup = '';
+											$scope.finalFixtureObj.match_awayTeamObj.sub = '';
+											$scope.finalFixtureObj.match_awayTeamObj.lastSub = '';
+											$scope.finalFixtureObj.match_awayTeamObj.player = '';
 
-										console.log($scope.firstRoundFixtureObj);
-										console.log($scope.secondRoundFixtureObj);
-										console.log($scope.thirdRoundFixtureObj);
-										console.log($scope.roundOf16FixtureObj);
-										console.log($scope.quarterFinalFixtureObj);
-										console.log($scope.semiFinalFixtureObj);
-										console.log($scope.thirdPlaceFixtureObj);
-										console.log($scope.finalFixtureObj);
+											$scope.finalFixtureObj.id = "MA" + $rootScope.randomString + 1 + m;
+											$scope.finalFixtureObj.match_homeTeam = "";
+											$scope.finalFixtureObj.match_awayTeam = "";
+											$scope.finalFixtureObj.match_date = moment(finalDate).toISOString();
+											$scope.finalFixtureObj.match_time = timeArr[1];
+											$scope.finalFixtureObj.match_fixture = "final";
+											$scope.finalFixtureObj.match_field = 1;
+											$scope.finalFixtureObj.match_started = "";
+											$scope.finalFixtureObj.competition_id = entry.id;
+											$scope.finalFixtureObj.match_venue = entry.comp_address.venue.nama;
 
+											if(moment(finalDate).format('dddd') === 'Monday'){
+												$scope.finalFixtureObj.match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+												$scope.finalFixtureObj.match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(finalDate).format('dddd') === 'Tuesday'){
+												$scope.finalFixtureObj.match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+												$scope.finalFixtureObj.match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(finalDate).format('dddd') === 'Wednesday'){
+												$scope.finalFixtureObj.match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+												$scope.finalFixtureObj.match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(finalDate).format('dddd') === 'Thursday'){
+												$scope.finalFixtureObj.match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+												$scope.finalFixtureObj.match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(finalDate).format('dddd') === 'Friday'){
+												$scope.finalFixtureObj.match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+												$scope.finalFixtureObj.match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(finalDate).format('dddd') === 'Saturday'){
+												$scope.finalFixtureObj.match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+												$scope.finalFixtureObj.match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(finalDate).format('dddd') === 'Sunday'){
+												$scope.finalFixtureObj.match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+												$scope.finalFixtureObj.match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+											}
+											console.log($scope.finalFixtureObj);
+										},6000);
+										
 									}else if(entry.comp_numOfTeam === 16){
 
 										console.log("16");
@@ -2392,160 +4207,521 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 										quarterFinalDateArr.push(quarterFinalDate1,quarterFinalDate2,quarterFinalDate3,quarterFinalDate4);
 										semiFinalDateArr.push(semiFinalDate1,semiFinalDate2);
 
-
 										// Fixture 1
-										var timeIndex = 0;
-										var fixtureIndex = 0;
-										for(t = 0; t < $scope.firstRoundHomeTeam.length; t++){
-											$scope.firstRoundFixtureObj[t] = {};
-											$scope.firstRoundFixtureObj[t].id = "MA" + $rootScope.randomString + 1 + firstRoundGroupIndex + t;
-											$scope.firstRoundFixtureObj[t].match_homeTeam = $scope.firstRoundHomeTeam[t];
-											$scope.firstRoundFixtureObj[t].match_awayTeam = $scope.firstRoundAwayTeam[t];
-											$scope.firstRoundFixtureObj[t].match_group = $scope.firstRoundMatches.group[firstRoundGroupIndex];
-											$scope.firstRoundFixtureObj[t].match_date = moment(fixture1DateArr[fixtureIndex]).toISOString();
-											$scope.firstRoundFixtureObj[t].match_time = timeArr[timeIndex];
-											$scope.firstRoundFixtureObj[t].match_fixture = "fixture 1";
-											$scope.firstRoundFixtureObj[t].field = 1;
-											$scope.firstRoundFixtureObj[t].match_started = "";
-											$scope.firstRoundFixtureObj[t].fixture_number = 1;
-											$scope.firstRoundFixtureObj[t].competition_id = entry.id;
-											
-											timeIndex++;
-											if(t % 2 !== 0){
-												firstRoundGroupIndex++;
+										setTimeout(function(){
+											var timeIndex = 0;
+											var fixtureIndex = 0;
+											var refereeIndex = 0;
+											var analystIndex = 0;
+
+											for(t = 0; t < $scope.firstRoundHomeTeam.length; t++){
+												$scope.firstRoundFixtureObj[t] = {};
+												$scope.firstRoundFixtureObj[t].match_homeTeamObj = {};
+												$scope.firstRoundFixtureObj[t].match_homeTeamObj.team_name = $scope.firstRoundHomeTeam[t];
+												$scope.firstRoundFixtureObj[t].match_homeTeamObj.score = 0;
+												$scope.firstRoundFixtureObj[t].match_homeTeamObj.formation = '';
+												$scope.firstRoundFixtureObj[t].match_homeTeamObj.lineup = '';
+												$scope.firstRoundFixtureObj[t].match_homeTeamObj.lastLineup = '';
+												$scope.firstRoundFixtureObj[t].match_homeTeamObj.sub = '';
+												$scope.firstRoundFixtureObj[t].match_homeTeamObj.lastSub = '';
+												$scope.firstRoundFixtureObj[t].match_homeTeamObj.player = '';
+
+												$scope.firstRoundFixtureObj[t].match_awayTeamObj = {};
+												$scope.firstRoundFixtureObj[t].match_awayTeamObj.team_name = $scope.firstRoundAwayTeam[t];
+												$scope.firstRoundFixtureObj[t].match_awayTeamObj.score = 0;
+												$scope.firstRoundFixtureObj[t].match_awayTeamObj.formation = '';
+												$scope.firstRoundFixtureObj[t].match_awayTeamObj.lineup = '';
+												$scope.firstRoundFixtureObj[t].match_awayTeamObj.lastLineup = '';
+												$scope.firstRoundFixtureObj[t].match_awayTeamObj.sub = '';
+												$scope.firstRoundFixtureObj[t].match_awayTeamObj.lastSub = '';
+												$scope.firstRoundFixtureObj[t].match_awayTeamObj.player = '';
+
+												$scope.firstRoundFixtureObj[t].id = "MA" + $rootScope.randomString + 1 + firstRoundGroupIndex + t;
+												$scope.firstRoundFixtureObj[t].match_homeTeam = $scope.firstRoundHomeTeam[t];
+												$scope.firstRoundFixtureObj[t].match_awayTeam = $scope.firstRoundAwayTeam[t];
+												$scope.firstRoundFixtureObj[t].match_group = $scope.firstRoundMatches.group[firstRoundGroupIndex];
+												$scope.firstRoundFixtureObj[t].match_date = moment(fixture1DateArr[fixtureIndex]).toISOString();
+												$scope.firstRoundFixtureObj[t].match_time = timeArr[timeIndex];
+												$scope.firstRoundFixtureObj[t].match_fixture = "fixture 1";
+												$scope.firstRoundFixtureObj[t].match_field = 1;
+												$scope.firstRoundFixtureObj[t].match_started = "";
+												$scope.firstRoundFixtureObj[t].fixture_number = 1;
+												$scope.firstRoundFixtureObj[t].competition_id = entry.id;
+												$scope.firstRoundFixtureObj[t].match_venue = entry.comp_address.venue.nama;
+
+									
+												if(moment(fixture1DateArr[fixtureIndex]).format('dddd') === 'Monday'){
+													$scope.firstRoundFixtureObj[t].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+													$scope.firstRoundFixtureObj[t].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture1DateArr[fixtureIndex]).format('dddd') === 'Tuesday'){
+													$scope.firstRoundFixtureObj[t].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+													$scope.firstRoundFixtureObj[t].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture1DateArr[fixtureIndex]).format('dddd') === 'Wednesday'){
+													$scope.firstRoundFixtureObj[t].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+													$scope.firstRoundFixtureObj[t].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture1DateArr[fixtureIndex]).format('dddd') === 'Thursday'){
+													$scope.firstRoundFixtureObj[t].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+													$scope.firstRoundFixtureObj[t].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture1DateArr[fixtureIndex]).format('dddd') === 'Friday'){
+													$scope.firstRoundFixtureObj[t].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+													$scope.firstRoundFixtureObj[t].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture1DateArr[fixtureIndex]).format('dddd') === 'Saturday'){
+													$scope.firstRoundFixtureObj[t].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+													$scope.firstRoundFixtureObj[t].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture1DateArr[fixtureIndex]).format('dddd') === 'Sunday'){
+													$scope.firstRoundFixtureObj[t].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+													$scope.firstRoundFixtureObj[t].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+												}
+												
+												refereeIndex++;
+												analystIndex++;
+												timeIndex++;
+												if(t % 2 !== 0){
+													firstRoundGroupIndex++;
+												}
+												if((t+1) % 4 === 0){
+													fixtureIndex++;
+													timeIndex = 0;
+												}
 											}
-											if((t+1) % 4 === 0){
-												fixtureIndex++;
-												timeIndex = 0;
-											}
-										}
+											console.log($scope.firstRoundFixtureObj);
+										},6000);
+										
 
 										// Fixture 2
-										timeIndex = 0;
-										fixtureIndex = 0;
-										for(t = 0; t < $scope.secondRoundHomeTeam.length; t++){
-											$scope.secondRoundFixtureObj[t] = {};
-											$scope.secondRoundFixtureObj[t].id = "MA" + $rootScope.randomString + 2 + secondRoundGroupIndex + t;
-											$scope.secondRoundFixtureObj[t].match_homeTeam = $scope.secondRoundHomeTeam[t];
-											$scope.secondRoundFixtureObj[t].match_awayTeam = $scope.secondRoundAwayTeam[t];
-											$scope.secondRoundFixtureObj[t].match_group = $scope.firstRoundMatches.group[secondRoundGroupIndex];
-											$scope.secondRoundFixtureObj[t].match_date = moment(fixture2DateArr[fixtureIndex]).toISOString();
-											$scope.secondRoundFixtureObj[t].match_time = timeArr[timeIndex];
-											$scope.secondRoundFixtureObj[t].match_fixture = "fixture 2";
-											$scope.secondRoundFixtureObj[t].field = 1;
-											$scope.secondRoundFixtureObj[t].match_started = "";
-											$scope.secondRoundFixtureObj[t].fixture_number = 2;
-											$scope.secondRoundFixtureObj[t].competition_id = entry.id;
+										setTimeout(function(){
+											timeIndex = 0;
+											fixtureIndex = 0;
+											refereeIndex = 0;
+											analystIndex = 0;
 
-											timeIndex++;
-											if(t % 2 != 0){
-												secondRoundGroupIndex++;
+											for(t = 0; t < $scope.secondRoundHomeTeam.length; t++){
+												$scope.secondRoundFixtureObj[t] = {};
+												$scope.secondRoundFixtureObj[t].match_homeTeamObj = {};
+												$scope.secondRoundFixtureObj[t].match_homeTeamObj.team_name = $scope.secondRoundHomeTeam[t];
+												$scope.secondRoundFixtureObj[t].match_homeTeamObj.score = 0;
+												$scope.secondRoundFixtureObj[t].match_homeTeamObj.formation = '';
+												$scope.secondRoundFixtureObj[t].match_homeTeamObj.lineup = '';
+												$scope.secondRoundFixtureObj[t].match_homeTeamObj.lastLineup = '';
+												$scope.secondRoundFixtureObj[t].match_homeTeamObj.sub = '';
+												$scope.secondRoundFixtureObj[t].match_homeTeamObj.lastSub = '';
+												$scope.secondRoundFixtureObj[t].match_homeTeamObj.player = '';
+
+												$scope.secondRoundFixtureObj[t].match_awayTeamObj = {};
+												$scope.secondRoundFixtureObj[t].match_awayTeamObj.team_name = $scope.secondRoundAwayTeam[t];
+												$scope.secondRoundFixtureObj[t].match_awayTeamObj.score = 0;
+												$scope.secondRoundFixtureObj[t].match_awayTeamObj.formation = '';
+												$scope.secondRoundFixtureObj[t].match_awayTeamObj.lineup = '';
+												$scope.secondRoundFixtureObj[t].match_awayTeamObj.lastLineup = '';
+												$scope.secondRoundFixtureObj[t].match_awayTeamObj.sub = '';
+												$scope.secondRoundFixtureObj[t].match_awayTeamObj.lastSub = '';
+												$scope.secondRoundFixtureObj[t].match_awayTeamObj.player = '';
+
+												$scope.secondRoundFixtureObj[t].id = "MA" + $rootScope.randomString + 2 + secondRoundGroupIndex + t;
+												$scope.secondRoundFixtureObj[t].match_homeTeam = $scope.secondRoundHomeTeam[t];
+												$scope.secondRoundFixtureObj[t].match_awayTeam = $scope.secondRoundAwayTeam[t];
+												$scope.secondRoundFixtureObj[t].match_group = $scope.secondRoundMatches.group[secondRoundGroupIndex];
+												$scope.secondRoundFixtureObj[t].match_date = moment(fixture2DateArr[fixtureIndex]).toISOString();
+												$scope.secondRoundFixtureObj[t].match_time = timeArr[timeIndex];
+												$scope.secondRoundFixtureObj[t].match_fixture = "fixture 2";
+												$scope.secondRoundFixtureObj[t].match_field = 1;
+												$scope.secondRoundFixtureObj[t].match_started = "";
+												$scope.secondRoundFixtureObj[t].fixture_number = 2;
+												$scope.secondRoundFixtureObj[t].competition_id = entry.id;
+												$scope.secondRoundFixtureObj[t].match_venue = entry.comp_address.venue.nama;
+
+									
+												if(moment(fixture2DateArr[fixtureIndex]).format('dddd') === 'Monday'){
+													$scope.secondRoundFixtureObj[t].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+													$scope.secondRoundFixtureObj[t].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture2DateArr[fixtureIndex]).format('dddd') === 'Tuesday'){
+													$scope.secondRoundFixtureObj[t].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+													$scope.secondRoundFixtureObj[t].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture2DateArr[fixtureIndex]).format('dddd') === 'Wednesday'){
+													$scope.secondRoundFixtureObj[t].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+													$scope.secondRoundFixtureObj[t].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture2DateArr[fixtureIndex]).format('dddd') === 'Thursday'){
+													$scope.secondRoundFixtureObj[t].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+													$scope.secondRoundFixtureObj[t].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture2DateArr[fixtureIndex]).format('dddd') === 'Friday'){
+													$scope.secondRoundFixtureObj[t].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+													$scope.secondRoundFixtureObj[t].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture2DateArr[fixtureIndex]).format('dddd') === 'Saturday'){
+													$scope.secondRoundFixtureObj[t].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+													$scope.secondRoundFixtureObj[t].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture2DateArr[fixtureIndex]).format('dddd') === 'Sunday'){
+													$scope.secondRoundFixtureObj[t].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+													$scope.secondRoundFixtureObj[t].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+												}
+										
+												refereeIndex++;
+												analystIndex++;
+												timeIndex++;
+												if(t % 2 != 0){
+													secondRoundGroupIndex++;
+												}
+												if((t+1) % 4 === 0){
+													fixtureIndex++;
+													timeIndex = 0;
+												}
 											}
-											if((t+1) % 4 === 0){
-												fixtureIndex++;
-												timeIndex = 0;
-											}
-										}
+											console.log($scope.secondRoundFixtureObj);
+										},6000);
 
 										// Fixture 3
-										timeIndex = 0;
-										fixtureIndex = 0;
-										for(t = 0; t < $scope.thirdRoundHomeTeam.length; t++){
-											$scope.thirdRoundFixtureObj[t] = {};
-											$scope.thirdRoundFixtureObj[t].id = "MA" + $rootScope.randomString + 3 + secondRoundGroupIndex + t;
-											$scope.thirdRoundFixtureObj[t].match_homeTeam = $scope.thirdRoundHomeTeam[t];
-											$scope.thirdRoundFixtureObj[t].match_awayTeam = $scope.thirdRoundAwayTeam[t];
-											$scope.thirdRoundFixtureObj[t].match_group = $scope.thirdRoundMatches.group[thirdRoundGroupIndex];
-											$scope.thirdRoundFixtureObj[t].match_date = moment(fixture3DateArr[fixtureIndex]).toISOString();
-											$scope.thirdRoundFixtureObj[t].match_time = timeArr[timeIndex];
-											$scope.thirdRoundFixtureObj[t].match_fixture = "fixture 3";
-											$scope.thirdRoundFixtureObj[t].field = 1;
-											$scope.thirdRoundFixtureObj[t].match_started = "";
-											$scope.thirdRoundFixtureObj[t].fixture_number = 3;
-											$scope.thirdRoundFixtureObj[t].competition_id = entry.id;
+										setTimeout(function(){
+											timeIndex = 0;
+											fixtureIndex = 0;
+											refereeIndex = 0;
+											analystIndex = 0;
 
-											timeIndex++;
-											if(t % 2 != 0){
-												thirdRoundGroupIndex++;
+											for(t = 0; t < $scope.thirdRoundHomeTeam.length; t++){
+												$scope.thirdRoundFixtureObj[t] = {};
+												$scope.thirdRoundFixtureObj[t].match_homeTeamObj = {};
+												$scope.thirdRoundFixtureObj[t].match_homeTeamObj.team_name = $scope.thirdRoundHomeTeam[t];
+												$scope.thirdRoundFixtureObj[t].match_homeTeamObj.score = 0;
+												$scope.thirdRoundFixtureObj[t].match_homeTeamObj.formation = '';
+												$scope.thirdRoundFixtureObj[t].match_homeTeamObj.lineup = '';
+												$scope.thirdRoundFixtureObj[t].match_homeTeamObj.lastLineup = '';
+												$scope.thirdRoundFixtureObj[t].match_homeTeamObj.sub = '';
+												$scope.thirdRoundFixtureObj[t].match_homeTeamObj.lastSub = '';
+												$scope.thirdRoundFixtureObj[t].match_homeTeamObj.player = '';
+
+												$scope.thirdRoundFixtureObj[t].match_awayTeamObj = {};
+												$scope.thirdRoundFixtureObj[t].match_awayTeamObj.team_name = $scope.thirdRoundAwayTeam[t];
+												$scope.thirdRoundFixtureObj[t].match_awayTeamObj.score = 0;
+												$scope.thirdRoundFixtureObj[t].match_awayTeamObj.formation = '';
+												$scope.thirdRoundFixtureObj[t].match_awayTeamObj.lineup = '';
+												$scope.thirdRoundFixtureObj[t].match_awayTeamObj.lastLineup = '';
+												$scope.thirdRoundFixtureObj[t].match_awayTeamObj.sub = '';
+												$scope.thirdRoundFixtureObj[t].match_awayTeamObj.lastSub = '';
+												$scope.thirdRoundFixtureObj[t].match_awayTeamObj.player = '';
+
+												$scope.thirdRoundFixtureObj[t].id = "MA" + $rootScope.randomString + 3 + thirdRoundGroupIndex + t;
+												$scope.thirdRoundFixtureObj[t].match_homeTeam = $scope.thirdRoundHomeTeam[t];
+												$scope.thirdRoundFixtureObj[t].match_awayTeam = $scope.thirdRoundAwayTeam[t];
+												$scope.thirdRoundFixtureObj[t].match_group = $scope.thirdRoundMatches.group[thirdRoundGroupIndex];
+												$scope.thirdRoundFixtureObj[t].match_date = moment(fixture3DateArr[fixtureIndex]).toISOString();
+												$scope.thirdRoundFixtureObj[t].match_time = timeArr[timeIndex];
+												$scope.thirdRoundFixtureObj[t].match_fixture = "fixture 3";
+												$scope.thirdRoundFixtureObj[t].match_field = 1;
+												$scope.thirdRoundFixtureObj[t].match_started = "";
+												$scope.thirdRoundFixtureObj[t].fixture_number = 3;
+												$scope.thirdRoundFixtureObj[t].competition_id = entry.id;
+												$scope.thirdRoundFixtureObj[t].match_venue = entry.comp_address.venue.nama;
+
+									
+												if(moment(fixture3DateArr[fixtureIndex]).format('dddd') === 'Monday'){
+													$scope.thirdRoundFixtureObj[t].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+													$scope.thirdRoundFixtureObj[t].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture3DateArr[fixtureIndex]).format('dddd') === 'Tuesday'){
+													$scope.thirdRoundFixtureObj[t].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+													$scope.thirdRoundFixtureObj[t].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture3DateArr[fixtureIndex]).format('dddd') === 'Wednesday'){
+													$scope.thirdRoundFixtureObj[t].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+													$scope.thirdRoundFixtureObj[t].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture3DateArr[fixtureIndex]).format('dddd') === 'Thursday'){
+													$scope.thirdRoundFixtureObj[t].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+													$scope.thirdRoundFixtureObj[t].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture3DateArr[fixtureIndex]).format('dddd') === 'Friday'){
+													$scope.thirdRoundFixtureObj[t].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+													$scope.thirdRoundFixtureObj[t].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture3DateArr[fixtureIndex]).format('dddd') === 'Saturday'){
+													$scope.thirdRoundFixtureObj[t].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+													$scope.thirdRoundFixtureObj[t].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(fixture3DateArr[fixtureIndex]).format('dddd') === 'Sunday'){
+													$scope.thirdRoundFixtureObj[t].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+													$scope.thirdRoundFixtureObj[t].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+												}
+
+												refereeIndex++;
+												analystIndex++;
+												timeIndex++;
+												if(t % 2 != 0){
+													thirdRoundGroupIndex++;
+												}
+												if((t+1) % 4 === 0){
+													fixtureIndex++;
+													timeIndex = 0;
+												}
 											}
-											if((t+1) % 4 === 0){
-												fixtureIndex++;
-												timeIndex = 0;
-											}
-										}
+											console.log($scope.thirdRoundFixtureObj);
+										},6000);
+										
 
 										// Quarter Final
-										var pair = 1;
-										for(m = 0; m < 4; m++){
-											$scope.quarterFinalFixtureObj[m] = {};
-											$scope.quarterFinalFixtureObj[m].id = "MA" + $rootScope.randomString + 8 + m;
-											$scope.quarterFinalFixtureObj[m].match_homeTeam = "";
-											$scope.quarterFinalFixtureObj[m].match_awayTeam = "";
-											$scope.quarterFinalFixtureObj[m].match_date = moment(quarterFinalDateArr[quarterFinalIndex]).toISOString();
-											$scope.quarterFinalFixtureObj[m].match_time = timeArr[1];
-											$scope.quarterFinalFixtureObj[m].match_fixture = "quarter final";
-											$scope.quarterFinalFixtureObj[m].field = 1;
-											$scope.quarterFinalFixtureObj[m].match_pair = pair;
-											$scope.quarterFinalFixtureObj[m].match_started = "";
-											$scope.quarterFinalFixtureObj[m].competition_id = entry.id;
+										setTimeout(function(){
+											var pair = 1;
+											refereeIndex = 0;
+											analystIndex = 0;
 
-											quarterFinalIndex++;
-											if(m % 2 != 0){
-												pair++;
+											for(m = 0; m < 4; m++){
+												$scope.quarterFinalFixtureObj[m] = {};
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj = {};
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.team_name = '';
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.score = 0;
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.formation = '';
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.lineup = '';
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.lastLineup = '';
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.sub = '';
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.lastSub = '';
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.player = '';
+
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj = {};
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.team_name = '';
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.score = 0;
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.formation = '';
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.lineup = '';
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.lastLineup = '';
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.sub = '';
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.lastSub = '';
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.player = '';
+
+												$scope.quarterFinalFixtureObj[m].id = "MA" + $rootScope.randomString + 8 + m;
+												$scope.quarterFinalFixtureObj[m].match_homeTeam = "";
+												$scope.quarterFinalFixtureObj[m].match_awayTeam = "";
+												$scope.quarterFinalFixtureObj[m].match_date = moment(quarterFinalDateArr[quarterFinalIndex]).toISOString();
+												$scope.quarterFinalFixtureObj[m].match_time = timeArr[1];
+												$scope.quarterFinalFixtureObj[m].match_fixture = "quarter final";
+												$scope.quarterFinalFixtureObj[m].match_field = 1;
+												$scope.quarterFinalFixtureObj[m].match_pair = pair;
+												$scope.quarterFinalFixtureObj[m].match_started = "";
+												$scope.quarterFinalFixtureObj[m].competition_id = entry.id;
+												$scope.quarterFinalFixtureObj[m].match_venue = entry.comp_address.venue.nama;
+
+									
+												if(moment(quarterFinalDateArr[quarterFinalIndex]).format('dddd') === 'Monday'){
+													$scope.quarterFinalFixtureObj[m].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+													$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(quarterFinalDateArr[quarterFinalIndex]).format('dddd') === 'Tuesday'){
+													$scope.quarterFinalFixtureObj[m].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+													$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(quarterFinalDateArr[quarterFinalIndex]).format('dddd') === 'Wednesday'){
+													$scope.quarterFinalFixtureObj[m].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+													$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(quarterFinalDateArr[quarterFinalIndex]).format('dddd') === 'Thursday'){
+													$scope.quarterFinalFixtureObj[m].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+													$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(quarterFinalDateArr[quarterFinalIndex]).format('dddd') === 'Friday'){
+													$scope.quarterFinalFixtureObj[m].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+													$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(quarterFinalDateArr[quarterFinalIndex]).format('dddd') === 'Saturday'){
+													$scope.quarterFinalFixtureObj[m].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+													$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(quarterFinalDateArr[quarterFinalIndex]).format('dddd') === 'Sunday'){
+													$scope.quarterFinalFixtureObj[m].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+													$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+												}
+											
+												refereeIndex++;
+												analystIndex++;
+												quarterFinalIndex++;
+												if(m % 2 != 0){
+													pair++;
+												}
 											}
-										}
+											console.log($scope.quarterFinalFixtureObj);
+										},6000);
+										
 
 										// Semi Final
-										for(m = 0; m < 2; m++){
-											$scope.semiFinalFixtureObj[m] = {};
-											$scope.semiFinalFixtureObj[m].id = "MA" + $rootScope.randomString + 4 + m;
-											$scope.semiFinalFixtureObj[m].match_homeTeam = "";
-											$scope.semiFinalFixtureObj[m].match_awayTeam = "";
-											$scope.semiFinalFixtureObj[m].match_date = moment(semiFinalDateArr[semiFinalIndex]).toISOString();
-											$scope.semiFinalFixtureObj[m].match_time = timeArr[1];
-											$scope.semiFinalFixtureObj[m].match_fixture = "semi final";
-											$scope.semiFinalFixtureObj[m].field = 1;
-											$scope.semiFinalFixtureObj[m].match_pair = 1;
-											$scope.semiFinalFixtureObj[m].match_started = "";
-											$scope.semiFinalFixtureObj[m].competition_id = entry.id;
+										setTimeout(function(){
+											refereeIndex = 0;
+											analystIndex = 0;
 
-											semiFinalIndex++;
-										}
+											for(m = 0; m < 2; m++){
+												$scope.semiFinalFixtureObj[m] = {};
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj = {};
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.team_name = '';
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.score = 0;
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.formation = '';
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.lineup = '';
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.lastLineup = '';
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.sub = '';
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.lastSub = '';
+												$scope.semiFinalFixtureObj[m].match_homeTeamObj.player = '';
+
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj = {};
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.team_name = '';
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.score = 0;
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.formation = '';
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.lineup = '';
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.lastLineup = '';
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.sub = '';
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.lastSub = '';
+												$scope.semiFinalFixtureObj[m].match_awayTeamObj.player = '';
+
+												$scope.semiFinalFixtureObj[m].id = "MA" + $rootScope.randomString + 4 + m;
+												$scope.semiFinalFixtureObj[m].match_homeTeam = "";
+												$scope.semiFinalFixtureObj[m].match_awayTeam = "";
+												$scope.semiFinalFixtureObj[m].match_date = moment(semiFinalDateArr[semiFinalIndex]).toISOString();
+												$scope.semiFinalFixtureObj[m].match_time = timeArr[1];
+												$scope.semiFinalFixtureObj[m].match_fixture = "semi final";
+												$scope.semiFinalFixtureObj[m].match_field = 1;
+												$scope.semiFinalFixtureObj[m].match_pair = 1;
+												$scope.semiFinalFixtureObj[m].match_started = "";
+												$scope.semiFinalFixtureObj[m].competition_id = entry.id;
+												$scope.semiFinalFixtureObj[m].match_venue = entry.comp_address.venue.nama;
+
+									
+												if(moment(semiFinalDateArr[semiFinalIndex]).format('dddd') === 'Monday'){
+													$scope.semiFinalFixtureObj[m].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+													$scope.semiFinalFixtureObj[m].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(semiFinalDateArr[semiFinalIndex]).format('dddd') === 'Tuesday'){
+													$scope.semiFinalFixtureObj[m].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+													$scope.semiFinalFixtureObj[m].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(semiFinalDateArr[semiFinalIndex]).format('dddd') === 'Wednesday'){
+													$scope.semiFinalFixtureObj[m].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+													$scope.semiFinalFixtureObj[m].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(semiFinalDateArr[semiFinalIndex]).format('dddd') === 'Thursday'){
+													$scope.semiFinalFixtureObj[m].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+													$scope.semiFinalFixtureObj[m].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(semiFinalDateArr[semiFinalIndex]).format('dddd') === 'Friday'){
+													$scope.semiFinalFixtureObj[m].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+													$scope.semiFinalFixtureObj[m].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(semiFinalDateArr[semiFinalIndex]).format('dddd') === 'Saturday'){
+													$scope.semiFinalFixtureObj[m].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+													$scope.semiFinalFixtureObj[m].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(semiFinalDateArr[semiFinalIndex]).format('dddd') === 'Sunday'){
+													$scope.semiFinalFixtureObj[m].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+													$scope.semiFinalFixtureObj[m].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+												}
+											
+												refereeIndex++;
+												analystIndex++;
+												semiFinalIndex++;
+											}
+											console.log($scope.semiFinalFixtureObj);
+										},6000);
+									
 										// Third Place
-										$scope.thirdPlaceFixtureObj = {};
-										$scope.thirdPlaceFixtureObj.id = "MA" + $rootScope.randomString + 3 + m;
-										$scope.thirdPlaceFixtureObj.match_homeTeam = "";
-										$scope.thirdPlaceFixtureObj.match_awayTeam = "";
-										$scope.thirdPlaceFixtureObj.match_date = moment(thirdPlaceDate).toISOString();
-										$scope.thirdPlaceFixtureObj.match_time = timeArr[1];
-										$scope.thirdPlaceFixtureObj.match_fixture = "third place";
-										$scope.thirdPlaceFixtureObj.field = 1;
-										$scope.thirdPlaceFixtureObj.match_started = "";
-										$scope.thirdPlaceFixtureObj.competition_id = entry.id;
+										setTimeout(function(){
+											refereeIndex = 0;
+											analystIndex = 0;
+
+											$scope.thirdPlaceFixtureObj = {};
+											$scope.thirdPlaceFixtureObj.match_homeTeamObj = {};
+											$scope.thirdPlaceFixtureObj.match_homeTeamObj.team_name = '';
+											$scope.thirdPlaceFixtureObj.match_homeTeamObj.score = 0;
+											$scope.thirdPlaceFixtureObj.match_homeTeamObj.formation = '';
+											$scope.thirdPlaceFixtureObj.match_homeTeamObj.lineup = '';
+											$scope.thirdPlaceFixtureObj.match_homeTeamObj.lastLineup = '';
+											$scope.thirdPlaceFixtureObj.match_homeTeamObj.sub = '';
+											$scope.thirdPlaceFixtureObj.match_homeTeamObj.lastSub = '';
+											$scope.thirdPlaceFixtureObj.match_homeTeamObj.player = '';
+
+											$scope.thirdPlaceFixtureObj.match_awayTeamObj = {};
+											$scope.thirdPlaceFixtureObj.match_awayTeamObj.team_name = '';
+											$scope.thirdPlaceFixtureObj.match_awayTeamObj.score = 0;
+											$scope.thirdPlaceFixtureObj.match_awayTeamObj.formation = '';
+											$scope.thirdPlaceFixtureObj.match_awayTeamObj.lineup = '';
+											$scope.thirdPlaceFixtureObj.match_awayTeamObj.lastLineup = '';
+											$scope.thirdPlaceFixtureObj.match_awayTeamObj.sub = '';
+											$scope.thirdPlaceFixtureObj.match_awayTeamObj.lastSub = '';
+											$scope.thirdPlaceFixtureObj.match_awayTeamObj.player = '';
+
+											$scope.thirdPlaceFixtureObj.id = "MA" + $rootScope.randomString + 3 + m;
+											$scope.thirdPlaceFixtureObj.match_homeTeam = "";
+											$scope.thirdPlaceFixtureObj.match_awayTeam = "";
+											$scope.thirdPlaceFixtureObj.match_date = moment(thirdPlaceDate).toISOString();
+											$scope.thirdPlaceFixtureObj.match_time = timeArr[1];
+											$scope.thirdPlaceFixtureObj.match_fixture = "third place";
+											$scope.thirdPlaceFixtureObj.match_field = 1;
+											$scope.thirdPlaceFixtureObj.match_pair = 1;
+											$scope.thirdPlaceFixtureObj.match_started = "";
+											$scope.thirdPlaceFixtureObj.competition_id = entry.id;
+											$scope.thirdPlaceFixtureObj.match_venue = entry.comp_address.venue.nama;
+
+											if(moment(thirdPlaceDate).format('dddd') === 'Monday'){
+												$scope.thirdPlaceFixtureObj.match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+												$scope.thirdPlaceFixtureObj.match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(thirdPlaceDate).format('dddd') === 'Tuesday'){
+												$scope.thirdPlaceFixtureObj.match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+												$scope.thirdPlaceFixtureObj.match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(thirdPlaceDate).format('dddd') === 'Wednesday'){
+												$scope.thirdPlaceFixtureObj.match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+												$scope.thirdPlaceFixtureObj.match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(thirdPlaceDate).format('dddd') === 'Thursday'){
+												$scope.thirdPlaceFixtureObj.match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+												$scope.thirdPlaceFixtureObj.match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(thirdPlaceDate).format('dddd') === 'Friday'){
+												$scope.thirdPlaceFixtureObj.match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+												$scope.thirdPlaceFixtureObj.match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(thirdPlaceDate).format('dddd') === 'Saturday'){
+												$scope.thirdPlaceFixtureObj.match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+												$scope.thirdPlaceFixtureObj.match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(thirdPlaceDate).format('dddd') === 'Sunday'){
+												$scope.thirdPlaceFixtureObj.match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+												$scope.thirdPlaceFixtureObj.match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+											}
+											console.log($scope.thirdPlaceFixtureObj);
+										},6000);
+										
 
 										// Final
-										$scope.finalFixtureObj = {};
-										$scope.finalFixtureObj.id = "MA" + $rootScope.randomString + 1 + m;
-										$scope.finalFixtureObj.match_homeTeam = "";
-										$scope.finalFixtureObj.match_awayTeam = "";
-										$scope.finalFixtureObj.match_date = moment(finalDate).toISOString();
-										$scope.finalFixtureObj.match_time = timeArr[1];
-										$scope.finalFixtureObj.match_fixture = "final";
-										$scope.finalFixtureObj.field = 1;
-										$scope.finalFixtureObj.match_started = "";
-										$scope.finalFixtureObj.competition_id = entry.id;
+										setTimeout(function(){
+											refereeIndex = 1;
+											analystIndex = 1;
 
+											$scope.finalFixtureObj = {};
+											$scope.finalFixtureObj.match_homeTeamObj = {};
+											$scope.finalFixtureObj.match_homeTeamObj.team_name = '';
+											$scope.finalFixtureObj.match_homeTeamObj.score = 0;
+											$scope.finalFixtureObj.match_homeTeamObj.formation = '';
+											$scope.finalFixtureObj.match_homeTeamObj.lineup = '';
+											$scope.finalFixtureObj.match_homeTeamObj.lastLineup = '';
+											$scope.finalFixtureObj.match_homeTeamObj.sub = '';
+											$scope.finalFixtureObj.match_homeTeamObj.lastSub = '';
+											$scope.finalFixtureObj.match_homeTeamObj.player = '';
 
-										console.log($scope.firstRoundFixtureObj);
-										console.log($scope.secondRoundFixtureObj);
-										console.log($scope.thirdRoundFixtureObj);
-										console.log($scope.quarterFinalFixtureObj);
-										console.log($scope.semiFinalFixtureObj);
-										console.log($scope.thirdPlaceFixtureObj);
-										console.log($scope.finalFixtureObj);
-									
+											$scope.finalFixtureObj.match_awayTeamObj = {};
+											$scope.finalFixtureObj.match_awayTeamObj.team_name = '';
+											$scope.finalFixtureObj.match_awayTeamObj.score = 0;
+											$scope.finalFixtureObj.match_awayTeamObj.formation = '';
+											$scope.finalFixtureObj.match_awayTeamObj.lineup = '';
+											$scope.finalFixtureObj.match_awayTeamObj.lastLineup = '';
+											$scope.finalFixtureObj.match_awayTeamObj.sub = '';
+											$scope.finalFixtureObj.match_awayTeamObj.lastSub = '';
+											$scope.finalFixtureObj.match_awayTeamObj.player = '';
+
+											$scope.finalFixtureObj.id = "MA" + $rootScope.randomString + 1 + m;
+											$scope.finalFixtureObj.match_homeTeam = "";
+											$scope.finalFixtureObj.match_awayTeam = "";
+											$scope.finalFixtureObj.match_date = moment(finalDate).toISOString();
+											$scope.finalFixtureObj.match_time = timeArr[1];
+											$scope.finalFixtureObj.match_fixture = "final";
+											$scope.finalFixtureObj.match_field = 1;
+											$scope.finalFixtureObj.match_started = "";
+											$scope.finalFixtureObj.competition_id = entry.id;
+											$scope.finalFixtureObj.match_venue = entry.comp_address.venue.nama;
+
+											if(moment(finalDate).format('dddd') === 'Monday'){
+												$scope.finalFixtureObj.match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+												$scope.finalFixtureObj.match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(finalDate).format('dddd') === 'Tuesday'){
+												$scope.finalFixtureObj.match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+												$scope.finalFixtureObj.match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(finalDate).format('dddd') === 'Wednesday'){
+												$scope.finalFixtureObj.match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+												$scope.finalFixtureObj.match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(finalDate).format('dddd') === 'Thursday'){
+												$scope.finalFixtureObj.match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+												$scope.finalFixtureObj.match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(finalDate).format('dddd') === 'Friday'){
+												$scope.finalFixtureObj.match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+												$scope.finalFixtureObj.match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(finalDate).format('dddd') === 'Saturday'){
+												$scope.finalFixtureObj.match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+												$scope.finalFixtureObj.match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(finalDate).format('dddd') === 'Sunday'){
+												$scope.finalFixtureObj.match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+												$scope.finalFixtureObj.match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+											}
+											console.log($scope.finalFixtureObj);											
+										},6000);									
 									}
 
+								// 14 Days (done)
 								}else if(numOfDays === 14){
 									console.log("14");
 									if(entry.comp_numOfTeam === 32){
@@ -2559,7 +4735,6 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 										var roundOf16Index = 0;				
 										var roundOf16DateArr = [];
 										roundOf16DateArr.push(roundOf16Date1,roundOf16Date2);	
-
 									}else if(entry.comp_numOfTeam === 16){
 										console.log("16");
 										var fixture1Date = moment(new Date(entry.comp_start));
@@ -2570,7 +4745,6 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 										var quarterFinalIndex = 0;
 										var quarterFinalDateArr = [];	
 										quarterFinalDateArr.push(quarterFinalDate1,quarterFinalDate2);
-
 									}else{
 										console.log("8");
 										var fixture1Date1 = moment(new Date(entry.comp_start));
@@ -2607,6 +4781,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 									var timeIndex = 0;
 									var fieldIndex = 0;
 									var refereeIndex = 0;
+									var analystIndex = 0;
 
 									// get day based on date
 									console.log(moment(fixture1Date).format('dddd')); 
@@ -2614,6 +4789,9 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 									setTimeout(function(){
 										var timeIndex = 0;
 										var fieldIndex = 0;
+										var refereeIndex = 0;
+										var analystIndex = 0;
+
 										for(t = 0; t < $scope.firstRoundHomeTeam.length; t++){
 											$scope.firstRoundFixtureObj[t] = {};
 											$scope.firstRoundFixtureObj[t].match_homeTeamObj = {};
@@ -2621,7 +4799,9 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 											$scope.firstRoundFixtureObj[t].match_homeTeamObj.score = 0;
 											$scope.firstRoundFixtureObj[t].match_homeTeamObj.formation = '';
 											$scope.firstRoundFixtureObj[t].match_homeTeamObj.lineup = '';
+											$scope.firstRoundFixtureObj[t].match_homeTeamObj.lastLineup = '';
 											$scope.firstRoundFixtureObj[t].match_homeTeamObj.sub = '';
+											$scope.firstRoundFixtureObj[t].match_homeTeamObj.lastSub = '';
 											$scope.firstRoundFixtureObj[t].match_homeTeamObj.player = '';
 
 											$scope.firstRoundFixtureObj[t].match_awayTeamObj = {};
@@ -2629,7 +4809,9 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 											$scope.firstRoundFixtureObj[t].match_awayTeamObj.score = 0;
 											$scope.firstRoundFixtureObj[t].match_awayTeamObj.formation = '';
 											$scope.firstRoundFixtureObj[t].match_awayTeamObj.lineup = '';
+											$scope.firstRoundFixtureObj[t].match_awayTeamObj.lastLineup = '';
 											$scope.firstRoundFixtureObj[t].match_awayTeamObj.sub = '';
+											$scope.firstRoundFixtureObj[t].match_awayTeamObj.lastSub = '';
 											$scope.firstRoundFixtureObj[t].match_awayTeamObj.player = '';
 
 											$scope.firstRoundFixtureObj[t].id = "MA" + $rootScope.randomString + 1 + firstRoundGroupIndex + t;
@@ -2638,31 +4820,38 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 											$scope.firstRoundFixtureObj[t].match_group = $scope.firstRoundMatches.group[firstRoundGroupIndex];
 											$scope.firstRoundFixtureObj[t].match_fixture = "fixture 1";
 											$scope.firstRoundFixtureObj[t].match_field = fieldArr[fieldIndex];
-											$scope.firstRoundFixtureObj[t].match_started = "";
 											$scope.firstRoundFixtureObj[t].fixture_number = 1;
 											$scope.firstRoundFixtureObj[t].competition_id = entry.id;
 											$scope.firstRoundFixtureObj[t].match_date = moment(fixture1Date).toISOString();
 											$scope.firstRoundFixtureObj[t].match_time = timeArr[timeIndex];
 											$scope.firstRoundFixtureObj[t].match_venue = entry.comp_address.venue.nama;
-
+										
 											if(moment(fixture1Date).format('dddd') === 'Monday'){
 												$scope.firstRoundFixtureObj[t].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+												$scope.firstRoundFixtureObj[t].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
 											}else if(moment(fixture1Date).format('dddd') === 'Tuesday'){
 												$scope.firstRoundFixtureObj[t].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+												$scope.firstRoundFixtureObj[t].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
 											}else if(moment(fixture1Date).format('dddd') === 'Wednesday'){
 												$scope.firstRoundFixtureObj[t].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+												$scope.firstRoundFixtureObj[t].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
 											}else if(moment(fixture1Date).format('dddd') === 'Thursday'){
 												$scope.firstRoundFixtureObj[t].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+												$scope.firstRoundFixtureObj[t].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
 											}else if(moment(fixture1Date).format('dddd') === 'Friday'){
 												$scope.firstRoundFixtureObj[t].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+												$scope.firstRoundFixtureObj[t].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
 											}else if(moment(fixture1Date).format('dddd') === 'Saturday'){
 												$scope.firstRoundFixtureObj[t].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+												$scope.firstRoundFixtureObj[t].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
 											}else if(moment(fixture1Date).format('dddd') === 'Sunday'){
 												$scope.firstRoundFixtureObj[t].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+												$scope.firstRoundFixtureObj[t].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
 											}
 
 											fieldIndex++;
 											refereeIndex++;
+											analystIndex++;
 											if(t % 2 != 0){
 												firstRoundGroupIndex++;
 											}
@@ -2676,12 +4865,13 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 											console.log(timeIndex);
 											if((timeIndex % 2 == 0) && (fieldIndex == 0)){
 												refereeIndex = 0;
+												analystIndex = 0;
 											}
 
 											if(entry.comp_numOfTeam === 8){
 												timeIndex++;
 												$scope.firstRoundFixtureObj[t].match_date = moment(fixture1DateArr[fixture1Index]).toISOString();
-												$scope.firstRoundFixtureObj[t].field = "1";
+												$scope.firstRoundFixtureObj[t].match_field = "1";
 												if((t+1) % 2 == 0){
 													fixture1Index++;
 													timeIndex = 0;
@@ -2703,7 +4893,9 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 											$scope.secondRoundFixtureObj[t].match_homeTeamObj.score = 0;
 											$scope.secondRoundFixtureObj[t].match_homeTeamObj.formation = '';
 											$scope.secondRoundFixtureObj[t].match_homeTeamObj.lineup = '';
+											$scope.secondRoundFixtureObj[t].match_homeTeamObj.lastLineup = '';
 											$scope.secondRoundFixtureObj[t].match_homeTeamObj.sub = '';
+											$scope.secondRoundFixtureObj[t].match_homeTeamObj.lastSub = '';
 											$scope.secondRoundFixtureObj[t].match_homeTeamObj.player = '';
 
 											$scope.secondRoundFixtureObj[t].match_awayTeamObj = {};
@@ -2711,13 +4903,15 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 											$scope.secondRoundFixtureObj[t].match_awayTeamObj.score = 0;
 											$scope.secondRoundFixtureObj[t].match_awayTeamObj.formation = '';
 											$scope.secondRoundFixtureObj[t].match_awayTeamObj.lineup = '';
+											$scope.secondRoundFixtureObj[t].match_awayTeamObj.lastLineup = '';
 											$scope.secondRoundFixtureObj[t].match_awayTeamObj.sub = '';
+											$scope.secondRoundFixtureObj[t].match_awayTeamObj.lastSub = '';
 											$scope.secondRoundFixtureObj[t].match_awayTeamObj.player = '';
 
 											$scope.secondRoundFixtureObj[t].id = "MA" + $rootScope.randomString + 2 + secondRoundGroupIndex + t;
 											$scope.secondRoundFixtureObj[t].match_homeTeam = $scope.secondRoundHomeTeam[t];
 											$scope.secondRoundFixtureObj[t].match_awayTeam = $scope.secondRoundAwayTeam[t];
-											$scope.secondRoundFixtureObj[t].match_group = $scope.firstRoundMatches.group[secondRoundGroupIndex];
+											$scope.secondRoundFixtureObj[t].match_group = $scope.secondRoundMatches.group[secondRoundGroupIndex];
 											$scope.secondRoundFixtureObj[t].match_date = moment(fixture2Date).toISOString();
 											$scope.secondRoundFixtureObj[t].match_time = timeArr[timeIndex];
 											$scope.secondRoundFixtureObj[t].match_fixture = "fixture 2";
@@ -2729,21 +4923,29 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 											if(moment(fixture2Date).format('dddd') === 'Monday'){
 												$scope.secondRoundFixtureObj[t].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+												$scope.secondRoundFixtureObj[t].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
 											}else if(moment(fixture2Date).format('dddd') === 'Tuesday'){
 												$scope.secondRoundFixtureObj[t].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+												$scope.secondRoundFixtureObj[t].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
 											}else if(moment(fixture2Date).format('dddd') === 'Wednesday'){
 												$scope.secondRoundFixtureObj[t].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+												$scope.secondRoundFixtureObj[t].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
 											}else if(moment(fixture2Date).format('dddd') === 'Thursday'){
 												$scope.secondRoundFixtureObj[t].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+												$scope.secondRoundFixtureObj[t].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
 											}else if(moment(fixture2Date).format('dddd') === 'Friday'){
 												$scope.secondRoundFixtureObj[t].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+												$scope.secondRoundFixtureObj[t].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
 											}else if(moment(fixture2Date).format('dddd') === 'Saturday'){
 												$scope.secondRoundFixtureObj[t].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+												$scope.secondRoundFixtureObj[t].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
 											}else if(moment(fixture2Date).format('dddd') === 'Sunday'){
 												$scope.secondRoundFixtureObj[t].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+												$scope.secondRoundFixtureObj[t].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
 											}
 
 											refereeIndex++;
+											analystIndex++;
 											fieldIndex++;
 											if(t % 2 != 0){
 												secondRoundGroupIndex++;
@@ -2759,12 +4961,13 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 											console.log(timeIndex);
 											if((timeIndex % 2 == 0) && (fieldIndex == 0)){
 												refereeIndex = 0;
+												analystIndex = 0;
 											}
 
 											if(entry.comp_numOfTeam === 8){
 												timeIndex++;
 												$scope.secondRoundFixtureObj[t].match_date = moment(fixture2DateArr[fixture2Index]).toISOString();
-												$scope.secondRoundFixtureObj[t].field = "1";
+												$scope.secondRoundFixtureObj[t].match_field = "1";
 												if((t+1) % 2 == 0){
 													fixture2Index++;
 													timeIndex = 0;
@@ -2779,6 +4982,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 										timeIndex = 0;
 										fieldIndex = 0;
 										refereeIndex = 0;
+										analystIndex = 0;
 										for(t = 0; t < $scope.thirdRoundHomeTeam.length; t++){
 											$scope.thirdRoundFixtureObj[t] = {};
 											$scope.thirdRoundFixtureObj[t].match_homeTeamObj = {};
@@ -2786,7 +4990,9 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 											$scope.thirdRoundFixtureObj[t].match_homeTeamObj.score = 0;
 											$scope.thirdRoundFixtureObj[t].match_homeTeamObj.formation = '';
 											$scope.thirdRoundFixtureObj[t].match_homeTeamObj.lineup = '';
+											$scope.thirdRoundFixtureObj[t].match_homeTeamObj.lastLineup = '';
 											$scope.thirdRoundFixtureObj[t].match_homeTeamObj.sub = '';
+											$scope.thirdRoundFixtureObj[t].match_homeTeamObj.lastSub = '';
 											$scope.thirdRoundFixtureObj[t].match_homeTeamObj.player = '';
 
 											$scope.thirdRoundFixtureObj[t].match_awayTeamObj = {};
@@ -2794,7 +5000,9 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 											$scope.thirdRoundFixtureObj[t].match_awayTeamObj.score = 0;
 											$scope.thirdRoundFixtureObj[t].match_awayTeamObj.formation = '';
 											$scope.thirdRoundFixtureObj[t].match_awayTeamObj.lineup = '';
+											$scope.thirdRoundFixtureObj[t].match_awayTeamObj.lastLineup = '';
 											$scope.thirdRoundFixtureObj[t].match_awayTeamObj.sub = '';
+											$scope.thirdRoundFixtureObj[t].match_awayTeamObj.lastSub = '';
 											$scope.thirdRoundFixtureObj[t].match_awayTeamObj.player = '';
 
 											$scope.thirdRoundFixtureObj[t].id = "MA" + $rootScope.randomString + 3 + secondRoundGroupIndex + t;
@@ -2812,21 +5020,29 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 											if(moment(fixture3Date).format('dddd') === 'Monday'){
 												$scope.thirdRoundFixtureObj[t].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+												$scope.thirdRoundFixtureObj[t].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
 											}else if(moment(fixture3Date).format('dddd') === 'Tuesday'){
 												$scope.thirdRoundFixtureObj[t].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+												$scope.thirdRoundFixtureObj[t].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
 											}else if(moment(fixture3Date).format('dddd') === 'Wednesday'){
 												$scope.thirdRoundFixtureObj[t].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+												$scope.thirdRoundFixtureObj[t].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
 											}else if(moment(fixture3Date).format('dddd') === 'Thursday'){
 												$scope.thirdRoundFixtureObj[t].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+												$scope.thirdRoundFixtureObj[t].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
 											}else if(moment(fixture3Date).format('dddd') === 'Friday'){
 												$scope.thirdRoundFixtureObj[t].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+												$scope.thirdRoundFixtureObj[t].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
 											}else if(moment(fixture3Date).format('dddd') === 'Saturday'){
 												$scope.thirdRoundFixtureObj[t].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+												$scope.thirdRoundFixtureObj[t].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
 											}else if(moment(fixture3Date).format('dddd') === 'Sunday'){
 												$scope.thirdRoundFixtureObj[t].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+												$scope.thirdRoundFixtureObj[t].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
 											}
 
 											refereeIndex++;
+											analystIndex++;
 											fieldIndex++;
 											if(t % 2 != 0){
 												thirdRoundGroupIndex++;
@@ -2842,12 +5058,13 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 											console.log(timeIndex);
 											if((timeIndex % 2 == 0) && (fieldIndex == 0)){
 												refereeIndex = 0;
+												analystIndex = 0;
 											}
 											
 											if(entry.comp_numOfTeam === 8){
 												timeIndex++;
 												$scope.thirdRoundFixtureObj[t].match_date = moment(fixture3DateArr[fixture3Index]).toISOString();
-												$scope.thirdRoundFixtureObj[t].field = "1";
+												$scope.thirdRoundFixtureObj[t].match_field = "1";
 												if((t+1) % 2 == 0){
 													fixture3Index++;
 													timeIndex = 0;
@@ -2862,6 +5079,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 										if(entry.comp_numOfTeam === 32){
 											timeIndex = 0;
 											refereeIndex = 0;
+											analystIndex = 0;
 											var pair = 1;
 											for(var m = 0; m < 8; m++){
 												$scope.roundOf16FixtureObj[m] = {};
@@ -2870,7 +5088,9 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 												$scope.roundOf16FixtureObj[m].match_homeTeamObj.score = 0;
 												$scope.roundOf16FixtureObj[m].match_homeTeamObj.formation = '';
 												$scope.roundOf16FixtureObj[m].match_homeTeamObj.lineup = '';
+												$scope.roundOf16FixtureObj[m].match_homeTeamObj.lastLineup = '';
 												$scope.roundOf16FixtureObj[m].match_homeTeamObj.sub = '';
+												$scope.roundOf16FixtureObj[m].match_homeTeamObj.lastSub = '';
 												$scope.roundOf16FixtureObj[m].match_homeTeamObj.player = '';
 
 												$scope.roundOf16FixtureObj[m].match_awayTeamObj = {};
@@ -2878,7 +5098,9 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 												$scope.roundOf16FixtureObj[m].match_awayTeamObj.score = 0;
 												$scope.roundOf16FixtureObj[m].match_awayTeamObj.formation = '';
 												$scope.roundOf16FixtureObj[m].match_awayTeamObj.lineup = '';
+												$scope.roundOf16FixtureObj[m].match_awayTeamObj.lastLineup = '';
 												$scope.roundOf16FixtureObj[m].match_awayTeamObj.sub = '';
+												$scope.roundOf16FixtureObj[m].match_awayTeamObj.lastSub = '';
 												$scope.roundOf16FixtureObj[m].match_awayTeamObj.player = '';
 
 												$scope.roundOf16FixtureObj[m].id = "MA" + $rootScope.randomString + 16 + m;
@@ -2894,28 +5116,37 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 												$scope.roundOf16FixtureObj[m].match_venue = entry.comp_address.venue.nama;
 
 												if(moment(roundOf16DateArr[roundOf16Index]).format('dddd') === 'Monday'){
-													$scope.roundOf16FixtureObj[t].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+													$scope.roundOf16FixtureObj[m].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+													$scope.roundOf16FixtureObj[m].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
 												}else if(moment(roundOf16DateArr[roundOf16Index]).format('dddd') === 'Tuesday'){
-													$scope.roundOf16FixtureObj[t].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+													$scope.roundOf16FixtureObj[m].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+													$scope.roundOf16FixtureObj[m].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
 												}else if(moment(roundOf16DateArr[roundOf16Index]).format('dddd') === 'Wednesday'){
-													$scope.roundOf16FixtureObj[t].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+													$scope.roundOf16FixtureObj[m].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+													$scope.roundOf16FixtureObj[m].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
 												}else if(moment(roundOf16DateArr[roundOf16Index]).format('dddd') === 'Thursday'){
-													$scope.roundOf16FixtureObj[t].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+													$scope.roundOf16FixtureObj[m].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+													$scope.roundOf16FixtureObj[m].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
 												}else if(moment(roundOf16DateArr[roundOf16Index]).format('dddd') === 'Friday'){
-													$scope.roundOf16FixtureObj[t].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+													$scope.roundOf16FixtureObj[m].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+													$scope.roundOf16FixtureObj[m].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
 												}else if(moment(roundOf16DateArr[roundOf16Index]).format('dddd') === 'Saturday'){
-													$scope.roundOf16FixtureObj[t].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+													$scope.roundOf16FixtureObj[m].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+													$scope.roundOf16FixtureObj[m].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
 												}else if(moment(roundOf16DateArr[roundOf16Index]).format('dddd') === 'Sunday'){
-													$scope.roundOf16FixtureObj[t].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+													$scope.roundOf16FixtureObj[m].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+													$scope.roundOf16FixtureObj[m].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
 												}
 
 												refereeIndex++;
+												analystIndex++;
 												console.log(timeIndex);
-												if((timeIndex % 2 == 0) && (fieldIndex == 0)){
+												if((timeIndex % 4 == 0) && (fieldIndex == 0)){
 													refereeIndex = 0;
+													analystIndex = 0;
 												}
 
-												timeIndex++;
+												timeIndex = timeIndex + 2;
 												if((m+1) % 4 == 0){
 													roundOf16Index++;
 													timeIndex = 0;
@@ -2935,6 +5166,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 											console.log("asjadlajdaskdjad");
 											timeIndex = 0;
 											refereeIndex = 0;
+											analystIndex = 0;
 											pair = 1;
 											for(m = 0; m < 4; m++){
 												$scope.quarterFinalFixtureObj[m] = {};
@@ -2943,7 +5175,9 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.score = 0;
 												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.formation = '';
 												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.lineup = '';
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.lastLineup = '';
 												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.sub = '';
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.lastSub = '';
 												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.player = '';
 
 												$scope.quarterFinalFixtureObj[m].match_awayTeamObj = {};
@@ -2951,8 +5185,11 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.score = 0;
 												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.formation = '';
 												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.lineup = '';
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.lastLineup = '';
 												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.sub = '';
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.lastSub = '';
 												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.player = '';
+
 												$scope.quarterFinalFixtureObj[m].id = "MA" + $rootScope.randomString + 8 + m;
 												$scope.quarterFinalFixtureObj[m].match_homeTeam = "";
 												$scope.quarterFinalFixtureObj[m].match_awayTeam = "";
@@ -2964,24 +5201,31 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 												$scope.quarterFinalFixtureObj[m].competition_id = entry.id;
 												$scope.quarterFinalFixtureObj[m].match_venue = entry.comp_address.venue.nama;
 
-												timeIndex++;
+												timeIndex = timeIndex + 2;
 												if(entry.comp_numOfTeam === 32){
 													$scope.quarterFinalFixtureObj[m].match_date = moment(quarterFinalDate).toISOString();
 
 													if(moment(quarterFinalDate).format('dddd') === 'Monday'){
 														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
 													}else if(moment(quarterFinalDate).format('dddd') === 'Tuesday'){
 														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
 													}else if(moment(quarterFinalDate).format('dddd') === 'Wednesday'){
 														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
 													}else if(moment(quarterFinalDate).format('dddd') === 'Thursday'){
 														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
 													}else if(moment(quarterFinalDate).format('dddd') === 'Friday'){
 														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
 													}else if(moment(quarterFinalDate).format('dddd') === 'Saturday'){
 														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
 													}else if(moment(quarterFinalDate).format('dddd') === 'Sunday'){
 														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
 													}
 
 												}else if(entry.comp_numOfTeam === 16){
@@ -2989,18 +5233,25 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 													
 													if(moment(quarterFinalDateArr[quarterFinalIndex]).format('dddd') === 'Monday'){
 														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
 													}else if(moment(quarterFinalDateArr[quarterFinalIndex]).format('dddd') === 'Tuesday'){
 														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
 													}else if(moment(quarterFinalDateArr[quarterFinalIndex]).format('dddd') === 'Wednesday'){
 														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
 													}else if(moment(quarterFinalDateArr[quarterFinalIndex]).format('dddd') === 'Thursday'){
 														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
 													}else if(moment(quarterFinalDateArr[quarterFinalIndex]).format('dddd') === 'Friday'){
 														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
 													}else if(moment(quarterFinalDateArr[quarterFinalIndex]).format('dddd') === 'Saturday'){
 														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
 													}else if(moment(quarterFinalDateArr[quarterFinalIndex]).format('dddd') === 'Sunday'){
 														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
 													}
 
 													if((m+1) % 2 == 0){
@@ -3013,9 +5264,11 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 												}
 												
 												refereeIndex++;
+												analystIndex++;
 												console.log(timeIndex);
-												if((timeIndex % 2 == 0) && (fieldIndex == 0)){
+												if((timeIndex % 4 == 0) && (fieldIndex == 0)){
 													refereeIndex = 0;
+													analystIndex = 0;
 												}
 											}
 										}
@@ -3026,6 +5279,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 									setTimeout(function(){
 										timeIndex = 1;
 										refereeIndex = 0;
+										analystIndex = 0;
 										for(m = 0; m < 2; m++){
 											$scope.semiFinalFixtureObj[m] = {};
 											$scope.semiFinalFixtureObj[m].match_homeTeamObj = {};
@@ -3033,7 +5287,9 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 											$scope.semiFinalFixtureObj[m].match_homeTeamObj.score = 0;
 											$scope.semiFinalFixtureObj[m].match_homeTeamObj.formation = '';
 											$scope.semiFinalFixtureObj[m].match_homeTeamObj.lineup = '';
+											$scope.semiFinalFixtureObj[m].match_homeTeamObj.lastLineup = '';
 											$scope.semiFinalFixtureObj[m].match_homeTeamObj.sub = '';
+											$scope.semiFinalFixtureObj[m].match_homeTeamObj.lastSub = '';
 											$scope.semiFinalFixtureObj[m].match_homeTeamObj.player = '';
 
 											$scope.semiFinalFixtureObj[m].match_awayTeamObj = {};
@@ -3041,8 +5297,11 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 											$scope.semiFinalFixtureObj[m].match_awayTeamObj.score = 0;
 											$scope.semiFinalFixtureObj[m].match_awayTeamObj.formation = '';
 											$scope.semiFinalFixtureObj[m].match_awayTeamObj.lineup = '';
+											$scope.semiFinalFixtureObj[m].match_awayTeamObj.lastLineup = '';
 											$scope.semiFinalFixtureObj[m].match_awayTeamObj.sub = '';
+											$scope.semiFinalFixtureObj[m].match_awayTeamObj.lastSub = '';
 											$scope.semiFinalFixtureObj[m].match_awayTeamObj.player = '';
+
 											$scope.semiFinalFixtureObj[m].id = "MA" + $rootScope.randomString + 4 + m;
 											$scope.semiFinalFixtureObj[m].match_homeTeam = "";
 											$scope.semiFinalFixtureObj[m].match_awayTeam = "";
@@ -3057,23 +5316,31 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 											if(moment(semiFinalDate).format('dddd') === 'Monday'){
 												$scope.semiFinalFixtureObj[m].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+												$scope.semiFinalFixtureObj[m].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
 											}else if(moment(semiFinalDate).format('dddd') === 'Tuesday'){
 												$scope.semiFinalFixtureObj[m].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+												$scope.semiFinalFixtureObj[m].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
 											}else if(moment(semiFinalDate).format('dddd') === 'Wednesday'){
 												$scope.semiFinalFixtureObj[m].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+												$scope.semiFinalFixtureObj[m].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
 											}else if(moment(semiFinalDate).format('dddd') === 'Thursday'){
 												$scope.semiFinalFixtureObj[m].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+												$scope.semiFinalFixtureObj[m].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
 											}else if(moment(semiFinalDate).format('dddd') === 'Friday'){
 												$scope.semiFinalFixtureObj[m].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+												$scope.semiFinalFixtureObj[m].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
 											}else if(moment(semiFinalDate).format('dddd') === 'Saturday'){
 												$scope.semiFinalFixtureObj[m].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+												$scope.semiFinalFixtureObj[m].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
 											}else if(moment(semiFinalDate).format('dddd') === 'Sunday'){
 												$scope.semiFinalFixtureObj[m].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+												$scope.semiFinalFixtureObj[m].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
 											}
 
 											semiFinalIndex++;
-											timeIndex++;
+											timeIndex = timeIndex + 2;
 											refereeIndex++;
+											analystIndex++;
 										}
 										console.log($scope.semiFinalFixtureObj);
 									},6000);
@@ -3087,7 +5354,9 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 										$scope.thirdPlaceFixtureObj.match_homeTeamObj.score = 0;
 										$scope.thirdPlaceFixtureObj.match_homeTeamObj.formation = '';
 										$scope.thirdPlaceFixtureObj.match_homeTeamObj.lineup = '';
+										$scope.thirdPlaceFixtureObj.match_homeTeamObj.lastLineup = '';
 										$scope.thirdPlaceFixtureObj.match_homeTeamObj.sub = '';
+										$scope.thirdPlaceFixtureObj.match_homeTeamObj.lastSub = '';
 										$scope.thirdPlaceFixtureObj.match_homeTeamObj.player = '';
 
 										$scope.thirdPlaceFixtureObj.match_awayTeamObj = {};
@@ -3095,8 +5364,11 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 										$scope.thirdPlaceFixtureObj.match_awayTeamObj.score = 0;
 										$scope.thirdPlaceFixtureObj.match_awayTeamObj.formation = '';
 										$scope.thirdPlaceFixtureObj.match_awayTeamObj.lineup = '';
+										$scope.thirdPlaceFixtureObj.match_awayTeamObj.lastLineup = '';
 										$scope.thirdPlaceFixtureObj.match_awayTeamObj.sub = '';
+										$scope.thirdPlaceFixtureObj.match_awayTeamObj.lastSub = '';
 										$scope.thirdPlaceFixtureObj.match_awayTeamObj.player = '';
+
 										$scope.thirdPlaceFixtureObj.id = "MA" + $rootScope.randomString + 3 + m;
 										$scope.thirdPlaceFixtureObj.match_homeTeam = "";
 										$scope.thirdPlaceFixtureObj.match_awayTeam = "";
@@ -3109,23 +5381,29 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 										$scope.thirdPlaceFixtureObj.match_venue = entry.comp_address.venue.nama;
 
 										if(moment(thirdPlaceDate).format('dddd') === 'Monday'){
-											$scope.thirdPlaceFixtureObj.match_referee = $scope.avMonRef[0][refereeIndex].username;
+											$scope.thirdPlaceFixtureObj.match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+											$scope.thirdPlaceFixtureObj.match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
 										}else if(moment(thirdPlaceDate).format('dddd') === 'Tuesday'){
-											$scope.thirdPlaceFixtureObj.match_referee = $scope.avTueRef[0][refereeIndex].username;
+											$scope.thirdPlaceFixtureObj.match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+											$scope.thirdPlaceFixtureObj.match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
 										}else if(moment(thirdPlaceDate).format('dddd') === 'Wednesday'){
-											$scope.thirdPlaceFixtureObj.match_referee = $scope.avWedRef[0][refereeIndex].username;
+											$scope.thirdPlaceFixtureObj.match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+											$scope.thirdPlaceFixtureObj.match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
 										}else if(moment(thirdPlaceDate).format('dddd') === 'Thursday'){
-											$scope.thirdPlaceFixtureObj.match_referee = $scope.avThuRef[0][refereeIndex].username;
+											$scope.thirdPlaceFixtureObj.match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+											$scope.thirdPlaceFixtureObj.match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
 										}else if(moment(thirdPlaceDate).format('dddd') === 'Friday'){
-											$scope.thirdPlaceFixtureObj.match_referee = $scope.avFriRef[0][refereeIndex].username;
+											$scope.thirdPlaceFixtureObj.match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+											$scope.thirdPlaceFixtureObj.match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
 										}else if(moment(thirdPlaceDate).format('dddd') === 'Saturday'){
-											$scope.thirdPlaceFixtureObj.match_referee = $scope.avSatRef[0][refereeIndex].username;
+											$scope.thirdPlaceFixtureObj.match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+											$scope.thirdPlaceFixtureObj.match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
 										}else if(moment(thirdPlaceDate).format('dddd') === 'Sunday'){
-											$scope.thirdPlaceFixtureObj.match_referee = $scope.avSunRef[0][refereeIndex].username;
+											$scope.thirdPlaceFixtureObj.match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+											$scope.thirdPlaceFixtureObj.match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
 										}
 										console.log($scope.thirdPlaceFixtureObj);
 									},6000);
-									
 
 									// Final
 									setTimeout(function(){
@@ -3136,7 +5414,9 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 										$scope.finalFixtureObj.match_homeTeamObj.score = 0;
 										$scope.finalFixtureObj.match_homeTeamObj.formation = '';
 										$scope.finalFixtureObj.match_homeTeamObj.lineup = '';
+										$scope.finalFixtureObj.match_homeTeamObj.lastLineup = '';
 										$scope.finalFixtureObj.match_homeTeamObj.sub = '';
+										$scope.finalFixtureObj.match_homeTeamObj.lastSub = '';
 										$scope.finalFixtureObj.match_homeTeamObj.player = '';
 
 										$scope.finalFixtureObj.match_awayTeamObj = {};
@@ -3144,8 +5424,11 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 										$scope.finalFixtureObj.match_awayTeamObj.score = 0;
 										$scope.finalFixtureObj.match_awayTeamObj.formation = '';
 										$scope.finalFixtureObj.match_awayTeamObj.lineup = '';
+										$scope.finalFixtureObj.match_awayTeamObj.lastLineup = '';
 										$scope.finalFixtureObj.match_awayTeamObj.sub = '';
+										$scope.finalFixtureObj.match_awayTeamObj.lastSub = '';
 										$scope.finalFixtureObj.match_awayTeamObj.player = '';
+
 										$scope.finalFixtureObj.id = "MA" + $rootScope.randomString + 1 + m;
 										$scope.finalFixtureObj.match_homeTeam = "";
 										$scope.finalFixtureObj.match_awayTeam = "";
@@ -3158,33 +5441,31 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 										$scope.finalFixtureObj.match_venue = entry.comp_address.venue.nama;
 
 										if(moment(finalDate).format('dddd') === 'Monday'){
-											$scope.finalFixtureObj.match_referee = $scope.avMonRef[0][refereeIndex].username;
+											$scope.finalFixtureObj.match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+											$scope.finalFixtureObj.match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
 										}else if(moment(finalDate).format('dddd') === 'Tuesday'){
-											$scope.finalFixtureObj.match_referee = $scope.avTueRef[0][refereeIndex].username;
+											$scope.finalFixtureObj.match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+											$scope.finalFixtureObj.match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
 										}else if(moment(finalDate).format('dddd') === 'Wednesday'){
-											$scope.finalFixtureObj.match_referee = $scope.avWedRef[0][refereeIndex].username;
+											$scope.finalFixtureObj.match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+											$scope.finalFixtureObj.match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
 										}else if(moment(finalDate).format('dddd') === 'Thursday'){
-											$scope.finalFixtureObj.match_referee = $scope.avThuRef[0][refereeIndex].username;
+											$scope.finalFixtureObj.match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+											$scope.finalFixtureObj.match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
 										}else if(moment(finalDate).format('dddd') === 'Friday'){
-											$scope.finalFixtureObj.match_referee = $scope.avFriRef[0][refereeIndex].username;
+											$scope.finalFixtureObj.match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+											$scope.finalFixtureObj.match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
 										}else if(moment(finalDate).format('dddd') === 'Saturday'){
-											$scope.finalFixtureObj.match_referee = $scope.avSatRef[0][refereeIndex].username;
+											$scope.finalFixtureObj.match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+											$scope.finalFixtureObj.match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
 										}else if(moment(finalDate).format('dddd') === 'Sunday'){
-											$scope.finalFixtureObj.match_referee = $scope.avSunRef[0][refereeIndex].username;
+											$scope.finalFixtureObj.match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+											$scope.finalFixtureObj.match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
 										}
 										console.log($scope.finalFixtureObj);
 									},6000);
 									
-
-									console.log($scope.firstRoundFixtureObj);
-									console.log($scope.secondRoundFixtureObj);
-									console.log($scope.thirdRoundFixtureObj);
-									console.log($scope.roundOf16FixtureObj);
-									console.log($scope.quarterFinalFixtureObj);
-									console.log($scope.semiFinalFixtureObj);
-									console.log($scope.thirdPlaceFixtureObj);
-									console.log($scope.finalFixtureObj);
-
+								// 7 Days (done)
 								}else {
 									console.log("7");
 									var fixture1Date = moment(new Date(entry.comp_start));
@@ -3222,231 +5503,662 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 									// Fixture 1
 									var timeIndex = 0;
 									var fieldIndex = 0;
+									var refereeIndex = 0;
+									var analystIndex = 0;
 
-									for(t = 0; t < $scope.firstRoundHomeTeam.length; t++){
-										$scope.firstRoundFixtureObj[t] = {};
-										$scope.firstRoundFixtureObj[t].id = "MA" + $rootScope.randomString + 1 + firstRoundGroupIndex + t;
-										$scope.firstRoundFixtureObj[t].match_homeTeam = $scope.firstRoundHomeTeam[t];
-										$scope.firstRoundFixtureObj[t].match_awayTeam = $scope.firstRoundAwayTeam[t];
-										$scope.firstRoundFixtureObj[t].match_group = $scope.firstRoundMatches.group[firstRoundGroupIndex];
-										$scope.firstRoundFixtureObj[t].match_date = moment(fixture1Date).toISOString();
-										$scope.firstRoundFixtureObj[t].match_time = timeArr[timeIndex];
-										$scope.firstRoundFixtureObj[t].match_fixture = "fixture 1";
-										$scope.firstRoundFixtureObj[t].field = fieldArr[fieldIndex];
-										$scope.firstRoundFixtureObj[t].match_started = "";
-										$scope.firstRoundFixtureObj[t].fixture_number = 1;
-										$scope.firstRoundFixtureObj[t].competition_id = entry.id;
 
-										fieldIndex++;
-										if(t % 2 != 0){
-											firstRoundGroupIndex++;
-										}
+									setTimeout(function(){
+										var timeIndex = 0;
+										var fieldIndex = 0;
+										var refereeIndex = 0;
+										var analystIndex = 0;
 
-										if(entry.comp_numOfTeam !== 8){
-											if((t+1) % 3 == 0){
-												timeIndex++;
-												fieldIndex = 0;
-											}
-										}
+										for(t = 0; t < $scope.firstRoundHomeTeam.length; t++){
+											$scope.firstRoundFixtureObj[t] = {};
+											$scope.firstRoundFixtureObj[t].match_homeTeamObj = {};
+											$scope.firstRoundFixtureObj[t].match_homeTeamObj.team_name = $scope.firstRoundHomeTeam[t];
+											$scope.firstRoundFixtureObj[t].match_homeTeamObj.score = 0;
+											$scope.firstRoundFixtureObj[t].match_homeTeamObj.formation = '';
+											$scope.firstRoundFixtureObj[t].match_homeTeamObj.lineup = '';
+											$scope.firstRoundFixtureObj[t].match_homeTeamObj.lastLineup = '';
+											$scope.firstRoundFixtureObj[t].match_homeTeamObj.sub = '';
+											$scope.firstRoundFixtureObj[t].match_homeTeamObj.lastSub = '';
+											$scope.firstRoundFixtureObj[t].match_homeTeamObj.player = '';
 
-										if(entry.comp_numOfTeam === 8){
-											timeIndex++;
+											$scope.firstRoundFixtureObj[t].match_awayTeamObj = {};
+											$scope.firstRoundFixtureObj[t].match_awayTeamObj.team_name = $scope.firstRoundAwayTeam[t];
+											$scope.firstRoundFixtureObj[t].match_awayTeamObj.score = 0;
+											$scope.firstRoundFixtureObj[t].match_awayTeamObj.formation = '';
+											$scope.firstRoundFixtureObj[t].match_awayTeamObj.lineup = '';
+											$scope.firstRoundFixtureObj[t].match_awayTeamObj.lastLineup = '';
+											$scope.firstRoundFixtureObj[t].match_awayTeamObj.sub = '';
+											$scope.firstRoundFixtureObj[t].match_awayTeamObj.lastSub = '';
+											$scope.firstRoundFixtureObj[t].match_awayTeamObj.player = '';
+
+											$scope.firstRoundFixtureObj[t].id = "MA" + $rootScope.randomString + 1 + firstRoundGroupIndex + t;
+											$scope.firstRoundFixtureObj[t].match_homeTeam = $scope.firstRoundHomeTeam[t];
+											$scope.firstRoundFixtureObj[t].match_awayTeam = $scope.firstRoundAwayTeam[t];
+											$scope.firstRoundFixtureObj[t].match_group = $scope.firstRoundMatches.group[firstRoundGroupIndex];
+											$scope.firstRoundFixtureObj[t].match_fixture = "fixture 1";
+											$scope.firstRoundFixtureObj[t].match_field = fieldArr[fieldIndex];
+											$scope.firstRoundFixtureObj[t].fixture_number = 1;
+											$scope.firstRoundFixtureObj[t].competition_id = entry.id;
 											$scope.firstRoundFixtureObj[t].match_date = moment(fixture1Date).toISOString();
-											$scope.firstRoundFixtureObj[t].field = "1";
-											
-										}
-									}
-
-									// Fixture 2
-									timeIndex = 0;
-									fieldIndex = 0;
-									for(t = 0; t < $scope.secondRoundHomeTeam.length; t++){
-										$scope.secondRoundFixtureObj[t] = {};
-										$scope.secondRoundFixtureObj[t].id = "MA" + $rootScope.randomString + 2 + secondRoundGroupIndex + t;
-										$scope.secondRoundFixtureObj[t].match_homeTeam = $scope.secondRoundHomeTeam[t];
-										$scope.secondRoundFixtureObj[t].match_awayTeam = $scope.secondRoundAwayTeam[t];
-										$scope.secondRoundFixtureObj[t].match_group = $scope.firstRoundMatches.group[secondRoundGroupIndex];
-										$scope.secondRoundFixtureObj[t].match_date = moment(fixture2Date).toISOString();
-										$scope.secondRoundFixtureObj[t].match_time = timeArr[timeIndex];
-										$scope.secondRoundFixtureObj[t].match_fixture = "fixture 2";
-										$scope.secondRoundFixtureObj[t].field = fieldArr[fieldIndex];
-										$scope.secondRoundFixtureObj[t].match_started = "";
-										$scope.secondRoundFixtureObj[t].fixture_number = 2;
-										$scope.secondRoundFixtureObj[t].competition_id = entry.id;
-
-										fieldIndex++;
-										if(t % 2 != 0){
-											secondRoundGroupIndex++;
-										}
-
-										if(entry.comp_numOfTeam !== 8){
-											if((t+1) % 3 == 0){
-												timeIndex++;
-												fieldIndex = 0;
-											}
-										}
-
-										if(entry.comp_numOfTeam === 8){
-											timeIndex++;
-											$scope.secondRoundFixtureObj[t].match_date = moment(fixture2Date).toISOString();
-											$scope.secondRoundFixtureObj[t].field = "1";
-											
-										}
-									}
-
-									// Fixture 3
-									timeIndex = 0;
-									fieldIndex = 0;
-									for(t = 0; t < $scope.thirdRoundHomeTeam.length; t++){
-										$scope.thirdRoundFixtureObj[t] = {};
-										$scope.thirdRoundFixtureObj[t].id = "MA" + $rootScope.randomString + 3 + secondRoundGroupIndex + t;
-										$scope.thirdRoundFixtureObj[t].match_homeTeam = $scope.thirdRoundHomeTeam[t];
-										$scope.thirdRoundFixtureObj[t].match_awayTeam = $scope.thirdRoundAwayTeam[t];
-										$scope.thirdRoundFixtureObj[t].match_group = $scope.thirdRoundMatches.group[thirdRoundGroupIndex];
-										$scope.thirdRoundFixtureObj[t].match_date = moment(fixture3Date).toISOString();
-										$scope.thirdRoundFixtureObj[t].match_time = timeArr[timeIndex];
-										$scope.thirdRoundFixtureObj[t].match_fixture = "fixture 3"
-										$scope.thirdRoundFixtureObj[t].field = fieldArr[fieldIndex];
-										$scope.thirdRoundFixtureObj[t].match_started = "";
-										$scope.thirdRoundFixtureObj[t].fixture_number = 3;
-										$scope.thirdRoundFixtureObj[t].competition_id = entry.id;
-
-										fieldIndex++;
-										if(t % 2 != 0){
-											thirdRoundGroupIndex++;
-										}
-
-										if(entry.comp_numOfTeam !== 8){
-											if((t+1) % 3 == 0){
-												timeIndex++;
-												fieldIndex = 0;
-											}
-										}
+											$scope.firstRoundFixtureObj[t].match_time = timeArr[timeIndex];
+											$scope.firstRoundFixtureObj[t].match_venue = entry.comp_address.venue.nama;
 										
-										if(entry.comp_numOfTeam === 8){
-											timeIndex++;
-											$scope.thirdRoundFixtureObj[t].match_date = moment(fixture3Date).toISOString();
-											$scope.thirdRoundFixtureObj[t].field = "1";
-											
-										}
-
-										
-									}
-
-									// Round of 16
-									if(entry.comp_numOfTeam === 32){
-										timeIndex = 0;
-										pair = 1;
-										for(var m = 0; m < 8; m++){
-											$scope.roundOf16FixtureObj[m] = {};
-											$scope.roundOf16FixtureObj[m].id = "MA" + $rootScope.randomString + 16 + m;
-											$scope.roundOf16FixtureObj[m].match_homeTeam = "";
-											$scope.roundOf16FixtureObj[m].match_awayTeam = "";
-											$scope.roundOf16FixtureObj[m].match_date = moment(roundOf16Date).toISOString();
-											$scope.roundOf16FixtureObj[m].match_time = timeArr[timeIndex];
-											$scope.roundOf16FixtureObj[m].match_fixture = "round of 16";
-											$scope.roundOf16FixtureObj[m].field = 1;
-											$scope.roundOf16FixtureObj[m].match_pair = pair;
-											$scope.roundOf16FixtureObj[m].match_started = "";
-											$scope.roundOf16FixtureObj[m].competition_id = entry.id;
-
-											timeIndex++;
-											if((m+1) % 4 == 0){
-												roundOf16Index++;
+											if(moment(fixture1Date).format('dddd') === 'Monday'){
+												$scope.firstRoundFixtureObj[t].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+												$scope.firstRoundFixtureObj[t].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(fixture1Date).format('dddd') === 'Tuesday'){
+												$scope.firstRoundFixtureObj[t].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+												$scope.firstRoundFixtureObj[t].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(fixture1Date).format('dddd') === 'Wednesday'){
+												$scope.firstRoundFixtureObj[t].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+												$scope.firstRoundFixtureObj[t].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(fixture1Date).format('dddd') === 'Thursday'){
+												$scope.firstRoundFixtureObj[t].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+												$scope.firstRoundFixtureObj[t].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(fixture1Date).format('dddd') === 'Friday'){
+												$scope.firstRoundFixtureObj[t].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+												$scope.firstRoundFixtureObj[t].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(fixture1Date).format('dddd') === 'Saturday'){
+												$scope.firstRoundFixtureObj[t].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+												$scope.firstRoundFixtureObj[t].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(fixture1Date).format('dddd') === 'Sunday'){
+												$scope.firstRoundFixtureObj[t].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+												$scope.firstRoundFixtureObj[t].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
 											}
-											if(m % 2 != 0){
-												pair++;
-											}
-										}
-									}
-									
-									// Quarter Final
-									if(entry.comp_numOfTeam === 16 || entry.comp_numOfTeam === 32){
-										console.log("asjadlajdaskdjad");
-										timeIndex = 0;
-										pair = 1;
-										for(m = 0; m < 4; m++){
-											$scope.quarterFinalFixtureObj[m] = {};
-											$scope.quarterFinalFixtureObj[m].id = "MA" + $rootScope.randomString + 8 + m;
-											$scope.quarterFinalFixtureObj[m].match_homeTeam = "";
-											$scope.quarterFinalFixtureObj[m].match_awayTeam = "";
-											$scope.quarterFinalFixtureObj[m].match_time = timeArr[timeIndex];
-											$scope.quarterFinalFixtureObj[m].match_fixture = "quarter final";
-											$scope.quarterFinalFixtureObj[m].field = 1;
-											$scope.quarterFinalFixtureObj[m].match_pair = pair;
-											$scope.quarterFinalFixtureObj[m].match_started = "";
-											$scope.quarterFinalFixtureObj[m].competition_id = entry.id;
 
-											timeIndex++;
-											if(entry.comp_numOfTeam === 32){
-												$scope.quarterFinalFixtureObj[m].match_date = moment(quarterFinalDate).toISOString();
-											}else if(entry.comp_numOfTeam === 16){
-												$scope.quarterFinalFixtureObj[m].match_date = moment(quarterFinalDate).toISOString();
-												if((m+1) % 2 == 0){
-													quarterFinalIndex++;
+											fieldIndex++;
+											refereeIndex++;
+											analystIndex++;
+											if(t % 2 != 0){
+												firstRoundGroupIndex++;
+											}
+
+											if(entry.comp_numOfTeam !== 8){
+												if((t+1) % 3 == 0){
+													timeIndex++;
+													fieldIndex = 0;
 												}
 											}
-											if(m % 2 != 0){
-												pair++;
+
+											if(entry.comp_numOfTeam === 8){
+												timeIndex++;
+												$scope.firstRoundFixtureObj[t].match_date = moment(fixture1Date).toISOString();
+												$scope.firstRoundFixtureObj[t].match_field = "1";
+												
 											}
 										}
-									}
+										console.log($scope.firstRoundFixtureObj);
+									},6000);
+									
+
+									// Fixture 2
+									setTimeout(function(){
+										timeIndex = 0;
+										fieldIndex = 0;
+
+										for(t = 0; t < $scope.secondRoundHomeTeam.length; t++){
+											$scope.secondRoundFixtureObj[t] = {};
+											$scope.secondRoundFixtureObj[t].match_homeTeamObj = {};
+											$scope.secondRoundFixtureObj[t].match_homeTeamObj.team_name = $scope.secondRoundHomeTeam[t];
+											$scope.secondRoundFixtureObj[t].match_homeTeamObj.score = 0;
+											$scope.secondRoundFixtureObj[t].match_homeTeamObj.formation = '';
+											$scope.secondRoundFixtureObj[t].match_homeTeamObj.lineup = '';
+											$scope.secondRoundFixtureObj[t].match_homeTeamObj.lastLineup = '';
+											$scope.secondRoundFixtureObj[t].match_homeTeamObj.sub = '';
+											$scope.secondRoundFixtureObj[t].match_homeTeamObj.lastSub = '';
+											$scope.secondRoundFixtureObj[t].match_homeTeamObj.player = '';
+
+											$scope.secondRoundFixtureObj[t].match_awayTeamObj = {};
+											$scope.secondRoundFixtureObj[t].match_awayTeamObj.team_name = $scope.secondRoundAwayTeam[t];
+											$scope.secondRoundFixtureObj[t].match_awayTeamObj.score = 0;
+											$scope.secondRoundFixtureObj[t].match_awayTeamObj.formation = '';
+											$scope.secondRoundFixtureObj[t].match_awayTeamObj.lineup = '';
+											$scope.secondRoundFixtureObj[t].match_awayTeamObj.lastLineup = '';
+											$scope.secondRoundFixtureObj[t].match_awayTeamObj.sub = '';
+											$scope.secondRoundFixtureObj[t].match_awayTeamObj.lastSub = '';
+											$scope.secondRoundFixtureObj[t].match_awayTeamObj.player = '';
+
+											$scope.secondRoundFixtureObj[t].id = "MA" + $rootScope.randomString + 2 + secondRoundGroupIndex + t;
+											$scope.secondRoundFixtureObj[t].match_homeTeam = $scope.secondRoundHomeTeam[t];
+											$scope.secondRoundFixtureObj[t].match_awayTeam = $scope.secondRoundAwayTeam[t];
+											$scope.secondRoundFixtureObj[t].match_group = $scope.secondRoundMatches.group[secondRoundGroupIndex];
+											$scope.secondRoundFixtureObj[t].match_fixture = "fixture 2";
+											$scope.secondRoundFixtureObj[t].match_field = fieldArr[fieldIndex];
+											$scope.secondRoundFixtureObj[t].fixture_number = 2;
+											$scope.secondRoundFixtureObj[t].competition_id = entry.id;
+											$scope.secondRoundFixtureObj[t].match_date = moment(fixture2Date).toISOString();
+											$scope.secondRoundFixtureObj[t].match_time = timeArr[timeIndex];
+											$scope.secondRoundFixtureObj[t].match_venue = entry.comp_address.venue.nama;
+										
+											if(moment(fixture2Date).format('dddd') === 'Monday'){
+												$scope.secondRoundFixtureObj[t].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+												$scope.secondRoundFixtureObj[t].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(fixture2Date).format('dddd') === 'Tuesday'){
+												$scope.secondRoundFixtureObj[t].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+												$scope.secondRoundFixtureObj[t].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(fixture2Date).format('dddd') === 'Wednesday'){
+												$scope.secondRoundFixtureObj[t].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+												$scope.secondRoundFixtureObj[t].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(fixture2Date).format('dddd') === 'Thursday'){
+												$scope.secondRoundFixtureObj[t].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+												$scope.secondRoundFixtureObj[t].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(fixture2Date).format('dddd') === 'Friday'){
+												$scope.secondRoundFixtureObj[t].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+												$scope.secondRoundFixtureObj[t].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(fixture2Date).format('dddd') === 'Saturday'){
+												$scope.secondRoundFixtureObj[t].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+												$scope.secondRoundFixtureObj[t].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(fixture2Date).format('dddd') === 'Sunday'){
+												$scope.secondRoundFixtureObj[t].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+												$scope.secondRoundFixtureObj[t].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+											}
+
+											refereeIndex++;
+											analystIndex++;
+											fieldIndex++;
+											if(t % 2 != 0){
+												secondRoundGroupIndex++;
+											}
+
+											if(entry.comp_numOfTeam !== 8){
+												if((t+1) % 3 == 0){
+													timeIndex++;
+													fieldIndex = 0;
+												}
+											}
+
+											if(entry.comp_numOfTeam === 8){
+												timeIndex++;
+												$scope.secondRoundFixtureObj[t].match_date = moment(fixture2Date).toISOString();
+												$scope.secondRoundFixtureObj[t].match_field = "1";
+												
+											}
+										}
+										console.log($scope.secondRoundFixtureObj);
+									},6000);
+									
+
+									// Fixture 3
+									setTimeout(function(){
+										timeIndex = 0;
+										fieldIndex = 0;
+										refereeIndex = 0;
+										analystIndex = 0;
+										for(t = 0; t < $scope.thirdRoundHomeTeam.length; t++){
+											$scope.thirdRoundFixtureObj[t] = {};
+											$scope.thirdRoundFixtureObj[t].match_homeTeamObj = {};
+											$scope.thirdRoundFixtureObj[t].match_homeTeamObj.team_name = $scope.thirdRoundHomeTeam[t];
+											$scope.thirdRoundFixtureObj[t].match_homeTeamObj.score = 0;
+											$scope.thirdRoundFixtureObj[t].match_homeTeamObj.formation = '';
+											$scope.thirdRoundFixtureObj[t].match_homeTeamObj.lineup = '';
+											$scope.thirdRoundFixtureObj[t].match_homeTeamObj.lastLineup = '';
+											$scope.thirdRoundFixtureObj[t].match_homeTeamObj.sub = '';
+											$scope.thirdRoundFixtureObj[t].match_homeTeamObj.lastSub = '';
+											$scope.thirdRoundFixtureObj[t].match_homeTeamObj.player = '';
+
+											$scope.thirdRoundFixtureObj[t].match_awayTeamObj = {};
+											$scope.thirdRoundFixtureObj[t].match_awayTeamObj.team_name = $scope.thirdRoundAwayTeam[t];
+											$scope.thirdRoundFixtureObj[t].match_awayTeamObj.score = 0;
+											$scope.thirdRoundFixtureObj[t].match_awayTeamObj.formation = '';
+											$scope.thirdRoundFixtureObj[t].match_awayTeamObj.lineup = '';
+											$scope.thirdRoundFixtureObj[t].match_awayTeamObj.lastLineup = '';
+											$scope.thirdRoundFixtureObj[t].match_awayTeamObj.sub = '';
+											$scope.thirdRoundFixtureObj[t].match_awayTeamObj.lastSub = '';
+											$scope.thirdRoundFixtureObj[t].match_awayTeamObj.player = '';
+
+											$scope.thirdRoundFixtureObj[t].id = "MA" + $rootScope.randomString + 3 + thirdRoundGroupIndex + t;
+											$scope.thirdRoundFixtureObj[t].match_homeTeam = $scope.thirdRoundHomeTeam[t];
+											$scope.thirdRoundFixtureObj[t].match_awayTeam = $scope.thirdRoundAwayTeam[t];
+											$scope.thirdRoundFixtureObj[t].match_group = $scope.thirdRoundMatches.group[thirdRoundGroupIndex];
+											$scope.thirdRoundFixtureObj[t].match_fixture = "fixture 3";
+											$scope.thirdRoundFixtureObj[t].match_field = fieldArr[fieldIndex];
+											$scope.thirdRoundFixtureObj[t].fixture_number = 3;
+											$scope.thirdRoundFixtureObj[t].competition_id = entry.id;
+											$scope.thirdRoundFixtureObj[t].match_date = moment(fixture3Date).toISOString();
+											$scope.thirdRoundFixtureObj[t].match_time = timeArr[timeIndex];
+											$scope.thirdRoundFixtureObj[t].match_venue = entry.comp_address.venue.nama;
+										
+											if(moment(fixture3Date).format('dddd') === 'Monday'){
+												$scope.thirdRoundFixtureObj[t].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+												$scope.thirdRoundFixtureObj[t].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(fixture3Date).format('dddd') === 'Tuesday'){
+												$scope.thirdRoundFixtureObj[t].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+												$scope.thirdRoundFixtureObj[t].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(fixture3Date).format('dddd') === 'Wednesday'){
+												$scope.thirdRoundFixtureObj[t].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+												$scope.thirdRoundFixtureObj[t].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(fixture3Date).format('dddd') === 'Thursday'){
+												$scope.thirdRoundFixtureObj[t].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+												$scope.thirdRoundFixtureObj[t].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(fixture3Date).format('dddd') === 'Friday'){
+												$scope.thirdRoundFixtureObj[t].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+												$scope.thirdRoundFixtureObj[t].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(fixture3Date).format('dddd') === 'Saturday'){
+												$scope.thirdRoundFixtureObj[t].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+												$scope.thirdRoundFixtureObj[t].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(fixture3Date).format('dddd') === 'Sunday'){
+												$scope.thirdRoundFixtureObj[t].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+												$scope.thirdRoundFixtureObj[t].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+											}
+
+											refereeIndex++;
+											analystIndex++;
+											fieldIndex++;
+											if(t % 2 != 0){
+												thirdRoundGroupIndex++;
+											}
+
+											if(entry.comp_numOfTeam !== 8){
+												if((t+1) % 3 == 0){
+													timeIndex++;
+													fieldIndex = 0;
+												}
+											}
+											
+											if(entry.comp_numOfTeam === 8){
+												timeIndex++;
+												$scope.thirdRoundFixtureObj[t].match_date = moment(fixture3Date).toISOString();
+												$scope.thirdRoundFixtureObj[t].match_field = "1";
+												
+											}
+										}
+										console.log($scope.thirdRoundFixtureObj);
+									},6000);
+									
+
+									// Round of 16
+									setTimeout(function(){
+										if(entry.comp_numOfTeam === 32){
+											timeIndex = 0;
+											refereeIndex = 0;
+											analystIndex = 0;
+											fieldIndex = 0;
+											pair = 1;
+											for(var m = 0; m < 8; m++){
+												$scope.roundOf16FixtureObj[m] = {};
+												$scope.roundOf16FixtureObj[m].match_homeTeamObj = {};
+												$scope.roundOf16FixtureObj[m].match_homeTeamObj.team_name = '';
+												$scope.roundOf16FixtureObj[m].match_homeTeamObj.score = 0;
+												$scope.roundOf16FixtureObj[m].match_homeTeamObj.formation = '';
+												$scope.roundOf16FixtureObj[m].match_homeTeamObj.lineup = '';
+												$scope.roundOf16FixtureObj[m].match_homeTeamObj.lastLineup = '';
+												$scope.roundOf16FixtureObj[m].match_homeTeamObj.sub = '';
+												$scope.roundOf16FixtureObj[m].match_homeTeamObj.lastSub = '';
+												$scope.roundOf16FixtureObj[m].match_homeTeamObj.player = '';
+
+												$scope.roundOf16FixtureObj[m].match_awayTeamObj = {};
+												$scope.roundOf16FixtureObj[m].match_awayTeamObj.team_name = '';
+												$scope.roundOf16FixtureObj[m].match_awayTeamObj.score = 0;
+												$scope.roundOf16FixtureObj[m].match_awayTeamObj.formation = '';
+												$scope.roundOf16FixtureObj[m].match_awayTeamObj.lineup = '';
+												$scope.roundOf16FixtureObj[m].match_awayTeamObj.lastLineup = '';
+												$scope.roundOf16FixtureObj[m].match_awayTeamObj.sub = '';
+												$scope.roundOf16FixtureObj[m].match_awayTeamObj.lastSub = '';
+												$scope.roundOf16FixtureObj[m].match_awayTeamObj.player = '';
+
+												$scope.roundOf16FixtureObj[m].id = "MA" + $rootScope.randomString + 16 + m;
+												$scope.roundOf16FixtureObj[m].match_homeTeam = '';
+												$scope.roundOf16FixtureObj[m].match_awayTeam = '';
+												$scope.roundOf16FixtureObj[m].match_fixture = "round of 16";
+												$scope.roundOf16FixtureObj[m].match_field = fieldArr[fieldIndex];
+												$scope.roundOf16FixtureObj[m].competition_id = entry.id;
+												$scope.roundOf16FixtureObj[m].match_pair = pair;
+												$scope.roundOf16FixtureObj[m].match_date = moment(roundOf16Date).toISOString();
+												$scope.roundOf16FixtureObj[m].match_time = timeArr[timeIndex];
+												$scope.roundOf16FixtureObj[m].match_venue = entry.comp_address.venue.nama;
+											
+												if(moment(roundOf16Date).format('dddd') === 'Monday'){
+													$scope.roundOf16FixtureObj[m].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+													$scope.roundOf16FixtureObj[m].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(roundOf16Date).format('dddd') === 'Tuesday'){
+													$scope.roundOf16FixtureObj[m].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+													$scope.roundOf16FixtureObj[m].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(roundOf16Date).format('dddd') === 'Wednesday'){
+													$scope.roundOf16FixtureObj[m].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+													$scope.roundOf16FixtureObj[m].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(roundOf16Date).format('dddd') === 'Thursday'){
+													$scope.roundOf16FixtureObj[m].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+													$scope.roundOf16FixtureObj[m].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(roundOf16Date).format('dddd') === 'Friday'){
+													$scope.roundOf16FixtureObj[m].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+													$scope.roundOf16FixtureObj[m].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(roundOf16Date).format('dddd') === 'Saturday'){
+													$scope.roundOf16FixtureObj[m].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+													$scope.roundOf16FixtureObj[m].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+												}else if(moment(roundOf16Date).format('dddd') === 'Sunday'){
+													$scope.roundOf16FixtureObj[m].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+													$scope.roundOf16FixtureObj[m].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+												}
+
+												refereeIndex++;
+												analystIndex++;
+												fieldIndex++;
+												// if((timeIndex % 4 == 0)){
+												// 	refereeIndex = 0;
+												// 	analystIndex = 0;
+												// }
+
+												if((m+1) % 2 == 0){
+													timeIndex = timeIndex + 2;
+													fieldIndex = 0;
+												}
+												
+												if(m % 2 != 0){
+													pair++;
+												}
+											}
+										}
+										console.log($scope.roundOf16FixtureObj);
+									},6000);
+									
+									
+									// Quarter Final
+									setTimeout(function(){
+										if(entry.comp_numOfTeam === 16 || entry.comp_numOfTeam === 32){
+											console.log("asjadlajdaskdjad");
+											timeIndex = 0;
+											refereeIndex = 0;
+											analystIndex = 0;
+											pair = 1;
+											for(m = 0; m < 4; m++){
+												$scope.quarterFinalFixtureObj[m] = {};
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj = {};
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.team_name = '';
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.score = 0;
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.formation = '';
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.lineup = '';
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.lastLineup = '';
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.sub = '';
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.lastSub = '';
+												$scope.quarterFinalFixtureObj[m].match_homeTeamObj.player = '';
+
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj = {};
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.team_name = '';
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.score = 0;
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.formation = '';
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.lineup = '';
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.lastLineup = '';
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.sub = '';
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.lastSub = '';
+												$scope.quarterFinalFixtureObj[m].match_awayTeamObj.player = '';
+
+
+												$scope.quarterFinalFixtureObj[m].id = "MA" + $rootScope.randomString + 16 + m;
+												$scope.quarterFinalFixtureObj[m].match_homeTeam = '';
+												$scope.quarterFinalFixtureObj[m].match_awayTeam = '';
+												$scope.quarterFinalFixtureObj[m].match_fixture = "quarter final";
+												$scope.quarterFinalFixtureObj[m].match_field = fieldArr[fieldIndex];
+												$scope.quarterFinalFixtureObj[m].competition_id = entry.id;
+												$scope.quarterFinalFixtureObj[m].match_pair = pair;
+												$scope.quarterFinalFixtureObj[m].match_time = timeArr[timeIndex];
+												$scope.quarterFinalFixtureObj[m].match_date = moment(quarterFinalDate).toISOString();
+												$scope.quarterFinalFixtureObj[m].match_venue = entry.comp_address.venue.nama;
+
+												if(entry.comp_numOfTeam === 32){
+													$scope.quarterFinalFixtureObj[m].match_date = moment(quarterFinalDate).toISOString();
+													if(moment(quarterFinalDate).format('dddd') === 'Monday'){
+														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(quarterFinalDate).format('dddd') === 'Tuesday'){
+														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(quarterFinalDate).format('dddd') === 'Wednesday'){
+														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(quarterFinalDate).format('dddd') === 'Thursday'){
+														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(quarterFinalDate).format('dddd') === 'Friday'){
+														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(quarterFinalDate).format('dddd') === 'Saturday'){
+														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(quarterFinalDate).format('dddd') === 'Sunday'){
+														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+													}
+												}else if(entry.comp_numOfTeam === 16){
+													$scope.quarterFinalFixtureObj[m].match_date = moment(quarterFinalDate[quarterFinalIndex]).toISOString();
+													if(moment(quarterFinalDate[quarterFinalIndex]).format('dddd') === 'Monday'){
+														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(quarterFinalDate[quarterFinalIndex]).format('dddd') === 'Tuesday'){
+														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(quarterFinalDate[quarterFinalIndex]).format('dddd') === 'Wednesday'){
+														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(quarterFinalDate[quarterFinalIndex]).format('dddd') === 'Thursday'){
+														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(quarterFinalDate[quarterFinalIndex]).format('dddd') === 'Friday'){
+														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(quarterFinalDate[quarterFinalIndex]).format('dddd') === 'Saturday'){
+														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+													}else if(moment(quarterFinalDate[quarterFinalIndex]).format('dddd') === 'Sunday'){
+														$scope.quarterFinalFixtureObj[m].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+														$scope.quarterFinalFixtureObj[m].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+													}
+													if((m+1) % 2 == 0){
+														quarterFinalIndex++;
+													}
+												}
+											
+												
+
+												timeIndex = timeIndex + 2;
+												refereeIndex++;
+												analystIndex++;
+										
+												if(m % 2 != 0){
+													pair++;
+												}
+											}
+										}
+										console.log($scope.quarterFinalFixtureObj);
+									},6000);
+									
 									
 									// Semi Final
-									timeIndex = 1;
-									for(m = 0; m < 2; m++){
-										$scope.semiFinalFixtureObj[m] = {};
-										$scope.semiFinalFixtureObj[m].id = "MA" + $rootScope.randomString + 4 + m;
-										$scope.semiFinalFixtureObj[m].match_homeTeam = "";
-										$scope.semiFinalFixtureObj[m].match_awayTeam = "";
-										$scope.semiFinalFixtureObj[m].match_date = moment(semiFinalDate).toISOString();
-										$scope.semiFinalFixtureObj[m].match_time = timeArr[timeIndex];
-										$scope.semiFinalFixtureObj[m].match_fixture = "semi final";
-										$scope.semiFinalFixtureObj[m].field = 1;
-										$scope.semiFinalFixtureObj[m].match_pair = 1;
-										$scope.semiFinalFixtureObj[m].match_started = "";
-										$scope.semiFinalFixtureObj[m].competition_id = entry.id;
+									setTimeout(function(){
+										timeIndex = 1;
+										refereeIndex = 0;
+										analystIndex = 0;
+										pair = 1;
+										for(m = 0; m < 2; m++){
+											$scope.semiFinalFixtureObj[m] = {};
+											$scope.semiFinalFixtureObj[m].match_homeTeamObj = {};
+											$scope.semiFinalFixtureObj[m].match_homeTeamObj.team_name = '';
+											$scope.semiFinalFixtureObj[m].match_homeTeamObj.score = 0;
+											$scope.semiFinalFixtureObj[m].match_homeTeamObj.formation = '';
+											$scope.semiFinalFixtureObj[m].match_homeTeamObj.lineup = '';
+											$scope.semiFinalFixtureObj[m].match_homeTeamObj.lastLineup = '';
+											$scope.semiFinalFixtureObj[m].match_homeTeamObj.sub = '';
+											$scope.semiFinalFixtureObj[m].match_homeTeamObj.lastSub = '';
+											$scope.semiFinalFixtureObj[m].match_homeTeamObj.player = '';
 
-										semiFinalIndex++;
-										timeIndex++;
-									}
+											$scope.semiFinalFixtureObj[m].match_awayTeamObj = {};
+											$scope.semiFinalFixtureObj[m].match_awayTeamObj.team_name = '';
+											$scope.semiFinalFixtureObj[m].match_awayTeamObj.score = 0;
+											$scope.semiFinalFixtureObj[m].match_awayTeamObj.formation = '';
+											$scope.semiFinalFixtureObj[m].match_awayTeamObj.lineup = '';
+											$scope.semiFinalFixtureObj[m].match_awayTeamObj.lastLineup = '';
+											$scope.semiFinalFixtureObj[m].match_awayTeamObj.sub = '';
+											$scope.semiFinalFixtureObj[m].match_awayTeamObj.lastSub = '';
+											$scope.semiFinalFixtureObj[m].match_awayTeamObj.player = '';
+
+											$scope.semiFinalFixtureObj[m].id = "MA" + $rootScope.randomString + 4 + m;
+											$scope.semiFinalFixtureObj[m].match_homeTeam = '';
+											$scope.semiFinalFixtureObj[m].match_awayTeam = '';
+											$scope.semiFinalFixtureObj[m].match_fixture = "semi final";
+											$scope.semiFinalFixtureObj[m].match_field = fieldArr[fieldIndex];
+											$scope.semiFinalFixtureObj[m].competition_id = entry.id;
+											$scope.semiFinalFixtureObj[m].match_pair = pair;
+											$scope.semiFinalFixtureObj[m].match_date = moment(semiFinalDate).toISOString();
+											$scope.semiFinalFixtureObj[m].match_time = timeArr[timeIndex];
+											$scope.semiFinalFixtureObj[m].match_venue = entry.comp_address.venue.nama;
+										
+											if(moment(semiFinalDate).format('dddd') === 'Monday'){
+												$scope.semiFinalFixtureObj[m].match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+												$scope.semiFinalFixtureObj[m].match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(semiFinalDate).format('dddd') === 'Tuesday'){
+												$scope.semiFinalFixtureObj[m].match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+												$scope.semiFinalFixtureObj[m].match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(semiFinalDate).format('dddd') === 'Wednesday'){
+												$scope.semiFinalFixtureObj[m].match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+												$scope.semiFinalFixtureObj[m].match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(semiFinalDate).format('dddd') === 'Thursday'){
+												$scope.semiFinalFixtureObj[m].match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+												$scope.semiFinalFixtureObj[m].match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(semiFinalDate).format('dddd') === 'Friday'){
+												$scope.semiFinalFixtureObj[m].match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+												$scope.semiFinalFixtureObj[m].match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(semiFinalDate).format('dddd') === 'Saturday'){
+												$scope.semiFinalFixtureObj[m].match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+												$scope.semiFinalFixtureObj[m].match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+											}else if(moment(semiFinalDate).format('dddd') === 'Sunday'){
+												$scope.semiFinalFixtureObj[m].match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+												$scope.semiFinalFixtureObj[m].match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+											}
+
+											semiFinalIndex++;
+											timeIndex = timeIndex + 2;
+											refereeIndex++;
+											analystIndex++;
+										}
+										console.log($scope.semiFinalFixtureObj);
+									},6000);
+									
 
 									// Third Place
-									$scope.thirdPlaceFixtureObj = {};
-									$scope.thirdPlaceFixtureObj.id = "MA" + $rootScope.randomString + 3 + m;
-									$scope.thirdPlaceFixtureObj.match_homeTeam = "";
-									$scope.thirdPlaceFixtureObj.match_awayTeam = "";
-									$scope.thirdPlaceFixtureObj.match_date = moment(thirdPlaceDate).toISOString();
-									$scope.thirdPlaceFixtureObj.match_time = timeArr[1];
-									$scope.thirdPlaceFixtureObj.match_fixture = "third place";
-									$scope.thirdPlaceFixtureObj.field = 1;
-									$scope.thirdPlaceFixtureObj.match_started = "";
-									$scope.thirdPlaceFixtureObj.competition_id = entry.id;
+									setTimeout(function(){
+										refereeIndex = 0;
+										$scope.thirdPlaceFixtureObj = {};
+										$scope.thirdPlaceFixtureObj.match_homeTeamObj = {};
+										$scope.thirdPlaceFixtureObj.match_homeTeamObj.team_name = '';
+										$scope.thirdPlaceFixtureObj.match_homeTeamObj.score = 0;
+										$scope.thirdPlaceFixtureObj.match_homeTeamObj.formation = '';
+										$scope.thirdPlaceFixtureObj.match_homeTeamObj.lineup = '';
+										$scope.thirdPlaceFixtureObj.match_homeTeamObj.lastLineup = '';
+										$scope.thirdPlaceFixtureObj.match_homeTeamObj.sub = '';
+										$scope.thirdPlaceFixtureObj.match_homeTeamObj.lastSub = '';
+										$scope.thirdPlaceFixtureObj.match_homeTeamObj.player = '';
+
+										$scope.thirdPlaceFixtureObj.match_awayTeamObj = {};
+										$scope.thirdPlaceFixtureObj.match_awayTeamObj.team_name = '';
+										$scope.thirdPlaceFixtureObj.match_awayTeamObj.score = 0;
+										$scope.thirdPlaceFixtureObj.match_awayTeamObj.formation = '';
+										$scope.thirdPlaceFixtureObj.match_awayTeamObj.lineup = '';
+										$scope.thirdPlaceFixtureObj.match_awayTeamObj.lastLineup = '';
+										$scope.thirdPlaceFixtureObj.match_awayTeamObj.sub = '';
+										$scope.thirdPlaceFixtureObj.match_awayTeamObj.lastSub = '';
+										$scope.thirdPlaceFixtureObj.match_awayTeamObj.player = '';
+
+										$scope.thirdPlaceFixtureObj.id = "MA" + $rootScope.randomString + 3 + m;
+										$scope.thirdPlaceFixtureObj.match_homeTeam = "";
+										$scope.thirdPlaceFixtureObj.match_awayTeam = "";
+										$scope.thirdPlaceFixtureObj.match_date = moment(thirdPlaceDate).toISOString();
+										$scope.thirdPlaceFixtureObj.match_time = timeArr[1];
+										$scope.thirdPlaceFixtureObj.match_fixture = "third place";
+										$scope.thirdPlaceFixtureObj.match_field = 1;
+										$scope.thirdPlaceFixtureObj.match_started = "";
+										$scope.thirdPlaceFixtureObj.competition_id = entry.id;
+										$scope.thirdPlaceFixtureObj.match_venue = entry.comp_address.venue.nama;
+
+										if(moment(thirdPlaceDate).format('dddd') === 'Monday'){
+											$scope.thirdPlaceFixtureObj.match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+											$scope.thirdPlaceFixtureObj.match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+										}else if(moment(thirdPlaceDate).format('dddd') === 'Tuesday'){
+											$scope.thirdPlaceFixtureObj.match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+											$scope.thirdPlaceFixtureObj.match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+										}else if(moment(thirdPlaceDate).format('dddd') === 'Wednesday'){
+											$scope.thirdPlaceFixtureObj.match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+											$scope.thirdPlaceFixtureObj.match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+										}else if(moment(thirdPlaceDate).format('dddd') === 'Thursday'){
+											$scope.thirdPlaceFixtureObj.match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+											$scope.thirdPlaceFixtureObj.match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+										}else if(moment(thirdPlaceDate).format('dddd') === 'Friday'){
+											$scope.thirdPlaceFixtureObj.match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+											$scope.thirdPlaceFixtureObj.match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+										}else if(moment(thirdPlaceDate).format('dddd') === 'Saturday'){
+											$scope.thirdPlaceFixtureObj.match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+											$scope.thirdPlaceFixtureObj.match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+										}else if(moment(thirdPlaceDate).format('dddd') === 'Sunday'){
+											$scope.thirdPlaceFixtureObj.match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+											$scope.thirdPlaceFixtureObj.match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+										}
+										console.log($scope.thirdPlaceFixtureObj);
+									},6000);
+									
 
 									// Final
-									$scope.finalFixtureObj = {};
-									$scope.finalFixtureObj.id = "MA" + $rootScope.randomString + 1 + m;
-									$scope.finalFixtureObj.match_homeTeam = "";
-									$scope.finalFixtureObj.match_awayTeam = "";
-									$scope.finalFixtureObj.match_date = moment(finalDate).toISOString();
-									$scope.finalFixtureObj.match_time = timeArr[2];
-									$scope.finalFixtureObj.match_fixture = "final";
-									$scope.finalFixtureObj.field = 1;
-									$scope.finalFixtureObj.match_started = "";
-									$scope.finalFixtureObj.competition_id = entry.id;
+									setTimeout(function(){
+										refereeIndex = 0;
+										$scope.finalFixtureObj = {};
+										$scope.finalFixtureObj.match_homeTeamObj = {};
+										$scope.finalFixtureObj.match_homeTeamObj.team_name = '';
+										$scope.finalFixtureObj.match_homeTeamObj.score = 0;
+										$scope.finalFixtureObj.match_homeTeamObj.formation = '';
+										$scope.finalFixtureObj.match_homeTeamObj.lineup = '';
+										$scope.finalFixtureObj.match_homeTeamObj.lastLineup = '';
+										$scope.finalFixtureObj.match_homeTeamObj.sub = '';
+										$scope.finalFixtureObj.match_homeTeamObj.lastSub = '';
+										$scope.finalFixtureObj.match_homeTeamObj.player = '';
 
+										$scope.finalFixtureObj.match_awayTeamObj = {};
+										$scope.finalFixtureObj.match_awayTeamObj.team_name = '';
+										$scope.finalFixtureObj.match_awayTeamObj.score = 0;
+										$scope.finalFixtureObj.match_awayTeamObj.formation = '';
+										$scope.finalFixtureObj.match_awayTeamObj.lineup = '';
+										$scope.finalFixtureObj.match_awayTeamObj.lastLineup = '';
+										$scope.finalFixtureObj.match_awayTeamObj.sub = '';
+										$scope.finalFixtureObj.match_awayTeamObj.lastSub = '';
+										$scope.finalFixtureObj.match_awayTeamObj.player = '';
 
-									console.log($scope.firstRoundFixtureObj);
-									console.log($scope.secondRoundFixtureObj);
-									console.log($scope.thirdRoundFixtureObj);
-									console.log($scope.roundOf16FixtureObj);
-									console.log($scope.quarterFinalFixtureObj);
-									console.log($scope.semiFinalFixtureObj);
-									console.log($scope.thirdPlaceFixtureObj);
-									console.log($scope.finalFixtureObj);
-								
+										$scope.finalFixtureObj.id = "MA" + $rootScope.randomString + 1 + m;
+										$scope.finalFixtureObj.match_homeTeam = "";
+										$scope.finalFixtureObj.match_awayTeam = "";
+										$scope.finalFixtureObj.match_date = moment(finalDate).toISOString();
+										$scope.finalFixtureObj.match_time = timeArr[3];
+										$scope.finalFixtureObj.match_fixture = "final";
+										$scope.finalFixtureObj.match_field = 1;
+										$scope.finalFixtureObj.match_started = "";
+										$scope.finalFixtureObj.competition_id = entry.id;
+										$scope.finalFixtureObj.match_venue = entry.comp_address.venue.nama;
+
+										if(moment(finalDate).format('dddd') === 'Monday'){
+											$scope.finalFixtureObj.match_referee = $scope.avMonRef[timeIndex][refereeIndex].username;
+											$scope.finalFixtureObj.match_analyst = $scope.avMonAnalysts[timeIndex][analystIndex].username;
+										}else if(moment(finalDate).format('dddd') === 'Tuesday'){
+											$scope.finalFixtureObj.match_referee = $scope.avTueRef[timeIndex][refereeIndex].username;
+											$scope.finalFixtureObj.match_analyst = $scope.avTueAnalysts[timeIndex][analystIndex].username;
+										}else if(moment(finalDate).format('dddd') === 'Wednesday'){
+											$scope.finalFixtureObj.match_referee = $scope.avWedRef[timeIndex][refereeIndex].username;
+											$scope.finalFixtureObj.match_analyst = $scope.avWedAnalysts[timeIndex][analystIndex].username;
+										}else if(moment(finalDate).format('dddd') === 'Thursday'){
+											$scope.finalFixtureObj.match_referee = $scope.avThuRef[timeIndex][refereeIndex].username;
+											$scope.finalFixtureObj.match_analyst = $scope.avThuAnalysts[timeIndex][analystIndex].username;
+										}else if(moment(finalDate).format('dddd') === 'Friday'){
+											$scope.finalFixtureObj.match_referee = $scope.avFriRef[timeIndex][refereeIndex].username;
+											$scope.finalFixtureObj.match_analyst = $scope.avFriAnalysts[timeIndex][analystIndex].username;
+										}else if(moment(finalDate).format('dddd') === 'Saturday'){
+											$scope.finalFixtureObj.match_referee = $scope.avSatRef[timeIndex][refereeIndex].username;
+											$scope.finalFixtureObj.match_analyst = $scope.avSatAnalysts[timeIndex][analystIndex].username;
+										}else if(moment(finalDate).format('dddd') === 'Sunday'){
+											$scope.finalFixtureObj.match_referee = $scope.avSunRef[timeIndex][refereeIndex].username;
+											$scope.finalFixtureObj.match_analyst = $scope.avSunAnalysts[timeIndex][analystIndex].username;
+										}
+										console.log($scope.finalFixtureObj);
+									},6000);
 								}
-								},2000);
+							},2000);
 								
 
 								 // "registeredTeam": "Uruguay,Russia,Saudia Arabia,Egypt,Spain,Portugal,IR Iran,Morocco,France,Denmark,Peru,Australia,Croatia,Argentina,Nigeria,Iceland,Brazil,Switzerland,Serbia,Costa Rica,Sweden,Mexico,Korea Republic,Germany,Belgium,England,Tunisia,Panama,Colombia,Japan,Senegal,Poland",
@@ -3466,16 +6178,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 								// var savedMatchesThirdPlace = [];
 								// var savedMatchesFinal = [];
 
-								// localStorage.setItem("firstRoundMatchesStatus", "On Progress");
-								// localStorage.setItem("secondRoundMatchesStatus", "On Progress");
-								// localStorage.setItem("thirdRoundMatchesStatus", "On Progress");
-								// localStorage.setItem("roundOf16MatchesStatus", "On Progress");
-								// localStorage.setItem("quarterFinalMatchesStatus", "On Progress");
-								// localStorage.setItem("semiFinalMatchesStatus", "On Progress");
-								// localStorage.setItem("thirdPlaceMatchesStatus", "On Progress");
-								// localStorage.setItem("finalMatchesStatus", "On Progress");
-
-
+						
 								if(entry.schedule_status === 'On Queue'){
 
 									setTimeout(function(){
@@ -3488,55 +6191,37 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 										var savedMatchesSemiFinal = [];
 										var savedMatchesThirdPlace = [];
 										var savedMatchesFinal = [];
-
+										var timeOutTime = 1000;
 								
 										$scope.firstRoundFixtureObj.forEach(function(entry){
-											if(localStorage.getItem("firstRoundMatchesStatus") === 'On Progress'){
-												console.log(savedMatchesFirstRound);
-												console.log(entry.id);
-												if(savedMatchesFirstRound.indexOf(entry.id) === -1){
-													addMatchDelay(entry);
-													savedMatchesFirstRound.push(entry.id);
-												}else{
-													console.log("sudah ad");
-													localStorage.setItem("firstRoundMatchesStatus", "Completed");
-												}
-											}
+											addMatchDelay(entry,timeOutTime);
+											timeOutTime += 10;
 										});
 
 										// 	set timer to addMatch function to minimize the number of request per second to prevent failed request
-										function addMatchDelay(entry){
+										function addMatchDelay(entry,timeOutTime){
 											setTimeout(function(){
 												//insert data to database
 												console.log("blm ad");
 												MatchService.addMatch(entry).success(function(data){
-													// $ionicLoading.hide();
 													console.log("add match");
 													console.log(data);
-													savedMatchesFirstRound.push(entry.id);
 												}).error(function(data){
-													// $ionicLoading.hide();
+													$ionicLoading.hide();
 												});
 												//insert data to database
-											},8000);
+											},timeOutTime);
 										}
 
 										$scope.secondRoundFixtureObj.forEach(function(entry){
-											if(localStorage.getItem("secondRoundMatchesStatus") === 'On Progress'){
-												console.log(savedMatchesSecondRound);
-												console.log(entry.id);
-												if(savedMatchesSecondRound.indexOf(entry.id) === -1){
-													addMatchDelay(entry);
-													savedMatchesSecondRound.push(entry.id);
-												}else{
-													console.log("sudah ad");
-													localStorage.setItem("secondRoundMatchesStatus", "Completed");
-												}
-											}
+													addMatchDelay(entry,timeOutTime);
+													// savedMatchesSecondRound.push(entry.id);
+													timeOutTime += 10;
+											
 										});
 
 										// 	set timer to addMatch function to minimize the number of request per second to prevent failed request
-										function addMatchDelay(entry){
+										function addMatchDelay(entry,timeOutTime){
 											setTimeout(function(){
 												//insert data to database
 												console.log("blm ad");
@@ -3544,30 +6229,22 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 													// $ionicLoading.hide();
 													console.log("add match");
 													console.log(data);
-													savedMatchesSecondRound.push(entry.id);
+													// savedMatchesSecondRound.push(entry.id);
 												}).error(function(data){
 													// $ionicLoading.hide();
 												});
 												//insert data to database
-											},8000);
+											},timeOutTime);
 										}
 
 										$scope.thirdRoundFixtureObj.forEach(function(entry){
-											if(localStorage.getItem("thirdRoundMatchesStatus") === 'On Progress'){
-												console.log(savedMatchesThirdRound);
-												console.log(entry.id);
-												if(savedMatchesThirdRound.indexOf(entry.id) === -1){
-													addMatchDelay(entry);
-													savedMatchesThirdRound.push(entry.id);
-												}else{
-													console.log("sudah ad");
-													localStorage.setItem("thirdRoundMatchesStatus", "Completed");
-												}
-											}
+													addMatchDelay(entry,timeOutTime);
+													// savedMatchesThirdRound.push(entry.id);
+													timeOutTime += 10;
 										});
 
 										// 	set timer to addMatch function to minimize the number of request per second to prevent failed request
-										function addMatchDelay(entry){
+										function addMatchDelay(entry,timeOutTime){
 											setTimeout(function(){
 												//insert data to database
 												console.log("blm ad");
@@ -3575,31 +6252,25 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 													// $ionicLoading.hide();
 													console.log("add match");
 													console.log(data);
-													savedMatchesThirdRound.push(entry.id);
+													// savedMatchesThirdRound.push(entry.id);
 												}).error(function(data){
 													// $ionicLoading.hide();
 												});
 												//insert data to database
-											},8000);
+											},timeOutTime);
 										}
 
 										if(entry.comp_numOfTeam === 32){
 											$scope.roundOf16FixtureObj.forEach(function(entry){
-												if(localStorage.getItem("roundOf16MatchesStatus") === 'On Progress'){
-													console.log(savedMatchesRoundOf16);
-													console.log(entry.id);
-													if(savedMatchesRoundOf16.indexOf(entry.id) === -1){
-														addMatchDelay(entry);
-														savedMatchesRoundOf16.push(entry.id);
-													}else{
-														console.log("sudah ad");
-														localStorage.setItem("roundOf16MatchesStatus", "Completed");
-													}
-												}
+											
+														addMatchDelay(entry,timeOutTime);
+														// savedMatchesRoundOf16.push(entry.id);
+														timeOutTime += 10;
+												
 											});
 
 											// 	set timer to addMatch function to minimize the number of request per second to prevent failed request
-											function addMatchDelay(entry){
+											function addMatchDelay(entry,timeOutTime){
 												setTimeout(function(){
 													//insert data to database
 													console.log("blm ad");
@@ -3607,32 +6278,26 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 														// $ionicLoading.hide();
 														console.log("add match");
 														console.log(data);
-														savedMatchesRoundOf16.push(entry.id);
+														// savedMatchesRoundOf16.push(entry.id);
 													}).error(function(data){
 														// $ionicLoading.hide();
 													});
 													//insert data to database
-												},8000);
+												},timeOutTime);
 											}
 										}
 
 										if(entry.comp_numOfTeam !== 8){
 											$scope.quarterFinalFixtureObj.forEach(function(entry){
-												if(localStorage.getItem("quarterFinalMatchesStatus") === 'On Progress'){
-													console.log(savedMatchesQuarterFinal);
-													console.log(entry.id);
-													if(savedMatchesQuarterFinal.indexOf(entry.id) === -1){
-														addMatchDelay(entry);
-														savedMatchesQuarterFinal.push(entry.id);
-													}else{
-														console.log("sudah ad");
-														localStorage.setItem("quarterFinalMatchesStatus", "Completed");
-													}
-												}
+											
+														addMatchDelay(entry,timeOutTime);
+														// savedMatchesQuarterFinal.push(entry.id);
+														timeOutTime += 10;
+												
 											});
 
 											// 	set timer to addMatch function to minimize the number of request per second to prevent failed request
-											function addMatchDelay(entry){
+											function addMatchDelay(entry,timeOutTime){
 												setTimeout(function(){
 													//insert data to database
 													console.log("blm ad");
@@ -3640,31 +6305,24 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 														// $ionicLoading.hide();
 														console.log("add match");
 														console.log(data);
-														savedMatchesQuarterFinal.push(entry.id);
+														// savedMatchesQuarterFinal.push(entry.id);
 													}).error(function(data){
 														// $ionicLoading.hide();
 													});
 													//insert data to database
-												},8000);
+												},timeOutTime);
 											}
 										}
 
 										$scope.semiFinalFixtureObj.forEach(function(entry){
-											if(localStorage.getItem("semiFinalMatchesStatus") === 'On Progress'){
-												console.log(savedMatchesSemiFinal);
-												console.log(entry.id);
-												if(savedMatchesSemiFinal.indexOf(entry.id) === -1){
-													addMatchDelay(entry);
-													savedMatchesSemiFinal.push(entry.id);
-												}else{
-													console.log("sudah ad");
-													localStorage.setItem("semiFinalMatchesStatus", "Completed");
-												}
-											}
+										
+													addMatchDelay(entry,timeOutTime);
+													// savedMatchesSemiFinal.push(entry.id);
+													timeOutTime += 10;
 										});
 
 										// 	set timer to addMatch function to minimize the number of request per second to prevent failed request
-										function addMatchDelay(entry){
+										function addMatchDelay(entry,timeOutTime){
 											setTimeout(function(){
 												//insert data to database
 												console.log("blm ad");
@@ -3672,30 +6330,25 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 													// $ionicLoading.hide();
 													console.log("add match");
 													console.log(data);
-													savedMatchesSemiFinal.push(entry.id);
+													// savedMatchesSemiFinal.push(entry.id);
 												}).error(function(data){
 													// $ionicLoading.hide();
 												});
 												//insert data to database
-											},8000);
+											},timeOutTime);
 										}
 
 										// $scope.thirdPlaceFixtureObj.forEach(function(entry){
-											if(localStorage.getItem("thirdPlaceMatchesStatus") === 'On Progress'){
-												console.log(savedMatchesThirdPlace);
-												console.log($scope.thirdPlaceFixtureObj.id);
-												if(savedMatchesThirdPlace.indexOf($scope.thirdPlaceFixtureObj.id) === -1){
-													addMatchDelay($scope.thirdPlaceFixtureObj);
-													savedMatchesThirdPlace.push($scope.thirdPlaceFixtureObj.id);
-												}else{
-													console.log("sudah ad");
-													localStorage.setItem("thirdPlaceMatchesStatus", "Completed");
-												}
-											}
+										
+													addMatchDelay($scope.thirdPlaceFixtureObj,timeOutTime);
+													// savedMatchesThirdPlace.push($scope.thirdPlaceFixtureObj.id);
+													timeOutTime += 10;
+												
+											// }
 										// });
 
 										// 	set timer to addMatch function to minimize the number of request per second to prevent failed request
-										function addMatchDelay(entry){
+										function addMatchDelay(entry,timeOutTime){
 											setTimeout(function(){
 												//insert data to database
 												console.log("blm ad");
@@ -3703,30 +6356,25 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 													// $ionicLoading.hide();
 													console.log("add match");
 													console.log(data);
-													savedMatchesThirdPlace.push(entry.id);
+													// savedMatchesThirdPlace.push(entry.id);
 												}).error(function(data){
 													// $ionicLoading.hide();
 												});
 												//insert data to database
-											},8000);
+											},timeOutTime);
 										}
 
 										// $scope.finalFixtureObj.forEach(function(entry){
-											if(localStorage.getItem("finalMatchesStatus") === 'On Progress'){
-												console.log(savedMatchesFinal);
-												console.log($scope.finalFixtureObj.id);
-												if(savedMatchesFinal.indexOf($scope.finalFixtureObj.id) === -1){
-													addMatchDelay($scope.finalFixtureObj);
-													savedMatchesFinal.push($scope.finalFixtureObj.id);
-												}else{
-													console.log("sudah ad");
-													localStorage.setItem("finalMatchesStatus", "Completed");
-												}
-											}
+											
+													addMatchDelay($scope.finalFixtureObj,timeOutTime);
+													// savedMatchesFinal.push($scope.finalFixtureObj.id);
+													timeOutTime += 10;
+												
+											// }
 										// });
 
 										// 	set timer to addMatch function to minimize the number of request per second to prevent failed request
-										function addMatchDelay(entry){
+										function addMatchDelay(entry,timeOutTime){
 											setTimeout(function(){
 												//insert data to database
 												console.log("blm ad");
@@ -3734,12 +6382,12 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 													// $ionicLoading.hide();
 													console.log("add match");
 													console.log(data);
-													savedMatchesFinal.push(entry.id);
+													// savedMatchesFinal.push(entry.id);
 												}).error(function(data){
 													// $ionicLoading.hide();
 												});
 												//insert data to database
-											},8000);
+											},timeOutTime);
 										}
 									},50000);
 								}
@@ -3794,23 +6442,23 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 								}
 								// scheduling
 							}
-							// bikin array utk menampung wasit-wasit yang available pada tanggal dan waktu pertandingan tertentu
-							var avRefArr = [];
+							// // bikin array utk menampung wasit-wasit yang available pada tanggal dan waktu pertandingan tertentu
+							// var avRefArr = [];
 
-							// bikin function utk cari / get wasit-wasit yang available pada tgl dan waktu pertandingan tertentu
-							var date = "2010-10-20";
-							var time = "4:30";
-							var singleDate = date + " " + time;
+							// // bikin function utk cari / get wasit-wasit yang available pada tgl dan waktu pertandingan tertentu
+							// var date = "2010-10-20";
+							// var time = "4:30";
+							// var singleDate = date + " " + time;
 
-							console.log(singleDate);
+							// console.log(singleDate);
 							
-							// get day based on date
-							console.log(moment(date).format('dddd')); 
+							// // get day based on date
+							// console.log(moment(date).format('dddd')); 
 
-							// bikin function utk get wasit yg available berdasarkan tgl dan waktu pertandingan tertentu
-							$scope.getAvRefByDayAndTime = function(day, time){
-								// bikin service / api utk get av ref where available_day === day && available_time === time
-							};
+							// // bikin function utk get wasit yg available berdasarkan tgl dan waktu pertandingan tertentu
+							// $scope.getAvRefByDayAndTime = function(day, time){
+							// 	// bikin service / api utk get av ref where available_day === day && available_time === time
+							// };
 
 					}
 				});
@@ -3825,15 +6473,8 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		}
 	};
 	
-	$scope.loadCompetition = setInterval($scope.getCompetitionByOrganizer, 1000);
-		
+	$scope.loadCompetition = setInterval($scope.getCompetitionByOrganizer, 2000);
 
-	console.log(ls.getItem("role"));
-	// $scope.loadOnProgressMatches = setInterval($scope.getOnProgressMatches, 1000);
-	// $scope.loadAcceptedMatches = setInterval($scope.getAcceptedMatches, 1000);
-	$scope.availableLoaded = false;
-	$scope.onProgressLoaded = false;
-	$scope.acceptedLoaded = false;
 
 	var date = new Date();
 	$scope.thisDay = date.getDate();
@@ -3848,12 +6489,18 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		"matchId": []
 	};
 
+	$scope.analystMatchesByDateObj = {
+		"competition": [],
+		"matches": [],
+		"matchId": []
+	};
+
 	// bedakan nama variable untuk today, next, dan prev 
 	// supaya datanya tidak bentrokan
 
 
 	console.log("today");
-	$rootScope.showLoading($ionicLoading);
+	// $rootScope.showLoading($ionicLoading);
 
 	$scope.matchDate = $scope.thisDay + " " + $scope.thisMonthName + " " + $scope.thisYear;
 	$scope.matchDate = new Date($scope.matchDate);
@@ -3866,17 +6513,18 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			// console.log(data);
 
 			data.forEach(function(match){
-				if($scope.refMatchesByDateObj.competition.indexOf(match.competition_id) !== -1){
-
-				}else{
+				if($scope.refMatchesByDateObj.competition.indexOf(match.competition_id) === -1){
 					index++;
-					$scope.refMatchesByDateObj.competition.push(match.competition_id);
+					
+					CompetitionService.getCompetitionName(match.competition_id).success(function(data) {
+						$scope.refMatchesByDateObj.competition.push(data);
+						console.log(data);
+					}).error(function(data) {});
+					
 					$scope.refMatchesByDateObj.matches[index] = [];
 				}
-				// $scope.allLiveMatchesObj.matches = $scope.matchesArr.concat(data);
-				if($scope.refMatchesByDateObj.matchId.indexOf(match.id) !== -1){
 
-				}else{
+				if($scope.refMatchesByDateObj.matchId.indexOf(match.id) === -1){
 					$scope.refMatchesByDateObj.matches[index].push(match);
 					$scope.refMatchesByDateObj.matchId.push(match.id);
 				}
@@ -3889,6 +6537,35 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	};
 	$scope.loadMatchesByRefereeAndDate = setInterval($scope.getMatchesByRefereeAndDate, 1000);
 
+	var indexA = -1;
+	$scope.getMatchesByAnalystAndDate = function() {
+		MatchService.getMatchesByAnalystAndDate(ls.getItem("username"),$scope.matchDate).success(function(data) {
+
+			data.forEach(function(match){
+				if($scope.analystMatchesByDateObj.competition.indexOf(match.competition_id) === -1){
+					indexA++;
+					
+					CompetitionService.getCompetitionName(match.competition_id).success(function(data) {
+						$scope.analystMatchesByDateObj.competition.push(data);
+						console.log(data);
+					}).error(function(data) {});
+					
+					$scope.analystMatchesByDateObj.matches[indexA] = [];
+				}
+
+				if($scope.analystMatchesByDateObj.matchId.indexOf(match.id) === -1){
+					$scope.analystMatchesByDateObj.matches[indexA].push(match);
+					$scope.analystMatchesByDateObj.matchId.push(match.id);
+				}
+			});
+			console.log($scope.analystMatchesByDateObj);
+			clearInterval($scope.loadMatchesByAnalystAndDate);
+		}).error(function(data) {
+			console.log("gagal");
+		});
+	};
+	$scope.loadMatchesByAnalystAndDate = setInterval($scope.getMatchesByAnalystAndDate, 1000);
+
 
 	$scope.day = date.getDate();
 	$scope.month = date.getMonth();
@@ -3896,7 +6573,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	$scope.monthName = $scope.monthNames[$scope.month];
     $scope.year = date.getFullYear();
  
-    $scope.next = function(){
+    $scope.refNext = function(){
 		$rootScope.showLoading($ionicLoading);
 	   	$scope.refMatchesByDateObj = {
 			"competition": [],
@@ -3939,7 +6616,10 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 				}else{
 					index++;
-					$scope.refMatchesByDateObj.competition.push(match.competition_id);
+					CompetitionService.getCompetitionName(match.competition_id).success(function(data) {
+						$scope.refMatchesByDateObj.competition.push(data);
+						console.log(data);
+					}).error(function(data) {});
 					$scope.refMatchesByDateObj.matches[index] = [];
 				}
 				// $scope.allLiveMatchesObj.matches = $scope.matchesArr.concat(data);
@@ -3953,18 +6633,18 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			console.log($scope.refMatchesByDateObj);
 
 			setTimeout(function() {
-            	// $ionicLoading.hide();
-        	}, 10000);
+            	$ionicLoading.hide();
+        	}, 1500);
 
 		}).error(function(data) {
 			console.log("gagal");
 			setTimeout(function() {
-            	// $ionicLoading.hide();
-        	}, 10000);
+            	$ionicLoading.hide();
+        	}, 1500);
 		});
 	};
 
-	$scope.prev = function(){
+	$scope.refPrev = function(){
 		$scope.refMatchesByDateObj = {
 			"competition": [],
 			"matches": [],
@@ -4006,7 +6686,10 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 				}else{
 					index++;
-					$scope.refMatchesByDateObj.competition.push(match.competition_id);
+					CompetitionService.getCompetitionName(match.competition_id).success(function(data) {
+						$scope.refMatchesByDateObj.competition.push(data);
+						console.log(data);
+					}).error(function(data) {});
 					$scope.refMatchesByDateObj.matches[index] = [];
 				}
 				// $scope.allLiveMatchesObj.matches = $scope.matchesArr.concat(data);
@@ -4021,14 +6704,156 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 			setTimeout(function() {
             	$ionicLoading.hide();
-        	}, 2000);
+        	}, 1500);
 
 		}).error(function(data) {
 			console.log("gagal");
 
 			setTimeout(function() {
             	$ionicLoading.hide();
-        	}, 2000);
+        	}, 1500);
+		});
+	};
+
+	$scope.analystNext = function(){
+		$rootScope.showLoading($ionicLoading);
+	   	$scope.analystMatchesByDateObj = {
+			"competition": [],
+			"matches": [],
+			"matchId": []
+		};
+
+		console.log("next");
+		$scope.showme = 2;
+		var lastDay = new Date($scope.year, $scope.month + 1, 0);
+		var ld = lastDay.getDate();
+		if($scope.day == ld){
+			console.log("afsfsdf");
+			$scope.day = 1;
+			$scope.month += 1;
+			$scope.monthName = $scope.monthNames[$scope.month];
+			if($scope.month == 12){
+				$scope.month = 0;
+				$scope.monthName = $scope.monthNames[$scope.month];
+				$scope.year += 1;
+			}
+		}else{
+			$scope.day += 1;
+		}
+
+		$scope.matchDate = $scope.day + " " + $scope.monthName + " " + $scope.year;
+		$scope.matchDate = new Date($scope.matchDate);
+		$scope.matchDate = moment($scope.matchDate).toISOString();
+		console.log($scope.matchDate);
+
+		$scope.matchesArr = [];
+		$scope.allMatches = [];
+		
+		var index = -1;
+		MatchService.getMatchesByAnalystAndDate(ls.getItem("username"),$scope.matchDate).success(function(data) {
+			console.log(data);
+
+			data.forEach(function(match){
+				if($scope.analystMatchesByDateObj.competition.indexOf(match.competition_id) !== -1){
+
+				}else{
+					index++;
+					CompetitionService.getCompetitionName(match.competition_id).success(function(data) {
+						$scope.analystMatchesByDateObj.competition.push(data);
+						console.log(data);
+					}).error(function(data) {});
+					$scope.analystMatchesByDateObj.matches[index] = [];
+				}
+				// $scope.allLiveMatchesObj.matches = $scope.matchesArr.concat(data);
+				if($scope.analystMatchesByDateObj.matchId.indexOf(match.id) !== -1){
+
+				}else{
+					$scope.analystMatchesByDateObj.matches[index].push(match);
+					$scope.analystMatchesByDateObj.matchId.push(match.id);
+				}
+			});
+			console.log($scope.analystMatchesByDateObj);
+
+			setTimeout(function() {
+            	$ionicLoading.hide();
+        	}, 5000);
+
+		}).error(function(data) {
+			console.log("gagal");
+			setTimeout(function() {
+            	$ionicLoading.hide();
+        	}, 5000);
+		});
+	};
+
+	$scope.analystPrev = function(){
+		$scope.analystMatchesByDateObj = {
+			"competition": [],
+			"matches": [],
+			"matchId": []
+		};
+
+		$scope.showme = 2;
+		$rootScope.showLoading($ionicLoading);
+		if($scope.day == 1){
+			$scope.month -= 1;
+			console.log($scope.month);
+			$scope.monthName = $scope.monthNames[$scope.month];
+			var lastDay = new Date($scope.year, $scope.month + 1, 0);
+			var ld = lastDay.getDate();
+			$scope.day = ld;
+			if($scope.month == -1){
+				$scope.month = 11;
+				$scope.monthName = $scope.monthNames[$scope.month];
+				$scope.year -= 1;
+			}
+		}else{
+			$scope.day -= 1;
+		}
+
+		$scope.matchDate = $scope.day + " " + $scope.monthName + " " + $scope.year;
+		$scope.matchDate = new Date($scope.matchDate);
+		$scope.matchDate = moment($scope.matchDate).toISOString();
+		console.log($scope.matchDate);
+
+		$scope.matchesArr = [];
+		$scope.allMatches = [];
+		
+		var index = -1;
+		MatchService.getMatchesByAnalystAndDate(ls.getItem("username"),$scope.matchDate).success(function(data) {
+			console.log(data);
+
+			data.forEach(function(match){
+				if($scope.analystMatchesByDateObj.competition.indexOf(match.competition_id) !== -1){
+
+				}else{
+					index++;
+					CompetitionService.getCompetitionName(match.competition_id).success(function(data) {
+						$scope.analystMatchesByDateObj.competition.push(data);
+						console.log(data);
+					}).error(function(data) {});
+					$scope.analystMatchesByDateObj.matches[index] = [];
+				}
+				// $scope.allLiveMatchesObj.matches = $scope.matchesArr.concat(data);
+				if($scope.analystMatchesByDateObj.matchId.indexOf(match.id) !== -1){
+
+				}else{
+					$scope.analystMatchesByDateObj.matches[index].push(match);
+					$scope.analystMatchesByDateObj.matchId.push(match.id);
+				}
+			});
+			console.log($scope.analystMatchesByDateObj);
+
+			setTimeout(function() {
+            	$ionicLoading.hide();
+        	}, 5000);
+
+		}).error(function(data) {
+			console.log("gagal");
+
+			setTimeout(function() {
+            	$ionicLoading.hide();
+        	}, 5000);
 		});
 	};
 
@@ -4040,6 +6865,13 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		"matchId": []
 	};
 	$scope.refMatchesDays = [];
+	$scope.analystMatches = {};
+	$scope.allAnalystMatchesObj = {
+		"date": [],
+		"matches": [],
+		"matchId": []
+	};
+	$scope.analystMatchesDays = [];
 	$scope.diffTime = [];
 	var interval = [];
 	$scope.d = [];
@@ -4054,7 +6886,15 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			MatchService.getMatchesByReferee(localStorage.getItem("username")).success(function(data) {
 				// console.log("berhasil");
 				// console.log(data.length);
+				// data.forEach(function(match){
+				// 	$scope.refMatches.push(data);
+				// });
 				$scope.refMatches = data;
+
+				$scope.arrFromRefMatches = Object.keys($scope.refMatches).map(function(key) {
+				    return $scope.refMatches[key];
+				});
+
 				// console.log($scope.refMatches);
 				var index = -1;
 				$scope.refMatches.forEach(function(match){
@@ -4089,40 +6929,6 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			        }, interval[match.id]);
 
 			    }else if($scope.diffTime[match.id] <= 0){
-			  //   	$scope.matchForm = {};
-					// // $scope.matchForm.timer_status = '';
-
-					// if($scope.matchForm.timer_status === ''){
-					// 	$scope.liveData.timer_status = "1st half started";
-					// }else if($scope.matchForm.timer_Status === '1st half started'){
-					// 	$scope.liveData.timer_status = "1st half stopped";
-					// }else if($scope.matchForm.timer_Status === '1st half stopped'){
-					// 	$scope.liveData.timer_status = "2nd half started";
-					// }else if($scope.matchForm.timer_Status === '2nd half started'){
-					// 	$scope.liveData.timer_status = "2nd half stopped";
-					// }else if($scope.matchForm.timer_Status === '2nd half stopped'){
-					// 	$scope.liveData.timer_status = "1st half started (ET)";
-					// }else if($scope.matchForm.timer_Status === '1st half started (ET)'){
-					// 	$scope.liveData.timer_status = "1st half stopped (ET)";
-					// }else if($scope.matchForm.timer_Status === '1st half stopped (ET)'){
-					// 	$scope.liveData.timer_status = "2nd half started (ET)";
-					// }else if($scope.matchForm.timer_Status === '2nd half started (ET)'){
-					// 	$scope.liveData.timer_status = "2nd half stopped (ET)";
-					// }else if($scope.matchForm.timer_Status === '2nd half stopped (ET)'){
-					// 	$scope.liveData.timer_status = "penalty shootout started";
-					// }else if($scope.matchForm.timer_Status === 'penalty shootout started'){
-					// 	$scope.liveData.timer_status = "penalty shootout stopped";
-					// }else if($scope.matchForm.timer_Status === 'penalty shootout stopped'){
-					// 	$scope.liveData.timer_status = "finished";
-					// }else if($scope.matchForm.timer_Status === 'finished'){
-					// 	$scope.liveData.timer_status = "finished";
-					// }
-					// console.log("timer status" + $scope.matchForm.timer_Status);
-					// if($scope.matchForm.timer_Status !== 'finished'){
-					// 	MatchService.editMatchById(match.id,$scope.matchForm).success(function(data) {
-					// 	}).error(function(data) {});
-					// }
-					
 			    }
 
 					// $scope.allLiveMatchesArr = $scope.liveMatchArr.concat(data);
@@ -4140,29 +6946,6 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 						$scope.allRefMatchesObj.matches[index].push(match);
 						$scope.allRefMatchesObj.matchId.push(match.id);
 					}
-					
-
-					// console.log($scope.allRefMatchesObj);
-
-					// console.log(match);
-					// console.log(moment().format('MM/DD/YYYY'));
-					// console.log(moment().format('kk:mm'));
-					// console.log(moment(match.match_date).format('MM/DD/YYYY'));
-					// $scope.countDownData = {};
-					// if(moment(match.match_date).format('MM/DD/YYYY') == moment().format('MM/DD/YYYY') && match.match_countDown == moment().format('kk:mm')){
-					// 	// console.log("start countdown");
-					// 	$scope.countDownData.countDownStarted = true; 
-		   //      		$scope.countDownData.countDownTimer = 59;
-		   //      		clearInterval($scope.loadRefMatches);
-		   //      		MatchService.editMatchById(match.id,localStorage.getItem("token"),$scope.countDownData).success(function(data) {
-					// 		// console.log('countDowncountdowncountdown');
-					// 		$scope.countDown = setInterval($scope.startCountDown, 1000);
-					// 		$ionicLoading.hide();
-					// 		// $state.go('app.home');
-					// 	}).error(function(data) {
-					// 		$ionicLoading.hide();
-					// 	});
-					// }	
 					$ionicLoading.hide();				
 				});
 				// clearInterval($scope.loadRefMatches);
@@ -4173,55 +6956,125 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		}
 	};
 
+	$scope.getMatchesByAnalyst = function(){
+		console.log("get matches by analyst");
+		if(ls.getItem("role") === 'Analyst'){
+			$ionicLoading.hide();
+			MatchService.getMatchesByAnalyst(localStorage.getItem("username")).success(function(data) {
+				// console.log("berhasil");
+				// console.log(data.length);
+				data.sort(function(a, b) {
+                    var dateA = new Date(a.match_date),
+                        dateB = new Date(b.match_date);
+                    return dateA - dateB;//sort by date ascending
+                });
+				$scope.analystMatches = data;
 
-	$scope.showme1 = function(){
-		window.loadRefMatches = setInterval($scope.getMatchesByReferee, 1000);
-		$scope.showme = 'available';
-		console.log('available');
-	}
+				// console.log($scope.analystMatches);
+				var index = -1;
+				$scope.analystMatches.forEach(function(match){
 
-	$scope.showme2 = function(){
-		$scope.showme = 2;
-		console.log('2');
-		clearInterval(window.loadRefMatches);
-	}
+				// $scope.analystMatchesDays[match.id] = moment(match.match_date).toNow();
+				$scope.analystMatchesDate = moment(match.match_date).format('DD-MM-YYYY');
 
-	if(ls.getItem("role") === 'Referee'){
-		window.loadRefMatches = setInterval($scope.getMatchesByReferee, 1000);
-	}
+				// console.log(moment(match.match_time).format('HH:mm:ss'));
+			    var eventTime = moment($scope.analystMatchesDate + " " + match.match_time, 'DD-MM-YYYY HH:mm:ss').unix();
+			    var currentTime = moment().unix();
+			    $scope.diffTime[match.id] = eventTime - currentTime;    
+			    var duration = moment.duration($scope.diffTime[match.id] * 1000, 'milliseconds');
+			    interval[match.id] = 1000;
 
-	// $scope.countDownTimer = {};   
- //   	$scope.startCountDown = function() {
-	// 	MatchService.getMatchesByReferee(localStorage.getItem("username")).success(function(data) {
-	//         console.log(data);
-	//         $scope.refMatches = data;
 
-	//         $scope.refMatches.forEach(function(match){
-	//         	if(match.countDownStarted == "true" && match.countDownTimer > 0){
-	//         		// console.log("xcvx cvx vxvxcvxvx vxvxvxvcxv");
-	//         		$scope.countDownTimer.countDownTimer = match.countDownTimer - 1;
-	// 				console.log($scope.countDownTimer.countDownTimer);
-	// 				if($scope.countDownTimer.countDownTimer === 0){
-	// 					clearInterval($scope.countDown);
-	// 					// $scope.myVar = setInterval($scope.getMatchesByFixture, 1000);
-	// 				}
-	// 				MatchService.editMatchById(match.id,$scope.countDownTimer).success(function(data) {
-	// 					console.log('startcountdownstartcountdown');
-	// 					// $ionicLoading.hide();
-	// 					// $state.go('app.home');
-	// 				}).error(function(data) {
-	// 					// $ionicLoading.hide();
-	// 				});
-	//         	}
-	//         });
-	// 	}).error(function(data) {});
-	// };
+			    // if time to countdown
+			    if($scope.diffTime[match.id] > 0) {
 
-	// $scope.countDown = setInterval($scope.startCountDown, 1000);
+			        setInterval(function(){
+
+			            duration = moment.duration(duration.asMilliseconds() - interval[match.id], 'milliseconds');
+			            $scope.d[match.id] = moment.duration(duration).days(),
+			            $scope.h[match.id] = moment.duration(duration).hours(),
+			            $scope.m[match.id] = moment.duration(duration).minutes(),
+			            $scope.s[match.id] = moment.duration(duration).seconds();
+
+			          	$scope.d[match.id] = $.trim($scope.d[match.id]).length === 1 ? '0' + $scope.d[match.id] : $scope.d[match.id];
+			            $scope.h[match.id] = $.trim($scope.h[match.id]).length === 1 ? '0' + $scope.h[match.id] : $scope.h[match.id];
+			            $scope.m[match.id] = $.trim($scope.m[match.id]).length === 1 ? '0' + $scope.m[match.id] : $scope.m[match.id];
+			            $scope.s[match.id] = $.trim($scope.s[match.id]).length === 1 ? '0' + $scope.s[match.id] : $scope.s[match.id];
+
+			        }, interval[match.id]);
+
+			    }else if($scope.diffTime[match.id] <= 0){
+			    }
+
+					if($scope.allAnalystMatchesObj.date.indexOf(match.match_date) !== -1){
+
+					}else{
+						index++;
+						$scope.allAnalystMatchesObj.date.push(match.match_date);
+						$scope.allAnalystMatchesObj.matches[index] = [];
+					}
+					if($scope.allAnalystMatchesObj.matchId.indexOf(match.id) !== -1){
+
+					}else{
+						$scope.allAnalystMatchesObj.matches[index].push(match);
+						$scope.allAnalystMatchesObj.matchId.push(match.id);
+					}	
+					$ionicLoading.hide();				
+				});
+			}).error(function(data) {
+				console.log("gagal");
+				$ionicLoading.hide();
+			});
+		}
+	};
+
+	// setTimeout(function(){
+		if(ls.getItem("role") === 'Referee'){
+			console.log("refereeeeei i i iii ");
+			$ionicLoading.hide();
+			$scope.showme = 'available';
+			window.loadRefMatches = setInterval($scope.getMatchesByReferee, 1000);
+
+			$scope.showme1 = function(){
+				window.loadRefMatches = setInterval($scope.getMatchesByReferee, 1000);
+				$scope.showme = 'available';
+				console.log('available');
+			}
+
+			$scope.showme2 = function(){
+				clearInterval(window.loadRefMatches);
+				$scope.showme = 2;
+				console.log('2');
+				// clearInterval(window.loadRefMatches);
+			}
+		}
+	// },2000);
+	
+
+	setTimeout(function(){
+		if(ls.getItem("role") === 'Analyst'){
+			window.loadAnalystMatches = setInterval($scope.getMatchesByAnalyst, 1000);
+
+			$scope.showme1 = function(){
+				window.loadAnalystMatches = setInterval($scope.getMatchesByAnalyst, 1000);
+				$scope.showme = 'available';
+				console.log('available');
+			}
+
+			$scope.showme2 = function(){
+				$scope.showme = 2;
+				console.log('2');
+				clearInterval(window.loadRefMatches);
+				clearInterval(window.loadAnalystMatches);
+			}
+		}
+	},2000);
+
 
 	// go to track score page
 	$scope.goToTrackScore = function(id) { 
 		clearInterval(window.loadRefMatches);
+		localStorage.setItem("matchResultBackStatus","home");
 		$state.go('app.track_score', {
 			'matchId': id
 		});
@@ -4229,6 +7082,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 	// go to analyze match page
 	$scope.goToAnalyzeMatch = function(id) { 
+		clearInterval(window.loadAnalystMatches);
 		$state.go('app.analyze_match', {
 			'matchId': id
 		});
@@ -4236,76 +7090,19 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 	// go to match detail page
 	$scope.goToMatchDetail = function(id) { 
+		localStorage.setItem("matchResultBackStatus", "home");
 		$state.go('app.match_detail', {
 			'matchId': id
 		});
 	};
 
-	// utk sementara pake hide loading dlu
-	// $ionicLoading.hide();
-		
-	// var currentDate = new Date();
-	// currentDate.setDate(currentDate.getDate() + 1);
-	// currentDate = moment(currentDate).format('DD/MM/YYYY');
-	// console.log(currentDate);		
-	// $scope.availableMatches = {};
-	// $scope.onProgressMatches = {};
-	// $scope.acceptedMatches = {};
-	// $scope.getAvailableMatches = function(){
-	// 	MatchService.getAvailableMatches(currentDate).success(function(data) {
-	// 		$scope.availableMatches = data;
-	// 		console.log($scope.availableMatches);
-	// 		console.log("berhasil");
-	// 		clearInterval($scope.loadAvailableMatches);
-	// 		$scope.availableLoaded = true;
-	// 		// $ionicLoading.hide();
-	// 	}).error(function(data) {
-	// 		console.log("gagal");
-	// 		clearInterval($scope.loadAvailableMatches);
-	// 	});
-	// };
-
-	// if($scope.availableLoaded === false){
-	// 	$scope.loadAvailableMatches = setInterval($scope.getAvailableMatches, 2000);
-	// }
-
-	// $scope.getOnProgressMatches = function(){
-	// 	MatchService.getOnProgressMatches(ls.getItem("username"),currentDate).success(function(data) {
-	// 		$scope.onProgressMatches = data;
-	// 		console.log($scope.onProgressMatches);
-	// 		console.log("berhasil");
-	// 		clearInterval($scope.loadOnProgressMatches);
-	// 		$scope.onProgressLoaded = true;
-	// 		// $ionicLoading.hide();
-	// 	}).error(function(data) {
-	// 		console.log("gagal");
-	// 		clearInterval($scope.loadOnProgressMatches);
-	// 	});
-	// };
-
-	// if($scope.onProgressLoaded === false){
-	// 	$scope.loadOnProgressMatches = setInterval($scope.getOnProgressMatches, 2000);
-	// }
-	// if(ls.getItem("role") === 'Referee'){
-	// 	$scope.getAcceptedMatches = function(){
-	// 		MatchService.getAcceptedMatches(ls.getItem("username"),$scope.matchDate).success(function(data) {
-	// 			$scope.acceptedMatches = data;
-	// 			console.log($scope.acceptedMatches);
-	// 			console.log("berhasil");
-	// 			clearInterval($scope.loadAcceptedMatches);
-	// 			$scope.acceptedLoaded = true;
-	// 			// $ionicLoading.hide();
-	// 		}).error(function(data) {
-	// 			console.log("gagal");
-	// 			clearInterval($scope.loadAcceptedMatches);
-	// 		});
-	// 	};
-	// }
-
-	// if($scope.acceptedLoaded === false){
-	// 	$scope.loadAcceptedMatches = setInterval($scope.getAcceptedMatches, 2000);
-	// }
-	// }	
+	// go to match info page
+	$scope.goToMatchInfo = function(id) { 
+		localStorage.setItem("matchInfoBackStatus", "home");
+		$state.go('app.match_info', {
+			'matchId': id
+		});
+	};
 
 	$scope.doRefresh = function() {
 		$rootScope.reload($state,$scope);
@@ -4375,6 +7172,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		});
 	};
 	$scope.goToMatchDetail = function(id) {
+		localStorage.setItem("matchResultBackStatus", "home");
 		clearInterval($scope.loadCompetition);
 		$state.go('app.match_detail', {
 			'matchId': id
@@ -4442,6 +7240,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		$state.go('app.classement');
 	};
 	$scope.goToCompetitionSchedule = function(id) {
+		localStorage.setItem("backStatus", "home");
 		clearInterval($scope.loadCompetition);
 		$state.go('app.competition_schedule', {
 			'competitionId': id
@@ -4476,15 +7275,13 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	            console.log('Not sure!');
 	         }
 	    });
-	};
-
-	$scope.profileData = {};
-	$scope.profileData.createdCompetition = {};
-	$scope.profileData.createdCompetition.active = "";
-	
+	};	
 	$scope.delCompetition = function(id) {
 
 		console.log($scope.menuProfile);
+		$scope.profileData = {};
+		$scope.profileData.createdCompetition = {};
+		$scope.profileData.createdCompetition.active = "";
 		$scope.profileData.createdCompetition.completed = $scope.menuProfile.createdCompetition.completed;
 
 		var activeCompetitionArr = $scope.menuProfile.createdCompetition.active.split(",");
@@ -4559,7 +7356,12 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				var teamSquad = localStorage.getItem("myTeamSquad").split(",");
 				var teamSquadLength = teamSquad.length;
 
-				if(teamCoach !== null && teamSquadLength >= 8){
+				if(localStorage.getItem("team") === ''){
+					var confirmPopup = $ionicPopup.alert({
+						title: 'Register Competition Failed',
+						template: 'You must have a team before you can register into any competition!'
+					});
+				}else if(teamCoach !== '' && teamSquadLength >= 8){
 					// Register competition
 
 					$scope.formCompetition = {};
@@ -4571,12 +7373,12 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 					$scope.formTeam = {};
 					$scope.formTeam.CompId = id;
 					$scope.formTeam.TeamId = localStorage.getItem("myTeamId");
-					if($scope.menuProfile.team === '' || $scope.menuProfile.team === null){
-						var confirmPopup = $ionicPopup.alert({
-							title: 'Register Competition Failed',
-							template: 'You must join a team before you can register into any competition!'
-						});
-					}else{
+					// if($scope.menuProfile.team === '' || $scope.menuProfile.team === null){
+						// var confirmPopup = $ionicPopup.alert({
+						// 	title: 'Register Competition Failed',
+						// 	template: 'You must join a team before you can register into any competition!'
+						// });
+					// }else{
 						console.log("register competition");
 						// CompetitionService.registerTeam(localStorage.getItem("myTeamId"),localStorage.getItem("token"),$scope.formTeam).success(function(data){
 						// 	$ionicLoading.hide();
@@ -4602,14 +7404,14 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 						}).error(function(data){
 							$ionicLoading.hide();
 						});     
-					}
+					// }
 
-				}else if(teamCoach === null){
+				}else if(teamCoach === ''){
 					// show an alert
 					$rootScope.showPopup($ionicPopup,'Register Failed!','Your team must have a coach', 'popup-error');
 				}else if(teamSquadLength <= 8){
 					// show an alert
-					$rootScope.showPopup($ionicPopup,'Register Failed!','Your team members must be more than 7 peoples', 'popup-error');
+					$rootScope.showPopup($ionicPopup,'Register Failed!','Your team members must be minimal 8 peoples', 'popup-error');
 				}
 	         } else {
 	            console.log('Not sure!');
@@ -4686,7 +7488,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			console.log(profileObjData);
 
 			if($scope.profile.role === 'Organizer'){
-
+				console.log("organizer");
 				$scope.competitionStatus = "";	
 
 				if($scope.profile.createdCompetition.active !== ''){
@@ -4704,6 +7506,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 				$scope.totalCompetitions = $scope.totalActiveCompetitions + $scope.totalCompletedCompetitions;
 
+				console.log($scope.activeCompetitions);
 
 				$scope.showActiveCompetitions = function(){
 					$scope.competitionStatus = "Active";
@@ -4727,98 +7530,149 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				};
 			}
 
+			if($scope.profile.role === 'Manager' || $scope.profile.role === 'Coach' || $scope.profile.role === 'Player'){
+				$scope.availableJerseyNumber = [];
+				$scope.teamId = '';
+				$scope.teamData = {};
+				TeamService.getTeamByName($scope.profile.team).success(function(data){
+					console.log(data);
+					$scope.teamData = data;
+					$scope.availableJerseyNumber = data.availableJerseyNumber.split(",");
+					$scope.teamId = data.id;
+					console.log($scope.availableJerseyNumber);
+				}).error(function(data) {
+					$ionicLoading.hide();
+				});
+			}
+				
+
+			if($scope.profile.role === 'Referee' && $scope.profile.referee_rating !== ''){
+				$scope.totalRate = $scope.profile.referee_rating.total_rating_rate.split(",");
+				$scope.fairnessRate = $scope.profile.referee_rating.total_fairness_rate.split(",");
+				$scope.decisionRate = $scope.profile.referee_rating.total_decision_rate.split(",");
+				$scope.disciplineRate = $scope.profile.referee_rating.total_discipline_rate.split(",");
+				$scope.integrityRate = $scope.profile.referee_rating.total_integrity_rate.split(",");
+			}
+
+			
+
+
 			$scope.editProfil = function() {
+				$scope.teamData = {};
+				console.log($scope.teamId);
+				console.log($scope.profile.shirtNumber);
+				if($scope.availableJerseyNumber !== undefined){
+					var index = $scope.availableJerseyNumber.indexOf($scope.profile.shirtNumber);
+					$scope.availableJerseyNumber.splice(index, 1);
+					console.log($scope.availableJerseyNumber);
+					$scope.teamData.availableJerseyNumber = $scope.availableJerseyNumber;
+				}
+			
                 // Loading
                 // $ionicLoading.show({
                 //     content: 'Loading',
                 //     animation: 'fade-in',
                 //     showBackdrop: true,
                 // });
-                // $rootScope.showLoading();
+              
                 $scope.profile = data;
 
 
                 console.log(JSON.stringify($scope.profile) === JSON.stringify(profileObjData));
 
-               	if(JSON.stringify($scope.profile) === JSON.stringify(profileObjData) === true){
-					console.log("tidak ada perubahan data");
-					var alertPopup = $ionicPopup.alert({
-						title: 'Info',
-						template: 'Tidak Ada Perubahan Data'
-					});
-				}else{
-					console.log("ada data yang diubah");
+    //            	if(JSON.stringify($scope.profile) === JSON.stringify(profileObjData) === true){
+				// 	console.log("tidak ada perubahan data");
+				// 	var alertPopup = $ionicPopup.alert({
+				// 		title: 'Info',
+				// 		template: 'Tidak Ada Perubahan Data'
+				// 	});
+				// }else{
+					// console.log("ada data yang diubah");
 
 
-		var emailRe = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-		$scope.validateEmail = emailRe.test(String($scope.profile.email).toLowerCase());
-		   
-		if ($scope.profile.fullname === undefined || $scope.profile.fullname === "") {
-			$rootScope.showPopup($ionicPopup,'Edit Profile failed!','Fullname is required !', 'popup-error');
-		} else if ($scope.profile.username === undefined || $scope.profile.username === "") {
-			$rootScope.showPopup($ionicPopup,'Edit Profile failed!','Username is required !', 'popup-error');
-		} else if ($scope.validateEmail === false) {
-			$rootScope.showPopup($ionicPopup,'Edit Profile failed!','Email not valid', 'popup-error');			
-		} else if ($scope.profile.email === undefined || $scope.profile.email === "") {
-			$rootScope.showPopup($ionicPopup,'Edit Profile failed!','Your email must be filled and valid', 'popup-error');
-		} else {
-		
+				var emailRe = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+				$scope.validateEmail = emailRe.test(String($scope.profile.email).toLowerCase());
+				   
+				if ($scope.profile.fullname === undefined || $scope.profile.fullname === "") {
+					$rootScope.showPopup($ionicPopup,'Edit Profile failed!','Fullname is required !', 'popup-error');
+				} else if ($scope.profile.username === undefined || $scope.profile.username === "") {
+					$rootScope.showPopup($ionicPopup,'Edit Profile failed!','Username is required !', 'popup-error');
+				} else if ($scope.validateEmail === false) {
+					$rootScope.showPopup($ionicPopup,'Edit Profile failed!','Email not valid', 'popup-error');			
+				} else if ($scope.profile.email === undefined || $scope.profile.email === "") {
+					$rootScope.showPopup($ionicPopup,'Edit Profile failed!','Your email must be filled and valid', 'popup-error');
+				} else {
+					  $rootScope.showLoading($ionicLoading);
 
-                // Image upload processing
-                var fileInput = document.getElementById('file-upload');
-                var file = fileInput.files[0];
-                if (file === undefined) {
-                    $scope.profile.photo = '';
-                    // Add data to database
-                    LoginService.editUser(localStorage.getItem("userid"), localStorage.getItem("token"), $scope.profile).success(function(data) {
-                        $scope.profile = data;
-                        $state.go('app.profile');
-                        $ionicLoading.hide();
-                        var alertPopup = $ionicPopup.alert({
-							title: 'Berhasil',
-							template: 'Data Profil Berhasil Diubah'
-						});
-                    }).error(function(data) {
-                        $ionicLoading.hide();
-                        var alertPopup = $ionicPopup.alert({
-							title: 'Gagal',
-							template: 'Gagal Mengubah Data Profil'
-						});
-                    });
-                } else {
-                    ProfileService.uploadImage(file, '/' + file.name).success(function(data) {
-                        var params = {
-                            "path": '/' + file.name
-                        };
-                        LoginService.uploadImage(file, '/' + file.name).success(function(data) {
-                            var params = {
-                                "path": '/' + file.name
-                            };
-                            LoginService.getImageLink(params).success(function(data2) {
-                                var temp = data2.url;
-                                var url = temp.replace("?dl=0", "?dl=1");
-                                $scope.profile.photo = url;
-                                LoginService.editUser(localStorage.getItem("userid"), localStorage.getItem("token"), $scope.profile).success(function(data) {
-                                    $scope.profile = data;
-                                    $state.go('app.profile');
-                                    $ionicLoading.hide();
-                                    var alertPopup = $ionicPopup.alert({
-										title: 'Berhasil',
-										template: 'Data Profil Berhasil Diubah'
-									});
-                    			}).error(function(data) {
-                    				var alertPopup = $ionicPopup.alert({
-										title: 'Gagal',
-										template: 'Gagal Mengubah Data Profil'
-									});
-                    			})
-                            .error(function(data) {});
-                            }).error(function(data2) {});
-                        }).error(function(data) {});
-                    }).error(function(data) {});
-                }
-            }
-        }
+		                // Image upload processing
+		                var fileInput = document.getElementById('file-upload');
+		                var file = fileInput.files[0];
+		                if (file === undefined) {
+		                    $scope.profile.photo = '';
+		                    // Add data to database
+		                    LoginService.editUser(localStorage.getItem("userid"), localStorage.getItem("token"), $scope.profile).success(function(data) {
+		                        $scope.profile = data;
+
+		                        if($scope.profile.role === 'Manager' || $scope.profile.role === 'Coach' || $scope.profile.role === 'Player'){
+		                        	TeamService.editTeamById($scope.teamId, $scope.teamData).success(function(data) {
+					            		console.log(data);
+					                }).error(function(data) {});
+		                        }
+
+		                        $ionicLoading.hide();
+		                        var alertPopup = $ionicPopup.alert({
+									title: 'Berhasil',
+									template: 'Data Profil Berhasil Diubah'
+								});
+								$state.go('app.profile');
+		                    }).error(function(data) {
+		                        $ionicLoading.hide();
+		                        var alertPopup = $ionicPopup.alert({
+									title: 'Gagal',
+									template: 'Gagal Mengubah Data Profil'
+								});
+		                    });
+
+		                } else {
+		                    ProfileService.uploadImage(file, '/' + file.name).success(function(data) {
+		                        var params = {
+		                            "path": '/' + file.name
+		                        };
+		                        LoginService.uploadImage(file, '/' + file.name).success(function(data) {
+		                            var params = {
+		                                "path": '/' + file.name
+		                            };
+		                            LoginService.getImageLink(params).success(function(data2) {
+		                                var temp = data2.url;
+		                                var url = temp.replace("?dl=0", "?dl=1");
+		                                $scope.profile.photo = url;
+		                                LoginService.editUser(localStorage.getItem("userid"), localStorage.getItem("token"), $scope.profile).success(function(data) {
+		                                    $scope.profile = data;
+
+		                                   	if($scope.profile.role === 'Manager' || $scope.profile.role === 'Coach' || $scope.profile.role === 'Player'){
+					                        	TeamService.editTeamById($scope.teamId, $scope.teamData).success(function(data) {
+								            		console.log(data);
+								                }).error(function(data) {});
+					                        }
+
+		                                    $ionicLoading.hide();
+		                                    var alertPopup = $ionicPopup.alert({
+												title: 'Berhasil',
+												template: 'Data Profil Berhasil Diubah'
+											});
+											$state.go('app.profile');
+		                    			}).error(function(data) {
+		                    				var alertPopup = $ionicPopup.alert({
+												title: 'Gagal',
+												template: 'Gagal Mengubah Data Profil'
+											});
+		                    			})
+		                            .error(function(data) {});
+		                            }).error(function(data2) {});
+		                        }).error(function(data) {});
+		                    }).error(function(data) {});
+		                }
+		    	}
             };
 			$scope.editPassword = function() {
 				// Loading
@@ -4839,13 +7693,15 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			};
 		}).error(function(data) {});
 
-		$scope.teamData = {};
-		TeamService.getTeamById(localStorage.getItem("myTeamId"),localStorage.getItem("token")).success(function(data) {
-			$scope.teamData = data;
-			$ionicLoading.hide();
-		}).error(function(data) {
-			$ionicLoading.hide();
-		});
+		if($scope.profile.role === 'Manager' || $scope.profile.role === 'Coach' || $scope.profile.role === 'Player'){
+			$scope.teamData = {};
+			TeamService.getTeamById(localStorage.getItem("myTeamId"),localStorage.getItem("token")).success(function(data) {
+				$scope.teamData = data;
+				$ionicLoading.hide();
+			}).error(function(data) {
+				$ionicLoading.hide();
+			});
+		}
 })
 
 .controller('UserDetailCtrl', function($scope, $state, $stateParams, $ionicPopup, $ionicPlatform, $ionicLoading, LoginService) {
@@ -4867,12 +7723,20 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	$scope.backToSearchPlayerPage = function(){
 		$state.go('app.searchPlayer');
 	};
+
 	$scope.backToSearchCoachPage = function(){
 		$state.go('app.searchCoach');
 	};
 })
 
-.controller('RefereeRatingCtrl', function($scope, $state, $stateParams, $ionicPopup, $ionicPlatform, $ionicLoading, RatingService, CompetitionService, LoginService) {
+.controller('RefereeRatingCtrl', function($scope, $rootScope, $state, $stateParams, $ionicPopup, $ionicPlatform, $ionicLoading, LoginService, RatingService, MatchService, CompetitionService, LoginService) {
+	
+	// $rootScope.showLoading($ionicLoading);
+	    $ionicLoading.show({
+            content: 'Login...',
+            animation: 'fade-in',
+            showBackdrop: true,
+        });
 
 	console.log($stateParams.matchId);
 	$scope.finishedMatch = {};
@@ -4883,9 +7747,13 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		console.log($scope.finishedMatch[0].competition_id);
 		LoginService.getUserByUsername($scope.finishedMatch[0].match_referee).success(function(data){
 			$scope.profile = data;
-			$ionicLoading.hide();
+			// setTimeout(function(){
+			// 	$ionicLoading.hide();
+			// },2000);
 		}).error(function(data) {
-			$ionicLoading.hide();
+			// setTimeout(function(){
+			// 	$ionicLoading.hide();
+			// },2000);
 		});
 
 		CompetitionService.getCompetitionName($scope.finishedMatch[0].competition_id).success(function(comp) {
@@ -4898,9 +7766,11 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	 $scope.fairnessStar = 0;
 	 $scope.decisionStar = 0;
 	 $scope.disciplineStar = 0;
+	 $scope.integrityStar = 0;
 	 $scope.fairnessrated = false;
 	 $scope.decisionrated = false;
 	 $scope.disciplinerated = false;
+	 $scope.integrityrated = false;
 
      $scope.fairnessRating = function(star) {
      	console.log(star);
@@ -4919,41 +7789,150 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
      	$scope.disciplineStar = star;
      	$scope.disciplinerated = true;
      };
+
+     $scope.integrityRating = function(star) {
+     	console.log(star);
+     	$scope.integrityStar = star;
+     	$scope.integrityrated = true;
+     };
    
    	
- 	 $scope.submitRating = function() {
-	    var result = parseInt($scope.fairnessStar) + parseInt($scope.decisionStar) + parseInt($scope.disciplineStar);
+ 	 $scope.submitRefereeRating = function(matchId, refereeName) {
+ 	 	var fairnessRate = parseInt($scope.fairnessStar);
+ 	 	var decisionRate = parseInt($scope.decisionStar);
+ 	 	var disciplineRate = parseInt($scope.disciplineStar);
+ 	 	var integrityRate = parseInt($scope.integrityStar);
 
+	    var result = fairnessRate + decisionRate + disciplineRate + integrityRate;
+	    console.log(result);
+	    console.log(matchId);
 	    $scope.refRatingData = {};
-	    $scope.refRatingData.home_teamObj = {};
-	    $scope.refRatingData.home_teamObj.referee_rating = {};
-	    $scope.refRatingData.away_teamObj = {};
-	    $scope.refRatingData.away_teamObj.referee_rating = {};
+	    $scope.refRatingData.match_refereeObj = {};
+	   	$scope.refRatingData.match_refereeObj.name = refereeName;
+	   	$scope.refRatingData.match_refereeObj.fairnessRate = fairnessRate;
+	   	$scope.refRatingData.match_refereeObj.decisionRate = decisionRate;
+	   	$scope.refRatingData.match_refereeObj.disciplineRate = disciplineRate;
+	   	$scope.refRatingData.match_refereeObj.integrityRate = integrityRate;
+	   	$scope.refRatingData.referee_ratingStatus = true;
 
-	    // if home team == localstorage.getitem("team")
-	    $scope.refRatingData.id = "Rdfdfkjghdfkgh121sgdfgdsfsdf21";
-	    $scope.refRatingData.id_competition = "C121sdsfsdf21";
-	    $scope.refRatingData.id_match = "M13129434934";
-	    $scope.refRatingData.home_teamObj.referee_rating.referee_name = "Referee12121221";
-	    $scope.refRatingData.home_teamObj.referee_rating.fairness = $scope.fairnessStar;
-	    $scope.refRatingData.home_teamObj.referee_rating.decision = $scope.decisionStar;
-	    $scope.refRatingData.home_teamObj.referee_rating.discipline = $scope.disciplineStar;
+	   	console.log($scope.refRatingData);
 
-	    RatingService.saveRefereeRating($scope.refRatingData).success(function(data){
-			// $ionicLoading.hide();
+	   	// Save referee rating to match table
+	   	MatchService.editMatchById(matchId,$scope.refRatingData).success(function(data) {
+			console.log('berhasil melakukan rating');
 			console.log(data);
-			console.log("sukses wuhuhuhu");
-
-			alertPopup = $ionicPopup.alert({
-				title: 'Success!',
-				template: 'Your respond has been submitted ' + result
-			});
-
-			$state.go('app.home');
-		}).error(function(data){
+			// $ionicLoading.hide();
+		}).error(function(data) {
 			// $ionicLoading.hide();
 		});
-     };
+
+		$scope.refRatingForm = {};
+		$scope.refRatingForm.referee_rating = {};
+		$scope.refBanForm = {};
+		$scope.refBanForm.ban = {};
+		$scope.refereeId = '';
+		console.log(refereeName);
+		LoginService.getUserByUsername(refereeName).success(function(data){
+			console.log(data);
+			$scope.refereeId = data.id;
+
+			if(data.referee_rating === null || data.referee_rating.rate_counter === 0 || data.referee_rating === ''){
+				console.log("ya");
+				$scope.refRatingForm.referee_rating.rate_counter = 1;
+				$scope.refRatingForm.referee_rating.fairness_rate = fairnessRate;
+				$scope.refRatingForm.referee_rating.decision_rate = decisionRate;
+				$scope.refRatingForm.referee_rating.discipline_rate = disciplineRate;
+				$scope.refRatingForm.referee_rating.integrity_rate = integrityRate;
+
+				$scope.refRatingForm.referee_rating.total_fairness = fairnessRate;
+				$scope.refRatingForm.referee_rating.total_decision = decisionRate;
+				$scope.refRatingForm.referee_rating.total_discipline = disciplineRate;
+				$scope.refRatingForm.referee_rating.total_integrity = integrityRate;
+
+				$scope.refRatingForm.referee_rating.total_fairness_rate = fairnessRate.toFixed(1);
+				$scope.refRatingForm.referee_rating.total_decision_rate = decisionRate.toFixed(1);
+				$scope.refRatingForm.referee_rating.total_discipline_rate = disciplineRate.toFixed(1);
+				$scope.refRatingForm.referee_rating.total_integrity_rate = integrityRate.toFixed(1);
+
+
+				$scope.refRatingForm.referee_rating.total_rating = result;
+				$scope.refRatingForm.referee_rating.total_rating_rate = (result / 4).toFixed(1);
+
+			}else if((data.referee_rating.rate_counter + 1) % 5 === 0){
+				console.log("5 kali");
+				$scope.refRatingForm.referee_rating.rate_counter = data.referee_rating.rate_counter + 1;
+				$scope.refRatingForm.referee_rating.fairness_rate = fairnessRate + "," + data.referee_rating.fairness_rate;
+				$scope.refRatingForm.referee_rating.decision_rate = decisionRate + "," + data.referee_rating.decision_rate;
+				$scope.refRatingForm.referee_rating.discipline_rate = disciplineRate + "," + data.referee_rating.discipline_rate;
+				$scope.refRatingForm.referee_rating.integrity_rate = integrityRate + "," + data.referee_rating.integrity_rate;
+
+				$scope.refRatingForm.referee_rating.total_fairness = (data.referee_rating.total_fairness + fairnessRate);
+				$scope.refRatingForm.referee_rating.total_decision = (data.referee_rating.total_decision + decisionRate);
+				$scope.refRatingForm.referee_rating.total_discipline = (data.referee_rating.total_discipline + disciplineRate);
+				$scope.refRatingForm.referee_rating.total_integrity = (data.referee_rating.total_integrity + integrityRate);
+
+				$scope.refRatingForm.referee_rating.total_fairness_rate = ((data.referee_rating.total_fairness + fairnessRate) / $scope.refRatingForm.referee_rating.rate_counter).toFixed(1);
+				$scope.refRatingForm.referee_rating.total_decision_rate = ((data.referee_rating.total_decision + decisionRate) / $scope.refRatingForm.referee_rating.rate_counter).toFixed(1);
+				$scope.refRatingForm.referee_rating.total_discipline_rate = ((data.referee_rating.total_discipline + disciplineRate) / $scope.refRatingForm.referee_rating.rate_counter).toFixed(1);
+				$scope.refRatingForm.referee_rating.total_integrity_rate = ((data.referee_rating.total_integrity + integrityRate) / $scope.refRatingForm.referee_rating.rate_counter).toFixed(1);
+
+				$scope.refRatingForm.referee_rating.total_rating = (data.referee_rating.total_rating + result);
+				$scope.refRatingForm.referee_rating.total_rating_rate = ((data.referee_rating.total_rating + result) / (4 * $scope.refRatingForm.referee_rating.rate_counter)).toFixed(1);
+			
+				if($scope.refRatingForm.referee_rating.total_fairness_rate < 3 || $scope.refRatingForm.referee_rating.total_decision_rate < 3 || $scope.refRatingForm.referee_rating.total_discipline_rate < 3 || $scope.refRatingForm.referee_rating.total_integrity_rate < 3){
+					$scope.refBanForm.ban.status = true;
+					$scope.refBanForm.ban.start = moment().toISOString();
+					$scope.refBanForm.ban.end = moment().add(3, 'weeks').toISOString();
+					$scope.refBanForm.ban.numberOfDays = "3 weeks";
+
+					LoginService.editUser($scope.refereeId, localStorage.getItem("token"),$scope.refBanForm).success(function(data) {
+	               		console.log(data);
+	                }).error(function(data) {});	
+				}
+
+			}else{
+				console.log("blm 5 kali");
+				$scope.refRatingForm.referee_rating.rate_counter = data.referee_rating.rate_counter + 1;
+				$scope.refRatingForm.referee_rating.fairness_rate = fairnessRate + "," + data.referee_rating.fairness_rate;
+				$scope.refRatingForm.referee_rating.decision_rate = decisionRate + "," + data.referee_rating.decision_rate;
+				$scope.refRatingForm.referee_rating.discipline_rate = disciplineRate + "," + data.referee_rating.discipline_rate;
+				$scope.refRatingForm.referee_rating.integrity_rate = integrityRate + "," + data.referee_rating.integrity_rate;
+
+				$scope.refRatingForm.referee_rating.total_fairness = (data.referee_rating.total_fairness + fairnessRate);
+				$scope.refRatingForm.referee_rating.total_decision = (data.referee_rating.total_decision + decisionRate);
+				$scope.refRatingForm.referee_rating.total_discipline = (data.referee_rating.total_discipline + disciplineRate);
+				$scope.refRatingForm.referee_rating.total_integrity = (data.referee_rating.total_integrity + integrityRate);
+				$scope.refRatingForm.referee_rating.total_rating = (data.referee_rating.total_rating + result);
+
+				$scope.refRatingForm.referee_rating.total_fairness_rate = data.referee_rating.total_fairness_rate;
+				$scope.refRatingForm.referee_rating.total_decision_rate = data.referee_rating.total_decision_rate;
+				$scope.refRatingForm.referee_rating.total_discipline_rate = data.referee_rating.total_discipline_rate;
+				$scope.refRatingForm.referee_rating.total_integrity_rate = data.referee_rating.total_integrity_rate;
+				$scope.refRatingForm.referee_rating.total_rating_rate = data.referee_rating.total_rating_rate;
+			}
+			console.log($scope.refRatingForm);
+
+			// Save referee rating to user (referee) table
+
+		   	RatingService.addRefereeRatingById($scope.refereeId, $scope.refRatingForm).success(function(data) {
+				console.log('berhasil melakukan rating');
+				console.log(data);
+				// $ionicLoading.hide();
+				alertPopup = $ionicPopup.alert({
+					title: 'Success!',
+					template: 'Your respond has been submitted '
+				});
+				$state.go('app.home');
+			}).error(function(data) {
+				// $ionicLoading.hide();
+			});
+
+
+			$ionicLoading.hide();
+		}).error(function(data) {
+			// $ionicLoading.hide();
+		});
+    };
 })
 
 .controller('PlayerRatingCtrl', function($scope, $state, $ionicPopup, $ionicPlatform, $ionicLoading) {
@@ -5004,7 +7983,61 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
         // };
 })
 
-.controller('HistoryCtrl', function($scope, $state, $ionicPopup, $ionicPlatform, $ionicLoading, LoginService, ProfileService) {     
+.controller('HistoryCtrl', function($scope, $rootScope, $state, $ionicPopup, $ionicPlatform, $ionicLoading, MatchService, CompetitionService) {
+	$rootScope.showLoading($ionicLoading);
+	$scope.completedMatches = {};
+	$scope.compName = [];
+
+
+	if(localStorage.getItem("role") === 'Referee'){
+		MatchService.getCompletedMatchesByRef(localStorage.getItem("username")).success(function(data) {
+			$scope.completedMatches = data;
+
+			$scope.completedMatches.forEach(function(match){
+				console.log(match.id);
+				CompetitionService.getCompetitionName(match.competition_id).success(function(data) {
+					console.log(data);
+					$scope.compName[match.id] = data;
+				}).error(function(data) {});
+			});
+			
+
+			$ionicLoading.hide();
+		}).error(function(data) {
+			console.log("gagal");
+			$ionicLoading.hide();
+		});
+	}
+
+
+	if(localStorage.getItem("role") === 'Analyst'){
+		MatchService.getCompletedMatchesByAnalyst(localStorage.getItem("username")).success(function(data) {
+			$scope.completedMatches = data;
+			console.log($scope.completedMatches);
+
+			$scope.completedMatches.forEach(function(match){
+				console.log(match.id);
+				CompetitionService.getCompetitionName(match.competition_id).success(function(data) {
+					console.log(data);
+					$scope.compName[match.id] = data;
+				}).error(function(data) {});
+			});
+			
+
+			$ionicLoading.hide();
+		}).error(function(data) {
+			console.log("gagal");
+			$ionicLoading.hide();
+		});
+	}
+	
+	// go to match detail page
+	$scope.goToMatchDetail = function(id) { 
+		localStorage.setItem("matchResultBackStatus", "history");
+		$state.go('app.match_detail', {
+			'matchId': id
+		});
+	};
 })
 
 .controller('CompleteProfileCtrl', function($scope, $state, $ionicPopup, $ionicPlatform, $ionicLoading, LoginService, ProfileService, $cordovaImagePicker, $cordovaCamera) {
@@ -5034,7 +8067,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	};
 })
 
-.controller('MatchDetailCtrl', function($scope, $state, $stateParams, $ionicPopup, $ionicPlatform, $ionicLoading, MatchService, LoginService, PostService, ionicMaterialInk, ionicMaterialMotion, $cordovaSocialSharing) {
+.controller('MatchDetailCtrl', function($scope, $state, $stateParams, $ionicPopup, $ionicPlatform, $ionicLoading, MatchService, CompetitionService, LoginService, PostService, ionicMaterialInk, ionicMaterialMotion, $cordovaSocialSharing) {
 	$ionicLoading.show({
 		content: 'Login...',
 		animation: 'fade-in',
@@ -5093,6 +8126,11 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	MatchService.getMatchById($stateParams.matchId).success(function(data) {
 		$ionicLoading.hide();
 		$scope.match = data;
+		$scope.day = moment($scope.match.match_date).format('dddd');
+		CompetitionService.getCompetitionName($scope.match.competition_id).success(function(data) {
+			$scope.compName = data;
+			// console.log(compName);
+		}).error(function(data) {});
 
 		// Goal
 		if($scope.match.goalHome.scorer.includes(",")){
@@ -5103,6 +8141,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$scope.goalHomeh = $scope.match.goalHome.scoreHome.split(',');
 			$scope.goalHomea = $scope.match.goalHome.scoreAway.split(',');
 			$scope.goalStatusHome  = $scope.match.goalHome.goalStatus.split(',');
+			$scope.goalEventNumberHome  = $scope.match.goalHome.eventNumber.split(',');
 		}else if($scope.match.goalHome.scorer !== ''){
 			console.log("tidak ada");
 			$scope.scorerHome = $scope.match.goalHome.scorer.toString();
@@ -5111,7 +8150,9 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$scope.goalHomeh = $scope.match.goalHome.scoreHome.toString();
 			$scope.goalHomea = $scope.match.goalHome.scoreAway.toString();
 			$scope.goalStatusHome  = $scope.match.goalHome.goalStatus.toString();
+			$scope.goalEventNumberHome  = $scope.match.goalHome.eventNumber.toString();
 		}
+
 
 		if($scope.match.goalAway.scorer.includes(",")){
 			console.log("ada");
@@ -5121,6 +8162,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$scope.goalAwayh = $scope.match.goalAway.scoreHome.split(',');
 			$scope.goalAwaya = $scope.match.goalAway.scoreAway.split(',');
 			$scope.goalStatusAway  = $scope.match.goalAway.goalStatus.split(',');
+			$scope.goalEventNumberAway  = $scope.match.goalAway.eventNumber.split(',');
 		}else{
 			console.log("tidak ada");
 			$scope.scorerAway = $scope.match.goalAway.scorer.toString();
@@ -5129,6 +8171,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$scope.goalAwayh = $scope.match.goalAway.scoreHome.toString();
 			$scope.goalAwaya = $scope.match.goalAway.scoreAway.toString();
 			$scope.goalStatusAway  = $scope.match.goalAway.goalStatus.toString();
+			$scope.goalEventNumberAway  = $scope.match.goalAway.eventNumber.toString();
 		}
 
 		// Yellow Card
@@ -5137,11 +8180,13 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$scope.yellowPlayerHome = $scope.match.yellowCardHome.player.split(',');
 			$scope.yellowTimeHome = $scope.match.yellowCardHome.time.split(',');
 			$scope.yellowStatusHome = $scope.match.yellowCardHome.status.split(',');
+			$scope.yellowEventNumberHome = $scope.match.yellowCardHome.eventNumber.split(',');
 		}else if($scope.match.yellowCardHome.player !== ''){
 			console.log("tidak ada");
 			$scope.yellowPlayerHome = $scope.match.yellowCardHome.player.toString();
 			$scope.yellowTimeHome = $scope.match.yellowCardHome.time.toString();
 			$scope.yellowStatusHome = $scope.match.yellowCardHome.status.toString();
+			$scope.yellowEventNumberHome = $scope.match.yellowCardHome.eventNumber.toString();
 		}
 
 		if($scope.match.yellowCardAway.player.includes(",")){
@@ -5149,11 +8194,13 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$scope.yellowPlayerAway = $scope.match.yellowCardAway.player.split(',');
 			$scope.yellowTimeAway = $scope.match.yellowCardAway.time.split(',');
 			$scope.yellowStatusAway = $scope.match.yellowCardAway.status.split(',');
+			$scope.yellowEventNumberAway = $scope.match.yellowCardAway.eventNumber.split(',');
 		}else if($scope.match.yellowCardAway.player !== ''){
 			console.log("tidak ada");
 			$scope.yellowPlayerAway = $scope.match.yellowCardAway.player.toString();
 			$scope.yellowTimeAway = $scope.match.yellowCardAway.time.toString();
 			$scope.yellowStatusAway = $scope.match.yellowCardAway.status.toString();
+			$scope.yellowEventNumberAway = $scope.match.yellowCardAway.eventNumber.split(',');
 		}
 
 		// Red Card
@@ -5161,20 +8208,24 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			console.log("ada");
 			$scope.redPlayerHome = $scope.match.redCardHome.player.split(',');
 			$scope.redTimeHome = $scope.match.redCardHome.time.split(',');
+			$scope.redEventNumberHome = $scope.match.redCardHome.eventNumber.split(',');
 		}else if($scope.match.redCardHome.player !== ''){
 			console.log("tidak ada");
 			$scope.redPlayerHome = $scope.match.redCardHome.player.toString();
 			$scope.redTimeHome = $scope.match.redCardHome.time.toString();
+			$scope.redEventNumberHome = $scope.match.redCardHome.eventNumber.toString();
 		}
 
 		if($scope.match.redCardAway.player.includes(",")){
 			console.log("ada");
 			$scope.redPlayerAway = $scope.match.redCardAway.player.split(',');
 			$scope.redTimeAway = $scope.match.redCardAway.time.split(',');
+			$scope.redEventNumberAway = $scope.match.redCardAway.eventNumber.split(',');
 		}else if($scope.match.redCardAway.player !== ''){
 			console.log("tidak ada");
 			$scope.redPlayerAway = $scope.match.redCardAway.player.toString();
 			$scope.redTimeAway = $scope.match.redCardAway.time.toString();
+			$scope.redEventNumberAway = $scope.match.redCardAway.eventNumber.toString();
 		}
 
 		// Substitute
@@ -5183,11 +8234,13 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$scope.subInHome = $scope.match.substituteHome.in.split(',');
 			$scope.subOutHome = $scope.match.substituteHome.out.split(',');
 			$scope.subTimeHome = $scope.match.substituteHome.time.split(',');
+			$scope.subEventNumberHome = $scope.match.substituteHome.eventNumber.split(',');
 		}else if($scope.match.substituteHome.in !== ''){
 			console.log("tidak ada");
 			$scope.subInHome = $scope.match.substituteHome.in.toString();
 			$scope.subOutHome = $scope.match.substituteHome.out.toString();
 			$scope.subTimeHome = $scope.match.substituteHome.time.toString();
+			$scope.subEventNumberHome = $scope.match.substituteHome.eventNumber.toString();
 		}
 
 		if($scope.match.substituteAway.in.includes(",")){
@@ -5195,13 +8248,14 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$scope.subInAway = $scope.match.substituteAway.in.split(',');
 			$scope.subOutAway = $scope.match.substituteAway.out.split(',');
 			$scope.subTimeAway = $scope.match.substituteAway.time.split(',');
+			$scope.subEventNumberAway = $scope.match.substituteAway.eventNumber.split(',');
 		}else if($scope.match.substituteAway.in !== ''){
 			console.log("tidak ada");
 			$scope.subInAway = $scope.match.substituteAway.in.toString();
 			$scope.subOutAway = $scope.match.substituteAway.out.toString();
 			$scope.subTimeAway = $scope.match.substituteAway.time.toString();
+			$scope.subEventNumberAway = $scope.match.substituteAway.eventNumber.toString();
 		}
-
 	
 
 		if($scope.match.goalHome.scorer.includes(",")){
@@ -5214,6 +8268,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				$scope.goalHomeObj[h].goalA = $scope.goalHomea[h];
 				$scope.goalHomeObj[h].status = "home";
 				$scope.goalHomeObj[h].goalStatus = $scope.goalStatusHome[h];
+				$scope.goalHomeObj[h].eventNumber = $scope.goalEventNumberHome[h];
 			}
 		}else if($scope.match.goalHome.scorer !== ''){
 			$scope.goalHomeObj[0] = {};
@@ -5224,6 +8279,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$scope.goalHomeObj[0].goalA = $scope.goalHomea;
 			$scope.goalHomeObj[0].status = "home";
 			$scope.goalHomeObj[0].goalStatus = $scope.goalStatusHome;
+			$scope.goalHomeObj[0].eventNumber = $scope.goalEventNumberHome;
 
 		}
 
@@ -5237,6 +8293,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				$scope.goalAwayObj[a].goalA = $scope.goalAwaya[a];
 				$scope.goalAwayObj[a].status = "away";
 				$scope.goalAwayObj[a].goalStatus = $scope.goalStatusAway[a];
+				$scope.goalAwayObj[a].eventNumber = $scope.goalEventNumberAway[a];
 
 			}
 		}else if($scope.match.goalAway.scorer !== ''){
@@ -5248,6 +8305,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$scope.goalAwayObj[0].goalH = $scope.goalAwayh;
 			$scope.goalAwayObj[0].goalA = $scope.goalAwaya;
 			$scope.goalAwayObj[0].goalStatus = $scope.goalStatusAway;
+			$scope.goalAwayObj[0].eventNumber = $scope.goalEventNumberAway;
 		}
 
 		// Yellow Card
@@ -5259,6 +8317,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				$scope.yellowHomeObj[h].status = "home";
 				$scope.yellowHomeObj[h].cardStatus = "yellow";
 				$scope.yellowHomeObj[h].yellowCardStatus = $scope.yellowStatusHome[h];
+				$scope.yellowHomeObj[h].eventNumber = $scope.yellowEventNumberHome[h];
 			}
 		}else if($scope.match.yellowCardHome.player !== ''){
 			$scope.yellowHomeObj[0] = {};
@@ -5267,6 +8326,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$scope.yellowHomeObj[0].status = "home";
 			$scope.yellowHomeObj[0].cardStatus = "yellow";
 			$scope.yellowHomeObj[0].yellowCardStatus = $scope.yellowStatusHome;
+			$scope.yellowHomeObj[0].eventNumber = $scope.yellowEventNumberHome;
 		}
 
 		if($scope.match.yellowCardAway.player.includes(",")){
@@ -5277,6 +8337,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				$scope.yellowAwayObj[h].status = "away";
 				$scope.yellowAwayObj[h].cardStatus = "yellow";
 				$scope.yellowAwayObj[h].yellowCardStatus = $scope.yellowStatusAway[h];
+				$scope.yellowAwayObj[h].eventNumber = $scope.yellowEventNumberAway[h];
 			}
 		}else if($scope.match.yellowCardAway.player !== ''){
 			$scope.yellowAwayObj[0] = {};
@@ -5285,6 +8346,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$scope.yellowAwayObj[0].status = "away";
 			$scope.yellowAwayObj[0].cardStatus = "yellow";
 			$scope.yellowAwayObj[0].yellowCardStatus = $scope.yellowStatusAway;
+			$scope.yellowAwayObj[0].eventNumber = $scope.yellowEventNumberAway;
 		}
 
 		// Red Card
@@ -5295,6 +8357,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				$scope.redHomeObj[h].time = $scope.redTimeHome[h];
 				$scope.redHomeObj[h].status = "home";
 				$scope.redHomeObj[h].cardStatus = "red";
+				$scope.redHomeObj[h].eventNumber = $scope.redEventNumberHome[h];
 			}
 		}else if($scope.match.redCardHome.player !== ''){
 			$scope.redHomeObj[0] = {};
@@ -5302,6 +8365,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$scope.redHomeObj[0].time = $scope.redTimeHome;
 			$scope.redHomeObj[0].status = "home";
 			$scope.redHomeObj[0].cardStatus = "red";
+			$scope.redHomeObj[0].eventNumber = $scope.redEventNumberHome;
 		}
 
 		if($scope.match.redCardAway.player.includes(",")){
@@ -5311,6 +8375,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				$scope.redAwayObj[h].time = $scope.redTimeAway[h];
 				$scope.redAwayObj[h].status = "away";
 				$scope.redAwayObj[h].cardStatus = "red";
+				$scope.redAwayObj[h].eventNumber = $scope.redEventNumberAway[h];
 			}
 		}else if($scope.match.redCardAway.player !== ''){
 			$scope.redAwayObj[0] = {};
@@ -5318,6 +8383,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$scope.redAwayObj[0].time = $scope.redTimeAway;
 			$scope.redAwayObj[0].status = "away";
 			$scope.redAwayObj[0].cardStatus = "red";
+			$scope.redAwayObj[0].eventNumber = $scope.redEventNumberAway;
 		}
 
 		// Substitute
@@ -5329,6 +8395,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				$scope.subHomeObj[h].time = $scope.subTimeHome[h];
 				$scope.subHomeObj[h].status = "home";
 				$scope.subHomeObj[h].eventStatus = "sub";
+				$scope.subHomeObj[h].eventNumber = $scope.subEventNumberHome[h];
 			}
 		}else if($scope.match.substituteHome.in !== ''){
 			$scope.subHomeObj[0] = {};
@@ -5337,6 +8404,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$scope.subHomeObj[0].time = $scope.subTimeHome;
 			$scope.subHomeObj[0].status = "home";
 			$scope.subHomeObj[0].eventStatus = "sub";
+			$scope.subHomeObj[0].eventNumber = $scope.subEventNumberHome;
 		}
 
 		if($scope.match.substituteAway.in.includes(",")){
@@ -5347,6 +8415,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				$scope.subAwayObj[h].time = $scope.subTimeAway[h];
 				$scope.subAwayObj[h].status = "away";
 				$scope.subAwayObj[h].eventStatus = "sub";
+				$scope.subAwayObj[h].eventNumber = $scope.subEventNumberAway[h];
 			}
 		}else if($scope.match.substituteAway.in !== ''){
 			$scope.subAwayObj[0] = {};
@@ -5355,6 +8424,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$scope.subAwayObj[0].time = $scope.subTimeAway;
 			$scope.subAwayObj[0].status = "away";
 			$scope.subAwayObj[0].eventStatus = "sub";
+			$scope.subAwayObj[0].eventNumber = $scope.subEventNumberAway;
 		}
 
 		console.log($scope.goalHomeObj);
@@ -5468,7 +8538,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		console.log($scope.goalsArr);
 
 		$scope.goalsArr.sort(function(a, b) {
-		    return a.time - b.time;
+		    return a.eventNumber - b.eventNumber;
 		});
 
 		$scope.homeLineupArr = $scope.match.match_homeTeamObj.lineup.split(",");
@@ -5543,9 +8613,719 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				$ionicLoading.hide();
 			});
 		});
-		
+
+			var homePossession = $scope.match.match_stats.homePossession;
+			var awayPossession = $scope.match.match_stats.awayPossession;
+			var homeTotalShots = $scope.match.match_stats.homeTotalShots;
+			var awayTotalShots = $scope.match.match_stats.awayTotalShots;
+			var homeShotOnTarget = $scope.match.match_stats.homeShotOnTarget;
+			var awayShotOnTarget = $scope.match.match_stats.awayShotOnTarget;
+			var homeShotOffTarget = $scope.match.match_stats.homeShotOffTarget;
+			var awayShotOffTarget = $scope.match.match_stats.awayShotOffTarget;
+			var homeCornerKicks = $scope.match.match_stats.homeCornerKicks;
+			var awayCornerKicks = $scope.match.match_stats.awayCornerKicks;
+			var homeFouls = $scope.match.match_stats.homeFouls;
+			var awayFouls = $scope.match.match_stats.awayFouls;
+			var homeYellowCard = $scope.match.match_stats.homeYellowCard;
+			var awayYellowCard = $scope.match.match_stats.awayYellowCard;
+			var homeRedCard = $scope.match.match_stats.homeRedCard;
+			var awayRedCard = $scope.match.match_stats.awayRedCard;
+
+			if(homePossession !== awayPossession){
+				ballPossessionHome.style.width = (homePossession / (homePossession + awayPossession)) * 100 + '%';
+				ballPossessionAway.style.width = 100 - ((homePossession / (homePossession + awayPossession)) * 100) + '%';
+			}else if(homePossession === 0 && awayPossession !== 0){
+				ballPossessionHome.style.width = '0%';
+				ballPossessionAway.style.width = '100%';
+			}else if(awayPossession === 0 && homePossession !== 0){
+				ballPossessionHome.style.width = '100%';
+				ballPossessionAway.style.width = '0%';
+			}else if(homePossession === awayPossession){
+				ballPossessionHome.style.width = '50%';
+				ballPossessionAway.style.width = '50%';
+			}
+
+
+			if(homeTotalShots !== awayTotalShots){
+				totalShotsHome.style.width = (homeTotalShots / (homeTotalShots + awayTotalShots)) * 100 + '%';
+				totalShotsAway.style.width = 100 - ((homeTotalShots / (homeTotalShots + awayTotalShots)) * 100) + '%';
+			}else if(homeTotalShots === 0 && awayTotalShots !== 0){
+				totalShotsHome.style.width = '0%';
+				totalShotsAway.style.width = '100%';
+			}else if(awayTotalShots === 0 && homeTotalShots !== 0){
+				totalShotsHome.style.width = '100%';
+				totalShotsAway.style.width = '0%';
+			}else if(homeTotalShots === awayTotalShots){
+				totalShotsHome.style.width = '50%';
+				totalShotsAway.style.width = '50%';
+			}
+
+
+			if(homeShotOnTarget !== awayShotOnTarget){
+				shotOnTargetHome.style.width = (homeShotOnTarget / (homeShotOnTarget + awayShotOnTarget)) * 100 + '%';
+				shotOnTargetAway.style.width = 100 - ((homeShotOnTarget / (homeShotOnTarget + awayShotOnTarget)) * 100) + '%';
+			}else if(homeShotOnTarget === 0 && awayShotOnTarget !== 0){
+				shotOnTargetHome.style.width = '0%';
+				shotOnTargetAway.style.width = '100%';
+			}else if(awayShotOnTarget === 0 && homeShotOnTarget !== 0){
+				shotOnTargetHome.style.width = '100%';
+				shotOnTargetAway.style.width = '0%';
+			}else if(homeShotOnTarget === awayShotOnTarget){
+				shotOnTargetHome.style.width = '50%';
+				shotOnTargetAway.style.width = '50%';
+			}		
+
+
+			if(homeShotOffTarget !== awayShotOffTarget){
+				shotOffTargetHome.style.width = (homeShotOffTarget / (homeShotOffTarget + awayShotOffTarget)) * 100 + '%';
+				shotOffTargetAway.style.width = 100 - ((homeShotOffTarget / (homeShotOffTarget + awayShotOffTarget)) * 100) + '%';
+			}else if(homeShotOffTarget === 0 && awayShotOffTarget !== 0){
+				shotOffTargetHome.style.width = '0%';
+				shotOffTargetAway.style.width = '100%';
+			}else if(awayShotOffTarget === 0 && homeShotOffTarget !== 0){
+				shotOffTargetHome.style.width = '100%';
+				shotOffTargetAway.style.width = '0%';
+			}else if(homeShotOffTarget === awayShotOffTarget){
+				shotOffTargetHome.style.width = '50%';
+				shotOffTargetAway.style.width = '50%';
+			}			
+
+
+			if(homeCornerKicks !== awayCornerKicks){
+				cornerKicksHome.style.width = (homeCornerKicks / (homeCornerKicks + awayCornerKicks)) * 100 + '%';
+				cornerKicksAway.style.width = 100 - ((homeCornerKicks / (homeCornerKicks + awayCornerKicks)) * 100) + '%';
+			}else if(homeCornerKicks === 0 && awayCornerKicks !== 0){
+				cornerKicksHome.style.width = '0%';
+				cornerKicksAway.style.width = '100%';
+			}else if(awayCornerKicks === 0 && homeCornerKicks !== 0){
+				cornerKicksHome.style.width = '100%';
+				cornerKicksAway.style.width = '0%';
+			}else if(homeCornerKicks === awayCornerKicks){
+				cornerKicksHome.style.width = '50%';
+				cornerKicksAway.style.width = '50%';
+			}
+
+
+			if(homeFouls !== awayFouls){
+				foulsHome.style.width = (homeFouls / (homeFouls + awayFouls)) * 100 + '%';
+				foulsAway.style.width = 100 - ((homeFouls / (homeFouls + awayFouls)) * 100) + '%';
+			}else if(homeFouls === 0 && awayFouls !== 0){
+				foulsHome.style.width = '0%';
+				foulsAway.style.width = '100%';
+			}else if(awayFouls === 0 && homeFouls !== 0){
+				foulsHome.style.width = '100%';
+				foulsAway.style.width = '0%';
+			}else if(homeFouls === awayFouls){
+				foulsHome.style.width = '50%';
+				foulsAway.style.width = '50%';
+			}
+
+
+			if(homeYellowCard !== awayYellowCard){
+				yellowCardHome.style.width = (homeYellowCard / (homeYellowCard + awayYellowCard)) * 100 + '%';
+				yellowCardAway.style.width = 100 - ((homeYellowCard / (homeYellowCard + awayYellowCard)) * 100) + '%';
+			}else if(homeYellowCard === 0 && awayYellowCard !== 0){
+				yellowCardHome.style.width = '0%';
+				yellowCardAway.style.width = '100%';
+			}else if(awayYellowCard === 0 && homeYellowCard !== 0){
+				yellowCardHome.style.width = '100%';
+				yellowCardAway.style.width = '0%';
+			}else if(homeYellowCard === awayYellowCard){
+				yellowCardHome.style.width = '50%';
+				yellowCardAway.style.width = '50%';
+			}
+
+	
+			if(homeRedCard !== awayRedCard){
+				redCardHome.style.width = (homeRedCard / (homeRedCard + awayRedCard)) * 100 + '%';
+				redCardAway.style.width = 100 - ((homeRedCard / (homeRedCard + awayRedCard)) * 100) + '%';
+			}else if(homeRedCard === 0 && awayRedCard !== 0){
+				redCardHome.style.width = '0%';
+				redCardAway.style.width = '100%';
+			}else if(awayRedCard === 0 && homeRedCard !== 0){
+				redCardHome.style.width = '100%';
+				redCardAway.style.width = '0%';
+			}else if(homeRedCard === awayRedCard){
+				redCardHome.style.width = '50%';
+				redCardAway.style.width = '50%';
+			}		
 	}).error(function(data) {
 	});
+
+	$scope.getMatchById = function(){
+
+		MatchService.getMatchById($stateParams.matchId).success(function(data) {
+			$ionicLoading.hide();
+			$scope.match = data;
+			$scope.day = moment($scope.match.match_date).format('dddd');
+			CompetitionService.getCompetitionName($scope.match.competition_id).success(function(data) {
+				$scope.compName = data;
+				// console.log(compName);
+			}).error(function(data) {});
+
+			// Goal
+			if($scope.match.goalHome.scorer.includes(",")){
+				console.log("ada");
+				$scope.scorerHome = $scope.match.goalHome.scorer.split(',');
+				$scope.assistHome = $scope.match.goalHome.assist.split(',');
+				$scope.timeHome = $scope.match.goalHome.time.split(',');
+				$scope.goalHomeh = $scope.match.goalHome.scoreHome.split(',');
+				$scope.goalHomea = $scope.match.goalHome.scoreAway.split(',');
+				$scope.goalStatusHome  = $scope.match.goalHome.goalStatus.split(',');
+				$scope.goalEventNumberHome  = $scope.match.goalHome.eventNumber.split(',');
+			}else if($scope.match.goalHome.scorer !== ''){
+				console.log("tidak ada");
+				$scope.scorerHome = $scope.match.goalHome.scorer.toString();
+				$scope.assistHome = $scope.match.goalHome.assist.toString();
+				$scope.timeHome = $scope.match.goalHome.time.toString();
+				$scope.goalHomeh = $scope.match.goalHome.scoreHome.toString();
+				$scope.goalHomea = $scope.match.goalHome.scoreAway.toString();
+				$scope.goalStatusHome  = $scope.match.goalHome.goalStatus.toString();
+				$scope.goalEventNumberHome  = $scope.match.goalHome.eventNumber.toString();
+			}
+
+
+			if($scope.match.goalAway.scorer.includes(",")){
+				console.log("ada");
+				$scope.scorerAway = $scope.match.goalAway.scorer.split(',');
+				$scope.assistAway = $scope.match.goalAway.assist.split(',');
+				$scope.timeAway = $scope.match.goalAway.time.split(',');
+				$scope.goalAwayh = $scope.match.goalAway.scoreHome.split(',');
+				$scope.goalAwaya = $scope.match.goalAway.scoreAway.split(',');
+				$scope.goalStatusAway  = $scope.match.goalAway.goalStatus.split(',');
+				$scope.goalEventNumberAway  = $scope.match.goalAway.eventNumber.split(',');
+			}else{
+				console.log("tidak ada");
+				$scope.scorerAway = $scope.match.goalAway.scorer.toString();
+				$scope.assistAway = $scope.match.goalAway.assist.toString();
+				$scope.timeAway = $scope.match.goalAway.time.toString();
+				$scope.goalAwayh = $scope.match.goalAway.scoreHome.toString();
+				$scope.goalAwaya = $scope.match.goalAway.scoreAway.toString();
+				$scope.goalStatusAway  = $scope.match.goalAway.goalStatus.toString();
+				$scope.goalEventNumberAway  = $scope.match.goalAway.eventNumber.toString();
+			}
+
+			// Yellow Card
+			if($scope.match.yellowCardHome.player.includes(",")){
+				console.log("ada");
+				$scope.yellowPlayerHome = $scope.match.yellowCardHome.player.split(',');
+				$scope.yellowTimeHome = $scope.match.yellowCardHome.time.split(',');
+				$scope.yellowStatusHome = $scope.match.yellowCardHome.status.split(',');
+				$scope.yellowEventNumberHome = $scope.match.yellowCardHome.eventNumber.split(',');
+			}else if($scope.match.yellowCardHome.player !== ''){
+				console.log("tidak ada");
+				$scope.yellowPlayerHome = $scope.match.yellowCardHome.player.toString();
+				$scope.yellowTimeHome = $scope.match.yellowCardHome.time.toString();
+				$scope.yellowStatusHome = $scope.match.yellowCardHome.status.toString();
+				$scope.yellowEventNumberHome = $scope.match.yellowCardHome.eventNumber.toString();
+			}
+
+			if($scope.match.yellowCardAway.player.includes(",")){
+				console.log("ada");
+				$scope.yellowPlayerAway = $scope.match.yellowCardAway.player.split(',');
+				$scope.yellowTimeAway = $scope.match.yellowCardAway.time.split(',');
+				$scope.yellowStatusAway = $scope.match.yellowCardAway.status.split(',');
+				$scope.yellowEventNumberAway = $scope.match.yellowCardAway.eventNumber.split(',');
+			}else if($scope.match.yellowCardAway.player !== ''){
+				console.log("tidak ada");
+				$scope.yellowPlayerAway = $scope.match.yellowCardAway.player.toString();
+				$scope.yellowTimeAway = $scope.match.yellowCardAway.time.toString();
+				$scope.yellowStatusAway = $scope.match.yellowCardAway.status.toString();
+				$scope.yellowEventNumberAway = $scope.match.yellowCardAway.eventNumber.split(',');
+			}
+
+			// Red Card
+			if($scope.match.redCardHome.player.includes(",")){
+				console.log("ada");
+				$scope.redPlayerHome = $scope.match.redCardHome.player.split(',');
+				$scope.redTimeHome = $scope.match.redCardHome.time.split(',');
+				$scope.redEventNumberHome = $scope.match.redCardHome.eventNumber.split(',');
+			}else if($scope.match.redCardHome.player !== ''){
+				console.log("tidak ada");
+				$scope.redPlayerHome = $scope.match.redCardHome.player.toString();
+				$scope.redTimeHome = $scope.match.redCardHome.time.toString();
+				$scope.redEventNumberHome = $scope.match.redCardHome.eventNumber.toString();
+			}
+
+			if($scope.match.redCardAway.player.includes(",")){
+				console.log("ada");
+				$scope.redPlayerAway = $scope.match.redCardAway.player.split(',');
+				$scope.redTimeAway = $scope.match.redCardAway.time.split(',');
+				$scope.redEventNumberAway = $scope.match.redCardAway.eventNumber.split(',');
+			}else if($scope.match.redCardAway.player !== ''){
+				console.log("tidak ada");
+				$scope.redPlayerAway = $scope.match.redCardAway.player.toString();
+				$scope.redTimeAway = $scope.match.redCardAway.time.toString();
+				$scope.redEventNumberAway = $scope.match.redCardAway.eventNumber.toString();
+			}
+
+			// Substitute
+			if($scope.match.substituteHome.in.includes(",")){
+				console.log("ada");
+				$scope.subInHome = $scope.match.substituteHome.in.split(',');
+				$scope.subOutHome = $scope.match.substituteHome.out.split(',');
+				$scope.subTimeHome = $scope.match.substituteHome.time.split(',');
+				$scope.subEventNumberHome = $scope.match.substituteHome.eventNumber.split(',');
+			}else if($scope.match.substituteHome.in !== ''){
+				console.log("tidak ada");
+				$scope.subInHome = $scope.match.substituteHome.in.toString();
+				$scope.subOutHome = $scope.match.substituteHome.out.toString();
+				$scope.subTimeHome = $scope.match.substituteHome.time.toString();
+				$scope.subEventNumberHome = $scope.match.substituteHome.eventNumber.toString();
+			}
+
+			if($scope.match.substituteAway.in.includes(",")){
+				console.log("ada");
+				$scope.subInAway = $scope.match.substituteAway.in.split(',');
+				$scope.subOutAway = $scope.match.substituteAway.out.split(',');
+				$scope.subTimeAway = $scope.match.substituteAway.time.split(',');
+				$scope.subEventNumberAway = $scope.match.substituteAway.eventNumber.split(',');
+			}else if($scope.match.substituteAway.in !== ''){
+				console.log("tidak ada");
+				$scope.subInAway = $scope.match.substituteAway.in.toString();
+				$scope.subOutAway = $scope.match.substituteAway.out.toString();
+				$scope.subTimeAway = $scope.match.substituteAway.time.toString();
+				$scope.subEventNumberAway = $scope.match.substituteAway.eventNumber.toString();
+			}
+		
+
+			if($scope.match.goalHome.scorer.includes(",")){
+				for(var h = 0; h < $scope.scorerHome.length; h++){
+					$scope.goalHomeObj[h] = {};
+					$scope.goalHomeObj[h].scorer = $scope.scorerHome[h];
+					$scope.goalHomeObj[h].assist = $scope.assistHome[h];
+					$scope.goalHomeObj[h].time = $scope.timeHome[h];
+					$scope.goalHomeObj[h].goalH = $scope.goalHomeh[h];
+					$scope.goalHomeObj[h].goalA = $scope.goalHomea[h];
+					$scope.goalHomeObj[h].status = "home";
+					$scope.goalHomeObj[h].goalStatus = $scope.goalStatusHome[h];
+					$scope.goalHomeObj[h].eventNumber = $scope.goalEventNumberHome[h];
+				}
+			}else if($scope.match.goalHome.scorer !== ''){
+				$scope.goalHomeObj[0] = {};
+				$scope.goalHomeObj[0].scorer = $scope.scorerHome;
+				$scope.goalHomeObj[0].assist = $scope.assistHome;
+				$scope.goalHomeObj[0].time = $scope.timeHome;
+				$scope.goalHomeObj[0].goalH = $scope.goalHomeh;
+				$scope.goalHomeObj[0].goalA = $scope.goalHomea;
+				$scope.goalHomeObj[0].status = "home";
+				$scope.goalHomeObj[0].goalStatus = $scope.goalStatusHome;
+				$scope.goalHomeObj[0].eventNumber = $scope.goalEventNumberHome;
+
+			}
+
+			if($scope.match.goalAway.scorer.includes(",")){
+				for(var a = 0; a < $scope.scorerAway.length; a++){
+					$scope.goalAwayObj[a] = {};
+					$scope.goalAwayObj[a].scorer = $scope.scorerAway[a];
+					$scope.goalAwayObj[a].assist = $scope.assistAway[a];
+					$scope.goalAwayObj[a].time = $scope.timeAway[a];
+					$scope.goalAwayObj[a].goalH = $scope.goalAwayh[a];
+					$scope.goalAwayObj[a].goalA = $scope.goalAwaya[a];
+					$scope.goalAwayObj[a].status = "away";
+					$scope.goalAwayObj[a].goalStatus = $scope.goalStatusAway[a];
+					$scope.goalAwayObj[a].eventNumber = $scope.goalEventNumberAway[a];
+
+				}
+			}else if($scope.match.goalAway.scorer !== ''){
+				$scope.goalAwayObj[0] = {};
+				$scope.goalAwayObj[0].scorer = $scope.scorerAway;
+				$scope.goalAwayObj[0].assist = $scope.assistAway;
+				$scope.goalAwayObj[0].time = $scope.timeAway;
+				$scope.goalAwayObj[0].status = "away";
+				$scope.goalAwayObj[0].goalH = $scope.goalAwayh;
+				$scope.goalAwayObj[0].goalA = $scope.goalAwaya;
+				$scope.goalAwayObj[0].goalStatus = $scope.goalStatusAway;
+				$scope.goalAwayObj[0].eventNumber = $scope.goalEventNumberAway;
+			}
+
+			// Yellow Card
+			if($scope.match.yellowCardHome.player.includes(",")){
+				for(var h = 0; h < $scope.yellowPlayerHome.length; h++){
+					$scope.yellowHomeObj[h] = {};
+					$scope.yellowHomeObj[h].player = $scope.yellowPlayerHome[h];
+					$scope.yellowHomeObj[h].time = $scope.yellowTimeHome[h];
+					$scope.yellowHomeObj[h].status = "home";
+					$scope.yellowHomeObj[h].cardStatus = "yellow";
+					$scope.yellowHomeObj[h].yellowCardStatus = $scope.yellowStatusHome[h];
+					$scope.yellowHomeObj[h].eventNumber = $scope.yellowEventNumberHome[h];
+				}
+			}else if($scope.match.yellowCardHome.player !== ''){
+				$scope.yellowHomeObj[0] = {};
+				$scope.yellowHomeObj[0].player = $scope.yellowPlayerHome;
+				$scope.yellowHomeObj[0].time = $scope.yellowTimeHome;
+				$scope.yellowHomeObj[0].status = "home";
+				$scope.yellowHomeObj[0].cardStatus = "yellow";
+				$scope.yellowHomeObj[0].yellowCardStatus = $scope.yellowStatusHome;
+				$scope.yellowHomeObj[0].eventNumber = $scope.yellowEventNumberHome;
+			}
+
+			if($scope.match.yellowCardAway.player.includes(",")){
+				for(var h = 0; h < $scope.yellowPlayerAway.length; h++){
+					$scope.yellowAwayObj[h] = {};
+					$scope.yellowAwayObj[h].player = $scope.yellowPlayerAway[h];
+					$scope.yellowAwayObj[h].time = $scope.yellowTimeAway[h];
+					$scope.yellowAwayObj[h].status = "away";
+					$scope.yellowAwayObj[h].cardStatus = "yellow";
+					$scope.yellowAwayObj[h].yellowCardStatus = $scope.yellowStatusAway[h];
+					$scope.yellowAwayObj[h].eventNumber = $scope.yellowEventNumberAway[h];
+				}
+			}else if($scope.match.yellowCardAway.player !== ''){
+				$scope.yellowAwayObj[0] = {};
+				$scope.yellowAwayObj[0].player = $scope.yellowPlayerAway;
+				$scope.yellowAwayObj[0].time = $scope.yellowTimeAway;
+				$scope.yellowAwayObj[0].status = "away";
+				$scope.yellowAwayObj[0].cardStatus = "yellow";
+				$scope.yellowAwayObj[0].yellowCardStatus = $scope.yellowStatusAway;
+				$scope.yellowAwayObj[0].eventNumber = $scope.yellowEventNumberAway;
+			}
+
+			// Red Card
+			if($scope.match.redCardHome.player.includes(",")){
+				for(var h = 0; h < $scope.redPlayerHome.length; h++){
+					$scope.redHomeObj[h] = {};
+					$scope.redHomeObj[h].player = $scope.redPlayerHome[h];
+					$scope.redHomeObj[h].time = $scope.redTimeHome[h];
+					$scope.redHomeObj[h].status = "home";
+					$scope.redHomeObj[h].cardStatus = "red";
+					$scope.redHomeObj[h].eventNumber = $scope.redEventNumberHome[h];
+				}
+			}else if($scope.match.redCardHome.player !== ''){
+				$scope.redHomeObj[0] = {};
+				$scope.redHomeObj[0].player = $scope.redPlayerHome;
+				$scope.redHomeObj[0].time = $scope.redTimeHome;
+				$scope.redHomeObj[0].status = "home";
+				$scope.redHomeObj[0].cardStatus = "red";
+				$scope.redHomeObj[0].eventNumber = $scope.redEventNumberHome;
+			}
+
+			if($scope.match.redCardAway.player.includes(",")){
+				for(var h = 0; h < $scope.redPlayerAway.length; h++){
+					$scope.redAwayObj[h] = {};
+					$scope.redAwayObj[h].player = $scope.redPlayerAway[h];
+					$scope.redAwayObj[h].time = $scope.redTimeAway[h];
+					$scope.redAwayObj[h].status = "away";
+					$scope.redAwayObj[h].cardStatus = "red";
+					$scope.redAwayObj[h].eventNumber = $scope.redEventNumberAway[h];
+				}
+			}else if($scope.match.redCardAway.player !== ''){
+				$scope.redAwayObj[0] = {};
+				$scope.redAwayObj[0].player = $scope.redPlayerAway;
+				$scope.redAwayObj[0].time = $scope.redTimeAway;
+				$scope.redAwayObj[0].status = "away";
+				$scope.redAwayObj[0].cardStatus = "red";
+				$scope.redAwayObj[0].eventNumber = $scope.redEventNumberAway;
+			}
+
+			// Substitute
+			if($scope.match.substituteHome.in.includes(",")){
+				for(var h = 0; h < $scope.subInHome.length; h++){
+					$scope.subHomeObj[h] = {};
+					$scope.subHomeObj[h].in = $scope.subInHome[h];
+					$scope.subHomeObj[h].out = $scope.subOutHome[h];
+					$scope.subHomeObj[h].time = $scope.subTimeHome[h];
+					$scope.subHomeObj[h].status = "home";
+					$scope.subHomeObj[h].eventStatus = "sub";
+					$scope.subHomeObj[h].eventNumber = $scope.subEventNumberHome[h];
+				}
+			}else if($scope.match.substituteHome.in !== ''){
+				$scope.subHomeObj[0] = {};
+				$scope.subHomeObj[0].in = $scope.subInHome;
+				$scope.subHomeObj[0].out = $scope.subOutHome;
+				$scope.subHomeObj[0].time = $scope.subTimeHome;
+				$scope.subHomeObj[0].status = "home";
+				$scope.subHomeObj[0].eventStatus = "sub";
+				$scope.subHomeObj[0].eventNumber = $scope.subEventNumberHome;
+			}
+
+			if($scope.match.substituteAway.in.includes(",")){
+				for(var h = 0; h < $scope.subInAway.length; h++){
+					$scope.subAwayObj[h] = {};
+					$scope.subAwayObj[h].in = $scope.subInAway[h];
+					$scope.subAwayObj[h].out = $scope.subOutAway[h];
+					$scope.subAwayObj[h].time = $scope.subTimeAway[h];
+					$scope.subAwayObj[h].status = "away";
+					$scope.subAwayObj[h].eventStatus = "sub";
+					$scope.subAwayObj[h].eventNumber = $scope.subEventNumberAway[h];
+				}
+			}else if($scope.match.substituteAway.in !== ''){
+				$scope.subAwayObj[0] = {};
+				$scope.subAwayObj[0].in = $scope.subInAway;
+				$scope.subAwayObj[0].out = $scope.subOutAway;
+				$scope.subAwayObj[0].time = $scope.subTimeAway;
+				$scope.subAwayObj[0].status = "away";
+				$scope.subAwayObj[0].eventStatus = "sub";
+				$scope.subAwayObj[0].eventNumber = $scope.subEventNumberAway;
+			}
+
+			console.log($scope.goalHomeObj);
+			console.log($scope.goalAwayObj);
+			console.log($scope.yellowHomeObj);
+
+			$scope.goalHomeArr = [];
+			$scope.goalAwayArr = [];
+			$scope.yellowHomeArr = [];
+			$scope.yellowAwayArr = [];
+			$scope.redHomeArr = [];
+			$scope.redAwayArr = [];
+			$scope.subHomeArr = [];
+			$scope.subAwayArr = [];
+
+			for(var itemh in $scope.goalHomeObj){
+				// $scope.goalDataArr.push($scope.goalHomeObj[itemh]);
+				$scope.goalHomeArr.push($scope.goalHomeObj[itemh]);
+			}
+
+			for(var itema in $scope.goalAwayObj){
+				// $scope.goalDataArr.push($scope.goalAwayObj[itema]);
+				$scope.goalAwayArr.push($scope.goalAwayObj[itema]);
+			}
+
+			// Yellow Card
+			for(var item in $scope.yellowHomeObj){
+				// $scope.goalDataArr.push($scope.goalAwayObj[itema]);
+				$scope.yellowHomeArr.push($scope.yellowHomeObj[item]);
+			}
+
+			for(var item in $scope.yellowAwayObj){
+				// $scope.goalDataArr.push($scope.goalAwayObj[itema]);
+				$scope.yellowAwayArr.push($scope.yellowAwayObj[item]);
+			}
+
+			// Red Card
+			for(var item in $scope.redHomeObj){
+				// $scope.goalDataArr.push($scope.goalAwayObj[itema]);
+				$scope.redHomeArr.push($scope.redHomeObj[item]);
+			}
+
+			for(var item in $scope.redAwayObj){
+				// $scope.goalDataArr.push($scope.goalAwayObj[itema]);
+				$scope.redAwayArr.push($scope.redAwayObj[item]);
+			}
+
+			// Substitute
+			for(var item in $scope.subHomeObj){
+				// $scope.goalDataArr.push($scope.goalAwayObj[itema]);
+				$scope.subHomeArr.push($scope.subHomeObj[item]);
+			}
+
+			for(var item in $scope.subAwayObj){
+				// $scope.goalDataArr.push($scope.goalAwayObj[itema]);
+				$scope.subAwayArr.push($scope.subAwayObj[item]);
+			}
+			console.log($scope.goalHomeArr.length);
+			console.log($scope.goalAwayArr);
+			if($scope.goalHomeArr.length !== 0){
+				console.log("not 0");
+				$scope.goalsArr = $scope.goalHomeArr;
+				if($scope.goalAwayArr.length !== 0){
+					console.log("not 0000");
+					$scope.goalsArr = $scope.goalHomeArr.concat($scope.goalAwayArr);
+				}
+			}else{
+				console.log("0");
+				if($scope.goalAwayArr.length !== 0){
+					console.log("not 0000000000");
+					$scope.goalsArr = $scope.goalAwayArr;
+				}
+			}
+
+
+			if($scope.goalsArr.length !== 0){
+				$scope.goalsArr = $scope.goalsArr.concat($scope.yellowHomeArr);
+			}else{
+				$scope.goalsArr = $scope.yellowHomeArr;
+			}
+
+			if($scope.goalsArr.length !== 0){
+				$scope.goalsArr = $scope.goalsArr.concat($scope.yellowAwayArr);
+			}else{
+				$scope.goalsArr = $scope.yellowAwayArr;
+			}
+
+			if($scope.goalsArr.length !== 0){
+				$scope.goalsArr = $scope.goalsArr.concat($scope.redHomeArr);
+			}else{
+				$scope.goalsArr = $scope.redHomeArr;
+			}
+
+			if($scope.goalsArr.length !== 0){
+				$scope.goalsArr = $scope.goalsArr.concat($scope.redAwayArr);
+			}else{
+				$scope.goalsArr = $scope.redAwayArr;
+			}
+
+			if($scope.goalsArr.length !== 0){
+				$scope.goalsArr = $scope.goalsArr.concat($scope.subHomeArr);
+			}else{
+				$scope.goalsArr = $scope.subHomeArr;
+			}
+
+			if($scope.goalsArr.length !== 0){
+				$scope.goalsArr = $scope.goalsArr.concat($scope.subAwayArr);
+			}else{
+				$scope.goalsArr = $scope.subAwayArr;
+			}
+			console.log($scope.goalsArr);
+
+			$scope.goalsArr.sort(function(a, b) {
+			    return a.eventNumber - b.eventNumber;
+			});
+
+			// var homePossession = $scope.match.match_stats.homePossession;
+			// var awayPossession = $scope.match.match_stats.awayPossession;
+			// var homeTotalShots = $scope.match.match_stats.homeTotalShots;
+			// var awayTotalShots = $scope.match.match_stats.awayTotalShots;
+			// var homeShotOnTarget = $scope.match.match_stats.homeShotOnTarget;
+			// var awayShotOnTarget = $scope.match.match_stats.awayShotOnTarget;
+			// var homeShotOffTarget = $scope.match.match_stats.homeShotOffTarget;
+			// var awayShotOffTarget = $scope.match.match_stats.awayShotOffTarget;
+			// var homeCornerKicks = $scope.match.match_stats.homeCornerKicks;
+			// var awayCornerKicks = $scope.match.match_stats.awayCornerKicks;
+			// var homeFouls = $scope.match.match_stats.homeFouls;
+			// var awayFouls = $scope.match.match_stats.awayFouls;
+			// var homeYellowCard = $scope.match.match_stats.homeYellowCard;
+			// var awayYellowCard = $scope.match.match_stats.awayYellowCard;
+			// var homeRedCard = $scope.match.match_stats.homeRedCard;
+			// var awayRedCard = $scope.match.match_stats.awayRedCard;
+
+			// if(homePossession !== awayPossession){
+			// 	ballPossessionHome.style.width = (homePossession / (homePossession + awayPossession)) * 100 + '%';
+			// 	ballPossessionAway.style.width = 100 - ((homePossession / (homePossession + awayPossession)) * 100) + '%';
+			// }else if(homePossession === 0 && awayPossession !== 0){
+			// 	ballPossessionHome.style.width = '0%';
+			// 	ballPossessionAway.style.width = '100%';
+			// }else if(awayPossession === 0 && homePossession !== 0){
+			// 	ballPossessionHome.style.width = '100%';
+			// 	ballPossessionAway.style.width = '0%';
+			// }else if(homePossession === awayPossession){
+			// 	ballPossessionHome.style.width = '50%';
+			// 	ballPossessionAway.style.width = '50%';
+			// }
+
+
+			// if(homeTotalShots !== awayTotalShots){
+			// 	totalShotsHome.style.width = (homeTotalShots / (homeTotalShots + awayTotalShots)) * 100 + '%';
+			// 	totalShotsAway.style.width = 100 - ((homeTotalShots / (homeTotalShots + awayTotalShots)) * 100) + '%';
+			// }else if(homeTotalShots === 0 && awayTotalShots !== 0){
+			// 	totalShotsHome.style.width = '0%';
+			// 	totalShotsAway.style.width = '100%';
+			// }else if(awayTotalShots === 0 && homeTotalShots !== 0){
+			// 	totalShotsHome.style.width = '100%';
+			// 	totalShotsAway.style.width = '0%';
+			// }else if(homeTotalShots === awayTotalShots){
+			// 	totalShotsHome.style.width = '50%';
+			// 	totalShotsAway.style.width = '50%';
+			// }
+
+
+			// if(homeShotOnTarget !== awayShotOnTarget){
+			// 	shotOnTargetHome.style.width = (homeShotOnTarget / (homeShotOnTarget + awayShotOnTarget)) * 100 + '%';
+			// 	shotOnTargetAway.style.width = 100 - ((homeShotOnTarget / (homeShotOnTarget + awayShotOnTarget)) * 100) + '%';
+			// }else if(homeShotOnTarget === 0 && awayShotOnTarget !== 0){
+			// 	shotOnTargetHome.style.width = '0%';
+			// 	shotOnTargetAway.style.width = '100%';
+			// }else if(awayShotOnTarget === 0 && homeShotOnTarget !== 0){
+			// 	shotOnTargetHome.style.width = '100%';
+			// 	shotOnTargetAway.style.width = '0%';
+			// }else if(homeShotOnTarget === awayShotOnTarget){
+			// 	shotOnTargetHome.style.width = '50%';
+			// 	shotOnTargetAway.style.width = '50%';
+			// }		
+
+
+			// if(homeShotOffTarget !== awayShotOffTarget){
+			// 	shotOffTargetHome.style.width = (homeShotOffTarget / (homeShotOffTarget + awayShotOffTarget)) * 100 + '%';
+			// 	shotOffTargetAway.style.width = 100 - ((homeShotOffTarget / (homeShotOffTarget + awayShotOffTarget)) * 100) + '%';
+			// }else if(homeShotOffTarget === 0 && awayShotOffTarget !== 0){
+			// 	shotOffTargetHome.style.width = '0%';
+			// 	shotOffTargetAway.style.width = '100%';
+			// }else if(awayShotOffTarget === 0 && homeShotOffTarget !== 0){
+			// 	shotOffTargetHome.style.width = '100%';
+			// 	shotOffTargetAway.style.width = '0%';
+			// }else if(homeShotOffTarget === awayShotOffTarget){
+			// 	shotOffTargetHome.style.width = '50%';
+			// 	shotOffTargetAway.style.width = '50%';
+			// }			
+
+
+			// if(homeCornerKicks !== awayCornerKicks){
+			// 	cornerKicksHome.style.width = (homeCornerKicks / (homeCornerKicks + awayCornerKicks)) * 100 + '%';
+			// 	cornerKicksAway.style.width = 100 - ((homeCornerKicks / (homeCornerKicks + awayCornerKicks)) * 100) + '%';
+			// }else if(homeCornerKicks === 0 && awayCornerKicks !== 0){
+			// 	cornerKicksHome.style.width = '0%';
+			// 	cornerKicksAway.style.width = '100%';
+			// }else if(awayCornerKicks === 0 && homeCornerKicks !== 0){
+			// 	cornerKicksHome.style.width = '100%';
+			// 	cornerKicksAway.style.width = '0%';
+			// }else if(homeCornerKicks === awayCornerKicks){
+			// 	cornerKicksHome.style.width = '50%';
+			// 	cornerKicksAway.style.width = '50%';
+			// }
+
+
+			// if(homeFouls !== awayFouls){
+			// 	foulsHome.style.width = (homeFouls / (homeFouls + awayFouls)) * 100 + '%';
+			// 	foulsAway.style.width = 100 - ((homeFouls / (homeFouls + awayFouls)) * 100) + '%';
+			// }else if(homeFouls === 0 && awayFouls !== 0){
+			// 	foulsHome.style.width = '0%';
+			// 	foulsAway.style.width = '100%';
+			// }else if(awayFouls === 0 && homeFouls !== 0){
+			// 	foulsHome.style.width = '100%';
+			// 	foulsAway.style.width = '0%';
+			// }else if(homeFouls === awayFouls){
+			// 	foulsHome.style.width = '50%';
+			// 	foulsAway.style.width = '50%';
+			// }
+
+
+			// if(homeYellowCard !== awayYellowCard){
+			// 	yellowCardHome.style.width = (homeYellowCard / (homeYellowCard + awayYellowCard)) * 100 + '%';
+			// 	yellowCardAway.style.width = 100 - ((homeYellowCard / (homeYellowCard + awayYellowCard)) * 100) + '%';
+			// }else if(homeYellowCard === 0 && awayYellowCard !== 0){
+			// 	yellowCardHome.style.width = '0%';
+			// 	yellowCardAway.style.width = '100%';
+			// }else if(awayYellowCard === 0 && homeYellowCard !== 0){
+			// 	yellowCardHome.style.width = '100%';
+			// 	yellowCardAway.style.width = '0%';
+			// }else if(homeYellowCard === awayYellowCard){
+			// 	yellowCardHome.style.width = '50%';
+			// 	yellowCardAway.style.width = '50%';
+			// }
+
+	
+			// if(homeRedCard !== awayRedCard){
+			// 	redCardHome.style.width = (homeRedCard / (homeRedCard + awayRedCard)) * 100 + '%';
+			// 	redCardAway.style.width = 100 - ((homeRedCard / (homeRedCard + awayRedCard)) * 100) + '%';
+			// }else if(homeRedCard === 0 && awayRedCard !== 0){
+			// 	redCardHome.style.width = '0%';
+			// 	redCardAway.style.width = '100%';
+			// }else if(awayRedCard === 0 && homeRedCard !== 0){
+			// 	redCardHome.style.width = '100%';
+			// 	redCardAway.style.width = '0%';
+			// }else if(homeRedCard === awayRedCard){
+			// 	redCardHome.style.width = '50%';
+			// 	redCardAway.style.width = '50%';
+			// }	
+		}).error(function(data) {
+		});
+	}
+
+	window.loadMatchById = setInterval($scope.getMatchById, 1500);
+
+	
+	$scope.back = function(){
+		if(localStorage.getItem("matchResultBackStatus") === 'history'){
+			$state.go('app.history');
+			localStorage.removeItem("matchResultBackStatus");
+		}else if(localStorage.getItem("matchResultBackStatus") === 'livescore'){
+			$state.go('app.live_score');
+		}else{
+			$state.go('app.home');
+			localStorage.removeItem("matchResultBackStatus");
+		}
+	}
+
 })
 
 .controller('MatchInfoCtrl', function($scope, $state, $stateParams, $ionicPopup, $ionicPlatform, $ionicLoading, MatchService, LoginService, CompetitionService, PostService, ionicMaterialInk, ionicMaterialMotion, $cordovaSocialSharing) {
@@ -5572,6 +9352,22 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	$scope.homeSubPlayerArr = [];
 	$scope.awaySubPlayerArr = [];
 	$scope.homeLineupGKObj = {};
+	$scope.homeLineupGKArr = [];
+	$scope.homeLineupDefArr = [];
+	$scope.homeLineupMidArr = [];
+	$scope.homeLineupAttArr = [];
+	$scope.homeSubGKArr = [];
+	$scope.homeSubDefArr = [];
+	$scope.homeSubMidArr = [];
+	$scope.homeSubAttArr = [];
+	$scope.awayLineupGKArr = [];
+	$scope.awayLineupDefArr = [];
+	$scope.awayLineupMidArr = [];
+	$scope.awayLineupAttArr = [];
+	$scope.awaySubGKArr = [];
+	$scope.awaySubDefArr = [];
+	$scope.awaySubMidArr = [];
+	$scope.awaySubAttArr = [];
 
 
 	MatchService.getMatchById($stateParams.matchId).success(function(data) {
@@ -5584,13 +9380,20 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		$scope.homeSubArr = $scope.match.match_homeTeamObj.sub.split(",");
 		$scope.awaySubArr = $scope.match.match_awayTeamObj.sub.split(",");
 
+		console.log($scope.homeLineupArr);
+		console.log($scope.awayLineupArr);
+
+
 		$scope.homeLineupArr.forEach(function(lineup){
 			LoginService.getUserByUsername(lineup).success(function(data){
-				if(data !== null && data.position !== 'GK'){
-					$scope.homeLineupPlayerArr.push(data);
-				}
 				if(data.position == 'GK'){
-					$scope.homeLineupGKObj = data;
+					$scope.homeLineupGKArr.push(data);
+				}else if(data.position == 'Def'){
+					$scope.homeLineupDefArr.push(data);
+				}else if(data.position == 'Mid'){
+					$scope.homeLineupMidArr.push(data);
+				}else if(data.position == 'Att'){
+					$scope.homeLineupAttArr.push(data);
 				}
 				$ionicLoading.hide();
 			}).error(function(data) {
@@ -5600,8 +9403,14 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 		$scope.homeSubArr.forEach(function(sub){
 			LoginService.getUserByUsername(sub).success(function(data){
-				if(data !== null){
-					$scope.homeSubPlayerArr.push(data);
+				if(data.position == 'GK'){
+					$scope.homeSubGKArr.push(data);
+				}else if(data.position == 'Def'){
+					$scope.homeSubDefArr.push(data);
+				}else if(data.position == 'Mid'){
+					$scope.homeSubMidArr.push(data);
+				}else if(data.position == 'Att'){
+					$scope.homeSubAttArr.push(data);
 				}
 				$ionicLoading.hide();
 			}).error(function(data) {
@@ -5611,8 +9420,15 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 		$scope.awayLineupArr.forEach(function(lineup){
 			LoginService.getUserByUsername(lineup).success(function(data){
-				if(data !== null){
-					$scope.awayLineupPlayerArr.push(data);
+				console.log(data);
+				if(data.position == 'GK'){
+					$scope.awayLineupGKArr.push(data);
+				}else if(data.position == 'Def'){
+					$scope.awayLineupDefArr.push(data);
+				}else if(data.position == 'Mid'){
+					$scope.awayLineupMidArr.push(data);
+				}else if(data.position == 'Att'){
+					$scope.awayLineupAttArr.push(data);
 				}
 				$ionicLoading.hide();
 			}).error(function(data) {
@@ -5622,8 +9438,14 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 		$scope.awaySubArr.forEach(function(sub){
 			LoginService.getUserByUsername(sub).success(function(data){
-				if(data !== null){
-					$scope.awaySubPlayerArr.push(data);
+				if(data.position == 'GK'){
+					$scope.awaySubGKArr.push(data);
+				}else if(data.position == 'Def'){
+					$scope.awaySubDefArr.push(data);
+				}else if(data.position == 'Mid'){
+					$scope.awaySubMidArr.push(data);
+				}else if(data.position == 'Att'){
+					$scope.awaySubAttArr.push(data);
 				}
 				$ionicLoading.hide();
 			}).error(function(data) {
@@ -5631,7 +9453,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			});
 		});
 
-		
+		console.log($scope.awaySubGKArr);
 
 		CompetitionService.getCompetitionName($scope.match.competition_id).success(function(data) {
 			$scope.compName = data;
@@ -5716,7 +9538,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	});
 })
 
-.controller('EditMatchCtrl', function($ionicModal, NgMap, $scope, $rootScope, $state, $stateParams, $ionicPopup, $ionicPlatform, $ionicLoading, TeamService, MatchService, PostService, LoginService, CompetitionService, ionicMaterialInk, ionicMaterialMotion, $cordovaSocialSharing) {
+.controller('EditMatchCtrl', function($ionicModal, NgMap, $scope, $rootScope, $state, $stateParams, $ionicPopup, $ionicPlatform, $ionicLoading, TeamService, MatchService, ClassementService, LoginService, CompetitionService, ionicMaterialInk, ionicMaterialMotion, $cordovaSocialSharing) {
 	$ionicLoading.show({
 		content: 'Login...',
 		animation: 'fade-in',
@@ -5738,20 +9560,20 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		console.log($scope.matchData);
 		$ionicLoading.hide();
 		// if($scope.matchData.timer_status === null){
-			$scope.startTimer = function(){
-				if($scope.matchData.timer_status === null){
-					console.log("afsd fsdf sdfsdf sdfsdf sf");
-					$scope.timerData.timer = $scope.matchData.timer + 1;
-					// $scope.timerData.timer_status = "halftime";
-					MatchService.editMatchById($scope.matchData.id,$scope.timerData).success(function(data) {
-						console.log('qweqweqrer erwerwerrqwrqwrqwrqwr');
-						$ionicLoading.hide();
-						// $state.go('app.home');
-					}).error(function(data) {
-						$ionicLoading.hide();
-					});
-				}
-			};
+			// $scope.startTimer = function(){
+			// 	if($scope.matchData.timer_status === ''){
+			// 		console.log("afsd fsdf sdfsdf sdfsdf sf");
+			// 		$scope.timerData.timer = $scope.matchData.timer + 1;
+			// 		// $scope.timerData.timer_status = "halftime";
+			// 		MatchService.editMatchById($scope.matchData.id,$scope.timerData).success(function(data) {
+			// 			console.log('qweqweqrer erwerwerrqwrqwrqwrqwr');
+			// 			$ionicLoading.hide();
+			// 			// $state.go('app.home');
+			// 		}).error(function(data) {
+			// 			$ionicLoading.hide();
+			// 		});
+			// 	}
+			// };
 	}).error(function(data){
 		$ionicLoading.hide();
 	});
@@ -5802,6 +9624,225 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			}else{
 				console.log("tamat dah");
 				$scope.penaltyStatus = '';
+
+				$rootScope.showLoading();
+				$scope.timerData.timer_status = "penalty shootout stopped";
+				$scope.timerData.match_status = "finished";
+				$scope.timerData.live_status = false;
+				$scope.timerData.penalty = {};
+				$scope.timerData.penalty.status = true;
+				$scope.timerData.penalty.homeTeamScore = $scope.homePenaltyScore;
+				$scope.timerData.penalty.awayTeamScore = $scope.awayPenaltyScore;
+
+				if($scope.homePenaltyScore > $scope.awayPenaltyScore){
+					$scope.timerData.match_winner = $scope.matchData.match_homeTeam;
+					$scope.timerData.match_loser = $scope.matchData.match_awayTeam;
+				}else{
+					$scope.timerData.match_winner = $scope.matchData.match_awayTeam;
+					$scope.timerData.match_loser = $scope.matchData.match_homeTeam;
+				}
+
+				clearInterval($scope.loadMatch);
+				clearInterval($scope.loadTimer);
+				clearInterval($scope.loadTeamPossession);
+				$rootScope.showLoading($ionicLoading);
+
+				// update next round match
+				CompetitionService.getCompetitionById($scope.matchData.competition_id,localStorage.getItem("token")).success(function(comp) {
+					console.log(comp);
+					if($scope.matchData.match_fixture === 'play off'){
+						console.log("play off");
+						if(comp.comp_numOfTeam === 32){
+							var fixture = 'round of 16';
+							CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+								match.forEach(function(m){
+									console.log(m);
+									if($scope.matchData.pair_status === 'home'){
+										m.match_homeTeam = $scope.timerData.match_winner;
+										m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+									}else{
+										m.match_awayTeam = $scope.timerData.match_winner;
+										m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+									}
+									console.log(m);
+									// update next round match data
+									MatchService.editMatchById(m.id,m).success(function(data) {
+										console.log(data);
+									}).error(function(data) {});
+								})
+							}).error(function(data) {});
+						}else if(comp.comp_numOfTeam === 16){
+							var fixture = 'quarter final';
+							CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+								match.forEach(function(m){
+									console.log(m);
+									if($scope.matchData.pair_status === 'home'){
+										m.match_homeTeam = $scope.timerData.match_winner;
+										m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+									}else{
+										m.match_awayTeam = $scope.timerData.match_winner;
+										m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+									}
+									console.log(m);
+									// update next round match data
+									MatchService.editMatchById(m.id,m).success(function(data) {
+										console.log(data);
+									}).error(function(data) {});
+								})
+							}).error(function(data) {});
+						}else{
+							var fixture = 'semi final';
+							CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+								match.forEach(function(m){
+									console.log(m);
+									if($scope.matchData.pair_status === 'home'){
+										m.match_homeTeam = $scope.timerData.match_winner;
+										m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+									}else{
+										m.match_awayTeam = $scope.timerData.match_winner;
+										m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+									}
+									console.log(m);
+									// update next round match data
+									MatchService.editMatchById(m.id,m).success(function(data) {
+										console.log(data);
+									}).error(function(data) {});
+								})
+							}).error(function(data) {});
+						}
+					}else if($scope.matchData.match_fixture === 'round of 16'){
+						var fixture = 'quarter final';
+						CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+							match.forEach(function(m){
+								console.log(m);
+								if($scope.matchData.pair_status === 'home'){
+									m.match_homeTeam = $scope.timerData.match_winner;
+									m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+								}else{
+									m.match_awayTeam = $scope.timerData.match_winner;
+									m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+								}
+								console.log(m);
+								// update next round match data
+								MatchService.editMatchById(m.id,m).success(function(data) {
+									console.log(data);
+								}).error(function(data) {});
+							})
+						}).error(function(data) {});
+					}else if($scope.matchData.match_fixture === 'quarter final'){
+						var fixture = 'semi final';
+						CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+							match.forEach(function(m){
+								console.log(m);
+								if($scope.matchData.pair_status === 'home'){
+									m.match_homeTeam = $scope.timerData.match_winner;
+									m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+								}else{
+									m.match_awayTeam = $scope.timerData.match_winner;
+									m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+								}
+								console.log(m);
+								// update next round match data
+								MatchService.editMatchById(m.id,m).success(function(data) {
+									console.log(data);
+								}).error(function(data) {});
+							})
+						}).error(function(data) {});
+					}else if($scope.matchData.match_fixture === 'semi final'){
+						var fixture = 'final';
+						CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+							match.forEach(function(m){
+								console.log(m);
+								if($scope.matchData.pair_status === 'home'){
+									m.match_homeTeam = $scope.timerData.match_winner;
+									m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+								}else{
+									m.match_awayTeam = $scope.timerData.match_winner;
+									m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+								}
+								console.log(m);
+								// update next round match data
+								MatchService.editMatchById(m.id,m).success(function(data) {
+									console.log(data);
+								}).error(function(data) {});
+							})
+						}).error(function(data) {});
+					}
+				}).error(function(data) {});
+		
+				setTimeout(function(){
+
+					// update team data
+					TeamService.getTeamByName($scope.matchData.match_homeTeam).success(function(team){
+						$scope.teamFormWin = {};
+						$scope.teamFormWin.team_play = team.team_play + 1;
+						$scope.teamFormWin.team_point = team.team_point + 3;
+						$scope.teamFormWin.team_win = team.team_win + 1;
+						if($scope.matchData.match_homeTeam === $scope.timerData.match_winner){
+							$scope.teamFormWin.goalAgainst = team.team_goalAgainst + $scope.matchData.match_awayTeamObj.score;
+							$scope.teamFormWin.goalFor = team.team_goalFor + $scope.matchData.match_homeTeamObj.score;
+						}else{
+							$scope.teamFormWin.goalAgainst = team.team_goalAgainst + $scope.matchData.match_homeTeamObj.score;	
+							$scope.teamFormWin.goalFor = team.team_goalFor + $scope.matchData.match_awayTeamObj.score;
+						}
+						TeamService.editTeamById(team.id, $scope.teamFormWin).success(function(data) {
+		            		console.log(data);
+		                }).error(function(data) {});
+					}).error(function(data) {
+						$ionicLoading.hide();
+					});
+
+	                // update referee profile
+	                LoginService.getUserByUsername($scope.matchData.match_referee).success(function(referee){
+	                	$scope.refereeForm = {};
+	                	$scope.refereeForm.matchManaged = referee.matchManaged + 1;
+						LoginService.editUser(referee.id, localStorage.getItem("token"),$scope.refereeForm).success(function(data) {
+                    		console.log(data);
+                    	}).error(function(data) {});	
+					}).error(function(data) {});
+
+					// update analyst profile
+	                LoginService.getUserByUsername($scope.matchData.match_analyst).success(function(analyst){
+	                	$scope.analystForm = {};
+	                	$scope.analystForm.matchManaged = analyst.matchManaged + 1;
+						LoginService.editUser(analyst.id, localStorage.getItem("token"),$scope.analystForm).success(function(data) {
+                    		console.log(data);
+                    	}).error(function(data) {});	
+					}).error(function(data) {});
+				},1500);
+
+				setTimeout(function(){
+		
+					// update team data
+					TeamService.getTeamByName($scope.matchData.match_awayTeam).success(function(team){
+						$scope.teamFormLose = {};
+						$scope.teamFormLose.team_play = team.team_play + 1;
+						$scope.teamFormLose.team_lose = team.team_lose + 1;
+						if($scope.matchData.match_homeTeam === $scope.timerData.match_loser){
+							$scope.teamFormLose.goalAgainst = team.team_goalAgainst + $scope.matchData.match_awayTeamObj.score;
+							$scope.teamFormLose.goalFor = team.team_goalFor + $scope.matchData.match_homeTeamObj.score;
+						}else{
+							$scope.teamFormLose.goalAgainst = team.team_goalAgainst + $scope.matchData.match_homeTeamObj.score;	
+							$scope.teamFormLose.goalFor = team.team_goalFor + $scope.matchData.match_awayTeamObj.score;
+						}
+						TeamService.editTeamById(team.id, $scope.teamFormLose).success(function(data) {
+		            		console.log(data);
+		                }).error(function(data) {});
+
+					}).error(function(data) {
+						$ionicLoading.hide();
+					});
+				
+					// update match data
+					MatchService.editMatchById($scope.matchData.id,$scope.timerData).success(function(data) {
+						// setTimeout(function(){
+							$ionicLoading.hide();
+						// },1000);
+						$state.go('app.match_detail', {
+							'matchId': $scope.matchData.id
+						});
+					}).error(function(data) {});
+				},2000);
 			}
 
 			if($scope.awayPenaltyScore <= ($scope.homePenaltyScore + $scope.homePenaltyLeft)){
@@ -5809,6 +9850,226 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			}else{
 				console.log("tamat dah");
 				$scope.penaltyStatus = '';
+
+				$rootScope.showLoading();
+				$scope.timerData.timer_status = "penalty shootout stopped";
+				$scope.timerData.match_status = "finished";
+				$scope.timerData.live_status = false;
+				$scope.timerData.penalty = {};
+				$scope.timerData.penalty.status = true;
+				$scope.timerData.penalty.homeTeamScore = $scope.homePenaltyScore;
+				$scope.timerData.penalty.awayTeamScore = $scope.awayPenaltyScore;
+
+				if($scope.homePenaltyScore > $scope.awayPenaltyScore){
+					$scope.timerData.match_winner = $scope.matchData.match_homeTeam;
+					$scope.timerData.match_loser = $scope.matchData.match_awayTeam;
+				}else{
+					$scope.timerData.match_winner = $scope.matchData.match_awayTeam;
+					$scope.timerData.match_loser = $scope.matchData.match_homeTeam;
+				}
+
+				clearInterval($scope.loadMatch);
+				clearInterval($scope.loadTimer);
+				clearInterval($scope.loadTeamPossession);
+				$rootScope.showLoading($ionicLoading);
+
+				// update next round match
+				CompetitionService.getCompetitionById($scope.matchData.competition_id,localStorage.getItem("token")).success(function(comp) {
+					console.log(comp);
+					if($scope.matchData.match_fixture === 'play off'){
+						console.log("play off");
+						if(comp.comp_numOfTeam === 32){
+							var fixture = 'round of 16';
+							CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+								match.forEach(function(m){
+									console.log(m);
+									if($scope.matchData.pair_status === 'home'){
+										m.match_homeTeam = $scope.timerData.match_winner;
+										m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+									}else{
+										m.match_awayTeam = $scope.timerData.match_winner;
+										m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+									}
+									console.log(m);
+									// update next round match data
+									MatchService.editMatchById(m.id,m).success(function(data) {
+										console.log(data);
+									}).error(function(data) {});
+								})
+							}).error(function(data) {});
+						}else if(comp.comp_numOfTeam === 16){
+							var fixture = 'quarter final';
+							CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+								match.forEach(function(m){
+									console.log(m);
+									if($scope.matchData.pair_status === 'home'){
+										m.match_homeTeam = $scope.timerData.match_winner;
+										m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+									}else{
+										m.match_awayTeam = $scope.timerData.match_winner;
+										m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+									}
+									console.log(m);
+									// update next round match data
+									MatchService.editMatchById(m.id,m).success(function(data) {
+										console.log(data);
+									}).error(function(data) {});
+								})
+							}).error(function(data) {});
+						}else{
+							var fixture = 'semi final';
+							CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+								match.forEach(function(m){
+									console.log(m);
+									if($scope.matchData.pair_status === 'home'){
+										m.match_homeTeam = $scope.timerData.match_winner;
+										m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+									}else{
+										m.match_awayTeam = $scope.timerData.match_winner;
+										m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+									}
+									console.log(m);
+									// update next round match data
+									MatchService.editMatchById(m.id,m).success(function(data) {
+										console.log(data);
+									}).error(function(data) {});
+								})
+							}).error(function(data) {});
+						}
+					}else if($scope.matchData.match_fixture === 'round of 16'){
+						var fixture = 'quarter final';
+						CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+							match.forEach(function(m){
+								console.log(m);
+								if($scope.matchData.pair_status === 'home'){
+									m.match_homeTeam = $scope.timerData.match_winner;
+									m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+								}else{
+									m.match_awayTeam = $scope.timerData.match_winner;
+									m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+								}
+								console.log(m);
+								// update next round match data
+								MatchService.editMatchById(m.id,m).success(function(data) {
+									console.log(data);
+								}).error(function(data) {});
+							})
+						}).error(function(data) {});
+					}else if($scope.matchData.match_fixture === 'quarter final'){
+						var fixture = 'semi final';
+						CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+							match.forEach(function(m){
+								console.log(m);
+								if($scope.matchData.pair_status === 'home'){
+									m.match_homeTeam = $scope.timerData.match_winner;
+									m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+								}else{
+									m.match_awayTeam = $scope.timerData.match_winner;
+									m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+								}
+								console.log(m);
+								// update next round match data
+								MatchService.editMatchById(m.id,m).success(function(data) {
+									console.log(data);
+								}).error(function(data) {});
+							})
+						}).error(function(data) {});
+					}else if($scope.matchData.match_fixture === 'semi final'){
+						var fixture = 'final';
+						CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+							match.forEach(function(m){
+								console.log(m);
+								if($scope.matchData.pair_status === 'home'){
+									m.match_homeTeam = $scope.timerData.match_winner;
+									m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+								}else{
+									m.match_awayTeam = $scope.timerData.match_winner;
+									m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+								}
+								console.log(m);
+								// update next round match data
+								MatchService.editMatchById(m.id,m).success(function(data) {
+									console.log(data);
+								}).error(function(data) {});
+							})
+						}).error(function(data) {});
+					}
+				}).error(function(data) {});
+
+				setTimeout(function(){
+
+					// update team data
+					TeamService.getTeamByName($scope.matchData.match_homeTeam).success(function(team){
+						$scope.teamFormWin = {};
+						$scope.teamFormWin.team_play = team.team_play + 1;
+						$scope.teamFormWin.team_point = team.team_point + 3;
+						$scope.teamFormWin.team_win = team.team_win + 1;
+						if($scope.matchData.match_homeTeam === $scope.timerData.match_winner){
+							$scope.teamFormWin.goalAgainst = team.team_goalAgainst + $scope.matchData.match_awayTeamObj.score;
+							$scope.teamFormWin.goalFor = team.team_goalFor + $scope.matchData.match_homeTeamObj.score;
+						}else{
+							$scope.teamFormWin.goalAgainst = team.team_goalAgainst + $scope.matchData.match_homeTeamObj.score;	
+							$scope.teamFormWin.goalFor = team.team_goalFor + $scope.matchData.match_awayTeamObj.score;
+						}
+						TeamService.editTeamById(team.id, $scope.teamFormWin).success(function(data) {
+		            		console.log(data);
+		                }).error(function(data) {});
+					}).error(function(data) {
+						$ionicLoading.hide();
+					});
+
+	                // update referee profile
+	                LoginService.getUserByUsername($scope.matchData.match_referee).success(function(referee){
+	                	$scope.refereeForm = {};
+	                	$scope.refereeForm.matchManaged = referee.matchManaged + 1;
+						LoginService.editUser(referee.id, localStorage.getItem("token"),$scope.refereeForm).success(function(data) {
+                    		console.log(data);
+                    	}).error(function(data) {});	
+					}).error(function(data) {});
+
+					// update analyst profile
+	                LoginService.getUserByUsername($scope.matchData.match_analyst).success(function(analyst){
+	                	$scope.analystForm = {};
+	                	$scope.analystForm.matchManaged = analyst.matchManaged + 1;
+						LoginService.editUser(analyst.id, localStorage.getItem("token"),$scope.analystForm).success(function(data) {
+                    		console.log(data);
+                    	}).error(function(data) {});	
+					}).error(function(data) {});
+				},1500);
+
+				setTimeout(function(){
+		
+					// update team data
+					TeamService.getTeamByName($scope.matchData.match_awayTeam).success(function(team){
+						$scope.teamFormLose = {};
+						$scope.teamFormLose.team_play = team.team_play + 1;
+						$scope.teamFormLose.team_lose = team.team_lose + 1;
+						if($scope.matchData.match_homeTeam === $scope.timerData.match_loser){
+							$scope.teamFormLose.goalAgainst = team.team_goalAgainst + $scope.matchData.match_awayTeamObj.score;
+							$scope.teamFormLose.goalFor = team.team_goalFor + $scope.matchData.match_homeTeamObj.score;
+						}else{
+							$scope.teamFormLose.goalAgainst = team.team_goalAgainst + $scope.matchData.match_homeTeamObj.score;	
+							$scope.teamFormLose.goalFor = team.team_goalFor + $scope.matchData.match_awayTeamObj.score;
+						}
+						TeamService.editTeamById(team.id, $scope.teamFormLose).success(function(data) {
+		            		console.log(data);
+		                }).error(function(data) {});
+
+					}).error(function(data) {
+						$ionicLoading.hide();
+					});
+				
+					// update match data
+					MatchService.editMatchById($scope.matchData.id,$scope.timerData).success(function(data) {
+						// setTimeout(function(){
+							$ionicLoading.hide();
+						// },1000);
+						$state.go('app.match_detail', {
+							'matchId': $scope.matchData.id
+						});
+					}).error(function(data) {});
+				},2000);
+
 			}
 		}else if($scope.penaltyShootOut > 5){
 			// $scope.penaltyShootOut = $scope.penaltyShootOut + 1;
@@ -5838,8 +10099,227 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			if($scope.awayPenaltyScore <= ($scope.homePenaltyScore + $scope.homePenaltyLeft)){
 				console.log("msh bisa");
 			}else{
-				console.log("tamat dah");
+			console.log("tamat dah");
 				$scope.penaltyStatus = '';
+
+				$rootScope.showLoading();
+				$scope.timerData.timer_status = "penalty shootout stopped";
+				$scope.timerData.match_status = "finished";
+				$scope.timerData.live_status = false;
+				$scope.timerData.penalty = {};
+				$scope.timerData.penalty.status = true;
+				$scope.timerData.penalty.homeTeamScore = $scope.homePenaltyScore;
+				$scope.timerData.penalty.awayTeamScore = $scope.awayPenaltyScore;
+
+				if($scope.homePenaltyScore > $scope.awayPenaltyScore){
+					$scope.timerData.match_winner = $scope.matchData.match_homeTeam;
+					$scope.timerData.match_loser = $scope.matchData.match_awayTeam;
+				}else{
+					$scope.timerData.match_winner = $scope.matchData.match_awayTeam;
+					$scope.timerData.match_loser = $scope.matchData.match_homeTeam;
+				}
+
+				clearInterval($scope.loadMatch);
+				clearInterval($scope.loadTimer);
+				clearInterval($scope.loadTeamPossession);
+				$rootScope.showLoading($ionicLoading);
+
+				// update next round match
+				CompetitionService.getCompetitionById($scope.matchData.competition_id,localStorage.getItem("token")).success(function(comp) {
+					console.log(comp);
+					if($scope.matchData.match_fixture === 'play off'){
+						console.log("play off");
+						if(comp.comp_numOfTeam === 32){
+							var fixture = 'round of 16';
+							CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+								match.forEach(function(m){
+									console.log(m);
+									if($scope.matchData.pair_status === 'home'){
+										m.match_homeTeam = $scope.timerData.match_winner;
+										m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+									}else{
+										m.match_awayTeam = $scope.timerData.match_winner;
+										m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+									}
+									console.log(m);
+									// update next round match data
+									MatchService.editMatchById(m.id,m).success(function(data) {
+										console.log(data);
+									}).error(function(data) {});
+								})
+							}).error(function(data) {});
+						}else if(comp.comp_numOfTeam === 16){
+							var fixture = 'quarter final';
+							CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+								match.forEach(function(m){
+									console.log(m);
+									if($scope.matchData.pair_status === 'home'){
+										m.match_homeTeam = $scope.timerData.match_winner;
+										m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+									}else{
+										m.match_awayTeam = $scope.timerData.match_winner;
+										m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+									}
+									console.log(m);
+									// update next round match data
+									MatchService.editMatchById(m.id,m).success(function(data) {
+										console.log(data);
+									}).error(function(data) {});
+								})
+							}).error(function(data) {});
+						}else{
+							var fixture = 'semi final';
+							CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+								match.forEach(function(m){
+									console.log(m);
+									if($scope.matchData.pair_status === 'home'){
+										m.match_homeTeam = $scope.timerData.match_winner;
+										m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+									}else{
+										m.match_awayTeam = $scope.timerData.match_winner;
+										m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+									}
+									console.log(m);
+									// update next round match data
+									MatchService.editMatchById(m.id,m).success(function(data) {
+										console.log(data);
+									}).error(function(data) {});
+								})
+							}).error(function(data) {});
+						}
+					}else if($scope.matchData.match_fixture === 'round of 16'){
+						var fixture = 'quarter final';
+						CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+							match.forEach(function(m){
+								console.log(m);
+								if($scope.matchData.pair_status === 'home'){
+									m.match_homeTeam = $scope.timerData.match_winner;
+									m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+								}else{
+									m.match_awayTeam = $scope.timerData.match_winner;
+									m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+								}
+								console.log(m);
+								// update next round match data
+								MatchService.editMatchById(m.id,m).success(function(data) {
+									console.log(data);
+								}).error(function(data) {});
+							})
+						}).error(function(data) {});
+					}else if($scope.matchData.match_fixture === 'quarter final'){
+						var fixture = 'semi final';
+						CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+							match.forEach(function(m){
+								console.log(m);
+								if($scope.matchData.pair_status === 'home'){
+									m.match_homeTeam = $scope.timerData.match_winner;
+									m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+								}else{
+									m.match_awayTeam = $scope.timerData.match_winner;
+									m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+								}
+								console.log(m);
+								// update next round match data
+								MatchService.editMatchById(m.id,m).success(function(data) {
+									console.log(data);
+								}).error(function(data) {});
+							})
+						}).error(function(data) {});
+					}else if($scope.matchData.match_fixture === 'semi final'){
+						var fixture = 'final';
+						CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+							match.forEach(function(m){
+								console.log(m);
+								if($scope.matchData.pair_status === 'home'){
+									m.match_homeTeam = $scope.timerData.match_winner;
+									m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+								}else{
+									m.match_awayTeam = $scope.timerData.match_winner;
+									m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+								}
+								console.log(m);
+								// update next round match data
+								MatchService.editMatchById(m.id,m).success(function(data) {
+									console.log(data);
+								}).error(function(data) {});
+							})
+						}).error(function(data) {});
+					}
+				}).error(function(data) {});
+
+				setTimeout(function(){
+
+					// update team data
+					TeamService.getTeamByName($scope.matchData.match_homeTeam).success(function(team){
+						$scope.teamFormWin = {};
+						$scope.teamFormWin.team_play = team.team_play + 1;
+						$scope.teamFormWin.team_point = team.team_point + 3;
+						$scope.teamFormWin.team_win = team.team_win + 1;
+						if($scope.matchData.match_homeTeam === $scope.timerData.match_winner){
+							$scope.teamFormWin.goalAgainst = team.team_goalAgainst + $scope.matchData.match_awayTeamObj.score;
+							$scope.teamFormWin.goalFor = team.team_goalFor + $scope.matchData.match_homeTeamObj.score;
+						}else{
+							$scope.teamFormWin.goalAgainst = team.team_goalAgainst + $scope.matchData.match_homeTeamObj.score;	
+							$scope.teamFormWin.goalFor = team.team_goalFor + $scope.matchData.match_awayTeamObj.score;
+						}
+						TeamService.editTeamById(team.id, $scope.teamFormWin).success(function(data) {
+		            		console.log(data);
+		                }).error(function(data) {});
+					}).error(function(data) {
+						$ionicLoading.hide();
+					});
+
+	                // update referee profile
+	                LoginService.getUserByUsername($scope.matchData.match_referee).success(function(referee){
+	                	$scope.refereeForm = {};
+	                	$scope.refereeForm.matchManaged = referee.matchManaged + 1;
+						LoginService.editUser(referee.id, localStorage.getItem("token"),$scope.refereeForm).success(function(data) {
+                    		console.log(data);
+                    	}).error(function(data) {});	
+					}).error(function(data) {});
+
+					// update analyst profile
+	                LoginService.getUserByUsername($scope.matchData.match_analyst).success(function(analyst){
+	                	$scope.analystForm = {};
+	                	$scope.analystForm.matchManaged = analyst.matchManaged + 1;
+						LoginService.editUser(analyst.id, localStorage.getItem("token"),$scope.analystForm).success(function(data) {
+                    		console.log(data);
+                    	}).error(function(data) {});	
+					}).error(function(data) {});
+				},1500);
+
+				setTimeout(function(){
+			
+					// update team data
+					TeamService.getTeamByName($scope.matchData.match_awayTeam).success(function(team){
+						$scope.teamFormLose = {};
+						$scope.teamFormLose.team_play = team.team_play + 1;
+						$scope.teamFormLose.team_lose = team.team_lose + 1;
+						if($scope.matchData.match_homeTeam === $scope.timerData.match_loser){
+							$scope.teamFormLose.goalAgainst = team.team_goalAgainst + $scope.matchData.match_awayTeamObj.score;
+							$scope.teamFormLose.goalFor = team.team_goalFor + $scope.matchData.match_homeTeamObj.score;
+						}else{
+							$scope.teamFormLose.goalAgainst = team.team_goalAgainst + $scope.matchData.match_homeTeamObj.score;	
+							$scope.teamFormLose.goalFor = team.team_goalFor + $scope.matchData.match_awayTeamObj.score;
+						}
+						TeamService.editTeamById(team.id, $scope.teamFormLose).success(function(data) {
+		            		console.log(data);
+		                }).error(function(data) {});
+
+					}).error(function(data) {
+						$ionicLoading.hide();
+					});
+				
+					// update match data
+					MatchService.editMatchById($scope.matchData.id,$scope.timerData).success(function(data) {
+						// setTimeout(function(){
+							$ionicLoading.hide();
+						// },1000);
+						$state.go('app.match_detail', {
+							'matchId': $scope.matchData.id
+						});
+					}).error(function(data) {});
+				},2000);
 			}
 		}else if($scope.penaltyShootOut > 5){
 			// $scope.penaltyShootOut = $scope.penaltyShootOut + 1;
@@ -5876,8 +10356,227 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 					console.log("msh bisa");
 					$scope.penaltyShootOut = $scope.penaltyShootOut + 1;
 				}else{
-					console.log("tamat dah");
-					$scope.penaltyStatus = '';
+				console.log("tamat dah");
+				$scope.penaltyStatus = '';
+
+				$rootScope.showLoading();
+				$scope.timerData.timer_status = "penalty shootout stopped";
+				$scope.timerData.match_status = "finished";
+				$scope.timerData.live_status = false;
+				$scope.timerData.penalty = {};
+				$scope.timerData.penalty.status = true;
+				$scope.timerData.penalty.homeTeamScore = $scope.homePenaltyScore;
+				$scope.timerData.penalty.awayTeamScore = $scope.awayPenaltyScore;
+
+				if($scope.homePenaltyScore > $scope.awayPenaltyScore){
+					$scope.timerData.match_winner = $scope.matchData.match_homeTeam;
+					$scope.timerData.match_loser = $scope.matchData.match_awayTeam;
+				}else{
+					$scope.timerData.match_winner = $scope.matchData.match_awayTeam;
+					$scope.timerData.match_loser = $scope.matchData.match_homeTeam;
+				}
+
+				clearInterval($scope.loadMatch);
+				clearInterval($scope.loadTimer);
+				clearInterval($scope.loadTeamPossession);
+				$rootScope.showLoading($ionicLoading);
+
+				// update next round match
+				CompetitionService.getCompetitionById($scope.matchData.competition_id,localStorage.getItem("token")).success(function(comp) {
+					console.log(comp);
+					if($scope.matchData.match_fixture === 'play off'){
+						console.log("play off");
+						if(comp.comp_numOfTeam === 32){
+							var fixture = 'round of 16';
+							CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+								match.forEach(function(m){
+									console.log(m);
+									if($scope.matchData.pair_status === 'home'){
+										m.match_homeTeam = $scope.timerData.match_winner;
+										m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+									}else{
+										m.match_awayTeam = $scope.timerData.match_winner;
+										m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+									}
+									console.log(m);
+									// update next round match data
+									MatchService.editMatchById(m.id,m).success(function(data) {
+										console.log(data);
+									}).error(function(data) {});
+								})
+							}).error(function(data) {});
+						}else if(comp.comp_numOfTeam === 16){
+							var fixture = 'quarter final';
+							CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+								match.forEach(function(m){
+									console.log(m);
+									if($scope.matchData.pair_status === 'home'){
+										m.match_homeTeam = $scope.timerData.match_winner;
+										m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+									}else{
+										m.match_awayTeam = $scope.timerData.match_winner;
+										m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+									}
+									console.log(m);
+									// update next round match data
+									MatchService.editMatchById(m.id,m).success(function(data) {
+										console.log(data);
+									}).error(function(data) {});
+								})
+							}).error(function(data) {});
+						}else{
+							var fixture = 'semi final';
+							CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+								match.forEach(function(m){
+									console.log(m);
+									if($scope.matchData.pair_status === 'home'){
+										m.match_homeTeam = $scope.timerData.match_winner;
+										m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+									}else{
+										m.match_awayTeam = $scope.timerData.match_winner;
+										m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+									}
+									console.log(m);
+									// update next round match data
+									MatchService.editMatchById(m.id,m).success(function(data) {
+										console.log(data);
+									}).error(function(data) {});
+								})
+							}).error(function(data) {});
+						}
+					}else if($scope.matchData.match_fixture === 'round of 16'){
+						var fixture = 'quarter final';
+						CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+							match.forEach(function(m){
+								console.log(m);
+								if($scope.matchData.pair_status === 'home'){
+									m.match_homeTeam = $scope.timerData.match_winner;
+									m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+								}else{
+									m.match_awayTeam = $scope.timerData.match_winner;
+									m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+								}
+								console.log(m);
+								// update next round match data
+								MatchService.editMatchById(m.id,m).success(function(data) {
+									console.log(data);
+								}).error(function(data) {});
+							})
+						}).error(function(data) {});
+					}else if($scope.matchData.match_fixture === 'quarter final'){
+						var fixture = 'semi final';
+						CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+							match.forEach(function(m){
+								console.log(m);
+								if($scope.matchData.pair_status === 'home'){
+									m.match_homeTeam = $scope.timerData.match_winner;
+									m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+								}else{
+									m.match_awayTeam = $scope.timerData.match_winner;
+									m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+								}
+								console.log(m);
+								// update next round match data
+								MatchService.editMatchById(m.id,m).success(function(data) {
+									console.log(data);
+								}).error(function(data) {});
+							})
+						}).error(function(data) {});
+					}else if($scope.matchData.match_fixture === 'semi final'){
+						var fixture = 'final';
+						CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+							match.forEach(function(m){
+								console.log(m);
+								if($scope.matchData.pair_status === 'home'){
+									m.match_homeTeam = $scope.timerData.match_winner;
+									m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+								}else{
+									m.match_awayTeam = $scope.timerData.match_winner;
+									m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+								}
+								console.log(m);
+								// update next round match data
+								MatchService.editMatchById(m.id,m).success(function(data) {
+									console.log(data);
+								}).error(function(data) {});
+							})
+						}).error(function(data) {});
+					}
+				}).error(function(data) {});
+
+				setTimeout(function(){
+
+					// update team data
+					TeamService.getTeamByName($scope.matchData.match_homeTeam).success(function(team){
+						$scope.teamFormWin = {};
+						$scope.teamFormWin.team_play = team.team_play + 1;
+						$scope.teamFormWin.team_point = team.team_point + 3;
+						$scope.teamFormWin.team_win = team.team_win + 1;
+						if($scope.matchData.match_homeTeam === $scope.timerData.match_winner){
+							$scope.teamFormWin.goalAgainst = team.team_goalAgainst + $scope.matchData.match_awayTeamObj.score;
+							$scope.teamFormWin.goalFor = team.team_goalFor + $scope.matchData.match_homeTeamObj.score;
+						}else{
+							$scope.teamFormWin.goalAgainst = team.team_goalAgainst + $scope.matchData.match_homeTeamObj.score;	
+							$scope.teamFormWin.goalFor = team.team_goalFor + $scope.matchData.match_awayTeamObj.score;
+						}
+						TeamService.editTeamById(team.id, $scope.teamFormWin).success(function(data) {
+		            		console.log(data);
+		                }).error(function(data) {});
+					}).error(function(data) {
+						$ionicLoading.hide();
+					});
+
+	                // update referee profile
+	                LoginService.getUserByUsername($scope.matchData.match_referee).success(function(referee){
+	                	$scope.refereeForm = {};
+	                	$scope.refereeForm.matchManaged = referee.matchManaged + 1;
+						LoginService.editUser(referee.id, localStorage.getItem("token"),$scope.refereeForm).success(function(data) {
+                    		console.log(data);
+                    	}).error(function(data) {});	
+					}).error(function(data) {});
+
+					// update analyst profile
+	                LoginService.getUserByUsername($scope.matchData.match_analyst).success(function(analyst){
+	                	$scope.analystForm = {};
+	                	$scope.analystForm.matchManaged = analyst.matchManaged + 1;
+						LoginService.editUser(analyst.id, localStorage.getItem("token"),$scope.analystForm).success(function(data) {
+                    		console.log(data);
+                    	}).error(function(data) {});	
+					}).error(function(data) {});
+				},1500);
+
+				setTimeout(function(){
+
+					// update team data
+					TeamService.getTeamByName($scope.matchData.match_awayTeam).success(function(team){
+						$scope.teamFormLose = {};
+						$scope.teamFormLose.team_play = team.team_play + 1;
+						$scope.teamFormLose.team_lose = team.team_lose + 1;
+						if($scope.matchData.match_homeTeam === $scope.timerData.match_loser){
+							$scope.teamFormLose.goalAgainst = team.team_goalAgainst + $scope.matchData.match_awayTeamObj.score;
+							$scope.teamFormLose.goalFor = team.team_goalFor + $scope.matchData.match_homeTeamObj.score;
+						}else{
+							$scope.teamFormLose.goalAgainst = team.team_goalAgainst + $scope.matchData.match_homeTeamObj.score;	
+							$scope.teamFormLose.goalFor = team.team_goalFor + $scope.matchData.match_awayTeamObj.score;
+						}
+						TeamService.editTeamById(team.id, $scope.teamFormLose).success(function(data) {
+		            		console.log(data);
+		                }).error(function(data) {});
+
+					}).error(function(data) {
+						$ionicLoading.hide();
+					});
+				
+					// update match data
+					MatchService.editMatchById($scope.matchData.id,$scope.timerData).success(function(data) {
+						// setTimeout(function(){
+							$ionicLoading.hide();
+						// },1000);
+						$state.go('app.match_detail', {
+							'matchId': $scope.matchData.id
+						});
+					}).error(function(data) {});
+				},2000);	
 				}
 			}
 
@@ -5887,6 +10586,225 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			}else{
 				console.log("tamat dah");
 				$scope.penaltyStatus = '';
+
+				$rootScope.showLoading();
+				$scope.timerData.timer_status = "penalty shootout stopped";
+				$scope.timerData.match_status = "finished";
+				$scope.timerData.live_status = false;
+				$scope.timerData.penalty = {};
+				$scope.timerData.penalty.status = true;
+				$scope.timerData.penalty.homeTeamScore = $scope.homePenaltyScore;
+				$scope.timerData.penalty.awayTeamScore = $scope.awayPenaltyScore;
+
+				if($scope.homePenaltyScore > $scope.awayPenaltyScore){
+					$scope.timerData.match_winner = $scope.matchData.match_homeTeam;
+					$scope.timerData.match_loser = $scope.matchData.match_awayTeam;
+				}else{
+					$scope.timerData.match_winner = $scope.matchData.match_awayTeam;
+					$scope.timerData.match_loser = $scope.matchData.match_homeTeam;
+				}
+
+				clearInterval($scope.loadMatch);
+				clearInterval($scope.loadTimer);
+				clearInterval($scope.loadTeamPossession);
+				$rootScope.showLoading($ionicLoading);
+
+				// update next round match
+				CompetitionService.getCompetitionById($scope.matchData.competition_id,localStorage.getItem("token")).success(function(comp) {
+					console.log(comp);
+					if($scope.matchData.match_fixture === 'play off'){
+						console.log("play off");
+						if(comp.comp_numOfTeam === 32){
+							var fixture = 'round of 16';
+							CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+								match.forEach(function(m){
+									console.log(m);
+									if($scope.matchData.pair_status === 'home'){
+										m.match_homeTeam = $scope.timerData.match_winner;
+										m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+									}else{
+										m.match_awayTeam = $scope.timerData.match_winner;
+										m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+									}
+									console.log(m);
+									// update next round match data
+									MatchService.editMatchById(m.id,m).success(function(data) {
+										console.log(data);
+									}).error(function(data) {});
+								})
+							}).error(function(data) {});
+						}else if(comp.comp_numOfTeam === 16){
+							var fixture = 'quarter final';
+							CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+								match.forEach(function(m){
+									console.log(m);
+									if($scope.matchData.pair_status === 'home'){
+										m.match_homeTeam = $scope.timerData.match_winner;
+										m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+									}else{
+										m.match_awayTeam = $scope.timerData.match_winner;
+										m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+									}
+									console.log(m);
+									// update next round match data
+									MatchService.editMatchById(m.id,m).success(function(data) {
+										console.log(data);
+									}).error(function(data) {});
+								})
+							}).error(function(data) {});
+						}else{
+							var fixture = 'semi final';
+							CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+								match.forEach(function(m){
+									console.log(m);
+									if($scope.matchData.pair_status === 'home'){
+										m.match_homeTeam = $scope.timerData.match_winner;
+										m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+									}else{
+										m.match_awayTeam = $scope.timerData.match_winner;
+										m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+									}
+									console.log(m);
+									// update next round match data
+									MatchService.editMatchById(m.id,m).success(function(data) {
+										console.log(data);
+									}).error(function(data) {});
+								})
+							}).error(function(data) {});
+						}
+					}else if($scope.matchData.match_fixture === 'round of 16'){
+						var fixture = 'quarter final';
+						CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+							match.forEach(function(m){
+								console.log(m);
+								if($scope.matchData.pair_status === 'home'){
+									m.match_homeTeam = $scope.timerData.match_winner;
+									m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+								}else{
+									m.match_awayTeam = $scope.timerData.match_winner;
+									m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+								}
+								console.log(m);
+								// update next round match data
+								MatchService.editMatchById(m.id,m).success(function(data) {
+									console.log(data);
+								}).error(function(data) {});
+							})
+						}).error(function(data) {});
+					}else if($scope.matchData.match_fixture === 'quarter final'){
+						var fixture = 'semi final';
+						CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+							match.forEach(function(m){
+								console.log(m);
+								if($scope.matchData.pair_status === 'home'){
+									m.match_homeTeam = $scope.timerData.match_winner;
+									m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+								}else{
+									m.match_awayTeam = $scope.timerData.match_winner;
+									m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+								}
+								console.log(m);
+								// update next round match data
+								MatchService.editMatchById(m.id,m).success(function(data) {
+									console.log(data);
+								}).error(function(data) {});
+							})
+						}).error(function(data) {});
+					}else if($scope.matchData.match_fixture === 'semi final'){
+						var fixture = 'final';
+						CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+							match.forEach(function(m){
+								console.log(m);
+								if($scope.matchData.pair_status === 'home'){
+									m.match_homeTeam = $scope.timerData.match_winner;
+									m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+								}else{
+									m.match_awayTeam = $scope.timerData.match_winner;
+									m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+								}
+								console.log(m);
+								// update next round match data
+								MatchService.editMatchById(m.id,m).success(function(data) {
+									console.log(data);
+								}).error(function(data) {});
+							})
+						}).error(function(data) {});
+					}
+				}).error(function(data) {});
+		
+				setTimeout(function(){
+
+					// update team data
+					TeamService.getTeamByName($scope.matchData.match_homeTeam).success(function(team){
+						$scope.teamFormWin = {};
+						$scope.teamFormWin.team_play = team.team_play + 1;
+						$scope.teamFormWin.team_point = team.team_point + 3;
+						$scope.teamFormWin.team_win = team.team_win + 1;
+						if($scope.matchData.match_homeTeam === $scope.timerData.match_winner){
+							$scope.teamFormWin.goalAgainst = team.team_goalAgainst + $scope.matchData.match_awayTeamObj.score;
+							$scope.teamFormWin.goalFor = team.team_goalFor + $scope.matchData.match_homeTeamObj.score;
+						}else{
+							$scope.teamFormWin.goalAgainst = team.team_goalAgainst + $scope.matchData.match_homeTeamObj.score;	
+							$scope.teamFormWin.goalFor = team.team_goalFor + $scope.matchData.match_awayTeamObj.score;
+						}
+						TeamService.editTeamById(team.id, $scope.teamFormWin).success(function(data) {
+		            		console.log(data);
+		                }).error(function(data) {});
+					}).error(function(data) {
+						$ionicLoading.hide();
+					});
+
+	                // update referee profile
+	                LoginService.getUserByUsername($scope.matchData.match_referee).success(function(referee){
+	                	$scope.refereeForm = {};
+	                	$scope.refereeForm.matchManaged = referee.matchManaged + 1;
+						LoginService.editUser(referee.id, localStorage.getItem("token"),$scope.refereeForm).success(function(data) {
+                    		console.log(data);
+                    	}).error(function(data) {});	
+					}).error(function(data) {});
+
+					// update analyst profile
+	                LoginService.getUserByUsername($scope.matchData.match_analyst).success(function(analyst){
+	                	$scope.analystForm = {};
+	                	$scope.analystForm.matchManaged = analyst.matchManaged + 1;
+						LoginService.editUser(analyst.id, localStorage.getItem("token"),$scope.analystForm).success(function(data) {
+                    		console.log(data);
+                    	}).error(function(data) {});	
+					}).error(function(data) {});
+				},1500);
+
+				setTimeout(function(){
+				
+					// update team data
+					TeamService.getTeamByName($scope.matchData.match_awayTeam).success(function(team){
+						$scope.teamFormLose = {};
+						$scope.teamFormLose.team_play = team.team_play + 1;
+						$scope.teamFormLose.team_lose = team.team_lose + 1;
+						if($scope.matchData.match_homeTeam === $scope.timerData.match_loser){
+							$scope.teamFormLose.goalAgainst = team.team_goalAgainst + $scope.matchData.match_awayTeamObj.score;
+							$scope.teamFormLose.goalFor = team.team_goalFor + $scope.matchData.match_homeTeamObj.score;
+						}else{
+							$scope.teamFormLose.goalAgainst = team.team_goalAgainst + $scope.matchData.match_homeTeamObj.score;	
+							$scope.teamFormLose.goalFor = team.team_goalFor + $scope.matchData.match_awayTeamObj.score;
+						}
+						TeamService.editTeamById(team.id, $scope.teamFormLose).success(function(data) {
+		            		console.log(data);
+		                }).error(function(data) {});
+
+					}).error(function(data) {
+						$ionicLoading.hide();
+					});
+				
+					// update match data
+					MatchService.editMatchById($scope.matchData.id,$scope.timerData).success(function(data) {
+						// setTimeout(function(){
+							$ionicLoading.hide();
+						// },1000);
+						$state.go('app.match_detail', {
+							'matchId': $scope.matchData.id
+						});
+					}).error(function(data) {});
+				},2000);
 			}
 			
 
@@ -5957,6 +10875,225 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			}else{
 				console.log("tamat dah");
 				$scope.penaltyStatus = '';
+
+				$rootScope.showLoading();
+				$scope.timerData.timer_status = "penalty shootout stopped";
+				$scope.timerData.match_status = "finished";
+				$scope.timerData.live_status = false;
+				$scope.timerData.penalty = {};
+				$scope.timerData.penalty.status = true;
+				$scope.timerData.penalty.homeTeamScore = $scope.homePenaltyScore;
+				$scope.timerData.penalty.awayTeamScore = $scope.awayPenaltyScore;
+
+				if($scope.homePenaltyScore > $scope.awayPenaltyScore){
+					$scope.timerData.match_winner = $scope.matchData.match_homeTeam;
+					$scope.timerData.match_loser = $scope.matchData.match_awayTeam;
+				}else{
+					$scope.timerData.match_winner = $scope.matchData.match_awayTeam;
+					$scope.timerData.match_loser = $scope.matchData.match_homeTeam;
+				}
+
+				clearInterval($scope.loadMatch);
+				clearInterval($scope.loadTimer);
+				clearInterval($scope.loadTeamPossession);
+				$rootScope.showLoading($ionicLoading);
+
+				// update next round match
+				CompetitionService.getCompetitionById($scope.matchData.competition_id,localStorage.getItem("token")).success(function(comp) {
+					console.log(comp);
+					if($scope.matchData.match_fixture === 'play off'){
+						console.log("play off");
+						if(comp.comp_numOfTeam === 32){
+							var fixture = 'round of 16';
+							CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+								match.forEach(function(m){
+									console.log(m);
+									if($scope.matchData.pair_status === 'home'){
+										m.match_homeTeam = $scope.timerData.match_winner;
+										m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+									}else{
+										m.match_awayTeam = $scope.timerData.match_winner;
+										m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+									}
+									console.log(m);
+									// update next round match data
+									MatchService.editMatchById(m.id,m).success(function(data) {
+										console.log(data);
+									}).error(function(data) {});
+								})
+							}).error(function(data) {});
+						}else if(comp.comp_numOfTeam === 16){
+							var fixture = 'quarter final';
+							CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+								match.forEach(function(m){
+									console.log(m);
+									if($scope.matchData.pair_status === 'home'){
+										m.match_homeTeam = $scope.timerData.match_winner;
+										m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+									}else{
+										m.match_awayTeam = $scope.timerData.match_winner;
+										m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+									}
+									console.log(m);
+									// update next round match data
+									MatchService.editMatchById(m.id,m).success(function(data) {
+										console.log(data);
+									}).error(function(data) {});
+								})
+							}).error(function(data) {});
+						}else{
+							var fixture = 'semi final';
+							CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+								match.forEach(function(m){
+									console.log(m);
+									if($scope.matchData.pair_status === 'home'){
+										m.match_homeTeam = $scope.timerData.match_winner;
+										m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+									}else{
+										m.match_awayTeam = $scope.timerData.match_winner;
+										m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+									}
+									console.log(m);
+									// update next round match data
+									MatchService.editMatchById(m.id,m).success(function(data) {
+										console.log(data);
+									}).error(function(data) {});
+								})
+							}).error(function(data) {});
+						}
+					}else if($scope.matchData.match_fixture === 'round of 16'){
+						var fixture = 'quarter final';
+						CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+							match.forEach(function(m){
+								console.log(m);
+								if($scope.matchData.pair_status === 'home'){
+									m.match_homeTeam = $scope.timerData.match_winner;
+									m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+								}else{
+									m.match_awayTeam = $scope.timerData.match_winner;
+									m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+								}
+								console.log(m);
+								// update next round match data
+								MatchService.editMatchById(m.id,m).success(function(data) {
+									console.log(data);
+								}).error(function(data) {});
+							})
+						}).error(function(data) {});
+					}else if($scope.matchData.match_fixture === 'quarter final'){
+						var fixture = 'semi final';
+						CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+							match.forEach(function(m){
+								console.log(m);
+								if($scope.matchData.pair_status === 'home'){
+									m.match_homeTeam = $scope.timerData.match_winner;
+									m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+								}else{
+									m.match_awayTeam = $scope.timerData.match_winner;
+									m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+								}
+								console.log(m);
+								// update next round match data
+								MatchService.editMatchById(m.id,m).success(function(data) {
+									console.log(data);
+								}).error(function(data) {});
+							})
+						}).error(function(data) {});
+					}else if($scope.matchData.match_fixture === 'semi final'){
+						var fixture = 'final';
+						CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+							match.forEach(function(m){
+								console.log(m);
+								if($scope.matchData.pair_status === 'home'){
+									m.match_homeTeam = $scope.timerData.match_winner;
+									m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+								}else{
+									m.match_awayTeam = $scope.timerData.match_winner;
+									m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+								}
+								console.log(m);
+								// update next round match data
+								MatchService.editMatchById(m.id,m).success(function(data) {
+									console.log(data);
+								}).error(function(data) {});
+							})
+						}).error(function(data) {});
+					}
+				}).error(function(data) {});
+		
+				setTimeout(function(){
+
+					// update team data
+					TeamService.getTeamByName($scope.matchData.match_homeTeam).success(function(team){
+						$scope.teamFormWin = {};
+						$scope.teamFormWin.team_play = team.team_play + 1;
+						$scope.teamFormWin.team_point = team.team_point + 3;
+						$scope.teamFormWin.team_win = team.team_win + 1;
+						if($scope.matchData.match_homeTeam === $scope.timerData.match_winner){
+							$scope.teamFormWin.goalAgainst = team.team_goalAgainst + $scope.matchData.match_awayTeamObj.score;
+							$scope.teamFormWin.goalFor = team.team_goalFor + $scope.matchData.match_homeTeamObj.score;
+						}else{
+							$scope.teamFormWin.goalAgainst = team.team_goalAgainst + $scope.matchData.match_homeTeamObj.score;	
+							$scope.teamFormWin.goalFor = team.team_goalFor + $scope.matchData.match_awayTeamObj.score;
+						}
+						TeamService.editTeamById(team.id, $scope.teamFormWin).success(function(data) {
+		            		console.log(data);
+		                }).error(function(data) {});
+					}).error(function(data) {
+						$ionicLoading.hide();
+					});
+
+	                // update referee profile
+	                LoginService.getUserByUsername($scope.matchData.match_referee).success(function(referee){
+	                	$scope.refereeForm = {};
+	                	$scope.refereeForm.matchManaged = referee.matchManaged + 1;
+						LoginService.editUser(referee.id, localStorage.getItem("token"),$scope.refereeForm).success(function(data) {
+                    		console.log(data);
+                    	}).error(function(data) {});	
+					}).error(function(data) {});
+
+					// update analyst profile
+	                LoginService.getUserByUsername($scope.matchData.match_analyst).success(function(analyst){
+	                	$scope.analystForm = {};
+	                	$scope.analystForm.matchManaged = analyst.matchManaged + 1;
+						LoginService.editUser(analyst.id, localStorage.getItem("token"),$scope.analystForm).success(function(data) {
+                    		console.log(data);
+                    	}).error(function(data) {});	
+					}).error(function(data) {});
+				},1500);
+
+				setTimeout(function(){
+		
+					// update team data
+					TeamService.getTeamByName($scope.matchData.match_awayTeam).success(function(team){
+						$scope.teamFormLose = {};
+						$scope.teamFormLose.team_play = team.team_play + 1;
+						$scope.teamFormLose.team_lose = team.team_lose + 1;
+						if($scope.matchData.match_homeTeam === $scope.timerData.match_loser){
+							$scope.teamFormLose.goalAgainst = team.team_goalAgainst + $scope.matchData.match_awayTeamObj.score;
+							$scope.teamFormLose.goalFor = team.team_goalFor + $scope.matchData.match_homeTeamObj.score;
+						}else{
+							$scope.teamFormLose.goalAgainst = team.team_goalAgainst + $scope.matchData.match_homeTeamObj.score;	
+							$scope.teamFormLose.goalFor = team.team_goalFor + $scope.matchData.match_awayTeamObj.score;
+						}
+						TeamService.editTeamById(team.id, $scope.teamFormLose).success(function(data) {
+		            		console.log(data);
+		                }).error(function(data) {});
+
+					}).error(function(data) {
+						$ionicLoading.hide();
+					});
+				
+					// update match data
+					MatchService.editMatchById($scope.matchData.id,$scope.timerData).success(function(data) {
+						// setTimeout(function(){
+							$ionicLoading.hide();
+						// },1000);
+						$state.go('app.match_detail', {
+							'matchId': $scope.matchData.id
+						});
+					}).error(function(data) {});
+				},2000);
 			}
 		}else if($scope.penaltyShootOut > 5 && $scope.awayPenalty % 5 != 0){
 			$scope.penaltyShootOut = $scope.penaltyShootOut + 1;
@@ -5991,33 +11128,23 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	}
 
 
-	//timer
+	// timer
 	$scope.matchTimer = 0;
+
 	$scope.getMatchById = function(){
-		setTimeout(function(){
-			console.log("tes");
-			MatchService.getMatchById($stateParams.matchId).success(function(data){
-				$scope.matchData = data;
-				console.log($scope.matchData);
-				$ionicLoading.hide();
-					$scope.startTimer = function(){
-						if($scope.matchData.timer_status === null){
-							// console.log("afsd fsdf sdfsdf sdfsdf sf");
-							$scope.timerData.timer = $scope.matchData.timer + 1;
-							// $scope.timerData.timer_status = "halftime";
-							MatchService.editMatchById($scope.matchData.id,$scope.timerData).success(function(data) {
-								// console.log('qweqweqrer erwerwerrqwrqwrqwrqwr');
-								$ionicLoading.hide();
-								// $state.go('app.home');
-							}).error(function(data) {
-								$ionicLoading.hide();
-							});
-						}	
-					};
-			}).error(function(data){
-				$ionicLoading.hide();
-			});
-		},500);
+		MatchService.getMatchById($stateParams.matchId).success(function(data){
+			$scope.matchData = data;
+			console.log($scope.matchData);
+			console.log("analyst");
+			if(localStorage.getItem("role") === 'Analyst' && data.match_status === 'finished'){
+				clearInterval($scope.loadMatch);
+				clearInterval($scope.loadTeamPossession);
+				clearInterval($scope.loadTimer);
+				$state.go('app.match_detail', {
+					'matchId': $scope.matchData.id
+				});
+			}
+		}).error(function(data){});
 	};
 
 	$scope.startTimer = function(){
@@ -6082,16 +11209,26 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$scope.totalSecond = $scope.teamASecond + $scope.teamBSecond;
 			$scope.possessionTeamAPercentage = parseInt($scope.teamASecond / $scope.totalSecond * 100);
 			$scope.possessionTeamBPercentage = parseInt($scope.teamBSecond / $scope.totalSecond * 100);
+
+			MatchService.getMatchById($stateParams.matchId).success(function(match){
+		   		match.match_stats.homePossession = $scope.possessionTeamAPercentage;
+		   		match.match_stats.awayPossession = $scope.possessionTeamBPercentage;
+
+		   		MatchService.editMatchById($stateParams.matchId,match).success(function(data) {
+					console.log(data);
+					console.log("load possession");
+					$ionicLoading.hide();
+				}).error(function(data) {
+					$ionicLoading.hide();
+				});
+
+			}).error(function(data){});
+
 		}else{
 			$scope.possessionTeamAPercentage = 0;
 			$scope.possessionTeamBPercentage = 0;
 		}
 	};
-
-	$scope.loadTeamPossession = setInterval($scope.startTeamPossession, 10000);
-    $scope.loadMatch = setInterval($scope.getMatchById, 1000);
-    $scope.loadTimer = setInterval($scope.startTimer, 60000);
-
 
 	$scope.match = {};
 	$scope.matchTime = [];
@@ -6125,6 +11262,9 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 
 	console.log($scope.timerData);
+	$scope.loadTeamPossession = setInterval($scope.startTeamPossession, 10000);
+    $scope.loadMatch = setInterval($scope.getMatchById, 1000);
+    $scope.loadTimer = setInterval($scope.startTimer, 60000);
 
 	$scope.playMatch = function() {
 		$rootScope.showLoading();
@@ -6232,6 +11372,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	$scope.startFirstHalf = function() {
 		$rootScope.showLoading();
 		$scope.timerData.timer_status = "1st half started";
+		$scope.timerData.live_status = true;
 		MatchService.editMatchById($scope.matchData.id,$scope.timerData).success(function(data) {
 			console.log('qweqweqrer erwerwerrqwrqwrqwrqwr');
 			setTimeout(function(){
@@ -6243,8 +11384,38 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				$ionicLoading.hide();
 			},1000);
 		});
+
 		$scope.loadMatch = setInterval($scope.getMatchById, 1000);
 		$scope.loadTimer = setInterval($scope.startTimer, 60000);
+
+		// update player data
+		var lineupHomeArr = $scope.matchData.match_homeTeamObj.lineup.split(",");
+		var lineupAwayArr = $scope.matchData.match_awayTeamObj.lineup.split(",");
+
+		for(var i = 0; i < lineupHomeArr.length; i++){
+			LoginService.getUserByUsername(lineupHomeArr[i]).success(function(player){
+				$scope.profileForm = {};
+				$scope.profileForm.play = player.play + 1;
+
+				LoginService.editUser(player.id, localStorage.getItem("token"), $scope.profileForm).success(function(data) {
+					console.log(i);
+					console.log(data);
+	            }).error(function(data) {});
+
+			}).error(function(data) {});
+
+			LoginService.getUserByUsername(lineupAwayArr[i]).success(function(player){
+				$scope.profileForm = {};
+				$scope.profileForm.play = player.play + 1;
+
+				LoginService.editUser(player.id, localStorage.getItem("token"), $scope.profileForm).success(function(data) {
+					console.log(i);
+					console.log(data);
+	            }).error(function(data) {});
+
+			}).error(function(data) {});
+		}
+	
 		console.log("sdfsdffsdfd kijdfs fhfasjha sdajsfha fj");
 	};
 
@@ -6327,6 +11498,11 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	$scope.stopFirstHalf = function() {
 		$rootScope.showLoading();
 		$scope.timerData.timer_status = "1st half stopped";
+		$scope.timerData.halfTime = {};
+		$scope.timerData.halfTime.status = true;
+		$scope.timerData.halfTime.homeTeamScore = $scope.matchData.match_homeTeamObj.score;
+		$scope.timerData.halfTime.awayTeamScore = $scope.matchData.match_awayTeamObj.score;
+
 		MatchService.editMatchById($scope.matchData.id,$scope.timerData).success(function(data) {
 			console.log('qweqweqrer erwerwerrqwrqwrqwrqwr');
 			setTimeout(function(){
@@ -6343,7 +11519,10 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	};
 
 	$scope.stopSecondHalf = function() {
-		$rootScope.showLoading();
+		// clearInterval($scope.loadMatch);
+		clearInterval($scope.loadTimer);
+		clearInterval($scope.loadTeamPossession);
+		$rootScope.showLoading($ionicLoading);
 		console.log("stop second half");
 		console.log($scope.matchData.competition_id);
 
@@ -6351,36 +11530,292 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			console.log("yeah ");
 			$scope.timerData.timer_status = "2nd half stopped";
 			$scope.timerData.match_status = "finished";
-			MatchService.editMatchById($scope.matchData.id,$scope.timerData).success(function(data) {
-				setTimeout(function(){
-					$ionicLoading.hide();
-				},1000);
-				$state.go('app.match_detail', {
-					'matchId': $scope.matchData.id
-				});
-			}).error(function(data) {
-				setTimeout(function(){
-					$ionicLoading.hide();
-				},1000);
-			});
-			clearInterval($scope.loadTimer);
+			$scope.timerData.live_status = false;
+			$scope.timerData.fullTime = {};
+			$scope.timerData.fullTime.status = true;
+			$scope.timerData.fullTime.homeTeamScore = $scope.matchData.match_homeTeamObj.score;
+			$scope.timerData.fullTime.awayTeamScore = $scope.matchData.match_awayTeamObj.score;
+
+			if($scope.matchData.match_homeTeamObj.score === $scope.matchData.match_awayTeamObj.score){
+				console.log("score sama");
+				$scope.timerData.match_winner = '';
+			}else if($scope.matchData.match_homeTeamObj.score > $scope.matchData.match_awayTeamObj.score){
+				$scope.timerData.match_winner = $scope.matchData.match_homeTeam;
+				$scope.timerData.match_loser = $scope.matchData.match_awayTeam;
+				console.log("score tidak sama hometeam");
+
+			}else{
+				$scope.timerData.match_winner = $scope.matchData.match_awayTeam;
+				$scope.timerData.match_loser = $scope.matchData.match_homeTeam;
+				console.log("score tidak sama awayteam");
+
+			}
+			
+			// update classement
+			$scope.classementFormWin = {};
+			$scope.classementFormDraw = {};
+			$scope.classementFormLose = {};
+
+			if($scope.timerData.match_winner !== ''){
+				console.log($scope.matchData.competition_id);
+				console.log($scope.timerData.match_winner);
+
+				CompetitionService.getClassementByCompIdAndTeamName($scope.matchData.competition_id, $scope.timerData.match_winner).success(function(data) {
+					console.log(data);
+					$scope.classementFormWin = {};
+					$scope.classementFormWin.play = parseInt(data.play) + 1;
+					$scope.classementFormWin.point = parseInt(data.point) + 3;
+					if($scope.matchData.match_homeTeam === $scope.timerData.match_winner){
+						$scope.classementFormWin.goalAgainst = data.goalAgainst + $scope.matchData.match_awayTeamObj.score;
+						$scope.classementFormWin.goalFor = data.goalFor + $scope.matchData.match_homeTeamObj.score;
+					}else{
+						$scope.classementFormWin.goalAgainst = data.goalAgainst + $scope.matchData.match_homeTeamObj.score;	
+						$scope.classementFormWin.goalFor = data.goalFor + $scope.matchData.match_awayTeamObj.score;
+					}
+					$scope.classementFormWin.win = data.win + 1;
+					$scope.classementFormWin.goalDifference = $scope.classementFormWin.goalFor - $scope.classementFormWin.goalAgainst;
+					console.log($scope.classementFormWin);
+
+					setTimeout(function(){
+
+						// update classement data
+						ClassementService.editClassementById(data.id,$scope.classementFormWin).success(function(data) {
+							console.log(data);
+							console.log("berhasil");
+						}).error(function(data) {});
+
+						// update team data
+						TeamService.getTeamByName($scope.matchData.match_homeTeam).success(function(team){
+							$scope.teamFormWin = {};
+							$scope.teamFormWin.team_play = team.team_play + 1;
+							$scope.teamFormWin.team_point = team.team_point + 3;
+							$scope.teamFormWin.team_win = team.team_win + 1;
+							if($scope.matchData.match_homeTeam === $scope.timerData.match_winner){
+								$scope.teamFormWin.goalAgainst = team.team_goalAgainst + $scope.matchData.match_awayTeamObj.score;
+								$scope.teamFormWin.goalFor = team.team_goalFor + $scope.matchData.match_homeTeamObj.score;
+							}else{
+								$scope.teamFormWin.goalAgainst = team.team_goalAgainst + $scope.matchData.match_homeTeamObj.score;	
+								$scope.teamFormWin.goalFor = team.team_goalFor + $scope.matchData.match_awayTeamObj.score;
+							}
+							TeamService.editTeamById(team.id, $scope.teamFormWin).success(function(data) {
+			            		console.log(data);
+			                }).error(function(data) {});
+						}).error(function(data) {
+							$ionicLoading.hide();
+						});
+
+		                // update referee profile
+		                LoginService.getUserByUsername($scope.matchData.match_referee).success(function(referee){
+		                	$scope.refereeForm = {};
+		                	$scope.refereeForm.matchManaged = referee.matchManaged + 1;
+							LoginService.editUser(referee.id, localStorage.getItem("token"),$scope.refereeForm).success(function(data) {
+	                    		console.log(data);
+	                    	}).error(function(data) {});	
+						}).error(function(data) {});
+
+						// update analyst profile
+		                LoginService.getUserByUsername($scope.matchData.match_analyst).success(function(analyst){
+		                	$scope.analystForm = {};
+		                	$scope.analystForm.matchManaged = analyst.matchManaged + 1;
+							LoginService.editUser(analyst.id, localStorage.getItem("token"),$scope.analystForm).success(function(data) {
+	                    		console.log(data);
+	                    	}).error(function(data) {});	
+						}).error(function(data) {});
+					},1500);
+
+				}).error(function(data) {
+					console.log("gagal");
+				});		
+
+				CompetitionService.getClassementByCompIdAndTeamName($scope.matchData.competition_id, $scope.timerData.match_loser).success(function(data) {
+					console.log(data);
+					$scope.classementFormLose.play = parseInt(data.play) + 1;
+					$scope.classementFormLose.lose = data.lose + 1;
+					if($scope.matchData.match_homeTeam === $scope.timerData.match_loser){
+						$scope.classementFormLose.goalAgainst = data.goalAgainst + $scope.matchData.match_awayTeamObj.score;
+						$scope.classementFormLose.goalFor = data.goalFor + $scope.matchData.match_homeTeamObj.score;
+					}else{
+						$scope.classementFormLose.goalAgainst = data.goalAgainst + $scope.matchData.match_homeTeamObj.score;	
+						$scope.classementFormLose.goalFor = data.goalFor + $scope.matchData.match_awayTeamObj.score;
+					}
+					$scope.classementFormLose.goalDifference = $scope.classementFormLose.goalFor - $scope.classementFormLose.goalAgainst;
+					console.log($scope.classementFormLose);
+
+					setTimeout(function(){
+						// update classement data
+						ClassementService.editClassementById(data.id,$scope.classementFormLose).success(function(data) {
+							console.log(data);
+							console.log("berhasil");
+
+							// update team data
+							TeamService.getTeamByName($scope.matchData.match_awayTeam).success(function(team){
+								$scope.teamFormLose = {};
+								$scope.teamFormLose.team_play = team.team_play + 1;
+								$scope.teamFormLose.team_lose = team.team_lose + 1;
+								if($scope.matchData.match_homeTeam === $scope.timerData.match_loser){
+									$scope.teamFormLose.goalAgainst = team.team_goalAgainst + $scope.matchData.match_awayTeamObj.score;
+									$scope.teamFormLose.goalFor = team.team_goalFor + $scope.matchData.match_homeTeamObj.score;
+								}else{
+									$scope.teamFormLose.goalAgainst = team.team_goalAgainst + $scope.matchData.match_homeTeamObj.score;	
+									$scope.teamFormLose.goalFor = team.team_goalFor + $scope.matchData.match_awayTeamObj.score;
+								}
+								TeamService.editTeamById(team.id, $scope.teamFormLose).success(function(data) {
+				            		console.log(data);
+				                }).error(function(data) {});
+
+							}).error(function(data) {
+								$ionicLoading.hide();
+							});
+						
+							// update match data
+							MatchService.editMatchById($scope.matchData.id,$scope.timerData).success(function(data) {
+								// setTimeout(function(){
+									$ionicLoading.hide();
+								// },1000);
+								$state.go('app.match_detail', {
+									'matchId': $scope.matchData.id
+								});
+							}).error(function(data) {});
+
+						}).error(function(data) {});
+
+					},2000);
+
+				}).error(function(data) {
+					console.log("gagal");
+				});		
+			}else{
+
+				CompetitionService.getClassementByCompIdAndTeamName($scope.matchData.competition_id, $scope.matchData.match_homeTeam).success(function(data) {
+					console.log(data);
+
+					$scope.classementFormDraw.play = parseInt(data.play) + 1;
+					$scope.classementFormDraw.point = parseInt(data.point) + 1;
+					$scope.classementFormDraw.draw = parseInt(data.draw) + 1;
+					$scope.classementFormDraw.goalAgainst = data.goalAgainst + $scope.matchData.match_awayTeamObj.score;
+					$scope.classementFormDraw.goalFor = data.goalFor + $scope.matchData.match_homeTeamObj.score;
+					$scope.classementFormDraw.goalDifference = $scope.classementFormDraw.goalFor - $scope.classementFormDraw.goalAgainst;
+					console.log($scope.classementFormDraw);
+
+					setTimeout(function(){
+						// update classement data
+						ClassementService.editClassementById(data.id,$scope.classementFormDraw).success(function(data) {
+							console.log(data);
+							console.log("berhasil");
+						}).error(function(data) {});
+
+						// update team data
+						TeamService.getTeamByName($scope.matchData.match_homeTeam).success(function(team){
+							$scope.teamFormDraw = {};
+							$scope.teamFormDraw.team_play = team.team_play + 1;
+							$scope.teamFormDraw.team_point = team.team_point + 1;
+							$scope.teamFormDraw.team_draw = team.team_draw + 1;
+							$scope.teamFormDraw.goalAgainst = team.team_goalAgainst + $scope.matchData.match_awayTeamObj.score;
+							$scope.teamFormDraw.goalFor = team.team_goalFor + $scope.matchData.match_homeTeamObj.score;
+							$scope.teamFormDraw.goalDifference = $scope.teamFormDraw.goalFor - $scope.teamFormDraw.goalAgainst;
+
+							TeamService.editTeamById(team.id, $scope.teamFormDraw).success(function(data) {
+			            		console.log(data);
+			                }).error(function(data) {});
+
+						}).error(function(data) {
+							$ionicLoading.hide();
+						});
+
+		                // update referee profile
+		                LoginService.getUserByUsername($scope.matchData.match_referee).success(function(referee){
+		                	$scope.refereeForm = {};
+		                	$scope.refereeForm.matchManaged = referee.matchManaged + 1;
+							LoginService.editUser(referee.id, localStorage.getItem("token"),$scope.refereeForm).success(function(data) {
+	                    		console.log(data);
+	                    	}).error(function(data) {});	
+						}).error(function(data) {});
+
+						// update analyst profile
+		                LoginService.getUserByUsername($scope.matchData.match_analyst).success(function(analyst){
+		                	$scope.analystForm = {};
+		                	$scope.analystForm.matchManaged = analyst.matchManaged + 1;
+							LoginService.editUser(analyst.id, localStorage.getItem("token"),$scope.analystForm).success(function(data) {
+	                    		console.log(data);
+	                    	}).error(function(data) {});	
+						}).error(function(data) {});
+					},1500);
+
+				}).error(function(data) {
+					console.log("gagal");
+				});		
+
+				CompetitionService.getClassementByCompIdAndTeamName($scope.matchData.competition_id, $scope.matchData.match_awayTeam).success(function(data) {
+					console.log(data);
+					// $scope.classementFormDraw = {};
+					$scope.classementFormDraw.play = parseInt(data.play) + 1;
+					$scope.classementFormDraw.point = parseInt(data.point) + 1;
+					$scope.classementFormDraw.draw = parseInt(data.draw) + 1;
+					$scope.classementFormDraw.goalAgainst = data.goalAgainst + $scope.matchData.match_homeTeamObj.score;
+					$scope.classementFormDraw.goalFor = data.goalFor + $scope.matchData.match_awayTeamObj.score;
+					$scope.classementFormDraw.goalDifference = $scope.classementFormDraw.goalFor - $scope.classementFormDraw.goalAgainst;
+					console.log($scope.classementFormDraw);
+
+					setTimeout(function(){
+						// update classement data
+						ClassementService.editClassementById(data.id,$scope.classementFormDraw).success(function(data) {
+							console.log(data);
+							console.log("berhasil");
+
+							// update team data
+							TeamService.getTeamByName($scope.matchData.match_awayTeam).success(function(team){
+								$scope.teamFormDraw = {};
+								$scope.teamFormDraw.team_play = team.team_play + 1;
+								$scope.teamFormDraw.team_point = team.team_point + 1;
+								$scope.teamFormDraw.team_draw = team.team_draw + 1;
+								$scope.teamFormDraw.goalAgainst = team.team_goalAgainst + $scope.matchData.match_homeTeamObj.score;
+								$scope.teamFormDraw.goalFor = team.team_goalFor + $scope.matchData.match_awayTeamObj.score;
+								$scope.teamFormDraw.goalDifference = $scope.teamFormDraw.goalFor - $scope.teamFormDraw.goalAgainst;
+
+								TeamService.editTeamById(team.id, $scope.teamFormDraw).success(function(data) {
+				            		console.log(data);
+				                }).error(function(data) {});
+
+							}).error(function(data) {
+								$ionicLoading.hide();
+							});
+						
+							// update match data
+							MatchService.editMatchById($scope.matchData.id,$scope.timerData).success(function(data) {
+								// setTimeout(function(){
+									$ionicLoading.hide();
+								// },1000);
+								$state.go('app.match_detail', {
+									'matchId': $scope.matchData.id
+								});
+							}).error(function(data) {});
+
+						}).error(function(data) {});
+
+					},2000);
+
+				}).error(function(data) {
+					console.log("gagal");
+				});		
+			}
+
 		}else if($scope.matchData.match_homeTeamObj.score === $scope.matchData.match_awayTeamObj.score){
 			console.log("nope");
 			$scope.timerData.timer_status = "2nd half stopped";
+			$scope.timerData.fullTime = {};
+			$scope.timerData.fullTime.status = true;
+			$scope.timerData.fullTime.homeTeamScore = $scope.matchData.match_homeTeamObj.score;
+			$scope.timerData.fullTime.awayTeamScore = $scope.matchData.match_awayTeamObj.score;
 			MatchService.editMatchById($scope.matchData.id,$scope.timerData).success(function(data) {
-				console.log('qweqweqrer erwerwerrqwrqwrqwrqwr');
 				setTimeout(function(){
 					$ionicLoading.hide();
 				},1000);
-				// $state.go('app.home');
 			}).error(function(data) {
 				setTimeout(function(){
 					$ionicLoading.hide();
 				},1000);
 			});
-			// clearInterval($scope.loadMatch);
-			clearInterval($scope.loadTimer);
-			console.log("sdfsdffsdfd kijdfs fhfasjha sdajsfha fj");
+
 		}else{
 
 			if($scope.matchData.match_homeTeamObj.score > $scope.matchData.match_awayTeamObj.score){
@@ -6392,26 +11827,207 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			}
 			$scope.timerData.match_status = "finished";
 			$scope.timerData.timer_status = "2nd half stopped";
-			MatchService.editMatchById($scope.matchData.id,$scope.timerData).success(function(data) {
-				setTimeout(function(){
-					$ionicLoading.hide();
-				},1000);
-			}).error(function(data) {
-				setTimeout(function(){
-					$ionicLoading.hide();
-				},1000);
-			});
+			$scope.timerData.live_status = false;
+			$scope.timerData.fullTime = {};
+			$scope.timerData.fullTime.status = true;
+			$scope.timerData.fullTime.homeTeamScore = $scope.matchData.match_homeTeamObj.score;
+			$scope.timerData.fullTime.awayTeamScore = $scope.matchData.match_awayTeamObj.score;
 
-			// update classement
-			// update referee profile
-			// update player profile
-			// update coach profile
-			// update manager profile
-			// update analyst profile
-			// update rating 
-			// update team
+			console.log($scope.matchData.competition_id);
+			console.log($scope.timerData.match_winner);
+
+			// update next round match
+			CompetitionService.getCompetitionById($scope.matchData.competition_id,localStorage.getItem("token")).success(function(comp) {
+				console.log(comp);
+				if($scope.matchData.match_fixture === 'play off'){
+					console.log("play off");
+					if(comp.comp_numOfTeam === 32){
+						var fixture = 'round of 16';
+						CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+							match.forEach(function(m){
+								console.log(m);
+								if($scope.matchData.pair_status === 'home'){
+									m.match_homeTeam = $scope.timerData.match_winner;
+									m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+								}else{
+									m.match_awayTeam = $scope.timerData.match_winner;
+									m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+								}
+								console.log(m);
+								// update next round match data
+								MatchService.editMatchById(m.id,m).success(function(data) {
+									console.log(data);
+								}).error(function(data) {});
+							})
+						}).error(function(data) {});
+					}else if(comp.comp_numOfTeam === 16){
+						var fixture = 'quarter final';
+						CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+							match.forEach(function(m){
+								console.log(m);
+								if($scope.matchData.pair_status === 'home'){
+									m.match_homeTeam = $scope.timerData.match_winner;
+									m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+								}else{
+									m.match_awayTeam = $scope.timerData.match_winner;
+									m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+								}
+								console.log(m);
+								// update next round match data
+								MatchService.editMatchById(m.id,m).success(function(data) {
+									console.log(data);
+								}).error(function(data) {});
+							})
+						}).error(function(data) {});
+					}else{
+						var fixture = 'semi final';
+						CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+							match.forEach(function(m){
+								console.log(m);
+								if($scope.matchData.pair_status === 'home'){
+									m.match_homeTeam = $scope.timerData.match_winner;
+									m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+								}else{
+									m.match_awayTeam = $scope.timerData.match_winner;
+									m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+								}
+								console.log(m);
+								// update next round match data
+								MatchService.editMatchById(m.id,m).success(function(data) {
+									console.log(data);
+								}).error(function(data) {});
+							})
+						}).error(function(data) {});
+					}
+				}else if($scope.matchData.match_fixture === 'round of 16'){
+					var fixture = 'quarter final';
+					CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+						match.forEach(function(m){
+							console.log(m);
+							if($scope.matchData.pair_status === 'home'){
+								m.match_homeTeam = $scope.timerData.match_winner;
+								m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+							}else{
+								m.match_awayTeam = $scope.timerData.match_winner;
+								m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+							}
+							console.log(m);
+							// update next round match data
+							MatchService.editMatchById(m.id,m).success(function(data) {
+								console.log(data);
+							}).error(function(data) {});
+						})
+					}).error(function(data) {});
+				}else if($scope.matchData.match_fixture === 'quarter final'){
+					var fixture = 'semi final';
+					CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+						match.forEach(function(m){
+							console.log(m);
+							if($scope.matchData.pair_status === 'home'){
+								m.match_homeTeam = $scope.timerData.match_winner;
+								m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+							}else{
+								m.match_awayTeam = $scope.timerData.match_winner;
+								m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+							}
+							console.log(m);
+							// update next round match data
+							MatchService.editMatchById(m.id,m).success(function(data) {
+								console.log(data);
+							}).error(function(data) {});
+						})
+					}).error(function(data) {});
+				}else if($scope.matchData.match_fixture === 'semi final'){
+					var fixture = 'final';
+					CompetitionService.getMatchesByMatchFixture($scope.matchData.competition_id,fixture,localStorage.getItem("token")).success(function(match) {
+						match.forEach(function(m){
+							console.log(m);
+							if($scope.matchData.pair_status === 'home'){
+								m.match_homeTeam = $scope.timerData.match_winner;
+								m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+							}else{
+								m.match_awayTeam = $scope.timerData.match_winner;
+								m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+							}
+							console.log(m);
+							// update next round match data
+							MatchService.editMatchById(m.id,m).success(function(data) {
+								console.log(data);
+							}).error(function(data) {});
+						})
+					}).error(function(data) {});
+				}
+			}).error(function(data) {});
+
+				
+			setTimeout(function(){
+				// update team data
+				TeamService.getTeamByName($scope.matchData.match_homeTeam).success(function(team){
+					$scope.teamFormWin = {};
+					$scope.teamFormWin.team_play = team.team_play + 1;
+					$scope.teamFormWin.team_point = team.team_point + 3;
+					$scope.teamFormWin.team_win = team.team_win + 1;
+					if($scope.matchData.match_homeTeam === $scope.timerData.match_winner){
+						$scope.teamFormWin.goalAgainst = team.team_goalAgainst + $scope.matchData.match_awayTeamObj.score;
+						$scope.teamFormWin.goalFor = team.team_goalFor + $scope.matchData.match_homeTeamObj.score;
+					}else{
+						$scope.teamFormWin.goalAgainst = team.team_goalAgainst + $scope.matchData.match_homeTeamObj.score;	
+						$scope.teamFormWin.goalFor = team.team_goalFor + $scope.matchData.match_awayTeamObj.score;
+					}
+					TeamService.editTeamById(team.id, $scope.teamFormWin).success(function(data) {
+	            		console.log(data);
+	                }).error(function(data) {});
+				}).error(function(data) {
+					$ionicLoading.hide();
+				});
+
+                // update referee profile
+                LoginService.getUserByUsername($scope.matchData.match_referee).success(function(referee){
+                	$scope.refereeForm = {};
+                	$scope.refereeForm.matchManaged = referee.matchManaged + 1;
+					LoginService.editUser(referee.id, localStorage.getItem("token"),$scope.refereeForm).success(function(data) {
+                		console.log(data);
+                	}).error(function(data) {});	
+				}).error(function(data) {});
+
+				// update analyst profile
+                LoginService.getUserByUsername($scope.matchData.match_analyst).success(function(analyst){
+                	$scope.analystForm = {};
+                	$scope.analystForm.matchManaged = analyst.matchManaged + 1;
+					LoginService.editUser(analyst.id, localStorage.getItem("token"),$scope.analystForm).success(function(data) {
+                		console.log(data);
+                	}).error(function(data) {});	
+				}).error(function(data) {});
+			},1500);
+
+			setTimeout(function(){
+				// update team data
+				TeamService.getTeamByName($scope.matchData.match_awayTeam).success(function(team){
+					$scope.teamFormLose = {};
+					$scope.teamFormLose.team_play = team.team_play + 1;
+					$scope.teamFormLose.team_lose = team.team_lose + 1;
+					if($scope.matchData.match_homeTeam === $scope.timerData.match_loser){
+						$scope.teamFormLose.goalAgainst = team.team_goalAgainst + $scope.matchData.match_awayTeamObj.score;
+						$scope.teamFormLose.goalFor = team.team_goalFor + $scope.matchData.match_homeTeamObj.score;
+					}else{
+						$scope.teamFormLose.goalAgainst = team.team_goalAgainst + $scope.matchData.match_homeTeamObj.score;	
+						$scope.teamFormLose.goalFor = team.team_goalFor + $scope.matchData.match_awayTeamObj.score;
+					}
+					TeamService.editTeamById(team.id, $scope.teamFormLose).success(function(data) {
+	            		console.log(data);
+	                }).error(function(data) {});
+				}).error(function(data) {
+					$ionicLoading.hide();
+				});
 			
-			clearInterval($scope.loadTimer);
+				// update match data
+				MatchService.editMatchById($scope.matchData.id,$scope.timerData).success(function(data) {
+					$ionicLoading.hide();
+					$state.go('app.match_detail', {
+						'matchId': $scope.matchData.id
+					});
+				}).error(function(data) {});
+			},2000);	
 		}
 	};
 
@@ -6419,11 +12035,9 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		$rootScope.showLoading();
 		$scope.timerData.timer_status = "1st half stopped (ET)";
 		MatchService.editMatchById($scope.matchData.id,$scope.timerData).success(function(data) {
-			console.log('qweqweqrer erwerwerrqwrqwrqwrqwr');
 			setTimeout(function(){
 				$ionicLoading.hide();
 			},1000);
-			// $state.go('app.home');
 		}).error(function(data) {
 			setTimeout(function(){
 				$ionicLoading.hide();
@@ -6431,59 +12045,521 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		});
 		// clearInterval($scope.loadMatch);
 		clearInterval($scope.loadTimer);
-		console.log("sdfsdffsdfd kijdfs fhfasjha sdajsfha fj");
 	};
 
 	$scope.stopSecondHalfET = function() {
-		$rootScope.showLoading();
-		
+		// clearInterval($scope.loadMatch);
+		clearInterval($scope.loadTimer);
+		clearInterval($scope.loadTeamPossession);
+		$rootScope.showLoading($ionicLoading);
+		console.log("stop second half (ET)");
+		console.log($scope.matchData.competition_id);
+
 		if($scope.matchData.match_fixture.includes("fixture")){
 			console.log("yeah ");
 			$scope.timerData.timer_status = "2nd half stopped (ET)";
 			$scope.timerData.match_status = "finished";
-			MatchService.editMatchById($scope.matchData.id,$scope.timerData).success(function(data) {
-				setTimeout(function(){
-					$ionicLoading.hide();
-				},1000);
-				$state.go('app.match_detail', {
-					'matchId': $scope.matchData.id
-				});
-			}).error(function(data) {
-				setTimeout(function(){
-					$ionicLoading.hide();
-				},1000);
-			});
-			clearInterval($scope.loadTimer);
+			$scope.timerData.live_status = false;
+			$scope.timerData.extraTime = {};
+			$scope.timerData.extraTime.status = true;
+			$scope.timerData.extraTime.homeTeamScore = $scope.matchData.match_homeTeamObj.score;
+			$scope.timerData.extraTime.awayTeamScore = $scope.matchData.match_awayTeamObj.score;
+
+			if($scope.matchData.match_homeTeamObj.score === $scope.matchData.match_awayTeamObj.score){
+				console.log("score sama");
+				$scope.timerData.match_winner = '';
+			}else if($scope.matchData.match_homeTeamObj.score > $scope.matchData.match_awayTeamObj.score){
+				$scope.timerData.match_winner = $scope.matchData.match_homeTeam;
+				$scope.timerData.match_loser = $scope.matchData.match_awayTeam;
+				console.log("score tidak sama hometeam");
+
+			}else{
+				$scope.timerData.match_winner = $scope.matchData.match_awayTeam;
+				$scope.timerData.match_loser = $scope.matchData.match_homeTeam;
+				console.log("score tidak sama awayteam");
+
+			}
+			
+			// update classement
+			$scope.classementFormWin = {};
+			$scope.classementFormDraw = {};
+			$scope.classementFormLose = {};
+
+			if($scope.timerData.match_winner !== ''){
+				console.log($scope.matchData.competition_id);
+				console.log($scope.timerData.match_winner);
+
+				CompetitionService.getClassementByCompIdAndTeamName($scope.matchData.competition_id, $scope.timerData.match_winner).success(function(data) {
+					console.log(data);
+					$scope.classementFormWin = {};
+					$scope.classementFormWin.play = parseInt(data.play) + 1;
+					$scope.classementFormWin.point = parseInt(data.point) + 3;
+					if($scope.matchData.match_homeTeam === $scope.timerData.match_winner){
+						$scope.classementFormWin.goalAgainst = data.goalAgainst + $scope.matchData.match_awayTeamObj.score;
+						$scope.classementFormWin.goalFor = data.goalFor + $scope.matchData.match_homeTeamObj.score;
+					}else{
+						$scope.classementFormWin.goalAgainst = data.goalAgainst + $scope.matchData.match_homeTeamObj.score;	
+						$scope.classementFormWin.goalFor = data.goalFor + $scope.matchData.match_awayTeamObj.score;
+					}
+					$scope.classementFormWin.win = data.win + 1;
+					$scope.classementFormWin.goalDifference = $scope.classementFormWin.goalFor - $scope.classementFormWin.goalAgainst;
+					console.log($scope.classementFormWin);
+
+					setTimeout(function(){
+
+						// update classement data
+						ClassementService.editClassementById(data.id,$scope.classementFormWin).success(function(data) {
+							console.log(data);
+							console.log("berhasil");
+						}).error(function(data) {});
+
+						// update team data
+						TeamService.getTeamByName($scope.matchData.match_homeTeam).success(function(team){
+							$scope.teamFormWin = {};
+							$scope.teamFormWin.team_play = team.team_play + 1;
+							$scope.teamFormWin.team_point = team.team_point + 3;
+							$scope.teamFormWin.team_win = team.team_win + 1;
+							if($scope.matchData.match_homeTeam === $scope.timerData.match_winner){
+								$scope.teamFormWin.goalAgainst = team.team_goalAgainst + $scope.matchData.match_awayTeamObj.score;
+								$scope.teamFormWin.goalFor = team.team_goalFor + $scope.matchData.match_homeTeamObj.score;
+							}else{
+								$scope.teamFormWin.goalAgainst = team.team_goalAgainst + $scope.matchData.match_homeTeamObj.score;	
+								$scope.teamFormWin.goalFor = team.team_goalFor + $scope.matchData.match_awayTeamObj.score;
+							}
+							TeamService.editTeamById(team.id, $scope.teamFormWin).success(function(data) {
+			            		console.log(data);
+			                }).error(function(data) {});
+						}).error(function(data) {
+							$ionicLoading.hide();
+						});
+
+		                // update referee profile
+		                LoginService.getUserByUsername($scope.matchData.match_referee).success(function(referee){
+		                	$scope.refereeForm = {};
+		                	$scope.refereeForm.matchManaged = referee.matchManaged + 1;
+							LoginService.editUser(referee.id, localStorage.getItem("token"),$scope.refereeForm).success(function(data) {
+	                    		console.log(data);
+	                    	}).error(function(data) {});	
+						}).error(function(data) {});
+
+						// update analyst profile
+		                LoginService.getUserByUsername($scope.matchData.match_analyst).success(function(analyst){
+		                	$scope.analystForm = {};
+		                	$scope.analystForm.matchManaged = analyst.matchManaged + 1;
+							LoginService.editUser(analyst.id, localStorage.getItem("token"),$scope.analystForm).success(function(data) {
+	                    		console.log(data);
+	                    	}).error(function(data) {});	
+						}).error(function(data) {});
+					},1500);
+
+				}).error(function(data) {
+					console.log("gagal");
+				});		
+
+				CompetitionService.getClassementByCompIdAndTeamName($scope.matchData.competition_id, $scope.timerData.match_loser).success(function(data) {
+					console.log(data);
+					$scope.classementFormLose.play = parseInt(data.play) + 1;
+					$scope.classementFormLose.lose = data.lose + 1;
+					if($scope.matchData.match_homeTeam === $scope.timerData.match_loser){
+						$scope.classementFormLose.goalAgainst = data.goalAgainst + $scope.matchData.match_awayTeamObj.score;
+						$scope.classementFormLose.goalFor = data.goalFor + $scope.matchData.match_homeTeamObj.score;
+					}else{
+						$scope.classementFormLose.goalAgainst = data.goalAgainst + $scope.matchData.match_homeTeamObj.score;	
+						$scope.classementFormLose.goalFor = data.goalFor + $scope.matchData.match_awayTeamObj.score;
+					}
+					$scope.classementFormLose.goalDifference = $scope.classementFormLose.goalFor - $scope.classementFormLose.goalAgainst;
+					console.log($scope.classementFormLose);
+
+					setTimeout(function(){
+						// update classement data
+						ClassementService.editClassementById(data.id,$scope.classementFormLose).success(function(data) {
+							console.log(data);
+							console.log("berhasil");
+
+							// update team data
+							TeamService.getTeamByName($scope.matchData.match_awayTeam).success(function(team){
+								$scope.teamFormLose = {};
+								$scope.teamFormLose.team_play = team.team_play + 1;
+								$scope.teamFormLose.team_lose = team.team_lose + 1;
+								if($scope.matchData.match_homeTeam === $scope.timerData.match_loser){
+									$scope.teamFormLose.goalAgainst = team.team_goalAgainst + $scope.matchData.match_awayTeamObj.score;
+									$scope.teamFormLose.goalFor = team.team_goalFor + $scope.matchData.match_homeTeamObj.score;
+								}else{
+									$scope.teamFormLose.goalAgainst = team.team_goalAgainst + $scope.matchData.match_homeTeamObj.score;	
+									$scope.teamFormLose.goalFor = team.team_goalFor + $scope.matchData.match_awayTeamObj.score;
+								}
+								TeamService.editTeamById(team.id, $scope.teamFormLose).success(function(data) {
+				            		console.log(data);
+				                }).error(function(data) {});
+
+							}).error(function(data) {
+								$ionicLoading.hide();
+							});
+						
+							// update match data
+							MatchService.editMatchById($scope.matchData.id,$scope.timerData).success(function(data) {
+								// setTimeout(function(){
+									$ionicLoading.hide();
+								// },1000);
+								$state.go('app.match_detail', {
+									'matchId': $scope.matchData.id
+								});
+							}).error(function(data) {});
+
+						}).error(function(data) {});
+
+					},2000);
+
+				}).error(function(data) {
+					console.log("gagal");
+				});		
+			}else{
+
+				CompetitionService.getClassementByCompIdAndTeamName($scope.matchData.competition_id, $scope.matchData.match_homeTeam).success(function(data) {
+					console.log(data);
+
+					$scope.classementFormDraw.play = parseInt(data.play) + 1;
+					$scope.classementFormDraw.point = parseInt(data.point) + 1;
+					$scope.classementFormDraw.draw = parseInt(data.draw) + 1;
+					$scope.classementFormDraw.goalAgainst = data.goalAgainst + $scope.matchData.match_awayTeamObj.score;
+					$scope.classementFormDraw.goalFor = data.goalFor + $scope.matchData.match_homeTeamObj.score;
+					$scope.classementFormDraw.goalDifference = $scope.classementFormDraw.goalFor - $scope.classementFormDraw.goalAgainst;
+					console.log($scope.classementFormDraw);
+
+					setTimeout(function(){
+						// update classement data
+						ClassementService.editClassementById(data.id,$scope.classementFormDraw).success(function(data) {
+							console.log(data);
+							console.log("berhasil");
+						}).error(function(data) {});
+
+						// update team data
+						TeamService.getTeamByName($scope.matchData.match_homeTeam).success(function(team){
+							$scope.teamFormDraw = {};
+							$scope.teamFormDraw.team_play = team.team_play + 1;
+							$scope.teamFormDraw.team_point = team.team_point + 1;
+							$scope.teamFormDraw.team_draw = team.team_draw + 1;
+							$scope.teamFormDraw.goalAgainst = team.team_goalAgainst + $scope.matchData.match_awayTeamObj.score;
+							$scope.teamFormDraw.goalFor = team.team_goalFor + $scope.matchData.match_homeTeamObj.score;
+							$scope.teamFormDraw.goalDifference = $scope.teamFormDraw.goalFor - $scope.teamFormDraw.goalAgainst;
+
+							TeamService.editTeamById(team.id, $scope.teamFormDraw).success(function(data) {
+			            		console.log(data);
+			                }).error(function(data) {});
+
+						}).error(function(data) {
+							$ionicLoading.hide();
+						});
+
+		                // update referee profile
+		                LoginService.getUserByUsername($scope.matchData.match_referee).success(function(referee){
+		                	$scope.refereeForm = {};
+		                	$scope.refereeForm.matchManaged = referee.matchManaged + 1;
+							LoginService.editUser(referee.id, localStorage.getItem("token"),$scope.refereeForm).success(function(data) {
+	                    		console.log(data);
+	                    	}).error(function(data) {});	
+						}).error(function(data) {});
+
+						// update analyst profile
+		                LoginService.getUserByUsername($scope.matchData.match_analyst).success(function(analyst){
+		                	$scope.analystForm = {};
+		                	$scope.analystForm.matchManaged = analyst.matchManaged + 1;
+							LoginService.editUser(analyst.id, localStorage.getItem("token"),$scope.analystForm).success(function(data) {
+	                    		console.log(data);
+	                    	}).error(function(data) {});	
+						}).error(function(data) {});
+					},1500);
+
+				}).error(function(data) {
+					console.log("gagal");
+				});		
+
+				CompetitionService.getClassementByCompIdAndTeamName($scope.matchData.competition_id, $scope.matchData.match_awayTeam).success(function(data) {
+					console.log(data);
+					// $scope.classementFormDraw = {};
+					$scope.classementFormDraw.play = parseInt(data.play) + 1;
+					$scope.classementFormDraw.point = parseInt(data.point) + 1;
+					$scope.classementFormDraw.draw = parseInt(data.draw) + 1;
+					$scope.classementFormDraw.goalAgainst = data.goalAgainst + $scope.matchData.match_homeTeamObj.score;
+					$scope.classementFormDraw.goalFor = data.goalFor + $scope.matchData.match_awayTeamObj.score;
+					$scope.classementFormDraw.goalDifference = $scope.classementFormDraw.goalFor - $scope.classementFormDraw.goalAgainst;
+					console.log($scope.classementFormDraw);
+
+					setTimeout(function(){
+						// update classement data
+						ClassementService.editClassementById(data.id,$scope.classementFormDraw).success(function(data) {
+							console.log(data);
+							console.log("berhasil");
+
+							// update team data
+							TeamService.getTeamByName($scope.matchData.match_awayTeam).success(function(team){
+								$scope.teamFormDraw = {};
+								$scope.teamFormDraw.team_play = team.team_play + 1;
+								$scope.teamFormDraw.team_point = team.team_point + 1;
+								$scope.teamFormDraw.team_draw = team.team_draw + 1;
+								$scope.teamFormDraw.goalAgainst = team.team_goalAgainst + $scope.matchData.match_homeTeamObj.score;
+								$scope.teamFormDraw.goalFor = team.team_goalFor + $scope.matchData.match_awayTeamObj.score;
+								$scope.teamFormDraw.goalDifference = $scope.teamFormDraw.goalFor - $scope.teamFormDraw.goalAgainst;
+
+								TeamService.editTeamById(team.id, $scope.teamFormDraw).success(function(data) {
+				            		console.log(data);
+				                }).error(function(data) {});
+
+							}).error(function(data) {
+								$ionicLoading.hide();
+							});
+						
+							// update match data
+							MatchService.editMatchById($scope.matchData.id,$scope.timerData).success(function(data) {
+								// setTimeout(function(){
+									$ionicLoading.hide();
+								// },1000);
+								$state.go('app.match_detail', {
+									'matchId': $scope.matchData.id
+								});
+							}).error(function(data) {});
+
+						}).error(function(data) {});
+
+					},2000);
+
+				}).error(function(data) {
+					console.log("gagal");
+				});		
+			}
+
 		}else if($scope.matchData.match_homeTeamObj.score === $scope.matchData.match_awayTeamObj.score){
 			console.log("nope");
 			$scope.timerData.timer_status = "2nd half stopped (ET)";
+			$scope.timerData.extraTime = {};
+			$scope.timerData.extraTime.status = true;
+			$scope.timerData.extraTime.homeTeamScore = $scope.matchData.match_homeTeamObj.score;
+			$scope.timerData.extraTime.awayTeamScore = $scope.matchData.match_awayTeamObj.score;
 			MatchService.editMatchById($scope.matchData.id,$scope.timerData).success(function(data) {
-				console.log('qweqweqrer erwerwerrqwrqwrqwrqwr');
 				setTimeout(function(){
 					$ionicLoading.hide();
 				},1000);
-				// $state.go('app.home');
 			}).error(function(data) {
 				setTimeout(function(){
 					$ionicLoading.hide();
 				},1000);
 			});
-			// clearInterval($scope.loadMatch);
-			clearInterval($scope.loadTimer);
-			console.log("sdfsdffsdfd kijdfs fhfasjha sdajsfha fj");
+
 		}else{
+			if($scope.matchData.match_homeTeamObj.score > $scope.matchData.match_awayTeamObj.score){
+				$scope.timerData.match_winner = $scope.matchData.match_homeTeam;
+				$scope.timerData.match_loser = $scope.matchData.match_awayTeam;
+			}else{
+				$scope.timerData.match_winner = $scope.matchData.match_awayTeam;
+				$scope.timerData.match_loser = $scope.matchData.match_homeTeam;
+			}
 			$scope.timerData.match_status = "finished";
 			$scope.timerData.timer_status = "2nd half stopped (ET)";
-			MatchService.editMatchById($scope.matchData.id,$scope.timerData).success(function(data) {
-				setTimeout(function(){
+			$scope.timerData.live_status = false;
+			$scope.timerData.extraTime = {};
+			$scope.timerData.extraTime.status = true;
+			$scope.timerData.extraTime.homeTeamScore = $scope.matchData.match_homeTeamObj.score;
+			$scope.timerData.extraTime.awayTeamScore = $scope.matchData.match_awayTeamObj.score;
+
+			// update next round match
+			CompetitionService.getCompetitionById($scope.matchData.competition_id,localStorage.getItem("token")).success(function(comp) {
+				console.log(comp);
+				if($scope.matchData.match_fixture === 'play off'){
+					console.log("play off");
+					if(comp.comp_numOfTeam === 32){
+						var fixture = 'round of 16';
+						CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+							match.forEach(function(m){
+								console.log(m);
+								if($scope.matchData.pair_status === 'home'){
+									m.match_homeTeam = $scope.timerData.match_winner;
+									m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+								}else{
+									m.match_awayTeam = $scope.timerData.match_winner;
+									m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+								}
+								console.log(m);
+								// update next round match data
+								MatchService.editMatchById(m.id,m).success(function(data) {
+									console.log(data);
+								}).error(function(data) {});
+							})
+						}).error(function(data) {});
+					}else if(comp.comp_numOfTeam === 16){
+						var fixture = 'quarter final';
+						CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+							match.forEach(function(m){
+								console.log(m);
+								if($scope.matchData.pair_status === 'home'){
+									m.match_homeTeam = $scope.timerData.match_winner;
+									m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+								}else{
+									m.match_awayTeam = $scope.timerData.match_winner;
+									m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+								}
+								console.log(m);
+								// update next round match data
+								MatchService.editMatchById(m.id,m).success(function(data) {
+									console.log(data);
+								}).error(function(data) {});
+							})
+						}).error(function(data) {});
+					}else{
+						var fixture = 'semi final';
+						CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+							match.forEach(function(m){
+								console.log(m);
+								if($scope.matchData.pair_status === 'home'){
+									m.match_homeTeam = $scope.timerData.match_winner;
+									m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+								}else{
+									m.match_awayTeam = $scope.timerData.match_winner;
+									m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+								}
+								console.log(m);
+								// update next round match data
+								MatchService.editMatchById(m.id,m).success(function(data) {
+									console.log(data);
+								}).error(function(data) {});
+							})
+						}).error(function(data) {});
+					}
+				}else if($scope.matchData.match_fixture === 'round of 16'){
+					var fixture = 'quarter final';
+					CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+						match.forEach(function(m){
+							console.log(m);
+							if($scope.matchData.pair_status === 'home'){
+								m.match_homeTeam = $scope.timerData.match_winner;
+								m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+							}else{
+								m.match_awayTeam = $scope.timerData.match_winner;
+								m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+							}
+							console.log(m);
+							// update next round match data
+							MatchService.editMatchById(m.id,m).success(function(data) {
+								console.log(data);
+							}).error(function(data) {});
+						})
+					}).error(function(data) {});
+				}else if($scope.matchData.match_fixture === 'quarter final'){
+					var fixture = 'semi final';
+					CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+						match.forEach(function(m){
+							console.log(m);
+							if($scope.matchData.pair_status === 'home'){
+								m.match_homeTeam = $scope.timerData.match_winner;
+								m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+							}else{
+								m.match_awayTeam = $scope.timerData.match_winner;
+								m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+							}
+							console.log(m);
+							// update next round match data
+							MatchService.editMatchById(m.id,m).success(function(data) {
+								console.log(data);
+							}).error(function(data) {});
+						})
+					}).error(function(data) {});
+				}else if($scope.matchData.match_fixture === 'semi final'){
+					var fixture = 'final';
+					CompetitionService.getMatchByCompIdFixtureAndLastPair($scope.matchData.competition_id,fixture,$scope.matchData.match_pair).success(function(match) {
+						match.forEach(function(m){
+							console.log(m);
+							if($scope.matchData.pair_status === 'home'){
+								m.match_homeTeam = $scope.timerData.match_winner;
+								m.match_homeTeamObj.team_name = $scope.timerData.match_winner;
+							}else{
+								m.match_awayTeam = $scope.timerData.match_winner;
+								m.match_awayTeamObj.team_name = $scope.timerData.match_winner;
+							}
+							console.log(m);
+							// update next round match data
+							MatchService.editMatchById(m.id,m).success(function(data) {
+								console.log(data);
+							}).error(function(data) {});
+						})
+					}).error(function(data) {});
+				}
+			}).error(function(data) {});
+
+			console.log($scope.matchData.competition_id);
+			console.log($scope.timerData.match_winner);
+
+			setTimeout(function(){
+
+				// update team data
+				TeamService.getTeamByName($scope.matchData.match_homeTeam).success(function(team){
+					$scope.teamFormWin = {};
+					$scope.teamFormWin.team_play = team.team_play + 1;
+					$scope.teamFormWin.team_point = team.team_point + 3;
+					$scope.teamFormWin.team_win = team.team_win + 1;
+					if($scope.matchData.match_homeTeam === $scope.timerData.match_winner){
+						$scope.teamFormWin.goalAgainst = team.team_goalAgainst + $scope.matchData.match_awayTeamObj.score;
+						$scope.teamFormWin.goalFor = team.team_goalFor + $scope.matchData.match_homeTeamObj.score;
+					}else{
+						$scope.teamFormWin.goalAgainst = team.team_goalAgainst + $scope.matchData.match_homeTeamObj.score;	
+						$scope.teamFormWin.goalFor = team.team_goalFor + $scope.matchData.match_awayTeamObj.score;
+					}
+					TeamService.editTeamById(team.id, $scope.teamFormWin).success(function(data) {
+	            		console.log(data);
+	                }).error(function(data) {});
+				}).error(function(data) {
 					$ionicLoading.hide();
-				},1000);
-			}).error(function(data) {
-				setTimeout(function(){
+				});
+
+                // update referee profile
+                LoginService.getUserByUsername($scope.matchData.match_referee).success(function(referee){
+                	$scope.refereeForm = {};
+                	$scope.refereeForm.matchManaged = referee.matchManaged + 1;
+					LoginService.editUser(referee.id, localStorage.getItem("token"),$scope.refereeForm).success(function(data) {
+                		console.log(data);
+                	}).error(function(data) {});	
+				}).error(function(data) {});
+
+				// update analyst profile
+                LoginService.getUserByUsername($scope.matchData.match_analyst).success(function(analyst){
+                	$scope.analystForm = {};
+                	$scope.analystForm.matchManaged = analyst.matchManaged + 1;
+					LoginService.editUser(analyst.id, localStorage.getItem("token"),$scope.analystForm).success(function(data) {
+                		console.log(data);
+                	}).error(function(data) {});	
+				}).error(function(data) {});
+			},1500);
+
+			setTimeout(function(){
+
+				// update team data
+				TeamService.getTeamByName($scope.matchData.match_awayTeam).success(function(team){
+					$scope.teamFormLose = {};
+					$scope.teamFormLose.team_play = team.team_play + 1;
+					$scope.teamFormLose.team_lose = team.team_lose + 1;
+					if($scope.matchData.match_homeTeam === $scope.timerData.match_loser){
+						$scope.teamFormLose.goalAgainst = team.team_goalAgainst + $scope.matchData.match_awayTeamObj.score;
+						$scope.teamFormLose.goalFor = team.team_goalFor + $scope.matchData.match_homeTeamObj.score;
+					}else{
+						$scope.teamFormLose.goalAgainst = team.team_goalAgainst + $scope.matchData.match_homeTeamObj.score;	
+						$scope.teamFormLose.goalFor = team.team_goalFor + $scope.matchData.match_awayTeamObj.score;
+					}
+					TeamService.editTeamById(team.id, $scope.teamFormLose).success(function(data) {
+	            		console.log(data);
+	                }).error(function(data) {});
+
+				}).error(function(data) {
 					$ionicLoading.hide();
-				},1000);
-			});
-			clearInterval($scope.loadTimer);
+				});
+			
+				// update match data
+				MatchService.editMatchById($scope.matchData.id,$scope.timerData).success(function(data) {
+					// setTimeout(function(){
+						$ionicLoading.hide();
+					// },1000);
+					$state.go('app.match_detail', {
+						'matchId': $scope.matchData.id
+					});
+				}).error(function(data) {});
+			},2000);
 		}
 	};
 
@@ -6491,8 +12567,8 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		$rootScope.showLoading();
 		$scope.timerData.timer_status = "penalty shootout stopped";
 		$scope.timerData.match_status = "finished";
+		$scope.timerData.live_status = false;
 		MatchService.editMatchById($scope.matchData.id,$scope.timerData).success(function(data) {
-			console.log('qweqweqrer erwerwerrqwrqwrqwrqwr');
 			setTimeout(function(){
 				$ionicLoading.hide();
 			},1000);
@@ -6504,9 +12580,8 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				$ionicLoading.hide();
 			},1000);
 		});
-		// clearInterval($scope.loadMatch);
+		clearInterval($scope.loadMatch);
 		clearInterval($scope.loadTimer);
-		console.log("sdfsdffsdfd kijdfs fhfasjha sdajsfha fj");
 	};
 
 	$scope.homeScore = {};
@@ -6537,10 +12612,15 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	$scope.awaySub = {};
 	$scope.awaySub.substituteAway = {};
 	$scope.awaySub.match_awayTeamObj = {};
+	$scope.selectedStatus = false;
+	$scope.playerOutStatus = false;
+	$scope.playerInStatus = false;
+
 
 	$scope.showAssistPlayerHome = function(){
 		var scorers = document.getElementsByName("scorer");
 		var assist = document.getElementsByName("assist");
+		$scope.selectedStatus = true;
 
 		for (var a = 0; a < scorers.length; a++) {
 	        if (scorers[a].checked) {
@@ -6569,6 +12649,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	$scope.showAssistPlayerAway = function(){
 		var scorers = document.getElementsByName("scorer");
 		var assist = document.getElementsByName("assist");
+		$scope.selectedStatus = true;
 
 		for (var a = 0; a < scorers.length; a++) {
 	        if (scorers[a].checked) {
@@ -6592,6 +12673,18 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		}).error(function(data){
 			$ionicLoading.hide();
 		});
+	};
+
+	$scope.showSelectedStatus = function(){
+		$scope.selectedStatus = true;
+	};
+
+	$scope.setPlayerOutStatus = function(){
+		$scope.playerOutStatus = true;
+	};
+
+	$scope.setPlayerInStatus = function(){
+		$scope.playerInStatus = true;
 	};
 
 	$scope.addGoalHome = function() {
@@ -6630,28 +12723,26 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 					$scope.arrAway = [];
 					$scope.lastArrAway = 0;
 					$scope.arrHome = [];
-					$scope.lastArrHome = 0;
 					$scope.goalAwayDataArr = [];
+					$scope.lastArrHome = 0;
+
 					var scoreAway = $scope.matchData.goalAway.scoreAway;
-					var scoreAwayLength = scoreAway.toString().length;	
-					if(scoreAwayLength < 1){
+					if(scoreAway == 0){
 						console.log("0");
 						$scope.lastAwayDataArr = 0;
-					}else if(scoreAwayLength == 1){
-						console.log("1");
-						$scope.goalAwayDataArr.push($scope.matchData.goalAway.scoreAway);
-						$scope.lastAwayDataArr = $scope.goalAwayDataArr.length;
-					}else{
+					}else if(scoreAway.toString().indexOf(",") !== -1){
 						console.log("Ga ada");
 						$scope.goalAwayDataArr = $scope.matchData.goalAway.scoreAway.split(",");
 						$scope.lastAwayDataArr = $scope.goalAwayDataArr.length;
+					}else{
+						$scope.lastAwayDataArr = 1;
 					}
 					
 					
 					console.log($scope.lastAwayDataArr);
 
 					if($scope.matchData.goalHome.scoreAway !== ''){
-						if($scope.matchData.goalHome.scoreAway.toString().indexOf(",") !== -1){s
+						if($scope.matchData.goalHome.scoreAway.toString().indexOf(",") !== -1){
 							$scope.arrAway = $scope.matchData.goalHome.scoreAway.split(',');
 							$scope.lastArrAway = $scope.arrAway[$scope.arrAway.length-1];
 							console.log($scope.lastArrAway);
@@ -6672,7 +12763,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 					}	
 					console.log("scorer");
 					console.log($scope.matchData.goalHome.scorer);
-					if($scope.matchData.goalHome.scorer !== undefined){
+					if($scope.matchData.goalHome.scorer !== ''){
 						resultHome = parseInt($scope.lastArrHome,10);	
 						console.log(resultHome);
 						resultAway = parseInt($scope.lastAwayDataArr,10);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
@@ -6695,13 +12786,43 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 						$scope.homeScore.goalHome.eventNumber = $scope.matchData.match_eventNumber;
 					}
 					console.log($scope.homeScore);
+
+					// update match data
 					MatchService.editMatchById($stateParams.matchId,$scope.homeScore).success(function(data) {
 						console.log("sdfjh sdfjshfsjdhf sjdfhsdjfshdfjshdfs jkdfhskjfdh");
+						// $ionicLoading.hide();
+					}).error(function(data) {
+						// $ionicLoading.hide();
+					});
+
+					// update player data
+					LoginService.getUserByUsername(scorer).success(function(player){
+						$scope.profileForm = {};
+						$scope.profileForm.goal = player.goal + 1;
+
+						LoginService.editUser(player.id, localStorage.getItem("token"), $scope.profileForm).success(function(data) {
+							console.log(data);
+	                    }).error(function(data) {});
+
+					}).error(function(data) {});
+
+					if(assist !== 'no assist'){
+						LoginService.getUserByUsername(assist).success(function(player){
+							$scope.profileForm = {};
+							$scope.profileForm.assist = player.assist + 1;
+
+							LoginService.editUser(player.id, localStorage.getItem("token"), $scope.profileForm).success(function(data) {
+								console.log(data);
+		                    }).error(function(data) {});
+
+						}).error(function(data) {});
+					}
+
+					setTimeout(function(){
 						$ionicLoading.hide();
 						$scope.modal_goal.hide();
-					}).error(function(data) {
-						$ionicLoading.hide();
-					});
+					},1500);
+
 				}).error(function(data){
 					$ionicLoading.hide();
 				});
@@ -6747,22 +12868,18 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 					$scope.arrHome = [];
 					$scope.lastArrHome = 0;
 					$scope.goalHomeDataArr = [];
-					// $scope.lastHomeDataArr = $scope.goalHomeDataArr.length;
+					
 					var scoreHome = $scope.matchData.goalHome.scoreHome;
-					var scoreHomeLength = scoreHome.toString().length;	
-					if(scoreHomeLength < 1){
+					if(scoreHome == 0){
 						console.log("0");
 						$scope.lastHomeDataArr = 0;
-					}else if(scoreHomeLength == 1){
-						console.log("1");
-						$scope.goalHomeDataArr.push($scope.matchData.goalHome.scoreHome);
-						$scope.lastHomeDataArr = $scope.goalHomeDataArr.length;
-					}else{
+					}else if(scoreHome.toString().indexOf(",") !== -1){
 						console.log("Ga ada");
 						$scope.goalHomeDataArr = $scope.matchData.goalHome.scoreHome.split(",");
 						$scope.lastHomeDataArr = $scope.goalHomeDataArr.length;
+					}else{
+						$scope.lastHomeDataArr = 1;
 					}
-					
 					
 					console.log($scope.lastHomeDataArr);
 
@@ -6788,7 +12905,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 					}	
 					console.log("scorer");
 					console.log($scope.matchData.goalAway.scorer);
-					if($scope.matchData.goalAway.scorer !== undefined){
+					if($scope.matchData.goalAway.scorer !== ''){
 						resultHome = parseInt($scope.lastHomeDataArr,10);	
 						console.log(resultHome);
 						resultAway = parseInt($scope.lastArrAway,10);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
@@ -6811,13 +12928,42 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 						$scope.awayScore.goalAway.eventNumber = $scope.matchData.match_eventNumber;
 					}
 					console.log($scope.awayScore);
+
+					// update match data
 					MatchService.editMatchById($stateParams.matchId,$scope.awayScore).success(function(data) {
 						console.log("sdfjh sdfjshfsjdhf sjdfhsdjfshdfjshdfs jkdfhskjfdh");
+						// $ionicLoading.hide();
+						// $scope.modal_goal.hide();
+					}).error(function(data) {
+						// $ionicLoading.hide();
+					});
+
+					// update player data
+					LoginService.getUserByUsername(scorer).success(function(player){
+						$scope.profileForm = {};
+						$scope.profileForm.goal = player.goal + 1;
+
+						LoginService.editUser(player.id, localStorage.getItem("token"), $scope.profileForm).success(function(data) {
+	                    }).error(function(data) {});
+
+					}).error(function(data) {});
+
+					if(assist !== 'no assist'){
+						LoginService.getUserByUsername(assist).success(function(player){
+							$scope.profileForm = {};
+							$scope.profileForm.assist = player.assist + 1;
+
+							LoginService.editUser(player.id, localStorage.getItem("token"), $scope.profileForm).success(function(data) {
+		                    }).error(function(data) {});
+
+						}).error(function(data) {});
+					}
+
+					setTimeout(function(){
 						$ionicLoading.hide();
 						$scope.modal_goal.hide();
-					}).error(function(data) {
-						$ionicLoading.hide();
-					});
+					},1500);
+
 				}).error(function(data){
 					$ionicLoading.hide();
 				});
@@ -6855,19 +13001,17 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 					$scope.arrHome = [];
 					$scope.lastArrHome = 0;
 					$scope.goalAwayDataArr = [];
+
 					var scoreAway = $scope.matchData.goalAway.scoreAway;
-					var scoreAwayLength = scoreAway.toString().length;	
-					if(scoreAwayLength < 1){
+					if(scoreAway == 0){
 						console.log("0");
 						$scope.lastAwayDataArr = 0;
-					}else if(scoreAwayLength == 1){
-						console.log("1");
-						$scope.goalAwayDataArr.push($scope.matchData.goalAway.scoreAway);
-						$scope.lastAwayDataArr = $scope.goalAwayDataArr.length;
-					}else{
+					}else if(scoreAway.toString().indexOf(",") !== -1){
 						console.log("Ga ada");
 						$scope.goalAwayDataArr = $scope.matchData.goalAway.scoreAway.split(",");
 						$scope.lastAwayDataArr = $scope.goalAwayDataArr.length;
+					}else{
+						$scope.lastAwayDataArr = 1;
 					}
 					
 					
@@ -6895,7 +13039,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 					}	
 					console.log("scorer");
 					console.log($scope.matchData.goalHome.scorer);
-					if($scope.matchData.goalHome.scorer !== undefined){
+					if($scope.matchData.goalHome.scorer !== ''){
 						resultHome = parseInt($scope.lastArrHome,10);	
 						console.log(resultHome);
 						resultAway = parseInt($scope.lastAwayDataArr,10);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
@@ -6962,20 +13106,17 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 					$scope.arrHome = [];
 					$scope.lastArrHome = 0;
 					$scope.goalHomeDataArr = [];
-					// $scope.lastHomeDataArr = $scope.goalHomeDataArr.length;
+					
 					var scoreHome = $scope.matchData.goalHome.scoreHome;
-					var scoreHomeLength = scoreHome.toString().length;	
-					if(scoreHomeLength < 1){
+					if(scoreHome == 0){
 						console.log("0");
 						$scope.lastHomeDataArr = 0;
-					}else if(scoreHomeLength == 1){
-						console.log("1");
-						$scope.goalHomeDataArr.push($scope.matchData.goalHome.scoreHome);
-						$scope.lastHomeDataArr = $scope.goalHomeDataArr.length;
-					}else{
+					}else if(scoreHome.toString().indexOf(",") !== -1){
 						console.log("Ga ada");
 						$scope.goalHomeDataArr = $scope.matchData.goalHome.scoreHome.split(",");
 						$scope.lastHomeDataArr = $scope.goalHomeDataArr.length;
+					}else{
+						$scope.lastHomeDataArr = 1;
 					}
 					
 					
@@ -7003,7 +13144,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 					}	
 					console.log("scorer");
 					console.log($scope.matchData.goalAway.scorer);
-					if($scope.matchData.goalAway.scorer !== undefined){
+					if($scope.matchData.goalAway.scorer !== ''){
 						resultHome = parseInt($scope.lastHomeDataArr,10);	
 						console.log(resultHome);
 						resultAway = parseInt($scope.lastArrAway,10);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
@@ -7070,21 +13211,18 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 					$scope.arrHome = [];
 					$scope.lastArrHome = 0;
 					$scope.goalAwayDataArr = [];
+					
 					var scoreAway = $scope.matchData.goalAway.scoreAway;
-					var scoreAwayLength = scoreAway.toString().length;	
-					if(scoreAwayLength < 1){
+					if(scoreAway == 0){
 						console.log("0");
 						$scope.lastAwayDataArr = 0;
-					}else if(scoreAwayLength == 1){
-						console.log("1");
-						$scope.goalAwayDataArr.push($scope.matchData.goalAway.scoreAway);
-						$scope.lastAwayDataArr = $scope.goalAwayDataArr.length;
-					}else{
+					}else if(scoreAway.toString().indexOf(",") !== -1){
 						console.log("Ga ada");
 						$scope.goalAwayDataArr = $scope.matchData.goalAway.scoreAway.split(",");
 						$scope.lastAwayDataArr = $scope.goalAwayDataArr.length;
+					}else{
+						$scope.lastAwayDataArr = 1;
 					}
-					
 					
 					console.log($scope.lastAwayDataArr);
 
@@ -7110,7 +13248,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 					}	
 					console.log("scorer");
 					console.log($scope.matchData.goalHome.scorer);
-					if($scope.matchData.goalHome.scorer !== undefined){
+					if($scope.matchData.goalHome.scorer !== ''){
 						resultHome = parseInt($scope.lastArrHome,10);	
 						console.log(resultHome);
 						resultAway = parseInt($scope.lastAwayDataArr,10);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
@@ -7133,13 +13271,44 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 						$scope.homeScore.goalHome.eventNumber = $scope.matchData.match_eventNumber;
 					}
 					console.log($scope.homeScore);
+
+					// update match data
 					MatchService.editMatchById($stateParams.matchId,$scope.homeScore).success(function(data) {
 						console.log("sdfjh sdfjshfsjdhf sjdfhsdjfshdfjshdfs jkdfhskjfdh");
+						// $ionicLoading.hide();
+						// $scope.modal_goal.hide();
+					}).error(function(data) {
+						// $ionicLoading.hide();
+					});
+
+					// update player data
+					LoginService.getUserByUsername(scorer).success(function(player){
+						$scope.profileForm = {};
+						$scope.profileForm.goal = player.goal + 1;
+
+						LoginService.editUser(player.id, localStorage.getItem("token"), $scope.profileForm).success(function(data) {
+							console.log(data);
+	                    }).error(function(data) {});
+
+					}).error(function(data) {});
+
+					if(assist !== 'no assist'){
+						LoginService.getUserByUsername(assist).success(function(player){
+							$scope.profileForm = {};
+							$scope.profileForm.assist = player.assist + 1;
+
+							LoginService.editUser(player.id, localStorage.getItem("token"), $scope.profileForm).success(function(data) {
+								console.log(data);
+		                    }).error(function(data) {});
+
+						}).error(function(data) {});
+					}
+
+					setTimeout(function(){
 						$ionicLoading.hide();
 						$scope.modal_goal.hide();
-					}).error(function(data) {
-						$ionicLoading.hide();
-					});
+					},1500);
+
 				}).error(function(data){
 					$ionicLoading.hide();
 				});
@@ -7176,20 +13345,17 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 					$scope.arrHome = [];
 					$scope.lastArrHome = 0;
 					$scope.goalHomeDataArr = [];
-					// $scope.lastHomeDataArr = $scope.goalHomeDataArr.length;
+		
 					var scoreHome = $scope.matchData.goalHome.scoreHome;
-					var scoreHomeLength = scoreHome.toString().length;	
-					if(scoreHomeLength < 1){
+					if(scoreHome == 0){
 						console.log("0");
 						$scope.lastHomeDataArr = 0;
-					}else if(scoreHomeLength == 1){
-						console.log("1");
-						$scope.goalHomeDataArr.push($scope.matchData.goalHome.scoreHome);
-						$scope.lastHomeDataArr = $scope.goalHomeDataArr.length;
-					}else{
+					}else if(scoreHome.toString().indexOf(",") !== -1){
 						console.log("Ga ada");
 						$scope.goalHomeDataArr = $scope.matchData.goalHome.scoreHome.split(",");
 						$scope.lastHomeDataArr = $scope.goalHomeDataArr.length;
+					}else{
+						$scope.lastHomeDataArr = 1;
 					}
 					
 					
@@ -7217,7 +13383,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 					}	
 					console.log("scorer");
 					console.log($scope.matchData.goalAway.scorer);
-					if($scope.matchData.goalAway.scorer !== undefined){
+					if($scope.matchData.goalAway.scorer !== ''){
 						resultHome = parseInt($scope.lastHomeDataArr,10);	
 						console.log(resultHome);
 						resultAway = parseInt($scope.lastArrAway,10);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
@@ -7240,13 +13406,44 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 						$scope.awayScore.goalAway.eventNumber = $scope.matchData.match_eventNumber;
 					}
 					console.log($scope.awayScore);
+
+					// update match data
 					MatchService.editMatchById($stateParams.matchId,$scope.awayScore).success(function(data) {
 						console.log("sdfjh sdfjshfsjdhf sjdfhsdjfshdfjshdfs jkdfhskjfdh");
+						// $ionicLoading.hide();
+						// $scope.modal_goal.hide();
+					}).error(function(data) {
+						// $ionicLoading.hide();
+					});
+
+					// update player data
+					LoginService.getUserByUsername(scorer).success(function(player){
+						$scope.profileForm = {};
+						$scope.profileForm.goal = player.goal + 1;
+
+						LoginService.editUser(player.id, localStorage.getItem("token"), $scope.profileForm).success(function(data) {
+							console.log(data);
+	                    }).error(function(data) {});
+
+					}).error(function(data) {});
+
+					if(assist !== 'no assist'){
+						LoginService.getUserByUsername(assist).success(function(player){
+							$scope.profileForm = {};
+							$scope.profileForm.assist = player.assist + 1;
+
+							LoginService.editUser(player.id, localStorage.getItem("token"), $scope.profileForm).success(function(data) {
+								console.log(data);
+		                    }).error(function(data) {});
+
+						}).error(function(data) {});
+					}
+
+					setTimeout(function(){
 						$ionicLoading.hide();
 						$scope.modal_goal.hide();
-					}).error(function(data) {
-						$ionicLoading.hide();
-					});
+					},1500);
+
 				}).error(function(data){
 					$ionicLoading.hide();
 				});
@@ -7267,6 +13464,14 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				MatchService.getMatchById($stateParams.matchId).success(function(data){
 					$scope.matchData = data;
 					console.log($scope.matchData);
+
+					// update match stats
+					data.match_stats.homeYellowCard = data.match_stats.homeYellowCard + 1;
+					MatchService.editMatchById($stateParams.matchId,data).success(function(data) {
+						console.log("sdfjh sdfjshfsjdhf sjdfhsdjfshdfjshdfs jkdfhskjfdh");
+					}).error(function(data) {});
+
+
 					$ionicLoading.hide();
 					// $scope.homeYellow.match_eventNumber = $scope.matchData.match_eventNumber + 1;
 					$scope.homeYellow.match_eventNumber = $scope.matchData.match_eventNumber + 1;
@@ -7321,13 +13526,32 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 					}
 
 					console.log($scope.homeYellow);
+
+					// update match data
 					MatchService.editMatchById($stateParams.matchId,$scope.homeYellow).success(function(data) {
 						console.log("sdfjh sdfjshfsjdhf sjdfhsdjfshdfjshdfs jkdfhskjfdh");
+						// $ionicLoading.hide();
+						// $scope.modal_goal.hide();
+					}).error(function(data) {
+						// $ionicLoading.hide();
+					});
+
+					// update player data
+					LoginService.getUserByUsername(player).success(function(player){
+						$scope.profileForm = {};
+						$scope.profileForm.yellowCard = player.yellowCard + 1;
+
+						LoginService.editUser(player.id, localStorage.getItem("token"), $scope.profileForm).success(function(data) {
+							console.log(data);
+	                    }).error(function(data) {});
+
+					}).error(function(data) {});
+
+					setTimeout(function(){
 						$ionicLoading.hide();
 						$scope.modal_goal.hide();
-					}).error(function(data) {
-						$ionicLoading.hide();
-					});
+					},1500);
+
 				}).error(function(data){
 					$ionicLoading.hide();
 				});
@@ -7348,6 +13572,13 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				MatchService.getMatchById($stateParams.matchId).success(function(data){
 					$scope.matchData = data;
 					console.log($scope.matchData);
+
+					// update match stats
+					data.match_stats.awayYellowCard = data.match_stats.awayYellowCard + 1;
+					MatchService.editMatchById($stateParams.matchId,data).success(function(data) {
+						console.log("sdfjh sdfjshfsjdhf sjdfhsdjfshdfjshdfs jkdfhskjfdh");
+					}).error(function(data) {});
+
 					$ionicLoading.hide();
 					
 					$scope.awayYellow.match_eventNumber = $scope.matchData.match_eventNumber + 1;
@@ -7401,13 +13632,32 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 					}
 					
 					console.log($scope.awayYellow);
+
+					// update match data
 					MatchService.editMatchById($stateParams.matchId,$scope.awayYellow).success(function(data) {
 						console.log("sdfjh sdfjshfsjdhf sjdfhsdjfshdfjshdfs jkdfhskjfdh");
+						// $ionicLoading.hide();
+						// $scope.modal_goal.hide();
+					}).error(function(data) {
+						// $ionicLoading.hide();
+					});
+
+					// update player data
+					LoginService.getUserByUsername(player).success(function(player){
+						$scope.profileForm = {};
+						$scope.profileForm.yellowCard = player.yellowCard + 1;
+
+						LoginService.editUser(player.id, localStorage.getItem("token"), $scope.profileForm).success(function(data) {
+							console.log(data);
+	                    }).error(function(data) {});
+
+					}).error(function(data) {});
+
+					setTimeout(function(){
 						$ionicLoading.hide();
 						$scope.modal_goal.hide();
-					}).error(function(data) {
-						$ionicLoading.hide();
-					});
+					},1500);
+
 				}).error(function(data){
 					$ionicLoading.hide();
 				});
@@ -7428,6 +13678,14 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				MatchService.getMatchById($stateParams.matchId).success(function(data){
 					$scope.matchData = data;
 					console.log($scope.matchData);
+
+					// update match stats
+					data.match_stats.homeRedCard = data.match_stats.homeRedCard + 1;
+					MatchService.editMatchById($stateParams.matchId,data).success(function(data) {
+						console.log("sdfjh sdfjshfsjdhf sjdfhsdjfshdfjshdfs jkdfhskjfdh");
+					}).error(function(data) {});
+
+
 					$ionicLoading.hide();
 					
 					$scope.homeRed.match_eventNumber = $scope.matchData.match_eventNumber + 1;
@@ -7462,13 +13720,32 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 						$scope.homeRed.redCardHome.eventNumber = $scope.matchData.match_eventNumber;
 					}
 					console.log($scope.homeRed);
+
+					// update match data
 					MatchService.editMatchById($stateParams.matchId,$scope.homeRed).success(function(data) {
 						console.log("sdfjh sdfjshfsjdhf sjdfhsdjfshdfjshdfs jkdfhskjfdh");
+						// $ionicLoading.hide();
+						// $scope.modal_goal.hide();
+					}).error(function(data) {
+						// $ionicLoading.hide();
+					});
+
+					// update player data
+					LoginService.getUserByUsername(player).success(function(player){
+						$scope.profileForm = {};
+						$scope.profileForm.redCard = player.redCard + 1;
+
+						LoginService.editUser(player.id, localStorage.getItem("token"), $scope.profileForm).success(function(data) {
+							console.log(data);
+	                    }).error(function(data) {});
+
+					}).error(function(data) {});
+
+					setTimeout(function(){
 						$ionicLoading.hide();
 						$scope.modal_goal.hide();
-					}).error(function(data) {
-						$ionicLoading.hide();
-					});
+					},1500);
+
 				}).error(function(data){
 					$ionicLoading.hide();
 				});
@@ -7489,6 +13766,13 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				MatchService.getMatchById($stateParams.matchId).success(function(data){
 					$scope.matchData = data;
 					console.log($scope.matchData);
+
+					// update match stats
+					data.match_stats.awayRedCard = data.match_stats.awayRedCard + 1;
+					MatchService.editMatchById($stateParams.matchId,data).success(function(data) {
+						console.log("sdfjh sdfjshfsjdhf sjdfhsdjfshdfjshdfs jkdfhskjfdh");
+					}).error(function(data) {});
+
 					$ionicLoading.hide();
 					
 					$scope.awayRed.match_eventNumber = $scope.matchData.match_eventNumber + 1;
@@ -7521,13 +13805,32 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 						$scope.awayRed.redCardAway.eventNumber = $scope.matchData.match_eventNumber;
 					}
 					console.log($scope.awayRed);
+
+					// update match data
 					MatchService.editMatchById($stateParams.matchId,$scope.awayRed).success(function(data) {
 						console.log("sdfjh sdfjshfsjdhf sjdfhsdjfshdfjshdfs jkdfhskjfdh");
+						// $ionicLoading.hide();
+						// $scope.modal_goal.hide();
+					}).error(function(data) {
+						// $ionicLoading.hide();
+					});
+
+					// update player data
+					LoginService.getUserByUsername(player).success(function(player){
+						$scope.profileForm = {};
+						$scope.profileForm.redCard = player.redCard + 1;
+
+						LoginService.editUser(player.id, localStorage.getItem("token"), $scope.profileForm).success(function(data) {
+							console.log(data);
+	                    }).error(function(data) {});
+
+					}).error(function(data) {});
+
+					setTimeout(function(){
 						$ionicLoading.hide();
 						$scope.modal_goal.hide();
-					}).error(function(data) {
-						$ionicLoading.hide();
-					});
+					},1500);
+
 				}).error(function(data){
 					$ionicLoading.hide();
 				});
@@ -7602,13 +13905,32 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 						$scope.homeSub.substituteHome.eventNumber = $scope.matchData.match_eventNumber;
 					}
 					console.log($scope.homeSub);
+
+					// update match data
 					MatchService.editMatchById($stateParams.matchId,$scope.homeSub).success(function(data) {
 						console.log("sdfjh sdfjshfsjdhf sjdfhsdjfshdfjshdfs jkdfhskjfdh");
+						// $ionicLoading.hide();
+						// $scope.modal_goal.hide();
+					}).error(function(data) {
+						// $ionicLoading.hide();
+					});
+
+					// update player data
+					LoginService.getUserByUsername(playerIn).success(function(player){
+						$scope.profileForm = {};
+						$scope.profileForm.play = player.play + 1;
+
+						LoginService.editUser(player.id, localStorage.getItem("token"), $scope.profileForm).success(function(data) {
+							console.log(data);
+	                    }).error(function(data) {});
+
+					}).error(function(data) {});
+
+					setTimeout(function(){
 						$ionicLoading.hide();
 						$scope.modal_goal.hide();
-					}).error(function(data) {
-						$ionicLoading.hide();
-					});
+					},1500);
+
 				}).error(function(data){
 					$ionicLoading.hide();
 				});
@@ -7683,13 +14005,32 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 						$scope.awaySub.substituteAway.eventNumber = $scope.matchData.match_eventNumber;
 					}
 					console.log($scope.awaySub);
+
+					// update match data
 					MatchService.editMatchById($stateParams.matchId,$scope.awaySub).success(function(data) {
 						console.log("sdfjh sdfjshfsjdhf sjdfhsdjfshdfjshdfs jkdfhskjfdh");
+						// $ionicLoading.hide();
+						// $scope.modal_goal.hide();
+					}).error(function(data) {
+						// $ionicLoading.hide();
+					});
+
+					// update player data
+					LoginService.getUserByUsername(playerIn).success(function(player){
+						$scope.profileForm = {};
+						$scope.profileForm.play = player.play + 1;
+
+						LoginService.editUser(player.id, localStorage.getItem("token"), $scope.profileForm).success(function(data) {
+							console.log(data);
+	                    }).error(function(data) {});
+
+					}).error(function(data) {});
+
+					setTimeout(function(){
 						$ionicLoading.hide();
 						$scope.modal_goal.hide();
-					}).error(function(data) {
-						$ionicLoading.hide();
-					});
+					},1500);
+
 				}).error(function(data){
 					$ionicLoading.hide();
 				});
@@ -7698,7 +14039,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	    }   
 	};
 
-	//Modal
+	// Modal
 	$ionicModal.fromTemplateUrl('modals/modal.html', {
 		scope: $scope,
 		animation: 'slide-in-up'
@@ -7787,6 +14128,12 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	$scope.lineupData = [];
 	$scope.lineupDataArr = [];
 	$scope.status = "";
+	$scope.redCardPlayerHome = [];
+	$scope.redCardPlayerAway = [];
+	$scope.firstYellowCardPlayerHome = [];
+	$scope.secondYellowCardPlayerHome = [];
+	$scope.firstYellowCardPlayerAway = [];
+	$scope.secondYellowCardPlayerAway = [];
 
     $scope.goalHome = function() {
 			$ionicLoading.show({
@@ -7799,7 +14146,34 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		    $scope.modal_goal.show();
 
 		   	MatchService.getMatchById($stateParams.matchId).success(function(data){
+		   		var lineupArr = data.match_homeTeamObj.lineup.split(",");
 		   		$scope.lineupDataArr = data.match_homeTeamObj.lastLineup.split(",");
+		   		var yellowCardedStatusHomeArr = data.yellowCardHome.status.split(",");
+		   		var yellowCardedPlayerHomeArr = data.yellowCardHome.player.split(",");
+
+		   		if(data.redCardHome.player === ''){
+		   			$scope.redCardedPlayerHome = [];
+		   		}else{	
+		   			if(data.redCardHome.player.toString().indexOf(",") === -1){
+						$scope.redCardedPlayerHome = data.redCardHome.player;
+		   			}else{
+		   				$scope.redCardedPlayerHome = data.redCardHome.player.split(",");
+		   			}
+		   		}
+				
+				for(var p = 0; p < yellowCardedPlayerHomeArr.length; p++){
+					if(yellowCardedStatusHomeArr[p] === 'second yellow card'){
+						console.log("second yellow card : " + yellowCardedPlayerHomeArr[p])
+						$scope.secondYellowCardPlayerHome.push(yellowCardedPlayerHomeArr[p]);
+					}
+				}
+
+		   		// for(var l = 0; l < lineupArr.length; l++){
+		   		// 	if($scope.lineupDataArr.indexOf(lineupArr[l]) === -1){
+		   		// 		console.log(lineupArr[l]);
+		   		// 		$scope.redCardPlayerHome.push(lineupArr[l]);
+		   		// 	}
+		   		// }
 				$ionicLoading.hide();
 			}).error(function(data){
 				$ionicLoading.hide();
@@ -7818,7 +14192,37 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		    $scope.modal_goal.show();
 
 		   	MatchService.getMatchById($stateParams.matchId).success(function(data){
+		   		var lineupArr = data.match_awayTeamObj.lineup.split(",");
 		   		$scope.lineupDataArr = data.match_awayTeamObj.lastLineup.split(",");
+		   		var yellowCardedStatusAwayArr = data.yellowCardAway.status.split(",");
+		   		var yellowCardedPlayerAwayArr = data.yellowCardAway.player.split(",");
+
+
+		   		if(data.redCardAway.player === ''){
+		   			$scope.redCardedPlayerAway = [];
+		   		}else{	
+		   			if(data.redCardAway.player.toString().indexOf(",") === -1){
+						$scope.redCardedPlayerAway = data.redCardAway.player;
+		   			}else{
+		   				$scope.redCardedPlayerAway = data.redCardAway.player.split(",");
+		   			}
+		   		}
+		   		
+		
+				for(var p = 0; p < yellowCardedPlayerAwayArr.length; p++){
+					if(yellowCardedStatusAwayArr[p] === 'second yellow card'){
+						console.log("second yellow card : " + yellowCardedPlayerAwayArr[p])
+						$scope.secondYellowCardPlayerAway.push(yellowCardedPlayerAwayArr[p]);
+					}
+				}
+
+
+		   		// for(var l = 0; l < lineupArr.length; l++){
+		   		// 	if($scope.lineupDataArr.indexOf(lineupArr[l]) === -1){
+		   		// 		console.log(lineupArr[l]);
+		   		// 		$scope.redCardPlayerAway.push(lineupArr[l]);
+		   		// 	}
+		   		// }
 				$ionicLoading.hide();
 			}).error(function(data){
 				$ionicLoading.hide();
@@ -7837,7 +14241,34 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		    $scope.modal_goal.show();
 
 		   	MatchService.getMatchById($stateParams.matchId).success(function(data){
+		   		var lineupArr = data.match_homeTeamObj.lineup.split(",");
 		   		$scope.lineupDataArr = data.match_homeTeamObj.lastLineup.split(",");
+		   		var yellowCardedStatusHomeArr = data.yellowCardHome.status.split(",");
+		   		var yellowCardedPlayerHomeArr = data.yellowCardHome.player.split(",");
+
+		   		if(data.redCardHome.player === ''){
+		   			$scope.redCardedPlayerHome = [];
+		   		}else{	
+		   			if(data.redCardHome.player.toString().indexOf(",") === -1){
+						$scope.redCardedPlayerHome = data.redCardHome.player;
+		   			}else{
+		   				$scope.redCardedPlayerHome = data.redCardHome.player.split(",");
+		   			}
+		   		}
+				
+				for(var p = 0; p < yellowCardedPlayerHomeArr.length; p++){
+					if(yellowCardedStatusHomeArr[p] === 'second yellow card'){
+						console.log("second yellow card : " + yellowCardedPlayerHomeArr[p])
+						$scope.secondYellowCardPlayerHome.push(yellowCardedPlayerHomeArr[p]);
+					}
+				}
+
+		   		// for(var l = 0; l < lineupArr.length; l++){
+		   		// 	if($scope.lineupDataArr.indexOf(lineupArr[l]) === -1){
+		   		// 		console.log(lineupArr[l]);
+		   		// 		$scope.redCardPlayerHome.push(lineupArr[l]);
+		   		// 	}
+		   		// }
 				$ionicLoading.hide();
 			}).error(function(data){
 				$ionicLoading.hide();
@@ -7856,7 +14287,34 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		    $scope.modal_goal.show();
 
 		   	MatchService.getMatchById($stateParams.matchId).success(function(data){
+		   		var lineupArr = data.match_awayTeamObj.lineup.split(",");
 		   		$scope.lineupDataArr = data.match_awayTeamObj.lastLineup.split(",");
+		   		var yellowCardedStatusAwayArr = data.yellowCardAway.status.split(",");
+		   		var yellowCardedPlayerAwayArr = data.yellowCardAway.player.split(",");
+
+		   		if(data.redCardAway.player === ''){
+		   			$scope.redCardedPlayerAway = [];
+		   		}else{	
+		   			if(data.redCardAway.player.toString().indexOf(",") === -1){
+						$scope.redCardedPlayerAway = data.redCardAway.player;
+		   			}else{
+		   				$scope.redCardedPlayerAway = data.redCardAway.player.split(",");
+		   			}
+		   		}
+				
+				for(var p = 0; p < yellowCardedPlayerAwayArr.length; p++){
+					if(yellowCardedStatusAwayArr[p] === 'second yellow card'){
+						console.log("second yellow card : " + yellowCardedPlayerAwayArr[p])
+						$scope.secondYellowCardPlayerAway.push(yellowCardedPlayerAwayArr[p]);
+					}
+				}
+
+		   		// for(var l = 0; l < lineupArr.length; l++){
+		   		// 	if($scope.lineupDataArr.indexOf(lineupArr[l]) === -1){
+		   		// 		console.log(lineupArr[l]);
+		   		// 		$scope.redCardPlayerAway.push(lineupArr[l]);
+		   		// 	}
+		   		// }
 				$ionicLoading.hide();
 			}).error(function(data){
 				$ionicLoading.hide();
@@ -7875,7 +14333,34 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		    $scope.modal_goal.show();
 
 		   	MatchService.getMatchById($stateParams.matchId).success(function(data){
+		   		var lineupArr = data.match_homeTeamObj.lineup.split(",");
 		   		$scope.lineupDataArr = data.match_homeTeamObj.lastLineup.split(",");
+		   		var yellowCardedStatusHomeArr = data.yellowCardHome.status.split(",");
+		   		var yellowCardedPlayerHomeArr = data.yellowCardHome.player.split(",");
+
+		   		if(data.redCardHome.player === ''){
+		   			$scope.redCardedPlayerHome = [];
+		   		}else{	
+		   			if(data.redCardHome.player.toString().indexOf(",") === -1){
+						$scope.redCardedPlayerHome = data.redCardHome.player;
+		   			}else{
+		   				$scope.redCardedPlayerHome = data.redCardHome.player.split(",");
+		   			}
+		   		}
+				
+				for(var p = 0; p < yellowCardedPlayerHomeArr.length; p++){
+					if(yellowCardedStatusHomeArr[p] === 'second yellow card'){
+						console.log("second yellow card : " + yellowCardedPlayerHomeArr[p])
+						$scope.secondYellowCardPlayerHome.push(yellowCardedPlayerHomeArr[p]);
+					}
+				}
+
+		   		// for(var l = 0; l < lineupArr.length; l++){
+		   		// 	if($scope.lineupDataArr.indexOf(lineupArr[l]) === -1){
+		   		// 		console.log(lineupArr[l]);
+		   		// 		$scope.redCardPlayerHome.push(lineupArr[l]);
+		   		// 	}
+		   		// }
 				$ionicLoading.hide();
 			}).error(function(data){
 				$ionicLoading.hide();
@@ -7894,7 +14379,34 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		     $scope.modal_goal.show();
 		    
 		   	MatchService.getMatchById($stateParams.matchId).success(function(data){
+		   		var lineupArr = data.match_awayTeamObj.lineup.split(",");
 		   		$scope.lineupDataArr = data.match_awayTeamObj.lastLineup.split(",");
+		   		var yellowCardedStatusAwayArr = data.yellowCardAway.status.split(",");
+		   		var yellowCardedPlayerAwayArr = data.yellowCardAway.player.split(",");
+
+		   		if(data.redCardAway.player === ''){
+		   			$scope.redCardedPlayerAway = [];
+		   		}else{	
+		   			if(data.redCardAway.player.toString().indexOf(",") === -1){
+						$scope.redCardedPlayerAway = data.redCardAway.player;
+		   			}else{
+		   				$scope.redCardedPlayerAway = data.redCardAway.player.split(",");
+		   			}
+		   		}
+				
+				for(var p = 0; p < yellowCardedPlayerAwayArr.length; p++){
+					if(yellowCardedStatusAwayArr[p] === 'second yellow card'){
+						console.log("second yellow card : " + yellowCardedPlayerAwayArr[p])
+						$scope.secondYellowCardPlayerAway.push(yellowCardedPlayerAwayArr[p]);
+					}
+				}
+
+		   		// for(var l = 0; l < lineupArr.length; l++){
+		   		// 	if($scope.lineupDataArr.indexOf(lineupArr[l]) === -1){
+		   		// 		console.log(lineupArr[l]);
+		   		// 		$scope.redCardPlayerAway.push(lineupArr[l]);
+		   		// 	}
+		   		// }
 				$ionicLoading.hide();
 			}).error(function(data){
 				$ionicLoading.hide();
@@ -7913,7 +14425,34 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		    $scope.modal_goal.show();
 
 		   	MatchService.getMatchById($stateParams.matchId).success(function(data){
+		   		var lineupArr = data.match_homeTeamObj.lineup.split(",");
 		   		$scope.lineupDataArr = data.match_homeTeamObj.lastLineup.split(",");
+		   		var yellowCardedStatusHomeArr = data.yellowCardHome.status.split(",");
+		   		var yellowCardedPlayerHomeArr = data.yellowCardHome.player.split(",");
+
+		   		if(data.redCardHome.player === ''){
+		   			$scope.redCardedPlayerHome = [];
+		   		}else{	
+		   			if(data.redCardHome.player.toString().indexOf(",") === -1){
+						$scope.redCardedPlayerHome = data.redCardHome.player;
+		   			}else{
+		   				$scope.redCardedPlayerHome = data.redCardHome.player.split(",");
+		   			}
+		   		}
+				
+				for(var p = 0; p < yellowCardedPlayerHomeArr.length; p++){
+					if(yellowCardedStatusHomeArr[p] === 'second yellow card'){
+						console.log("second yellow card : " + yellowCardedPlayerHomeArr[p])
+						$scope.secondYellowCardPlayerHome.push(yellowCardedPlayerHomeArr[p]);
+					}
+				}
+
+		   		// for(var l = 0; l < lineupArr.length; l++){
+		   		// 	if($scope.lineupDataArr.indexOf(lineupArr[l]) === -1){
+		   		// 		console.log(lineupArr[l]);
+		   		// 		$scope.redCardPlayerHome.push(lineupArr[l]);
+		   		// 	}
+		   		// }
 				$ionicLoading.hide();
 			}).error(function(data){
 				$ionicLoading.hide();
@@ -7932,7 +14471,34 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		    $scope.modal_goal.show();
 
 		  	MatchService.getMatchById($stateParams.matchId).success(function(data){
+		   		var lineupArr = data.match_awayTeamObj.lineup.split(",");
 		   		$scope.lineupDataArr = data.match_awayTeamObj.lastLineup.split(",");
+		   		var yellowCardedStatusAwayArr = data.yellowCardAway.status.split(",");
+		   		var yellowCardedPlayerAwayArr = data.yellowCardAway.player.split(",");
+
+		   		if(data.redCardAway.player === ''){
+		   			$scope.redCardedPlayerAway = [];
+		   		}else{	
+		   			if(data.redCardAway.player.toString().indexOf(",") === -1){
+						$scope.redCardedPlayerAway = data.redCardAway.player;
+		   			}else{
+		   				$scope.redCardedPlayerAway = data.redCardAway.player.split(",");
+		   			}
+		   		}
+				
+				for(var p = 0; p < yellowCardedPlayerAwayArr.length; p++){
+					if(yellowCardedStatusAwayArr[p] === 'second yellow card'){
+						console.log("second yellow card : " + yellowCardedPlayerAwayArr[p])
+						$scope.secondYellowCardPlayerAway.push(yellowCardedPlayerAwayArr[p]);
+					}
+				}
+
+		   		// for(var l = 0; l < lineupArr.length; l++){
+		   		// 	if($scope.lineupDataArr.indexOf(lineupArr[l]) === -1){
+		   		// 		console.log(lineupArr[l]);
+		   		// 		$scope.redCardPlayerAway.push(lineupArr[l]);
+		   		// 	}
+		   		// }
 				$ionicLoading.hide();
 			}).error(function(data){
 				$ionicLoading.hide();
@@ -7951,7 +14517,34 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		    $scope.modal_goal.show();
 		  
 		   	MatchService.getMatchById($stateParams.matchId).success(function(data){
+		   		var lineupArr = data.match_homeTeamObj.lineup.split(",");
 		   		$scope.lineupDataArr = data.match_homeTeamObj.lastLineup.split(",");
+		   		var yellowCardedStatusHomeArr = data.yellowCardHome.status.split(",");
+		   		var yellowCardedPlayerHomeArr = data.yellowCardHome.player.split(",");
+
+		   		if(data.redCardHome.player === ''){
+		   			$scope.redCardedPlayerHome = [];
+		   		}else{	
+		   			if(data.redCardHome.player.toString().indexOf(",") === -1){
+						$scope.redCardedPlayerHome = data.redCardHome.player;
+		   			}else{
+		   				$scope.redCardedPlayerHome = data.redCardHome.player.split(",");
+		   			}
+		   		}
+				
+				for(var p = 0; p < yellowCardedPlayerHomeArr.length; p++){
+					if(yellowCardedStatusHomeArr[p] === 'second yellow card'){
+						console.log("second yellow card : " + yellowCardedPlayerHomeArr[p])
+						$scope.secondYellowCardPlayerHome.push(yellowCardedPlayerHomeArr[p]);
+					}
+				}
+
+		   		// for(var l = 0; l < lineupArr.length; l++){
+		   		// 	if($scope.lineupDataArr.indexOf(lineupArr[l]) === -1){
+		   		// 		console.log(lineupArr[l]);
+		   		// 		$scope.redCardPlayerHome.push(lineupArr[l]);
+		   		// 	}
+		   		// }
 				$ionicLoading.hide();
 			}).error(function(data){
 				$ionicLoading.hide();
@@ -7970,7 +14563,34 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		    $scope.modal_goal.show();
 		   
 		   	MatchService.getMatchById($stateParams.matchId).success(function(data){
+		   		var lineupArr = data.match_awayTeamObj.lineup.split(",");
 		   		$scope.lineupDataArr = data.match_awayTeamObj.lastLineup.split(",");
+		   		var yellowCardedStatusAwayArr = data.yellowCardAway.status.split(",");
+		   		var yellowCardedPlayerAwayArr = data.yellowCardAway.player.split(",");
+
+		   		if(data.redCardAway.player === ''){
+		   			$scope.redCardedPlayerAway = [];
+		   		}else{	
+		   			if(data.redCardAway.player.toString().indexOf(",") === -1){
+						$scope.redCardedPlayerAway = data.redCardAway.player;
+		   			}else{
+		   				$scope.redCardedPlayerAway = data.redCardAway.player.split(",");
+		   			}
+		   		}
+				
+				for(var p = 0; p < yellowCardedPlayerAwayArr.length; p++){
+					if(yellowCardedStatusAwayArr[p] === 'second yellow card'){
+						console.log("second yellow card : " + yellowCardedPlayerAwayArr[p])
+						$scope.secondYellowCardPlayerAway.push(yellowCardedPlayerAwayArr[p]);
+					}
+				}
+
+		   		// for(var l = 0; l < lineupArr.length; l++){
+		   		// 	if($scope.lineupDataArr.indexOf(lineupArr[l]) === -1){
+		   		// 		console.log(lineupArr[l]);
+		   		// 		$scope.redCardPlayerAway.push(lineupArr[l]);
+		   		// 	}
+		   		// }
 				$ionicLoading.hide();
 			}).error(function(data){
 				$ionicLoading.hide();
@@ -7989,7 +14609,35 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		    $scope.modal_goal.show();
 
 		   	MatchService.getMatchById($stateParams.matchId).success(function(data){
+		   		var lineupArr = data.match_homeTeamObj.lineup.split(",");
 		   		$scope.lineupDataArr = data.match_homeTeamObj.lastLineup.split(",");
+		   		var yellowCardedStatusHomeArr = data.yellowCardHome.status.split(",");
+		   		var yellowCardedPlayerHomeArr = data.yellowCardHome.player.split(",");
+
+		   		if(data.redCardHome.player === ''){
+		   			$scope.redCardedPlayerHome = [];
+		   		}else{	
+		   			if(data.redCardHome.player.toString().indexOf(",") === -1){
+						$scope.redCardedPlayerHome = data.redCardHome.player;
+		   			}else{
+		   				$scope.redCardedPlayerHome = data.redCardHome.player.split(",");
+		   			}
+		   		}
+				
+				for(var p = 0; p < yellowCardedPlayerHomeArr.length; p++){
+					if(yellowCardedStatusHomeArr[p] === 'second yellow card'){
+						console.log("second yellow card : " + yellowCardedPlayerHomeArr[p])
+						$scope.secondYellowCardPlayerHome.push(yellowCardedPlayerHomeArr[p]);
+					}
+				}
+
+		   		// for(var l = 0; l < lineupArr.length; l++){
+		   		// 	if($scope.lineupDataArr.indexOf(lineupArr[l]) === -1){
+		   		// 		console.log(lineupArr[l]);
+		   		// 		$scope.redCardPlayerHome.push(lineupArr[l]);
+		   		// 	}
+		   		// }
+		   		
 		   		$scope.subDataArr = data.match_homeTeamObj.lastSub.split(",");
 				$ionicLoading.hide();
 			}).error(function(data){
@@ -8009,7 +14657,35 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		    $scope.modal_goal.show();
 		   
 		   	MatchService.getMatchById($stateParams.matchId).success(function(data){
+		   		var lineupArr = data.match_awayTeamObj.lineup.split(",");
 		   		$scope.lineupDataArr = data.match_awayTeamObj.lastLineup.split(",");
+		   		var yellowCardedStatusAwayArr = data.yellowCardAway.status.split(",");
+		   		var yellowCardedPlayerAwayArr = data.yellowCardAway.player.split(",");
+
+		   		if(data.redCardAway.player === ''){
+		   			$scope.redCardedPlayerAway = [];
+		   		}else{	
+		   			if(data.redCardAway.player.toString().indexOf(",") === -1){
+						$scope.redCardedPlayerAway = data.redCardAway.player;
+		   			}else{
+		   				$scope.redCardedPlayerAway = data.redCardAway.player.split(",");
+		   			}
+		   		}
+				
+				for(var p = 0; p < yellowCardedPlayerAwayArr.length; p++){
+					if(yellowCardedStatusAwayArr[p] === 'second yellow card'){
+						console.log("second yellow card : " + yellowCardedPlayerAwayArr[p])
+						$scope.secondYellowCardPlayerAway.push(yellowCardedPlayerAwayArr[p]);
+					}
+				}
+
+		   		// for(var l = 0; l < lineupArr.length; l++){
+		   		// 	if($scope.lineupDataArr.indexOf(lineupArr[l]) === -1){
+		   		// 		console.log(lineupArr[l]);
+		   		// 		$scope.redCardPlayerAway.push(lineupArr[l]);
+		   		// 	}
+		   		// }
+		   		
 		   		$scope.subDataArr = data.match_awayTeamObj.lastSub.split(",");
 				$ionicLoading.hide();
 			}).error(function(data){
@@ -8018,9 +14694,251 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		// }	
 	};
 
+	// Analyze Match 
+	$scope.shotOnTargetHome = function() {
+		$ionicLoading.show({
+			content: 'Login...',
+			animation: 'fade-in',
+			showBackdrop: true,
+		});
+
+		clearInterval($scope.loadTimerTeamA);
+		clearInterval($scope.loadTimerTeamB);
+		$scope.timerTeamAStat = false;
+		$scope.timerTeamBStat = false;
+		
+		MatchService.getMatchById($stateParams.matchId).success(function(match){
+	   		match.match_stats.homeShotOnTarget = match.match_stats.homeShotOnTarget + 1;
+	   		match.match_stats.homeTotalShots = match.match_stats.homeTotalShots + 1;
+
+	   		MatchService.editMatchById($stateParams.matchId,match).success(function(data) {
+				console.log(data);
+				$ionicLoading.hide();
+			}).error(function(data) {
+				$ionicLoading.hide();
+			});
+
+		}).error(function(data){});
+	};
+
+	$scope.shotOnTargetAway = function() {
+		$ionicLoading.show({
+			content: 'Login...',
+			animation: 'fade-in',
+			showBackdrop: true,
+		});
+
+		clearInterval($scope.loadTimerTeamA);
+		clearInterval($scope.loadTimerTeamB);
+		$scope.timerTeamAStat = false;
+		$scope.timerTeamBStat = false;
+		
+		MatchService.getMatchById($stateParams.matchId).success(function(match){
+	   		match.match_stats.awayShotOnTarget = match.match_stats.awayShotOnTarget + 1;
+	   		match.match_stats.awayTotalShots = match.match_stats.awayTotalShots + 1;
+
+	   		MatchService.editMatchById($stateParams.matchId,match).success(function(data) {
+				console.log(data);
+				$ionicLoading.hide();
+			}).error(function(data) {
+				$ionicLoading.hide();
+			});
+
+		}).error(function(data){});
+	};
+
+	$scope.shotOffTargetHome = function() {
+		$ionicLoading.show({
+			content: 'Login...',
+			animation: 'fade-in',
+			showBackdrop: true,
+		});
+
+		clearInterval($scope.loadTimerTeamA);
+		clearInterval($scope.loadTimerTeamB);
+		$scope.timerTeamAStat = false;
+		$scope.timerTeamBStat = false;
+		
+		MatchService.getMatchById($stateParams.matchId).success(function(match){
+	   		match.match_stats.homeShotOffTarget = match.match_stats.homeShotOffTarget + 1;
+	   		match.match_stats.homeTotalShots = match.match_stats.homeTotalShots + 1;
+
+	   		MatchService.editMatchById($stateParams.matchId,match).success(function(data) {
+				console.log(data);
+				$ionicLoading.hide();
+			}).error(function(data) {
+				$ionicLoading.hide();
+			});
+
+		}).error(function(data){});
+	};
+
+	$scope.shotOffTargetAway = function() {
+		$ionicLoading.show({
+			content: 'Login...',
+			animation: 'fade-in',
+			showBackdrop: true,
+		});
+
+		clearInterval($scope.loadTimerTeamA);
+		clearInterval($scope.loadTimerTeamB);
+		$scope.timerTeamAStat = false;
+		$scope.timerTeamBStat = false;
+		
+		MatchService.getMatchById($stateParams.matchId).success(function(match){
+	   		match.match_stats.awayShotOffTarget = match.match_stats.awayShotOffTarget + 1;
+	   		match.match_stats.awayTotalShots = match.match_stats.awayTotalShots + 1;
+
+	   		MatchService.editMatchById($stateParams.matchId,match).success(function(data) {
+				console.log(data);
+				$ionicLoading.hide();
+			}).error(function(data) {
+				$ionicLoading.hide();
+			});
+
+		}).error(function(data){});
+	};
+
+	$scope.cornerKickHome = function() {
+		$ionicLoading.show({
+			content: 'Login...',
+			animation: 'fade-in',
+			showBackdrop: true,
+		});
+
+		clearInterval($scope.loadTimerTeamA);
+		clearInterval($scope.loadTimerTeamB);
+		$scope.timerTeamAStat = false;
+		$scope.timerTeamBStat = false;
+		
+		MatchService.getMatchById($stateParams.matchId).success(function(match){
+	   		match.match_stats.homeCornerKicks = match.match_stats.homeCornerKicks + 1;
+
+	   		MatchService.editMatchById($stateParams.matchId,match).success(function(data) {
+				console.log(data);
+				$ionicLoading.hide();
+			}).error(function(data) {
+				$ionicLoading.hide();
+			});
+
+		}).error(function(data){});
+	};
+
+	$scope.cornerKickAway = function() {
+		$ionicLoading.show({
+			content: 'Login...',
+			animation: 'fade-in',
+			showBackdrop: true,
+		});
+
+		clearInterval($scope.loadTimerTeamA);
+		clearInterval($scope.loadTimerTeamB);
+		$scope.timerTeamAStat = false;
+		$scope.timerTeamBStat = false;
+		
+		MatchService.getMatchById($stateParams.matchId).success(function(match){
+	   		match.match_stats.awayCornerKicks = match.match_stats.awayCornerKicks + 1;
+
+	   		MatchService.editMatchById($stateParams.matchId,match).success(function(data) {
+				console.log(data);
+				$ionicLoading.hide();
+			}).error(function(data) {
+				$ionicLoading.hide();
+			});
+
+		}).error(function(data){});
+	};
+
+	$scope.foulHome = function() {
+		$ionicLoading.show({
+			content: 'Login...',
+			animation: 'fade-in',
+			showBackdrop: true,
+		});
+
+		clearInterval($scope.loadTimerTeamA);
+		clearInterval($scope.loadTimerTeamB);
+		$scope.timerTeamAStat = false;
+		$scope.timerTeamBStat = false;
+		
+		MatchService.getMatchById($stateParams.matchId).success(function(match){
+	   		match.match_stats.homeFouls = match.match_stats.homeFouls + 1;
+
+	   		MatchService.editMatchById($stateParams.matchId,match).success(function(data) {
+				console.log(data);
+				$ionicLoading.hide();
+			}).error(function(data) {
+				$ionicLoading.hide();
+			});
+
+		}).error(function(data){});
+	};
+
+	$scope.foulAway = function() {
+		$ionicLoading.show({
+			content: 'Login...',
+			animation: 'fade-in',
+			showBackdrop: true,
+		});
+
+		clearInterval($scope.loadTimerTeamA);
+		clearInterval($scope.loadTimerTeamB);
+		$scope.timerTeamAStat = false;
+		$scope.timerTeamBStat = false;
+		
+		MatchService.getMatchById($stateParams.matchId).success(function(match){
+	   		match.match_stats.awayFouls = match.match_stats.awayFouls + 1;
+
+	   		MatchService.editMatchById($stateParams.matchId,match).success(function(data) {
+				console.log(data);
+				$ionicLoading.hide();
+			}).error(function(data) {
+				$ionicLoading.hide();
+			});
+
+		}).error(function(data){});
+	};
+	// End Of Analyze Match Function
+
     $scope.closeModalGoal = function() {
-      $scope.modal_goal.hide();
-      $scope.squadDataArr = [];
+	  	$scope.modal_goal.hide();
+	  	$scope.squadDataArr = [];
+	  	$scope.selectedStatus = false;
+	  	$scope.playerOutStatus = false;
+	  	$scope.playerInStatus = false;
+	  	$scope.status = "";
+		$scope.redCardPlayerHome = [];
+		$scope.redCardPlayerAway = [];
+		$scope.firstYellowCardPlayerHome = [];
+		$scope.secondYellowCardPlayerHome = [];
+		$scope.firstYellowCardPlayerAway = [];
+		$scope.secondYellowCardPlayerAway = [];
+
+      	var scorers = document.getElementsByName("scorer");
+
+		for (var a = 0; a < scorers.length; a++) {
+	        if (scorers[a].checked) {
+	            scorers[a].checked = false;
+	            break;
+	        }
+	    }
+
+	    var playersIn = document.getElementsByName("playerIn");
+		var playersOut = document.getElementsByName("playerOut");
+		console.log("sub home");
+		for (var o = 0; o < playersOut.length; o++) {
+	        if (playersOut[o].checked) {
+	            playersOut[o].checked = false;
+	            break;
+	        }
+	    }
+
+	    for (var i = 0; i < playersIn.length; i++) {
+	        if (playersIn[i].checked) {
+	            playersIn[i].checked = false;
+	            break;
+	        }
+	    }
     };
     // Cleanup the modal when we're done with it!
     $scope.$on('$destroy', function() {
@@ -8051,7 +14969,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	$scope.venueInJakartaPusat = [
 		{nama: "Nirwana Futsal", alamat: "pasar sawah besar Lt.2, Jakarta Pusat", telepon: " 021-91479199"},
 		{nama: "Planet Futsal Plaza Kenari Mas", alamat: "Jl Kramat Raya No. 101 P6 A-B jak-Pus 10440", telepon: " 021-39845995"},
-		{nama: "Maestro", alamat: "Samping PRJ / samping Pasar Mobil Kemayoran", telepon: " 021-92409488"},
+		{nama: "Maestro", alamat: "Pasar Mobil Kemayoran", telepon: " 021-92409488"},
 		{nama: "Senayan Trade Center", alamat: "Jl. Asia Afrika Pintu IX, Gelora Senayan, Jakarta Pusat 10270", telepon: " 021-57932008"}
 	]
 
@@ -8120,20 +15038,6 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		{nama: "Galaxy Sport Ancol", alamat: "Jl. Lodan Raya No. 103, Ancol 14430", telepon: " 021-6918920"}
 	]
 
-	// format input data when typing for competition fee
-   	// $scope.data = {
-    // 	comp_fee: '',
-    // 	firstplace_reward: '',
-    // 	secondplace_reward: ''
-    // };
-
-    // $scope.options = {
-    //     numeral: {
-    //         numeral: true
-    //     }
-    // };
-
-
 	var stringlength = 15;
 	var stringArray = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
 	var rndString = "";
@@ -8150,6 +15054,9 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		city: "",
 		venue: ""
 	};
+	$scope.day = {};
+
+	$scope.minDate = moment(new Date()).add(8, 'days').format('YYYY-MM-DD');
 
 	CompetitionService.getAllCompetition().success(function(data) {
 		$ionicLoading.hide();
@@ -8174,13 +15081,6 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		$ionicLoading.hide();
 	});
 	$scope.status = "";
-	// $scope.showHide = function(value) {
-	//     if (value==="GroupStage"){
-	//     	$scope.status = "GroupStage";
-	//     }
-	//     else
-	//         document.getElementById('divShow').style.display = 'block';
-	// };
 
 	window.myFunction = function() {
 	    var x = document.getElementById("mySelect").value;
@@ -8196,7 +15096,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	};
 
 	console.log($scope.data.comp_start);
-	$scope.data.organizer = $scope.menuProfile.username;
+	$scope.data.organizer = localStorage.getItem("username");
 
 	// restrict input data for number of teams
 	$('.numOfTeamValidation').on('keyup', function(e){
@@ -8220,16 +15120,6 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
     });
 
     $('.compFeeValidation').on('keyup keydown', function(e){
-		// if input less than 0
-		// console.log($(this).val());
-  //       if ($(this).val() <= 0
-  //       		&& e.keyCode != 46 // delete
-  //       		&& e.keyCode != 8 // backspace
-  //          ) {
-  //          		console.log("kurang");
-  //          		e.preventDefault();     
-  //          		$(this).val();
-  //       }
   		// 1.
 		var selection = window.getSelection().toString();
 		if(selection !== ''){
@@ -8351,24 +15241,16 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	$scope.profileData = {};
 	$scope.profileData.createdCompetition = {};
 	$scope.breakBetweenFixture = ["no break",1,2,3,4,5,6,7];
+	$scope.numberOfDays = [7,14,21];
+	$scope.numberOfDays8 = [7,14];
+
 	console.log($scope.data.comp_start);
 	$scope.compEndDate = $scope.data.comp_start;
 
 	$scope.addCompetition = function() {
-		// validasi start date
-		// var todayDate = new Date();
-		// var numberOfDaysToAdd = 14;
-		// todayDate.setDate(todayDate.getDate() + numberOfDaysToAdd); 
-		// var dd = todayDate.getDate();
-		// var mm = todayDate.getMonth() + 1;
-		// var y = todayDate.getFullYear();
-
-		// var someFormattedDate = dd + '/'+ mm + '/'+ y;
 		console.log($scope.menuProfile);
 		$scope.profileData.createdCompetition.active = "";
 		$scope.profileData.createdCompetition.completed = "";
-		// $scope.profileData.createdCompetition.active.push($scope.data.comp_name);
-
 
 		if($scope.menuProfile.createdCompetition !== ''){
 			console.log("createdCompetition not null");
@@ -8385,58 +15267,49 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 		console.log($scope.data.comp_finish);
 		console.log($scope.data.comp_start);
-		if($scope.data.comp_start != null){
+		console.log($scope.data.fixture_break);
 
-			date = new Date($scope.data.comp_start);
+		if($scope.data.comp_type == 'GroupStage'){
+			$scope.day.numberOfDays = 0;
+			if($scope.data.comp_start != null){
 
-		    var fixture = $scope.data.comp_numOfTeam - 1;
-		    var counter = fixture * $scope.data.fixture_break;
-		    var numOfDays = (fixture + counter) - 1;
+			    var fixture = $scope.data.comp_numOfTeam - 1;
 
-		    var compFinishDate = date.setDate(date.getDate() + numOfDays);
+			    if($scope.data.fixture_break !== 'no break'){
+			    	var numOfBreak = ($scope.data.comp_numOfTeam - 2) * $scope.data.fixture_break;
 
-	    	if($scope.data.comp_type === 'GroupStage'){
-	    		$scope.data.comp_finish = moment(compFinishDate).toISOString();
-	    	}
-			console.log($scope.data.comp_start.getDate());
+				    // var counter = fixture * $scope.data.fixture_break;
+				    var numOfDays = (fixture + numOfBreak) - 1;
 
-			var minStartDate = new Date();
-			console.log(minStartDate.getDate());
-			minStartDate.setDate(minStartDate.getDate() + 14);
+				    var compFinishDate = moment(new Date($scope.data.comp_start)).add(numOfDays, 'days');
 
-			var maxStartDate = new Date();
-			maxStartDate.setDate(maxStartDate.getDate() + 21);
+			    	$scope.data.comp_finish = moment(compFinishDate).toISOString();
 
-			var minEndDate = new Date($scope.data.comp_start);
-			minEndDate.setDate(minEndDate.getDate() + 7);
+			    	console.log($scope.data.comp_finish);
+			    }else{
+				    var numOfDays = ($scope.data.comp_numOfTeam - 2);
+				    var compFinishDate = moment(new Date($scope.data.comp_start)).add(numOfDays, 'days');
+			    	$scope.data.comp_finish = moment(compFinishDate).toISOString();
+			    	$scope.data.fixture_break = 0;
 
-			var maxEndDate = new Date($scope.data.comp_start);
-			maxEndDate.setDate(maxEndDate.getDate() + 30);
-
-			console.log($scope.data.comp_start);
-			console.log(minStartDate);
-			console.log(maxStartDate);
-			console.log(minEndDate);
-			console.log(maxEndDate);
-
-			var isStartDateValid = true;
-			var isEndDateValid = true;
-
-			if ($scope.data.comp_start < minStartDate || $scope.data.comp_start > maxStartDate) {
-		       	console.log("start date must be between 14 and 21 day next to the day the competition is created");
-		       	isStartDateValid = false;
-		    } else {
-		    	isStartDateValid = true;
-		    }
-
-		    if ($scope.data.comp_finish < minEndDate || $scope.data.comp_finish > maxEndDate) {
-		       	console.log("end date must be between 7 and 30 day next to the competition start date");
-		       	isEndDateValid = false;
-		    } else {
-		    	isEndDateValid = true;
-		    }
+			    	console.log($scope.data.comp_finish);
+			    }
+			   
+			}
 		}
 
+		if($scope.data.comp_type != 'GroupStage'){
+			if($scope.data.comp_start != null){
+
+				var numOfDays = $scope.day.numberOfDays - 1;
+                var compFinishDate = moment(new Date($scope.data.comp_start)).add(numOfDays, 'days');
+
+		    	$scope.data.comp_finish = moment(compFinishDate).toISOString();
+
+		    	console.log($scope.data.comp_finish);
+			}
+		}
+		 
 		console.log($scope.fee.checked);
 
 		if ($scope.data.comp_name === undefined && $scope.data.comp_type === undefined && $scope.data.comp_location === undefined && $scope.data.comp_numOfTeam === undefined && $scope.data.comp_start === undefined && $scope.data.comp_finish === undefined) {
@@ -8447,7 +15320,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$rootScope.showPopup($ionicPopup,'Create Competition failed!','Competition type is required !', 'popup-error');
 		} else if ($scope.data.comp_numOfTeam === undefined || $scope.data.comp_numOfTeam === "") {
 			$rootScope.showPopup($ionicPopup,'Create Competition failed!','Number of teams is required !', 'popup-error');
-		} else if ($scope.fee.checked == true && $scope.data.comp_fee === undefined || $scope.data.comp_fee === "") {
+		} else if ($scope.fee.checked == true && ($scope.data.comp_fee === undefined || $scope.data.comp_fee === "")) {
 			$rootScope.showPopup($ionicPopup,'Create Competition failed!','registration fee is required !', 'popup-error');
 		} else if ($scope.data.comp_address.city === undefined || $scope.data.comp_address.city === "") {
 			$rootScope.showPopup($ionicPopup,'Create Competition failed!','city is required !', 'popup-error');
@@ -8455,12 +15328,8 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$rootScope.showPopup($ionicPopup,'Create Competition failed!','venue is required !', 'popup-error'); 
 		} else if ($scope.data.comp_start === undefined || $scope.data.comp_start === "") {
 			$rootScope.showPopup($ionicPopup,'Create Competition failed!','start date is required !', 'popup-error');
-		} else if (isStartDateValid === false) {
-			$rootScope.showPopup($ionicPopup,'Create Competition failed!','start date is not valid (must be minimal 14 day next to the day the competition is created)', 'popup-error');
-		} else if ($scope.data.comp_finish === undefined || $scope.data.comp_finish === "") {
-			$rootScope.showPopup($ionicPopup,'Create Competition failed!','end date is required !', 'popup-error');
-		} else if (isEndDateValid === false) {
-			$rootScope.showPopup($ionicPopup,'Create Competition failed!','end date is not valid (must be between 7 and 30 day next to the competition start date)', 'popup-error');
+		} else if ($scope.day.numberOfDays === undefined || $scope.day.numberOfDays === "") {
+			$rootScope.showPopup($ionicPopup,'Create Competition failed!','number of day is required !', 'popup-error');
 		} else if ($scope.data.comp_name !== null && $scope.data.comp_type !== null && $scope.data.comp_numOfTeam !== null && $scope.data.comp_location !== null && $scope.data.comp_start !== null && $scope.data.comp_finish !== null) {
 			console.log($scope.data);
 			CompetitionService.addCompetition($scope.data).success(function(data) {
@@ -8475,7 +15344,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				$ionicLoading.hide();
 				var alertPopup = $ionicPopup.alert({
 					title: 'Post Data Failed!',
-					template: 'Gagal Membuat Kompetisi'
+					template: 'Gagal Membuat Kompetisi, Silahkan coba beberapa saat lagi...'
 				});
 			});	
 			console.log($scope.profileData);
@@ -8563,7 +15432,13 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				var teamSquad = localStorage.getItem("myTeamSquad").split(",");
 				var teamSquadLength = teamSquad.length;
 
-				if(teamCoach !== null && teamSquadLength >= 8){
+				if(localStorage.getItem("team") === ''){
+					var confirmPopup = $ionicPopup.alert({
+						title: 'Register Competition Failed',
+						template: 'You must have a team before you can register into any competition!'
+					});
+
+				} else if(teamCoach !== null && teamSquadLength >= 8){
 					// Register competition
 
 					$scope.formCompetition = {};
@@ -9140,7 +16015,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		};
 })
 
-.controller('MyTeamCtrl', function($scope, $state, $stateParams, $ionicPopup, $ionicPlatform, $ionicLoading, $ionicModal, TeamService, LoginService, MatchService, PostService, ProfileService, CompetitionService, TrainingService, ionicMaterialInk, ionicMaterialMotion, $cordovaSocialSharing) {
+.controller('MyTeamCtrl', function($scope, $rootScope, $state, $stateParams, $ionicPopup, $ionicPlatform, $ionicLoading, $ionicModal, TeamService, LoginService, MatchService, PostService, ProfileService, CompetitionService, TrainingService, ionicMaterialInk, ionicMaterialMotion, $cordovaSocialSharing) {
 	$scope.team = {};
 	$scope.myTeam = {};
 	$scope.myTeamData = {};
@@ -9155,7 +16030,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	$scope.haveTeamStatus = false;
 	$scope.teamInvitationStatus = false;
 	$scope.teamInvitation = [];
-	$scope.showme = 1;
+	// $scope.showme = 1;
 	$scope.coachTab = 1;
 	$scope.counter = true;
 	$scope.userProfile = {};
@@ -9168,6 +16043,13 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	// });
 	// bug stlh create team, loading tidak mau berhenti
 
+	if(localStorage.getItem("showme") !== 1){
+		$scope.showme = localStorage.getItem("showme");
+	}else{
+		$scope.showme = 1;
+		localStorage.setItem("showme", 1);
+	}
+	
 	// Get user profile data
 	LoginService.getUserById(localStorage.getItem("userid")).success(function(data) {
 		$scope.userProfile = data;
@@ -9177,7 +16059,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		// if($scope.userProfile.team !== null){
 		// 	$scope.haveTeamStatus = true;
 		// }
-		if(localStorage.getItem("team") !== null){
+		if(localStorage.getItem("team") !== ''){
 			$scope.haveTeamStatus = true;
 		}
 		if($scope.userProfile.teamRequested !== ""){
@@ -9228,31 +16110,154 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 							// $ionicLoading.hide();
 						}
 
+
 						if($scope.createdTeam.team_squad !== null){
 							$scope.joinedMember = $scope.createdTeam.team_squad.split(",");
+
+							console.log($scope.joinedMember);
+							for(var i = 0; i < $scope.joinedMember.length; i++){
+								LoginService.getUserByUsername($scope.joinedMember[i]).success(function(data){
+									console.log(data);
+									if(data !== null){
+										$scope.joinedMemberData.push(data);
+									}
+								}).error(function(data) {
+									// $ionicLoading.hide();
+								});
+							}
+
 						}
 						if($scope.createdTeam.invited_member !== null){
 							$scope.invitedMember = $scope.createdTeam.invited_member.split(",");
+
+							console.log($scope.invitedMember);
+							var im = 0;
+							function getInvitedMemberData() {
+								$rootScope.showLoading();
+							    LoginService.getUserByUsername($scope.invitedMember[im]).success(function(data){
+									console.log(data);
+									if(data !== null){
+										$scope.invitedMemberData.push(data);
+									}
+								}).error(function(data) {
+									// $ionicLoading.hide();
+								});
+							    im++;
+							    if(im == $scope.invitedMember.length){
+							    	$ionicLoading.hide();
+							    }
+							    if( im < $scope.invitedMember.length){
+							        setTimeout( getInvitedMemberData, 500);
+							    }
+							}
+							getInvitedMemberData();
+							console.log($scope.invitedMemberData);
 						}
 						if($scope.createdTeam.coach_request !== null){
 							$scope.coachRequest = $scope.createdTeam.coach_request.split(",");
+
+							var cr = 0;
+							function getCoachRequestData() {
+							    LoginService.getUserByUsername($scope.coachRequest[cr]).success(function(data){
+									console.log(data);
+									if(data !== null){
+										$scope.coachRequestData.push(data);
+										$scope.userRequestData.push(data);
+									}
+								}).error(function(data) {
+									// $ionicLoading.hide();
+								});
+							    cr++;
+							    if(cr == $scope.coachRequest.length){
+							    	// $ionicLoading.hide();
+							    }
+							    if(cr < $scope.coachRequest.length){
+							        setTimeout( getCoachRequestData, 1000 );
+							    }
+							}
+							getCoachRequestData();
+							console.log($scope.coachRequestData);
 						}
 						if($scope.createdTeam.player_request !== null){
 							$scope.playerRequest = $scope.createdTeam.player_request.split(",");
+
+							var pr = 0;
+							function getPlayerRequestData() {
+							    LoginService.getUserByUsername($scope.playerRequest[pr]).success(function(data){
+									console.log(data);
+									if(data !== null){
+										$scope.playerRequestData.push(data);
+										$scope.userRequestData.push(data);
+									}
+								}).error(function(data) {
+									// $ionicLoading.hide();
+								});
+							    pr++;
+							    if(pr == $scope.playerRequest.length){
+							    	// $ionicLoading.hide();
+							    }
+							    if(pr < $scope.playerRequest.length){
+							        setTimeout( getPlayerRequestData, 1000 );
+							    }
+							}
+							getPlayerRequestData();
+							console.log($scope.playerRequestData);
+							console.log($scope.userRequestData);
 						}
 
-						console.log($scope.joinedMember);
-						for(var i = 0; i < $scope.joinedMember.length; i++){
-							LoginService.getUserByUsername($scope.joinedMember[i]).success(function(data){
-								console.log(data);
-								if(data !== null){
-									$scope.joinedMemberData.push(data);
+
+
+
+						// Invited Members
+						$scope.invitedMemberObj = [];
+						$scope.invitedMembersArr = [];
+						if($scope.createdTeam.invited_members === null || $scope.createdTeam.invited_members === '' || $scope.createdTeam.invited_members.name === undefined){
+						
+						}else{
+							if($scope.createdTeam.invited_members.name.includes(",")){
+								console.log("ada");
+								$scope.invitedMemberName = $scope.createdTeam.invited_members.name.split(',');
+								$scope.invitedMemberRole = $scope.createdTeam.invited_members.role.split(',');
+								$scope.invitedMemberNumber = $scope.createdTeam.invited_members.invite_number.split(',');
+								
+							}else if($scope.createdTeam.invited_members.name !== ''){
+								console.log("tidak ada");
+								$scope.invitedMemberName = $scope.createdTeam.invited_members.name.toString();
+								$scope.invitedMemberRole = $scope.createdTeam.invited_members.role.toString();
+								$scope.invitedMemberNumber = $scope.createdTeam.invited_members.invite_number.toString();
+							}
+
+							if($scope.createdTeam.invited_members.name.includes(",")){
+								for(var h = 0; h < $scope.invitedMemberName.length; h++){
+									$scope.invitedMemberObj[h] = {};
+									$scope.invitedMemberObj[h].name = $scope.invitedMemberName[h];
+									$scope.invitedMemberObj[h].role = $scope.invitedMemberRole[h];
+									$scope.invitedMemberObj[h].invite_number = $scope.invitedMemberNumber[h];
 								}
-							}).error(function(data) {
-								// $ionicLoading.hide();
-							});
+							}else if($scope.createdTeam.invited_members.name !== ''){
+								$scope.invitedMemberObj[0] = {};
+								$scope.invitedMemberObj[0].name = $scope.invitedMemberName;
+								$scope.invitedMemberObj[0].role = $scope.invitedMemberRole;
+								$scope.invitedMemberObj[0].invite_number = $scope.invitedMemberNumber;
+							}
+
+							
+							setTimeout(function(){
+								$rootScope.showLoading();
+								for(var item in $scope.invitedMemberObj){
+									$scope.invitedMembersArr.push($scope.invitedMemberObj[item]);
+								}
+								console.log($scope.invitedMembersArr);
+								setTimeout(function(){
+									$ionicLoading.hide();
+								},1000);
+								console.log($scope.invitedMembersArr)
+							},400);
 						}
-						console.log($scope.joinedMemberData);
+						
+							
+
+						
 
 						// var jm = 0;
 						// function getJoinedMemberData() {
@@ -9275,79 +16280,12 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 						// getJoinedMemberData();
 						// console.log($scope.joinedMemberData);
 
-
-						var im = 0;
-						function getInvitedMemberData() {
-						    LoginService.getUserByUsername($scope.invitedMember[im]).success(function(data){
-								console.log(data);
-								if(data !== null){
-									$scope.invitedMemberData.push(data);
-								}
-							}).error(function(data) {
-								// $ionicLoading.hide();
-							});
-						    im++;
-						    if(im == $scope.invitedMember.length){
-						    	$ionicLoading.hide();
-						    }
-						    if( im < $scope.invitedMember.length){
-						        setTimeout( getInvitedMemberData, 2700 );
-						    }
-						}
-						getInvitedMemberData();
-						console.log($scope.invitedMemberData);
-
-						var cr = 0;
-						function getCoachRequestData() {
-						    LoginService.getUserByUsername($scope.coachRequest[cr]).success(function(data){
-								console.log(data);
-								if(data !== null){
-									$scope.coachRequestData.push(data);
-									$scope.userRequestData.push(data);
-								}
-							}).error(function(data) {
-								// $ionicLoading.hide();
-							});
-						    cr++;
-						    if(cr == $scope.coachRequest.length){
-						    	// $ionicLoading.hide();
-						    }
-						    if(cr < $scope.coachRequest.length){
-						        setTimeout( getCoachRequestData, 1000 );
-						    }
-						}
-						getCoachRequestData();
-						console.log($scope.coachRequestData);
-
-						var pr = 0;
-						function getPlayerRequestData() {
-						    LoginService.getUserByUsername($scope.playerRequest[pr]).success(function(data){
-								console.log(data);
-								if(data !== null){
-									$scope.playerRequestData.push(data);
-									$scope.userRequestData.push(data);
-								}
-							}).error(function(data) {
-								// $ionicLoading.hide();
-							});
-						    pr++;
-						    if(pr == $scope.playerRequest.length){
-						    	// $ionicLoading.hide();
-						    }
-						    if(pr < $scope.playerRequest.length){
-						        setTimeout( getPlayerRequestData, 1000 );
-						    }
-						}
-						getPlayerRequestData();
-						console.log($scope.playerRequestData);
-						console.log($scope.userRequestData);
-
 					}).error(function(data) {});
 
 					// Get data goalkeeper, defender, midfielder, and attacker
 					console.log(localStorage.getItem("team"));
 					
-					$scope.getGoalKeeper = function(){
+					// $scope.getGoalKeeper = function(){
 						TeamService.getGoalkeeperByTeamName(localStorage.getItem("team")).success(function(data){
 							console.log(data);
 							if(data.length !== 0){
@@ -9363,8 +16301,8 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 							// 	}).error(function(data) {});
 							// }
 						}).error(function(data) {});
-					};	
-					$scope.getGoalKeeperTimer = setInterval($scope.getGoalKeeper, 1000);
+					// };	
+					// $scope.getGoalKeeperTimer = setInterval($scope.getGoalKeeper, 1000);
 
 					TeamService.getDefenderByTeamName(localStorage.getItem("team")).success(function(data){
 						console.log(data);
@@ -9460,10 +16398,11 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 									$scope.teamInvitationDataCount += 1;
 								}).error(function(data) {});
 
-								if(t == $scope.teamInvitationData.length - 1){
-									clearInterval($scope.getTeamInvitationTimer);
-								}
+								// if(t == $scope.teamInvitationData.length - 1){
+									// clearInterval($scope.getTeamInvitationTimer);
+								// }
 							}
+							clearInterval($scope.getTeamInvitationTimer);
 							console.log($scope.teamInvitationDataArr);
 						}else{
 							$scope.teamInvitationDataArr = [];
@@ -9473,7 +16412,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 					}).error(function(data) {});					
 				}
 			};
-			$scope.getTeamInvitationTimer = setInterval($scope.getTeamInvitation, 1000);
+			$scope.getTeamInvitationTimer = setInterval($scope.getTeamInvitation, 2000);
 			// function to get team invitation and the timer to reload data invitation
 			
 
@@ -9823,7 +16762,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				TrainingService.getTrainingById(id).success(function(data){
 					console.log(data);
 					$scope.trainingData = data;
-					$scope.notComingArr = $scope.trainingData.coming.split(",");
+					$scope.notComingArr = $scope.trainingData.not_coming.split(",");
 					for(var i = 0; i < $scope.notComingArr.length; i++){
 						LoginService.getUserByUsername($scope.notComingArr[i]).success(function(data){
 							console.log(data);
@@ -9871,20 +16810,34 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				console.log(data);
 				$scope.lineupData = data;
 				$scope.lineupStatus = [];
+				$scope.compName = [];
 
 				data.forEach(function(entry){
+					CompetitionService.getCompetitionName(entry.competition_id).success(function(data) {
+						$scope.compName[entry.id] = data;					
+					}).error(function(data) {});
+
+
 					if(entry.match_homeTeam === localStorage.getItem("team")){
+						console.log("hometeam");
 						if(entry.match_homeTeamObj !== null){
-							$scope.lineupStatus[entry.id] = true;
-						}else{
-							$scope.lineupStatus[entry.id] = false;
+							if(entry.match_homeTeamObj.lineup !== ''){
+								$scope.lineupStatus[entry.id] = localStorage.getItem("team");
+							}else{
+								$scope.lineupStatus[entry.id] = false;
+							}
 						}
+						
 					}else{
+						console.log("awayTeam");
 						if(entry.match_awayTeamObj !== null){
-							$scope.lineupStatus[entry.id] = true;
-						}else{
-							$scope.lineupStatus[entry.id] = false;
+							if(entry.match_awayTeamObj.lineup !== ''){
+								$scope.lineupStatus[entry.id] = localStorage.getItem("team");
+							}else{
+								$scope.lineupStatus[entry.id] = false;
+							}
 						}
+					
 					}
 
 				});
@@ -9980,103 +16933,23 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	});
 
 	$scope.coachData = {};
-	$scope.addCoachToTeam = function(username) {	
-		LoginService.getUserByUsername(username).success(function(data){
-			console.log(data);
-			$ionicLoading.hide();
-			$scope.coachData = data;
-			console.log($scope.coachData);
-			$scope.squadData = {};
-
-		$scope.squadData.Member = username;
-		$scope.squadData.TeamName = $scope.menuProfile.team;
-
-		TeamService.addMemberByName($scope.squadData).success(function(data){
-			// $ionicLoading.hide();
-			console.log("sukses wuhuhuhu");
-			// $state.go('app.team');
-		}).error(function(data){
-			// $ionicLoading.hide();
-		});
-
-		$scope.userSquad = {};
-		$scope.userSquad.TeamName = $scope.menuProfile.team;
-		$scope.userSquad.UserId = $scope.coachData.id;
-		TeamService.addTeamToUser($scope.userSquad).success(function(data){
-			// $ionicLoading.hide();
-			console.log("sukses wahahah");
-			// $state.go('app.team');
-		}).error(function(data){
-			// $ionicLoading.hide();
-		});
-
-
-		$scope.delInvitation = {};
-		$scope.delInvitation.UserName = username;
-		$scope.delInvitation.teamInvite = $scope.menuProfile.team;
-		TeamService.delTeamInvitation($scope.delInvitation).success(function(data){
-			// $ionicLoading.hide();
-			console.log("sukses alelele");
-			// $state.go('app.team');
-		}).error(function(data){
-			// $ionicLoading.hide();
-		});
-
-		$scope.delInvitedMember = {};
-		$scope.delInvitedMember.TeamName = username;
-		$scope.delInvitedMember.userInvited = $scope.menuProfile.team;
-		TeamService.delInvitedMember($scope.delInvitedMember).success(function(data){
-			// $ionicLoading.hide();
-			console.log("sukses ulelele");
-			// $state.go('app.team');
-		}).error(function(data){
-			// $ionicLoading.hide();
-		});
-
-		}).error(function(data) {
-			$ionicLoading.hide();
-		});
-	};
-	$scope.delCoachRequest = function(username) {
-			console.log("hqweiq2yei uqwguqwteuiqe");
-			console.log(username);
-			$scope.delInvitation = {};
-			$scope.delInvitation.UserName = username;
-			$scope.delInvitation.teamInvite = $scope.menuProfile.team;
-			TeamService.delTeamInvitation($scope.delInvitation).success(function(data){
-				// $ionicLoading.hide();
-				console.log("sukses alelele");
-				// $state.go('app.team');
-			}).error(function(data){
-				// $ionicLoading.hide();
-			});
-
-			$scope.delInvitedMember = {};
-			$scope.delInvitedMember.TeamName = $scope.menuProfile.team;
-			$scope.delInvitedMember.userInvited = username;
-			TeamService.delInvitedMember($scope.delInvitedMember).success(function(data){
-				// $ionicLoading.hide();
-				console.log("sukses ulelele");
-				// $state.go('app.team');
-			}).error(function(data){
-				// $ionicLoading.hide();
-			});
-	};
-	$scope.addUserToTeamSquad = function(teamName,teamId) {
-
-		console.log(teamName);
-		console.log(teamId);
-
+	$scope.playerData = {};
+	$scope.acceptPlayerRequest = function(username) {	
 		var confirmPopup = $ionicPopup.confirm({
-			title: 'Accept Invitation',
+			title: 'Accept Player Request',
 			template: 'Are you sure?'
 		});
+		LoginService.getUserByUsername(username).success(function(data){
+			$scope.playerData = data;
+			$ionicLoading.hide();
+
 		confirmPopup.then(function(res) {
 	        if(res) {
-	        	$scope.squadData = {};
-				$scope.squadData.Member = $scope.menuProfile.username;
-				$scope.squadData.TeamName = teamName;
-
+	        
+				$scope.squadData = {};
+				$scope.squadData.Member = username;
+				$scope.squadData.TeamName = $scope.menuProfile.team;
+				console.log($scope.squadData);
 				TeamService.addMemberByName($scope.squadData).success(function(data){
 					// $ionicLoading.hide();
 					console.log("sukses wuhuhuhu");
@@ -10086,8 +16959,9 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				});
 
 				$scope.userSquad = {};
-				$scope.userSquad.TeamName = teamName;
-				$scope.userSquad.UserId = $scope.menuProfile.id;
+				$scope.userSquad.TeamName = $scope.menuProfile.team;
+				$scope.userSquad.UserId = $scope.playerData.id;
+				console.log($scope.userSquad);
 				TeamService.addTeamToUser($scope.userSquad).success(function(data){
 					// $ionicLoading.hide();
 					console.log("sukses wahahah");
@@ -10096,15 +16970,187 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 					// $ionicLoading.hide();
 				});
 
+
+				$scope.delRequest = {};
+				$scope.delRequest.TeamName = $scope.menuProfile.team;
+				$scope.delRequest.playerRequest = username;
+				console.log($scope.delRequest);
+				TeamService.delPlayerRequest($scope.delRequest).success(function(data){
+					// $ionicLoading.hide();
+					console.log("sukses alelele");
+					// $state.go('app.team');
+				}).error(function(data){
+					// $ionicLoading.hide();
+				});
+
+				$scope.delRequestedTeam = {};
+				$scope.delRequestedTeam.Username = username;
+				$scope.delRequestedTeam.teamRequested = $scope.menuProfile.team;
+				console.log($scope.delRequestedTeam);
+				TeamService.delRequestedTeam($scope.delRequestedTeam).success(function(data){
+					// $ionicLoading.hide();
+					console.log("sukses ulelele");
+					// $state.go('app.team');
+				}).error(function(data){
+					// $ionicLoading.hide();
+				});
+
+				setTimeout(function(){
+					$state.go($state.current, {}, {
+	                    reload: true
+	                });
+				},4000);
+            	
+            	
+	        } else {
+	            console.log('Not sure!');
+	        }
+	    }); 
+
+		}).error(function(data) {
+			$ionicLoading.hide();
+		});
+	};
+	$scope.acceptCoachRequest = function(username) {	
+		LoginService.getUserByUsername(username).success(function(data){
+			$scope.playerData = data;
+			$ionicLoading.hide();
+
+		var confirmPopup = $ionicPopup.confirm({
+			title: 'Accept Coach Request',
+			template: 'Are you sure?'
+		});
+
+		confirmPopup.then(function(res) {
+	        if(res) {
+	        
+				$scope.squadData = {};
+				$scope.squadData.Member = username;
+				$scope.squadData.TeamName = $scope.menuProfile.team;
+				console.log($scope.squadData);
+				TeamService.addMemberByName($scope.squadData).success(function(data){
+					// $ionicLoading.hide();
+					console.log("sukses wuhuhuhu");
+					// $state.go('app.team');
+				}).error(function(data){
+					// $ionicLoading.hide();
+				});
+
+				$scope.userSquad = {};
+				$scope.userSquad.TeamName = $scope.menuProfile.team;
+				$scope.userSquad.UserId = $scope.playerData.id;
+				console.log($scope.userSquad);
+				TeamService.addTeamToUser($scope.userSquad).success(function(data){
+					// $ionicLoading.hide();
+					console.log("sukses wahahah");
+					// $state.go('app.team');
+				}).error(function(data){
+					// $ionicLoading.hide();
+				});
+
+
 				$scope.teamInfo = {};
-				$scope.teamInfo.team_coach = $scope.menuProfile.username;
-				TeamService.editTeamById(teamId, $scope.teamInfo).success(function(data) {
+				$scope.teamInfo.team_coach = username;
+				TeamService.editTeamById(localStorage.getItem("myTeamId"), $scope.teamInfo).success(function(data) {
             		console.log(data);
                 }).error(function(data) {});
 
-				$scope.delInvitation = {};
-				$scope.delInvitation.UserName = $scope.menuProfile.username;
-				$scope.delInvitation.teamInvite = teamName;
+
+				$scope.delRequest = {};
+				$scope.delRequest.TeamName = $scope.menuProfile.team;
+				$scope.delRequest.playerRequest = username;
+				console.log($scope.delRequest);
+				TeamService.delPlayerRequest($scope.delRequest).success(function(data){
+					// $ionicLoading.hide();
+					console.log("sukses alelele");
+					// $state.go('app.team');
+				}).error(function(data){
+					// $ionicLoading.hide();
+				});
+
+				$scope.delRequestedTeam = {};
+				$scope.delRequestedTeam.Username = username;
+				$scope.delRequestedTeam.teamRequested = $scope.menuProfile.team;
+				console.log($scope.delRequestedTeam);
+				TeamService.delRequestedTeam($scope.delRequestedTeam).success(function(data){
+					// $ionicLoading.hide();
+					console.log("sukses ulelele");
+					// $state.go('app.team');
+				}).error(function(data){
+					// $ionicLoading.hide();
+				});
+
+				setTimeout(function(){
+					$state.go($state.current, {}, {
+	                    reload: true
+	                });
+				},4000);
+            	
+            	
+	        } else {
+	            console.log('Not sure!');
+	        }
+	    }); 
+
+		}).error(function(data) {
+			$ionicLoading.hide();
+		});
+	};
+	$scope.acceptTeamInvitation = function(teamName,teamId) {	
+		var confirmPopup = $ionicPopup.confirm({
+			title: 'Accept Team Invitation',
+			template: 'Are you sure?'
+		});
+
+		$scope.squadData = {};
+		$scope.squadData.Member = $scope.menuProfile.username;
+		$scope.squadData.TeamName = teamName;
+
+		$scope.userSquad = {};
+		$scope.userSquad.TeamName = teamName;
+		$scope.userSquad.UserId = $scope.menuProfile.id;
+
+		$scope.teamInfo = {};
+		$scope.teamInfo.team_coach = $scope.menuProfile.username;
+
+		$scope.delInvitation = {};
+		$scope.delInvitation.UserName = $scope.menuProfile.username;
+		$scope.delInvitation.teamInvite = teamName;
+
+		$scope.delInvitedMember = {};
+		$scope.delInvitedMember.TeamName = teamName;
+		$scope.delInvitedMember.userInvited = $scope.menuProfile.username;
+
+		console.log($scope.squadData);
+		console.log($scope.userSquad);
+		console.log($scope.teamInfo);
+		console.log($scope.delInvitation);
+		console.log($scope.delInvitedMember);
+
+		confirmPopup.then(function(res) {
+	        if(res) {
+
+	        	TeamService.editTeamById(teamId, $scope.teamInfo).success(function(data) {
+            		console.log(data);
+                }).error(function(data) {});
+
+	        
+				TeamService.addMemberByName($scope.squadData).success(function(data){
+					// $ionicLoading.hide();
+					console.log("sukses wuhuhuhu");
+					// $state.go('app.team');
+				}).error(function(data){
+					// $ionicLoading.hide();
+				});
+
+				TeamService.addTeamToUser($scope.userSquad).success(function(data){
+					// $ionicLoading.hide();
+					console.log("sukses wahahah");
+					// $state.go('app.team');
+				}).error(function(data){
+					// $ionicLoading.hide();
+				});
+
 				TeamService.delTeamInvitation($scope.delInvitation).success(function(data){
 					// $ionicLoading.hide();
 					console.log(data);
@@ -10113,9 +17159,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 					// $ionicLoading.hide();
 				});
 
-				$scope.delInvitedMember = {};
-				$scope.delInvitedMember.TeamName = teamName;
-				$scope.delInvitedMember.userInvited = $scope.menuProfile.username;
+
 				TeamService.delInvitedMember($scope.delInvitedMember).success(function(data){
 					// $ionicLoading.hide();
 					console.log("sukses ulelele");
@@ -10124,27 +17168,144 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 					// $ionicLoading.hide();
 				});
 				// $state.go('app.my_team');   
-				
-            	$state.go($state.current, {}, {
-                    reload: true
-                });
+
+				setTimeout(function(){
+					$state.go($state.current, {}, {
+	                    reload: true
+	                });
+				},4000);
+            	
             	
 	        } else {
 	            console.log('Not sure!');
 	        }
-	    });   
+	    }); 
 	};
-	$scope.delTeamInvitation = function(teamName) {
-
-		console.log(teamName);
-
+	$scope.declinePlayerRequest = function(username) {	
+	
 		var confirmPopup = $ionicPopup.confirm({
-			title: 'Decline Invitation',
+			title: 'Decline Player Request',
 			template: 'Are you sure?'
 		});
+
 		confirmPopup.then(function(res) {
 	        if(res) {
-	        	$scope.delInvitation = {};
+	        
+				$scope.delRequest = {};
+				$scope.delRequest.TeamName = $scope.menuProfile.team;
+				$scope.delRequest.playerRequest = username;
+				console.log($scope.delRequest);
+				TeamService.delPlayerRequest($scope.delRequest).success(function(data){
+					// $ionicLoading.hide();
+					console.log("sukses alelele");
+					// $state.go('app.team');
+				}).error(function(data){
+					// $ionicLoading.hide();
+				});
+
+				$scope.delRequestedTeam = {};
+				$scope.delRequestedTeam.Username = username;
+				$scope.delRequestedTeam.teamRequested = $scope.menuProfile.team;
+				console.log($scope.delRequestedTeam);
+				TeamService.delRequestedTeam($scope.delRequestedTeam).success(function(data){
+					// $ionicLoading.hide();
+					console.log("sukses ulelele");
+					// $state.go('app.team');
+				}).error(function(data){
+					// $ionicLoading.hide();
+				});
+
+				setTimeout(function(){
+					$state.go($state.current, {}, {
+	                    reload: true
+	                });
+				},4000);
+            	
+            	
+	        } else {
+	            console.log('Not sure!');
+	        }
+	    });     
+	};
+	$scope.declineCoachRequest = function(username) {	
+	
+		var confirmPopup = $ionicPopup.confirm({
+			title: 'Decline Coach Request',
+			template: 'Are you sure?'
+		});
+
+		confirmPopup.then(function(res) {
+	        if(res) {
+	        
+				$scope.delRequest = {};
+				$scope.delRequest.TeamName = $scope.menuProfile.team;
+				$scope.delRequest.coachRequest = username;
+				console.log($scope.delRequest);
+				TeamService.delPlayerRequest($scope.delRequest).success(function(data){
+					// $ionicLoading.hide();
+					console.log("sukses alelele");
+					// $state.go('app.team');
+				}).error(function(data){
+					// $ionicLoading.hide();
+				});
+
+				$scope.delRequestedTeam = {};
+				$scope.delRequestedTeam.Username = username;
+				$scope.delRequestedTeam.teamRequested = $scope.menuProfile.team;
+				console.log($scope.delRequestedTeam);
+				TeamService.delRequestedTeam($scope.delRequestedTeam).success(function(data){
+					// $ionicLoading.hide();
+					console.log("sukses ulelele");
+					// $state.go('app.team');
+				}).error(function(data){
+					// $ionicLoading.hide();
+				});
+
+				setTimeout(function(){
+					$state.go($state.current, {}, {
+	                    reload: true
+	                });
+				},4000);
+            	
+            	
+	        } else {
+	            console.log('Not sure!');
+	        }
+	    });     
+	};
+	$scope.declineTeamInvitation = function(teamName,teamId) {	
+	
+		var confirmPopup = $ionicPopup.confirm({
+			title: 'Decline Team Invitation',
+			template: 'Are you sure?'
+		});
+		$scope.invitedMemberForm = {};
+		$scope.invitedMemberForm.invited_members = {};
+
+		TeamService.getTeamByName(teamName).success(function(data){
+			var invitedMemberName = data.invited_members.name.split(",");
+			var invitedMemberRole = data.invited_members.role.split(",");
+			var invitedMemberInviteNumber = data.invited_members.invite_number.split(",");
+
+			var index = invitedMemberName.indexOf($scope.menuProfile.username);
+
+			invitedMemberName.splice(index, 1);
+			invitedMemberRole.splice(index, 1);
+			invitedMemberInviteNumber.splice(index, 1);
+
+			$scope.invitedMemberForm.invited_members.name = invitedMemberName.join(",");
+			$scope.invitedMemberForm.invited_members.role = invitedMemberRole.join(",");
+			$scope.invitedMemberForm.invited_members.invite_number = invitedMemberInviteNumber.join(",");
+
+		}).error(function(data) {});	
+
+		console.log($scope.invitedMemberForm);
+
+		confirmPopup.then(function(res) {
+	        if(res) {
+	        	$rootScope.showLoading($ionicLoading);
+				console.log(teamName);
+				$scope.delInvitation = {};
 				$scope.delInvitation.UserName = $scope.menuProfile.username;
 				$scope.delInvitation.teamInvite = teamName;
 				TeamService.delTeamInvitation($scope.delInvitation).success(function(data){
@@ -10155,50 +17316,255 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 					// $ionicLoading.hide();
 				});
 
+				TeamService.editTeamById(teamId, $scope.invitedMemberForm).success(function(data) {
+            		console.log(data);
+                }).error(function(data) {});
+
 				$scope.delInvitedMember = {};
 				$scope.delInvitedMember.TeamName = teamName;
 				$scope.delInvitedMember.userInvited = $scope.menuProfile.username;
 				TeamService.delInvitedMember($scope.delInvitedMember).success(function(data){
-					// $ionicLoading.hide();
 					console.log("sukses ulelele");
 					// $state.go('app.team');
 				}).error(function(data){
 					// $ionicLoading.hide();
 				});
-				// $state.go('app.my_team'); 
-				$state.go($state.current, {}, {
-                    reload: true
-                });
-				$scope.getTeamInvitationTimer = setInterval($scope.getTeamInvitation, 1000);
+
+				setTimeout(function(){
+					$ionicLoading.hide();
+					$state.go($state.current, {}, {
+	                    reload: true
+	                });
+				},2000);
+            	
+            	
 	        } else {
 	            console.log('Not sure!');
 	        }
-	    });   
+	    });     
 	};
-	$scope.delUserFromInvitedMember = function(teamName) {
-		console.log(teamName);
-		$scope.delInvitation = {};
-		$scope.delInvitation.UserName = $scope.menuProfile.username;
-		$scope.delInvitation.teamInvite = teamName;
-		TeamService.delTeamInvitation($scope.delInvitation).success(function(data){
-			// $ionicLoading.hide();
-			console.log("sukses alelele");
-			// $state.go('app.team');
-		}).error(function(data){
-			// $ionicLoading.hide();
-		});
 
-		$scope.delInvitedMember = {};
-		$scope.delInvitedMember.TeamName = teamName;
-		$scope.delInvitedMember.userInvited = $scope.menuProfile.username;
-		TeamService.delInvitedMember($scope.delInvitedMember).success(function(data){
-			// $ionicLoading.hide();
-			console.log("sukses ulelele");
-			// $state.go('app.team');
-		}).error(function(data){
-			// $ionicLoading.hide();
-		});
-	};
+
+
+	// $scope.addCoachToTeam = function(username) {	
+	// 	LoginService.getUserByUsername(username).success(function(data){
+	// 		console.log(data);
+	// 		$ionicLoading.hide();
+	// 		$scope.coachData = data;
+	// 		console.log($scope.coachData);
+	// 		$scope.squadData = {};
+
+	// 	$scope.squadData.Member = username;
+	// 	$scope.squadData.TeamName = $scope.menuProfile.team;
+
+	// 	TeamService.addMemberByName($scope.squadData).success(function(data){
+	// 		// $ionicLoading.hide();
+	// 		console.log("sukses wuhuhuhu");
+	// 		// $state.go('app.team');
+	// 	}).error(function(data){
+	// 		// $ionicLoading.hide();
+	// 	});
+
+	// 	$scope.userSquad = {};
+	// 	$scope.userSquad.TeamName = $scope.menuProfile.team;
+	// 	$scope.userSquad.UserId = $scope.coachData.id;
+	// 	TeamService.addTeamToUser($scope.userSquad).success(function(data){
+	// 		// $ionicLoading.hide();
+	// 		console.log("sukses wahahah");
+	// 		// $state.go('app.team');
+	// 	}).error(function(data){
+	// 		// $ionicLoading.hide();
+	// 	});
+
+
+	// 	$scope.delInvitation = {};
+	// 	$scope.delInvitation.UserName = username;
+	// 	$scope.delInvitation.teamInvite = $scope.menuProfile.team;
+	// 	TeamService.delTeamInvitation($scope.delInvitation).success(function(data){
+	// 		// $ionicLoading.hide();
+	// 		console.log("sukses alelele");
+	// 		// $state.go('app.team');
+	// 	}).error(function(data){
+	// 		// $ionicLoading.hide();
+	// 	});
+
+	// 	$scope.delInvitedMember = {};
+	// 	$scope.delInvitedMember.TeamName = username;
+	// 	$scope.delInvitedMember.userInvited = $scope.menuProfile.team;
+	// 	TeamService.delInvitedMember($scope.delInvitedMember).success(function(data){
+	// 		// $ionicLoading.hide();
+	// 		console.log("sukses ulelele");
+	// 		// $state.go('app.team');
+	// 	}).error(function(data){
+	// 		// $ionicLoading.hide();
+	// 	});
+
+	// 	}).error(function(data) {
+	// 		$ionicLoading.hide();
+	// 	});
+	// };
+	// $scope.delCoachRequest = function(username) {
+	// 		console.log("hqweiq2yei uqwguqwteuiqe");
+	// 		console.log(username);
+	// 		$scope.delInvitation = {};
+	// 		$scope.delInvitation.UserName = username;
+	// 		$scope.delInvitation.teamInvite = $scope.menuProfile.team;
+	// 		TeamService.delTeamInvitation($scope.delInvitation).success(function(data){
+	// 			// $ionicLoading.hide();
+	// 			console.log("sukses alelele");
+	// 			// $state.go('app.team');
+	// 		}).error(function(data){
+	// 			// $ionicLoading.hide();
+	// 		});
+
+	// 		$scope.delInvitedMember = {};
+	// 		$scope.delInvitedMember.TeamName = $scope.menuProfile.team;
+	// 		$scope.delInvitedMember.userInvited = username;
+	// 		TeamService.delInvitedMember($scope.delInvitedMember).success(function(data){
+	// 			// $ionicLoading.hide();
+	// 			console.log("sukses ulelele");
+	// 			// $state.go('app.team');
+	// 		}).error(function(data){
+	// 			// $ionicLoading.hide();
+	// 		});
+	// };
+	// $scope.addUserToTeamSquad = function(teamName,teamId) {
+
+	// 	console.log(teamName);
+	// 	console.log(teamId);
+
+	// 	var confirmPopup = $ionicPopup.confirm({
+	// 		title: 'Accept Invitation',
+	// 		template: 'Are you sure?'
+	// 	});
+	// 	confirmPopup.then(function(res) {
+	//         if(res) {
+	//         	$scope.squadData = {};
+	// 			$scope.squadData.Member = $scope.menuProfile.username;
+	// 			$scope.squadData.TeamName = teamName;
+
+	// 			TeamService.addMemberByName($scope.squadData).success(function(data){
+	// 				// $ionicLoading.hide();
+	// 				console.log("sukses wuhuhuhu");
+	// 				// $state.go('app.team');
+	// 			}).error(function(data){
+	// 				// $ionicLoading.hide();
+	// 			});
+
+	// 			$scope.userSquad = {};
+	// 			$scope.userSquad.TeamName = teamName;
+	// 			$scope.userSquad.UserId = $scope.menuProfile.id;
+	// 			TeamService.addTeamToUser($scope.userSquad).success(function(data){
+	// 				// $ionicLoading.hide();
+	// 				console.log("sukses wahahah");
+	// 				// $state.go('app.team');
+	// 			}).error(function(data){
+	// 				// $ionicLoading.hide();
+	// 			});
+
+	// 			$scope.teamInfo = {};
+	// 			$scope.teamInfo.team_coach = $scope.menuProfile.username;
+	// 			TeamService.editTeamById(teamId, $scope.teamInfo).success(function(data) {
+ //            		console.log(data);
+ //                }).error(function(data) {});
+
+	// 			$scope.delInvitation = {};
+	// 			$scope.delInvitation.UserName = $scope.menuProfile.username;
+	// 			$scope.delInvitation.teamInvite = teamName;
+	// 			TeamService.delTeamInvitation($scope.delInvitation).success(function(data){
+	// 				// $ionicLoading.hide();
+	// 				console.log(data);
+	// 				// $state.go('app.team');
+	// 			}).error(function(data){
+	// 				// $ionicLoading.hide();
+	// 			});
+
+	// 			$scope.delInvitedMember = {};
+	// 			$scope.delInvitedMember.TeamName = teamName;
+	// 			$scope.delInvitedMember.userInvited = $scope.menuProfile.username;
+	// 			TeamService.delInvitedMember($scope.delInvitedMember).success(function(data){
+	// 				// $ionicLoading.hide();
+	// 				console.log("sukses ulelele");
+	// 				// $state.go('app.team');
+	// 			}).error(function(data){
+	// 				// $ionicLoading.hide();
+	// 			});
+	// 			// $state.go('app.my_team');   
+				
+ //            	$state.go($state.current, {}, {
+ //                    reload: true
+ //                });
+            	
+	//         } else {
+	//             console.log('Not sure!');
+	//         }
+	//     });   
+	// };
+	// $scope.delTeamInvitation = function(teamName) {
+
+	// 	console.log(teamName);
+
+	// 	var confirmPopup = $ionicPopup.confirm({
+	// 		title: 'Decline Invitation',
+	// 		template: 'Are you sure?'
+	// 	});
+	// 	confirmPopup.then(function(res) {
+	//         if(res) {
+	//         	$scope.delInvitation = {};
+	// 			$scope.delInvitation.UserName = $scope.menuProfile.username;
+	// 			$scope.delInvitation.teamInvite = teamName;
+	// 			TeamService.delTeamInvitation($scope.delInvitation).success(function(data){
+	// 				// $ionicLoading.hide();
+	// 				console.log("sukses alelele");
+	// 				// $state.go('app.team');
+	// 			}).error(function(data){
+	// 				// $ionicLoading.hide();
+	// 			});
+
+	// 			$scope.delInvitedMember = {};
+	// 			$scope.delInvitedMember.TeamName = teamName;
+	// 			$scope.delInvitedMember.userInvited = $scope.menuProfile.username;
+	// 			TeamService.delInvitedMember($scope.delInvitedMember).success(function(data){
+	// 				// $ionicLoading.hide();
+	// 				console.log("sukses ulelele");
+	// 				// $state.go('app.team');
+	// 			}).error(function(data){
+	// 				// $ionicLoading.hide();
+	// 			});
+	// 			// $state.go('app.my_team'); 
+	// 			$state.go($state.current, {}, {
+ //                    reload: true
+ //                });
+	// 			$scope.getTeamInvitationTimer = setInterval($scope.getTeamInvitation, 1000);
+	//         } else {
+	//             console.log('Not sure!');
+	//         }
+	//     });   
+	// };
+	// $scope.delUserFromInvitedMember = function(teamName) {
+	// 	console.log(teamName);
+	// 	$scope.delInvitation = {};
+	// 	$scope.delInvitation.UserName = $scope.menuProfile.username;
+	// 	$scope.delInvitation.teamInvite = teamName;
+	// 	TeamService.delTeamInvitation($scope.delInvitation).success(function(data){
+	// 		// $ionicLoading.hide();
+	// 		console.log("sukses alelele");
+	// 		// $state.go('app.team');
+	// 	}).error(function(data){
+	// 		// $ionicLoading.hide();
+	// 	});
+
+	// 	$scope.delInvitedMember = {};
+	// 	$scope.delInvitedMember.TeamName = teamName;
+	// 	$scope.delInvitedMember.userInvited = $scope.menuProfile.username;
+	// 	TeamService.delInvitedMember($scope.delInvitedMember).success(function(data){
+	// 		// $ionicLoading.hide();
+	// 		console.log("sukses ulelele");
+	// 		// $state.go('app.team');
+	// 	}).error(function(data){
+	// 		// $ionicLoading.hide();
+	// 	});
+	// };
 	$scope.goToMemberDetail = function(id) {
 		$state.go('app.member_profile', {
 			'userID': id
@@ -10224,9 +17590,25 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		$state.go('app.searchTeam');
 	};
 	$scope.searchCoach = function() {
+		$scope.searchedPlayerStatus = false;
+    	localStorage.setItem("searchedPlayerName", "");
+    	localStorage.setItem("searchedPlayerInviteStat", "");
+		localStorage.setItem("searchedPlayerJoinStat", "");  
+	   	localStorage.setItem("searchedPlayerPhoto", "");
+		localStorage.setItem("searchedPlayerEmail", "");
+		localStorage.setItem("formInvitedMembers", "");
+		localStorage.setItem("formTeam", "");
 		$state.go('app.searchCoach');
 	};
 	$scope.searchPlayer = function() {
+		$scope.searchedPlayerStatus = false;
+    	localStorage.setItem("searchedPlayerName", "");
+    	localStorage.setItem("searchedPlayerInviteStat", "");
+		localStorage.setItem("searchedPlayerJoinStat", "");  
+	   	localStorage.setItem("searchedPlayerPhoto", "");
+		localStorage.setItem("searchedPlayerEmail", "");
+		localStorage.setItem("formInvitedMembers", "");
+		localStorage.setItem("formTeam", "");
 		$state.go('app.searchPlayer');
 	};
 	$scope.searchCompetition = function() {
@@ -10236,6 +17618,12 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	// 	$state.go('app.lineup_detail');
 	// };
 	$scope.chooseLineup = function(id) { 
+		$state.go('app.lineup_detail', {
+			'matchId': id
+		});
+	};
+
+	$scope.viewLineup = function(id) { 
 		$state.go('app.lineup_detail', {
 			'matchId': id
 		});
@@ -10576,7 +17964,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	};
 })
 
-.controller('SearchCtrl', function($scope, $state, $ionicPopup, $ionicPlatform, $ionicLoading, TeamService, $stateParams) {
+.controller('SearchCtrl', function($scope, $rootScope, $state, $ionicPopup, $ionicPlatform, $ionicLoading, TeamService, $stateParams) {
         $scope.doRefresh = function() {
             $scope.$broadcast('scroll.refreshComplete');
             setTimeout(function() {
@@ -10588,11 +17976,46 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
         $scope.search = {};
         $scope.team = {};
     	$scope.formMember = {};
+    	$scope.formInvitedMembers = {};
+    	$scope.formInvitedMembers.invited_members = {};
 		$scope.formTeam = {};
 		$scope.dataMember = {};
 		$scope.dataTeam = {};
+		$scope.searchedPlayerStatus = false;
+		$scope.inviteStatus = false;
+        $scope.joinStatus = false;
+
+		console.log(localStorage.getItem("searchedPlayerName"));
+		console.log($scope.searchedPlayerStatus);
+        if(localStorage.getItem("searchedPlayerName") !== ''){
+        	console.log("true");
+        	$scope.searchedPlayerStatus = true;
+        	$scope.playerObj = {};
+        	$scope.playerObj.photo = localStorage.getItem("searchedPlayerPhoto");
+        	$scope.playerObj.username = localStorage.getItem("searchedPlayerName");
+        	$scope.playerObj.email = localStorage.getItem("searchedPlayerEmail");
+        	$scope.playerObj.inviteStatus = localStorage.getItem("searchedPlayerInviteStat");
+        	$scope.playerObj.joinStatus = localStorage.getItem("searchedPlayerJoinStat");
+
+        	var formInvitedMembersObj = localStorage.getItem('formInvitedMembers');
+			var formInvitedMembersObjData = JSON.parse(formInvitedMembersObj);
+			console.log(formInvitedMembersObjData);
+			var formTeamObj = localStorage.getItem('formTeam');
+			var formTeamObjData = JSON.parse(formTeamObj);
+			console.log(formTeamObjData);
+        }
+        console.log($scope.playerObj);
 
         $scope.searchData = function() {
+        	$scope.searchedPlayerStatus = false;
+        	localStorage.setItem("searchedPlayerName", "");
+        	localStorage.setItem("searchedPlayerInviteStat", "");
+			localStorage.setItem("searchedPlayerJoinStat", "");  
+		   	localStorage.setItem("searchedPlayerPhoto", "");
+			localStorage.setItem("searchedPlayerEmail", "");
+			localStorage.setItem("formInvitedMembers", "");
+			localStorage.setItem("formTeam", "");
+
             $ionicLoading.show({
                 content: 'Login...',
                 animation: 'fade-in',
@@ -10603,27 +18026,56 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
                 $scope.teamArr = [];
                 $scope.playerArr = [];
                 $scope.coachArr = [];
-                $scope.inviteStatus = false;
-                $scope.joinStatus = false;
-                for (var item in $scope.search.player) {
-                    $scope.playerArr.push($scope.search.player[item]);
-                   	$scope.formMember.Username = $scope.search.player[item].username;
-                   	$scope.formTeam.UserId = $scope.search.player[item].id;
+               
 
-                   	TeamService.getTeamById(localStorage.getItem("myTeamId"),localStorage.getItem("token")).success(function(data) {
+                console.log($scope.search);
+
+                for (var player in $scope.search.player) {
+                    $scope.playerArr.push($scope.search.player[player]);
+                   	$scope.formMember.Username = $scope.search.player[player].username;
+                   	$scope.formTeam.UserId = $scope.search.player[player].id;
+
+                   	TeamService.getTeamById(localStorage.getItem("myTeamId"),localStorage.getItem("token")).success(function(data) {	
 						console.log(data);
 						$ionicLoading.hide();
 						$scope.team = data;
-						$scope.invitedMember = $scope.team.invited_member.split(",");
+						$scope.teamId = data.id;
+						$scope.invitedMember = $scope.team.invited_members.name.split(",");
 						$scope.joinedMember = $scope.team.team_squad.split(",");
+
+						var inviteNumber = data.invited_members.invite_number.toString();
+
+						if(inviteNumber !== ''){
+							if(inviteNumber.indexOf(',') === -1){
+								// console.log("tidak ad koma");
+								var lastInviteNumber = parseInt(inviteNumber);
+							}else{
+								// console.log("baru ad satu data");
+								var inviteNumberArr = inviteNumber.split(",");
+								var lastInviteNumber = parseInt(inviteNumber[0]);
+							}
+						}
+
+
+						if(data.invited_members.name === ''){
+							$scope.formInvitedMembers.invited_members.name = $scope.search.player[player].username;
+							$scope.formInvitedMembers.invited_members.role = "Player";
+							$scope.formInvitedMembers.invited_members.invite_number = 1;
+						}else{
+							$scope.formInvitedMembers.invited_members.name = $scope.search.player[player].username + "," + data.invited_members.name;
+							$scope.formInvitedMembers.invited_members.role = "Player" + "," + data.invited_members.role;
+							$scope.formInvitedMembers.invited_members.invite_number = (lastInviteNumber + 1) + "," + data.invited_members.invite_number;
+						}
+
+
 						for(var i = 0; i < $scope.invitedMember.length; i++){
-							if($scope.search.player[item].username == $scope.invitedMember[i]){
+							if($scope.search.player[player].username == $scope.invitedMember[i]){
 								$scope.inviteStatus = true;
 								console.log("invited");
 							}
 						}
 						for(var j = 0; j < $scope.joinedMember.length; j++){
-							if($scope.search.player[item].username == $scope.joinedMember[j]){
+							if($scope.search.player[player].username == $scope.joinedMember[j]){
 								$scope.joinStatus = true;
 								console.log("joined");
 							}
@@ -10631,32 +18083,72 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 						$scope.formMember.TeamId = $scope.team.id;
                    		$scope.formTeam.TeamName = $scope.team.team_name;
 
+                   		console.log($scope.formMember);
+                   		console.log($scope.formTeam);
+
 					}).error(function(data) {
 						$ionicLoading.hide();
 					});
                 }
 
-                for (var item in $scope.search.coach) {
-                    $scope.coachArr.push($scope.search.coach[item]);
-                   	$scope.formMember.Username = $scope.search.coach[item].username;
-                   	$scope.formTeam.UserId = $scope.search.coach[item].id;
+                for (var coach in $scope.search.coach) {
+                    $scope.coachArr.push($scope.search.coach[coach]);
+                   	$scope.formMember.Username = $scope.search.coach[coach].username;
+                   	$scope.formTeam.UserId = $scope.search.coach[coach].id;
 
                    	TeamService.getTeamById(localStorage.getItem("myTeamId"),localStorage.getItem("token")).success(function(data) {
-						console.log(data);
+						console.log(data.invited_members.name);
 						$ionicLoading.hide();
 						$scope.team = data;
-						$scope.invitedMember = $scope.team.invited_member.split(",");
+						$scope.teamId = data.id;
 						$scope.joinedMember = $scope.team.team_coach;
-						for(var i = 0; i < $scope.invitedMember.length; i++){
-							if($scope.search.coach[item].username == $scope.invitedMember[i]){
-								$scope.inviteStatus = true;
-								console.log("invited");
+
+						if(data.invited_members.name !== undefined){
+							$scope.invitedMember = $scope.team.invited_members.name.split(",");
+							var inviteNumber = data.invited_members.invite_number.toString();
+
+							if(inviteNumber !== ''){
+								if(inviteNumber.indexOf(',') === -1){
+									// console.log("tidak ad koma");
+									var lastInviteNumber = parseInt(inviteNumber);
+								}else{
+									// console.log("baru ad satu data");
+									var inviteNumberArr = inviteNumber.split(",");
+									var lastInviteNumber = parseInt(inviteNumber[0]);
+								}
+							}
+
+							for(var i = 0; i < $scope.invitedMember.length; i++){
+								if($scope.search.coach[coach].username == $scope.invitedMember[i]){
+									$scope.inviteStatus = true;
+									console.log("invited");
+								}
 							}
 						}
-						for(var j = 0; j < $scope.joinedMember.length; j++){
-							if($scope.search.coach[item].username == $scope.joinedMember[j]){
-								$scope.joinStatus = true;
-								console.log("joined");
+
+						
+						console.log($scope.joinedMember);
+						console.log($scope.invitedMember);
+
+
+						if(data.invited_members.name === '' || data.invited_members.name === undefined){
+							$scope.formInvitedMembers.invited_members.name = $scope.search.coach[coach].username;
+							$scope.formInvitedMembers.invited_members.role = "Coach";
+							$scope.formInvitedMembers.invited_members.invite_number = 1;
+						}else{
+							$scope.formInvitedMembers.invited_members.name = $scope.search.coach[coach].username + "," + data.invited_members.name;
+							$scope.formInvitedMembers.invited_members.role = "Coach" + "," + data.invited_members.role;
+							$scope.formInvitedMembers.invited_members.invite_number = (lastInviteNumber + 1) + "," + data.invited_members.invite_number;
+						}
+
+
+						
+						if($scope.joinedMember !== null){
+							for(var j = 0; j < $scope.joinedMember.length; j++){
+								if($scope.search.coach[coach].username == $scope.joinedMember[j]){
+									$scope.joinStatus = true;
+									console.log("joined");
+								}
 							}
 						}
 						$scope.formMember.TeamId = $scope.team.id;
@@ -10675,24 +18167,32 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
                 $scope.dataMember.Username = $scope.menuProfile.username;
 	            $scope.dataTeam.UserId = $scope.menuProfile.id;
 
+	          
+
             	$scope.inviteMember = function(){
 					console.log($scope.formMember);
                    	console.log($scope.formTeam);
+                   	console.log($scope.formInvitedMembers);
 
 					var confirmPopup = $ionicPopup.confirm({
-						title: 'Invite Memberss',
+						title: 'Invite Members',
 						template: 'Are you sure?'
 					});
 					confirmPopup.then(function(res) {
 				        if(res) {
 				            console.log('Sure!');
 				            TeamService.addInvitedMember($scope.formMember).success(function(data){
+				            	console.log(data);
 								// $ionicLoading.hide();
 								console.log("sukses yataa");
 								// $state.go('app.team');
 							}).error(function(data){
 								// $ionicLoading.hide();
 							});
+
+							TeamService.editTeamById($scope.teamId, $scope.formInvitedMembers).success(function(data) {
+			            		console.log(data);
+			                }).error(function(data) {});
 
 							TeamService.addTeamInvitation($scope.formTeam).success(function(data){
 								// $ionicLoading.hide();
@@ -10701,7 +18201,8 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 							}).error(function(data){
 								// $ionicLoading.hide();
 							});
-							$state.go('app.my_team');    
+							$state.go('app.my_team');
+							localStorage.setItem("showme", 2);    
 				         } else {
 				            console.log('Not sure!');
 				         }
@@ -10711,6 +18212,14 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				$scope.JoinTeam = function(){
 					console.log($scope.dataMember);
                    	console.log($scope.dataTeam);
+                   	$scope.teamData = {};
+                   	TeamService.getTeamById($scope.dataMember.TeamId,localStorage.getItem("token")).success(function(data) {
+						$scope.teamData = data;
+						console.log($scope.teamData.availableJerseyNumber);
+						$ionicLoading.hide();
+					}).error(function(data) {
+						$ionicLoading.hide();
+					});
 
                    	var confirmPopup = $ionicPopup.confirm({
 						title: 'Join Team',
@@ -10719,30 +18228,36 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 					confirmPopup.then(function(res) {
 				        if(res) {
 				            console.log('Sure!');
+				            $rootScope.showLoading();
 				            TeamService.addRequestedTeam($scope.dataTeam).success(function(data){
-								$ionicLoading.hide();
+								// $ionicLoading.hide();
 								console.log("sukses yataa");
 								// $state.go('app.team');
 							}).error(function(data){
-								$ionicLoading.hide();
+								// $ionicLoading.hide();
 							});
 
 							TeamService.addPlayerRequest($scope.dataMember).success(function(data){
-								$ionicLoading.hide();
+								// $ionicLoading.hide();
 								console.log("berhasil wahuuu");
 								// $state.go('app.team');
 							}).error(function(data){
+								// $ionicLoading.hide();
+							});  
+
+							setTimeout(function(){
 								$ionicLoading.hide();
-							});       
+								var alertPopup = $ionicPopup.alert({
+				                    title: 'Join Team',
+				                    template: 'Your request has been send, please wait while the manager review it'
+				                });   
+				                $state.go('app.my_team'); 
+							},2000);
+							            
 				        } else {
 				            console.log('Not sure!');
 				        }
 				    }); 
-				    var alertPopup = $ionicPopup.alert({
-	                    title: 'Request Team To Join',
-	                    template: 'Your request has been send, please wait while the manager review it'
-	                });   
-	                $state.go('app.my_team');                  
 				};
 
 				$scope.ManageTeam = function(){
@@ -10771,6 +18286,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	                });   
 	                $state.go('app.my_team');
 				};
+
                 $ionicLoading.hide();
             }).error(function(data) {
                 var alertPopup = $ionicPopup.alert({
@@ -10780,44 +18296,105 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
             });
         };
 
-        $scope.topPlayerData = [];
-        $scope.highestPoint = 0;
-        $scope.index = 0;
-        $scope.playerData = [];
+  //       $scope.topPlayerData = [];
+  //       $scope.highestPoint = 0;
+  //       $scope.index = 0;
+  //       $scope.playerData = [];
 
-        TeamService.getPlayer().success(function(data){
-			$scope.playerData = data;
+  //       TeamService.getPlayer().success(function(data){
+		// 	$scope.playerData = data;
 
-			while($scope.playerData.length != 0){
-			    for(var i = 0; i < $scope.playerData.length; i++){
-			    	if($scope.playerData[i].goal == null || $scope.playerData[i].assist == null){
-			    		console.log("null");
-			    	}else{
-				        if(parseInt($scope.playerData[i].goal) + parseInt($scope.playerData[i].assist) > $scope.highestPoint){
-				            $scope.highestPoint = parseInt($scope.playerData[i].goal) + parseInt($scope.playerData[i].assist);
-				            $scope.index = i;
-				        }
-				    }    
-			    }
-			    $scope.topPlayerData.push($scope.playerData[$scope.index]);
-			    $scope.playerData.splice($scope.index,1);
-			    console.log($scope.playerData.length);
-			    $scope.highestPoint = 0;
-			}
-			$scope.topPlayerData.length = Math.min($scope.topPlayerData.length, 5)
-			console.log($scope.topPlayerData);
+		// 	while($scope.playerData.length != 0){
+		// 	    for(var i = 0; i < $scope.playerData.length; i++){
+		// 	    	if($scope.playerData[i].goal == null || $scope.playerData[i].assist == null){
+		// 	    		console.log("null");
+		// 	    	}else{
+		// 		        if(parseInt($scope.playerData[i].goal) + parseInt($scope.playerData[i].assist) > $scope.highestPoint){
+		// 		            $scope.highestPoint = parseInt($scope.playerData[i].goal) + parseInt($scope.playerData[i].assist);
+		// 		            $scope.index = i;
+		// 		        }
+		// 		    }    
+		// 	    }
+		// 	    $scope.topPlayerData.push($scope.playerData[$scope.index]);
+		// 	    $scope.playerData.splice($scope.index,1);
+		// 	    console.log($scope.playerData.length);
+		// 	    $scope.highestPoint = 0;
+		// 	}
+		// 	$scope.topPlayerData.length = Math.min($scope.topPlayerData.length, 5)
+		// 	console.log($scope.topPlayerData);
 
-		}).error(function(data){});
+		// }).error(function(data){});
 
-        $scope.backToMyTeam = function(){
-        	$state.go('app.my_team');
-        }
-        $scope.userDetail = function(username) {
-	    // Go to user detail page
+		$scope.userDetail = function(photo,username,email) {
+        	console.log(username);
+        	console.log($scope.inviteStatus);
+        	console.log($scope.joinStatus);
+        	console.log($scope.formInvitedMembers);
+        	console.log($scope.formTeam);
+        	if(localStorage.getItem("searchedPlayerInviteStat") !== ''){
+        		console.log("tidak null");
+        		localStorage.setItem("searchedPlayerInviteStat", localStorage.getItem("searchedPlayerInviteStat"));
+        		localStorage.setItem("searchedPlayerJoinStat", localStorage.getItem("searchedPlayerJoinStat"));
+        	}else{
+        		localStorage.setItem("searchedPlayerInviteStat", $scope.inviteStatus);
+				localStorage.setItem("searchedPlayerJoinStat", $scope.joinStatus);
+				localStorage.setItem('formInvitedMembers', JSON.stringify($scope.formInvitedMembers));
+				localStorage.setItem('formTeam', JSON.stringify($scope.formTeam));
+        	}
+        	localStorage.setItem("searchedPlayerPhoto", photo);
+        	localStorage.setItem("searchedPlayerName", username);
+			localStorage.setItem("searchedPlayerEmail", email);
+			
+			
+	    	// Go to user detail page
 	        $state.go('app.userDetail', {
 	            'username': username
 	        });
 	    };
+
+	    $scope.inviteMembers = function(){
+			console.log(formInvitedMembersObjData);
+           	console.log(formTeamObjData);
+
+			var confirmPopup = $ionicPopup.confirm({
+				title: 'Invite Members',
+				template: 'Are you sure?'
+			});
+			confirmPopup.then(function(res) {
+		        if(res) {
+		            console.log('Sure!');
+		
+					TeamService.editTeamById(localStorage.getItem("myTeamId"), formInvitedMembersObjData).success(function(data) {
+	            		console.log(data);
+	                }).error(function(data) {});
+
+					TeamService.addTeamInvitation(formTeamObjData).success(function(data){
+						// $ionicLoading.hide();
+						console.log("berhasil wahuuu");
+						// $state.go('app.team');
+					}).error(function(data){
+						// $ionicLoading.hide();
+					});
+					$state.go('app.my_team');
+					localStorage.setItem("showme", 2);    
+		         } else {
+		            console.log('Not sure!');
+		         }
+		    });               
+		};
+
+        $scope.backToMyTeam = function(){
+        	$scope.searchedPlayerStatus = false;
+        	localStorage.setItem("searchedPlayerName", "");
+        	localStorage.setItem("searchedPlayerInviteStat", "");
+			localStorage.setItem("searchedPlayerJoinStat", "");  
+		   	localStorage.setItem("searchedPlayerPhoto", "");
+			localStorage.setItem("searchedPlayerEmail", "");
+			localStorage.setItem("formInvitedMembers", "");
+			localStorage.setItem("formTeam", "");
+			localStorage.setItem("showme", 1);
+        	$state.go('app.my_team');
+        }
 })
 
 .controller('ChatCtrl', function($scope, $state, $ionicPlatform, $ionicLoading, LoginService, TeamService, MessageService) {
@@ -10953,13 +18530,27 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 	// search coach
 	$scope.searchCoach = function(){
-		// go to search coach page
+		$scope.searchedPlayerStatus = false;
+    	localStorage.setItem("searchedPlayerName", "");
+    	localStorage.setItem("searchedPlayerInviteStat", "");
+		localStorage.setItem("searchedPlayerJoinStat", "");  
+	   	localStorage.setItem("searchedPlayerPhoto", "");
+		localStorage.setItem("searchedPlayerEmail", "");
+		localStorage.setItem("formInvitedMembers", "");
+		localStorage.setItem("formTeam", "");
 		$state.go('app.searchCoach');
 	}
 
 	// search player
 	$scope.searchPlayer = function(){
-		// go to search coach page
+		$scope.searchedPlayerStatus = false;
+    	localStorage.setItem("searchedPlayerName", "");
+    	localStorage.setItem("searchedPlayerInviteStat", "");
+		localStorage.setItem("searchedPlayerJoinStat", "");  
+	   	localStorage.setItem("searchedPlayerPhoto", "");
+		localStorage.setItem("searchedPlayerEmail", "");
+		localStorage.setItem("formInvitedMembers", "");
+		localStorage.setItem("formTeam", "");
 		$state.go('app.searchPlayer');
 	}
 })
@@ -10978,12 +18569,14 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
     $scope.dataMessage = {};
     $scope.glued = true;
     $scope.messageData = [];
-
+    $scope.newMessage = [];
 	// build a string with random characters
 	for(var i = 1; i < stringlength; i++){
 		var rndNum = Math.ceil(Math.random() * stringArray.length) - 1;
 		rndString = rndString + stringArray[rndNum];
 	} 
+
+	console.log($stateParams.username);
 
 
     LoginService.getUserById(localStorage.getItem("userid"), localStorage.getItem("token")).success(function(data) {
@@ -11114,18 +18707,20 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			console.log(data);
 			$scope.team = data;
 			
-			$scope.myCompetition = $scope.team.competitionId.split(',');
-			console.log($scope.myCompetition);
+			if($scope.team.competitionId !== ''){
+				$scope.myCompetition = $scope.team.competitionId.split(',');
+				console.log($scope.myCompetition);
 
-			for(var c = 0; c < $scope.myCompetition.length; c++){
-				CompetitionService.getCompetitionById($scope.myCompetition[c],localStorage.getItem("token")).success(function(data) {
-					$scope.myCompetitionData.push(data);
-					$ionicLoading.hide();
-				}).error(function(data) {
-					$ionicLoading.hide();
-				});
-			}
-			console.log($scope.myCompetitionData);
+				for(var c = 0; c < $scope.myCompetition.length; c++){
+					CompetitionService.getCompetitionById($scope.myCompetition[c],localStorage.getItem("token")).success(function(data) {
+						$scope.myCompetitionData.push(data);
+						$ionicLoading.hide();
+					}).error(function(data) {
+						$ionicLoading.hide();
+					});
+				}
+				console.log($scope.myCompetitionData);
+			}			
 		}).error(function(data) {	 
 			$ionicLoading.hide();
 		});
@@ -11141,6 +18736,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	}
 	
  	$scope.goToScheduleDetail = function(id){
+ 		localStorage.setItem("backStatus", 'schedule');
  		$state.go('app.competition_schedule', {
 			'competitionId': id
 		});
@@ -11385,12 +18981,12 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	// 	console.log("gagal");
 	// });
 
-	$scope.backToSchedule = function(id) { // kembali ke halaman home
+	$scope.backToSchedule = function(id) { 
 		$state.go('app.complete_scheduling', {
 			'competitionId': id
 		});
 	};
-	$scope.editMatch = function(id) { // kembali ke halaman home
+	$scope.editMatch = function(id) { 
 		$state.go('app.edit_match', {
 			'matchId': id
 		});
@@ -11424,13 +19020,24 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 	$scope.matchData = {};
 	MatchService.getMatchById($stateParams.matchId,localStorage.getItem("token")).success(function(data){
-		if(data.match_homeTeam === localStorage.getItem("team")){
+		console.log(data);
+		console.log(localStorage.getItem("team"));
+		if(data.match_homeTeam.toLowerCase() === localStorage.getItem("team").toLowerCase()){
 			console.log("Home");
 			localStorage.setItem('teamStatus', "Home");
+			$scope.choosedFormationData = data.match_homeTeamObj.formation;
+			$scope.choosedLineupData = data.match_homeTeamObj.lineup.split(",");
+			$scope.choosedSubData = data.match_homeTeamObj.sub.split(",");
 		}else{
 			console.log("Away");
 			localStorage.setItem('teamStatus', "Away");
+			$scope.choosedFormationData = data.match_awayTeamObj.formation;
+			$scope.choosedLineupData = data.match_awayTeamObj.lineup.split(",");
+			$scope.choosedSubData = data.match_awayTeamObj.sub.split(",");
 		}
+
+		console.log($scope.choosedLineupData);
+		console.log($scope.choosedSubData);
 		// $scope.matchData = data;
 		// console.log($scope.matchData);
 		$ionicLoading.hide();
@@ -11783,6 +19390,18 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		console.log(localStorage.getItem("formation"));
 		console.log(lineupArr);
 		console.log($scope.substitute);
+		var subArr = [];
+		var sub = Object.values($scope.substitute);
+		console.log(sub);
+
+		for(var i = 0; i < sub.length; i++){
+			if(sub[i] !== undefined){
+				subArr.push(sub[i]);
+			}
+		}
+
+		var subArray = subArr.join(",");
+		console.log(subArray);
 
 		$scope.lineupData = {};
 
@@ -11790,21 +19409,27 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$scope.lineupData.match_homeTeamObj = {};
 			$scope.lineupData.match_homeTeamObj.team_name = localStorage.getItem("team");
 			$scope.lineupData.match_homeTeamObj.formation = localStorage.getItem("formation");
-			$scope.lineupData.match_homeTeamObj.lineup = lineupArr;
-			$scope.lineupData.match_homeTeamObj.player = lineupArr;
-			$scope.lineupData.match_homeTeamObj.sub = $scope.substitute;
+			$scope.lineupData.match_homeTeamObj.lineup = lineupArr.join(",");
+			$scope.lineupData.match_homeTeamObj.lastLineup = lineupArr.join(",");
+			$scope.lineupData.match_homeTeamObj.player = lineupArr.join(",");
+			$scope.lineupData.match_homeTeamObj.sub = subArray;
+			$scope.lineupData.match_homeTeamObj.lastSub = subArray;
+			$scope.lineupData.match_homeTeamObj.score = 0;
 		}else{
 			$scope.lineupData.match_awayTeamObj = {};
 			$scope.lineupData.match_awayTeamObj.team_name = localStorage.getItem("team");
 			$scope.lineupData.match_awayTeamObj.formation = localStorage.getItem("formation");
-			$scope.lineupData.match_awayTeamObj.lineup = lineupArr;
+			$scope.lineupData.match_awayTeamObj.lineup = lineupArr.join(",");;
+			$scope.lineupData.match_awayTeamObj.lastLineup = lineupArr.join(",");;
 			// pas substitute, player in ditambah ke data player
-			$scope.lineupData.match_awayTeamObj.player = lineupArr;
+			$scope.lineupData.match_awayTeamObj.player = lineupArr.join(",");;
 			// pas substitute, player in ditambah ke data player
-			$scope.lineupData.match_awayTeamObj.sub = $scope.substitute;
+			$scope.lineupData.match_awayTeamObj.sub = subArray;
+			$scope.lineupData.match_awayTeamObj.lastSub = subArray;
+			$scope.lineupData.match_awayTeamObj.score = 0;
 		}
 		
-		MatchService.editMatchById($stateParams.matchId,localStorage.getItem("token"),$scope.lineupData).success(function(data) {
+		MatchService.editMatchById($stateParams.matchId,$scope.lineupData).success(function(data) {
 			console.log('qweqweqrer erwerwerrqwrqwrqwrqwr');
 			console.log(data);
 			$ionicLoading.hide();
@@ -11865,10 +19490,10 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	console.log(ls.getItem("myCompetitionId"));
 
 	if(ls.getItem("role") !== 'Referee'){
-		$scope.myCompetitionId = ls.getItem("myCompetitionId");
-		$scope.myCompetitionArr = ls.getItem("myCompetitionId").split(",");
-
-		if(ls.getItem("myCompetitionId") !== 'null'){
+		
+		if(ls.getItem("myCompetitionId") !== ''){
+			$scope.myCompetitionId = ls.getItem("myCompetitionId");
+			$scope.myCompetitionArr = ls.getItem("myCompetitionId").split(",");
 			// get live matches
 			$scope.allLiveMatchesObj = {
 				"competition_name": [],
@@ -11883,8 +19508,6 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			// $scope.loadLiveMatches = function(){
 				$scope.myCompetitionArr.forEach(function(competition,index){
 					$ionicLoading.show();
-					$scope.competitionsArr[index] = {};
-
 					// CompetitionService.getCompetitionName(competition).success(function(data) {
 					// 	compName = data;
 					// 	console.log(compName);
@@ -11897,16 +19520,19 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 						console.log(data);
 						$scope.liveMatchCount = $scope.liveMatchCount + data.length;
 						if(data.length !== 0){
+							console.log("data length is not 0");
 							CompetitionService.getCompetitionName(competition).success(function(name) {
 								$scope.allLiveMatchesObj.competition_name.push(name);
 								$scope.allLiveMatchesObj.matches.push(data);
 
-
+								$scope.competitionsArr[index] = {};
 								$scope.competitionsArr[index].competition_name = name;
 								$scope.competitionsArr[index].matches = data;	
 							}).error(function(data) {
 
 							});
+						}else{
+							console.log("data length is 0");
 						}
 
 						console.log($scope.allLiveMatchesObj);
@@ -11926,6 +19552,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			// setTimeout(function(){
 				$scope.liveMatchData = [];
 				$scope.loadCompetition1 = function(){
+					console.log($scope.competitionsArr);
 					$scope.competitionsArr.forEach(function(competition){
 						competition.matches.forEach(function(match){
 							console.log(match);
@@ -11970,7 +19597,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 			setTimeout(function(){
 				window.loadCompetition1 = setInterval($scope.loadCompetition1, 1000);
-			},1000);
+			},2000);
 
 			$scope.showme1 = function(){
 				setTimeout(function(){
@@ -12035,13 +19662,26 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				}
 			});
 
-		}else if (ls.getItem("myCompetitionId") === 'null') { 
+		}else if (ls.getItem("myCompetitionId") === '') { 
 			$ionicLoading.hide();
+			$scope.competitionStatus = false;
+
+			$scope.showme = 1;
+
+			$scope.showme1 = function(){
+				$scope.showme = 1;
+				console.log(1);
+			}
+
+			$scope.showme2 = function(){
+				$scope.showme = 2;
+				console.log('2');
+			}
 		}
 	}	
 	
 	$scope.next = function(){
-
+		// $scope.competitionStatus = false;
 		$rootScope.showLoading($ionicLoading);
 
 		$scope.showme = 2;
@@ -12072,37 +19712,42 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		
 		var nextLoop = 1;
 
-		// get matches by date
-		$scope.myCompetitionArr.forEach(function(competition){
+		if(ls.getItem("myCompetitionId") !== ''){
+			// get matches by date
+			$scope.myCompetitionArr.forEach(function(competition){
 
-			CompetitionService.getCompetitionByDate(competition,$scope.matchDate,ls.getItem("token")).success(function(data) {
+				CompetitionService.getCompetitionByDate(competition,$scope.matchDate,ls.getItem("token")).success(function(data) {
 
-				if(data.length !== 0){
-					CompetitionService.getCompetitionName(competition).success(function(name) {
-						$scope.allMatchesObj.competition_name.push(name);
-						$scope.allMatchesObj.matches.push(data);
-					}).error(function(data) {
+					if(data.length !== 0){
+						CompetitionService.getCompetitionName(competition).success(function(name) {
+							$scope.allMatchesObj.competition_name.push(name);
+							$scope.allMatchesObj.matches.push(data);
+						}).error(function(data) {
 
-					});
+						});
+					}
+					
+					console.log($scope.allMatchesObj);
+
+				}).error(function(data) {
+					console.log("gagal");
+				});
+
+				nextLoop++
+				if(nextLoop === $scope.myCompetitionArr.length){
+					setTimeout(function() {
+			             $ionicLoading.hide();
+			        }, 1500);				
 				}
-				
-				console.log($scope.allMatchesObj);
-
-			}).error(function(data) {
-				console.log("gagal");
 			});
-
-			nextLoop++
-			if(nextLoop === $scope.myCompetitionArr.length){
-				setTimeout(function() {
-		             $ionicLoading.hide();
-		        }, 1500);				
-			}
-		});
+		}else{
+			$scope.competitionStatus = false;
+			$ionicLoading.hide();
+		}
 	};
 
 	$scope.prev = function(){
-
+		$scope.competitionStatus = false;
 		$rootScope.showLoading($ionicLoading);
 
 		$scope.showme = 2;
@@ -12132,36 +19777,49 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 		var prevLoop = 0;
 		
-		$scope.myCompetitionArr.forEach(function(competition){
+		if(ls.getItem("myCompetitionId") !== ''){
+			$scope.myCompetitionArr.forEach(function(competition){
 
-			CompetitionService.getCompetitionByDate(competition,$scope.matchDate,ls.getItem("token")).success(function(data) {
+				CompetitionService.getCompetitionByDate(competition,$scope.matchDate,ls.getItem("token")).success(function(data) {
 
-				if(data.length !== 0){
-					CompetitionService.getCompetitionName(competition).success(function(name) {
-						$scope.allMatchesObj.competition_name.push(name);
-						$scope.allMatchesObj.matches.push(data);
-					}).error(function(data) {
+					if(data.length !== 0){
+						CompetitionService.getCompetitionName(competition).success(function(name) {
+							$scope.allMatchesObj.competition_name.push(name);
+							$scope.allMatchesObj.matches.push(data);
+						}).error(function(data) {
 
-					});
+						});
+					}
+					
+					console.log($scope.allMatchesObj);
+
+				}).error(function(data) {
+					console.log("gagal");
+				});
+
+				prevLoop++
+				if(prevLoop === $scope.myCompetitionArr.length){
+					setTimeout(function() {
+			             $ionicLoading.hide();
+			        }, 1500);				
 				}
-				
-				console.log($scope.allMatchesObj);
-
-			}).error(function(data) {
-				console.log("gagal");
 			});
-
-			prevLoop++
-			if(prevLoop === $scope.myCompetitionArr.length){
-				setTimeout(function() {
-		             $ionicLoading.hide();
-		        }, 1500);				
-			}
-		});
+		}else{
+			$scope.competitionStatus = false;
+			$ionicLoading.hide();
+		}	
 	};
 
 	$scope.backToHome = function(){
 		$state.go('app.home');
+		clearInterval(window.loadCompetition1);
+	};
+	// go to match detail page
+	$scope.viewMatchResult = function(id) { 
+		localStorage.setItem("matchResultBackStatus", "livescore");
+		$state.go('app.match_detail', {
+			'matchId': id
+		});
 	};
 })
 
@@ -12169,6 +19827,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	var ls = localStorage;
 	$rootScope.showLoading($ionicLoading);
 	
+	console.log(localStorage.getItem("backStatus"));
 	// build a string with random characters
 	// for(var i = 1; i < stringlength; i++){
 	// 	var rndNum = Math.ceil(Math.random() * stringArray.length) - 1;
@@ -12190,8 +19849,6 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 
 	ClassementService.getClassementsByCompetitionId($stateParams.competitionId,ls.getItem("token")).success(function(data) {
 		$scope.classementsDataObj = data;
-		// $scope.numOfGroups = data.length / 4;
-		// console.log($scope.numOfGroups);
 
 		$scope.classementsDataObj.forEach(function(entry){
 			if(entry.group == "A"){
@@ -12214,38 +19871,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				$scope.classementDataArr.push(entry)
 			}	
 		})
-
-		// for(var i = 0; i < $scope.numOfGroups; i++){
-		// 	var chr = String.fromCharCode(65 + (i));	
-		// 	$scope.groupArr.push(chr);
-		// }
-		// console.log($scope.groupArr);
-
-		// console.log($scope.groupA);
-
 	}).error(function(data) {});
-
-	// $scope.group = 'A';
-	// $scope.changeGroup = function(group){
-	// 	console.log(group);
-	// 	$scope.group = group;
-	// }
-
-	// classement data (hard code)
-	$scope.classementsArr = [
-		{position: "1", teamName: "Team 001", play: "0", win: "0", draw: "0", lose: "0", goalDiff: "0", points: "0"},
-		{position: "2", teamName: "Team 002", play: "0", win: "0", draw: "0", lose: "0", goalDiff: "0", points: "0"},
-		{position: "3", teamName: "Team 003", play: "0", win: "0", draw: "0", lose: "0", goalDiff: "0", points: "0"},
-		{position: "4", teamName: "Team 004", play: "0", win: "0", draw: "0", lose: "0", goalDiff: "0", points: "0"},
-		{position: "5", teamName: "Team 005", play: "0", win: "0", draw: "0", lose: "0", goalDiff: "0", points: "0"},
-		{position: "6", teamName: "Team 006", play: "0", win: "0", draw: "0", lose: "0", goalDiff: "0", points: "0"},
-		{position: "7", teamName: "Team 007", play: "0", win: "0", draw: "0", lose: "0", goalDiff: "0", points: "0"},
-	];
-	console.log($scope.classementsArr[0].teamName);
-	// classement data (from database)
-	// get data team by competition
-	// ??????
-	// create function to get team detail (position, play, win, draw, lose, gf, point, etc) by competition id
 
 	console.log($stateParams.competitionId);
  	$scope.competition = {};
@@ -12283,74 +19909,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				teamPosition += ",0";
 			}
 			console.log(teamPosition);
-
-			// $scope.classementForm.id = "CL" + rndString;
-			// $scope.classementForm.position = $scope.team.team_position;
-			// $scope.classementForm.team = $scope.team.team_name;
-			// $scope.classementForm.play = $scope.team.team_play;
-			// $scope.classementForm.win = $scope.team.team_win;
-			// $scope.classementForm.draw = $scope.team.team_draw;
-			// $scope.classementForm.lose = $scope.team.team_lose;
-			// $scope.classementForm.goalDifference = $scope.team.goalFor - $scope.team.goalAgainst;
-			// $scope.classementForm.points = $scope.team.team_point;
-			// $scope.classementForm.competition_id = $stateParams.competitionId;
-			// $scope.classementForm.status = "Created";
-			// ClassementService.addClassement($scope.classementForm).success(function(data) {
-			// 	$ionicLoading.hide();
-			// 	console.log(data);
-			// 	$rootScope.showPopup($ionicPopup,'Success!','Berhasil Membuat Klasemen');
-			// }).error(function(data) {
-			// 	$ionicLoading.hide();
-			// 	$rootScope.showPopup($ionicPopup,'Post Data Failed!','Gagal Membuat Klasemen');
-			// });
-
-			// ClassementService.getClassementsByCompetition($stateParams.competitionId,ls.getItem("token")).success(function(data) {
-			// 	$scope.classements = data;
-			// 	$ionicLoading.hide();
-			// 	console.log($scope.classements);
-
-			// 	for(var t = 0; t < $scope.compTeam.length; t++){
-			// 		console.log($scope.compTeam[t]);
-			// 		TeamService.getTeamByName($scope.compTeam[t]).success(function(data){
-			// 			console.log(data);
-			// 			$scope.team = data;
-			// 		// insert to classement
-			// 		if($scope.classements.status == "" || $scope.classements.status === null){
-			// 			if($scope.team !== null){
-			// 				$scope.classementForm.id = "CL" + rndString;
-			// 				$scope.classementForm.position = $scope.team.team_position;
-			// 				$scope.classementForm.team = $scope.team.team_name;
-			// 				$scope.classementForm.play = $scope.team.team_play;
-			// 				$scope.classementForm.win = $scope.team.team_win;
-			// 				$scope.classementForm.draw = $scope.team.team_draw;
-			// 				$scope.classementForm.lose = $scope.team.team_lose;
-			// 				$scope.classementForm.goalDifference = $scope.team.goalFor - $scope.team.goalAgainst;
-			// 				$scope.classementForm.points = $scope.team.team_point;
-			// 				$scope.classementForm.competition_id = $stateParams.competitionId;
-			// 				$scope.classementForm.status = "Created";
-
-			// 				ClassementService.addClassement($scope.classementForm).success(function(data) {
-			// 					$ionicLoading.hide();
-			// 					console.log(data);
-			// 					$rootScope.showPopup($ionicPopup,'Success!','Berhasil Membuat Klasemen');
-			// 				}).error(function(data) {
-			// 					$ionicLoading.hide();
-			// 					$rootScope.showPopup($ionicPopup,'Post Data Failed!','Gagal Membuat Klasemen');
-			// 				});
-			// 			}
-			// 		}	
-			// 		console.log($scope.classementForm);	
-			// 			// insert to classement
-			// 			// $ionicLoading.hide();
-			// 		}).error(function(data) {
-			// 			// $ionicLoading.hide();
-			// 		});
-			// 	}
-
-			// }).error(function(data) {
-			// 	console.log("gagal");
-				$ionicLoading.hide();
-			// });	
+			$ionicLoading.hide();
 
 			for(var f = 1; f <= $scope.numOfFixtures; f++){
 				$scope.fixturesArr.push(f);
@@ -12367,13 +19926,14 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 		 	$scope.match_status = 'Play Off';
 
 		 	// Group Stage
+		 	$scope.matchesArr = [];
 		 	if($scope.competition.comp_type == 'GroupStage'){
 			 	CompetitionService.getMatchesByFixture($stateParams.competitionId,$scope.fixtureNumber,ls.getItem("token")).success(function(data) {
-					$scope.matches = data;
-					console.log($scope.matches);
-					for(var m = 0; m < $scope.matches.length; m++){
-						$scope.matches[m].match_date = new Date($scope.matches[m].match_date);
-						console.log($scope.matches[m].match_date);
+					$scope.matchesArr = data;
+					console.log($scope.matchesArr);
+					for(var m = 0; m < $scope.matchesArr.length; m++){
+						$scope.matchesArr[m].match_date = new Date($scope.matchesArr[m].match_date);
+						console.log($scope.matchesArr[m].match_date);
 					}
 					// $ionicLoading.hide();
 				}).error(function(data) {
@@ -12386,29 +19946,35 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 			$scope.knockoutMatchesArr = [];
 			if($scope.competition.comp_type == 'KnockoutSystem'){
 				$scope.matchFixture = 'play off';
+				$scope.finishedMatchLength = 0;
+				var pair = 1;
+				$scope.roundOf16FixtureObj = [];
+				var pair1Status = false;
+				$scope.knockoutRoundCompletedStatus = false;
 				CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
 					$scope.knockoutMatchesArr = data;
 					console.log($scope.knockoutMatchesArr);
+
 					for(var m = 0; m < $scope.knockoutMatchesArr.length; m++){
 						$scope.knockoutMatchesArr[m].match_date = new Date($scope.knockoutMatchesArr[m].match_date);
 						console.log($scope.knockoutMatchesArr[m].match_date);
+
+						if($scope.knockoutMatchesArr[m].match_winner !== ''){
+							console.log($scope.knockoutMatchesArr[m]);
+							$scope.finishedMatchLength++;
+						}
+
+						if($scope.finishedMatchLength == $scope.knockoutMatchesArr.length){
+							console.log("all matches is finished");
+							$scope.knockoutRoundCompletedStatus = true;
+						}else{
+							console.log("the match is not finished yet");
+						}
 					}
 					$ionicLoading.hide();
 				}).error(function(data) {
 					console.log("gagal");
 				});
-
-				// CompetitionService.getMatchesByMatchStatus($stateParams.competitionId,$scope.match_status,ls.getItem("token")).success(function(data) {
-				// 	$scope.knockoutMatches = data;
-				// 	console.log($scope.knockoutMatches);
-				// 	for(var m = 0; m < $scope.knockoutMatches.length; m++){
-				// 		$scope.knockoutMatches[m].match_date = new Date($scope.knockoutMatches[m].match_date);
-				// 		console.log($scope.knockoutMatches[m].match_date);
-				// 	}
-				// 	// $ionicLoading.hide();
-				// }).error(function(data) {
-				// 	console.log("gagal");
-				// });
 			}
 			// Knockout System
 
@@ -12438,43 +20004,50 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				if($scope.fixtureNumber > $scope.firstFixture){
 					$scope.prevStatus = true;
 				}
+				if($scope.competition.comp_type === 'GroupStage'){
+					if($scope.fixtureNumber === $scope.lastFixture){
+						$scope.nextStatus = false;
+					}
+				}
 				if($scope.fixtureNumber > $scope.lastFixture){	
-					$scope.knockoutStatus = "true";
-					if($scope.competition.comp_numOfTeam == 32){
-						if($scope.matchFixture == 'play off'){
-							$scope.matchFixture = 'round of 16';
-						}else if($scope.matchFixture == 'round of 16'){
-							$scope.matchFixture = 'quarter final';
-						}else if($scope.matchFixture == 'quarter final'){
-							$scope.matchFixture = 'semi final';
-						}else if($scope.matchFixture == 'semi final'){
-							$scope.matchFixture = 'third place';
-						}else if($scope.matchFixture = 'third place'){
-							$scope.matchFixture = 'final';
-							$scope.nextStatus = false;
-						}
-					}else if($scope.competition.comp_numOfTeam == 16){
-						if($scope.matchFixture == 'play off'){
-							$scope.matchFixture = 'quarter final';
-						}else if($scope.matchFixture == 'quarter final'){
-							$scope.matchFixture = 'semi final';
-						}else if($scope.matchFixture == 'semi final'){
-							$scope.matchFixture = 'third place';
-						}else if($scope.matchFixture == 'third place'){
-							$scope.matchFixture = 'final';
-							$scope.nextStatus = false;
-						}
-					}else if($scope.competition.comp_numOfTeam == 8){
-						if($scope.matchFixture == 'play off'){
-							$scope.matchFixture = 'semi final';
-						}else if($scope.matchFixture == 'semi final'){
-							$scope.matchFixture = 'third place';
-						}else if($scope.matchFixture == 'third place'){
-							$scope.matchFixture = 'final';
-							$scope.nextStatus = false;
+					if($scope.competition.comp_type === 'Combination'){
+						$scope.knockoutStatus = "true";
+						if($scope.competition.comp_numOfTeam == 32){
+							if($scope.matchFixture == 'play off'){
+								$scope.matchFixture = 'round of 16';
+							}else if($scope.matchFixture == 'round of 16'){
+								$scope.matchFixture = 'quarter final';
+							}else if($scope.matchFixture == 'quarter final'){
+								$scope.matchFixture = 'semi final';
+							}else if($scope.matchFixture == 'semi final'){
+								$scope.matchFixture = 'third place';
+							}else if($scope.matchFixture = 'third place'){
+								$scope.matchFixture = 'final';
+								$scope.nextStatus = false;
+							}
+						}else if($scope.competition.comp_numOfTeam == 16){
+							if($scope.matchFixture == 'play off'){
+								$scope.matchFixture = 'quarter final';
+							}else if($scope.matchFixture == 'quarter final'){
+								$scope.matchFixture = 'semi final';
+							}else if($scope.matchFixture == 'semi final'){
+								$scope.matchFixture = 'third place';
+							}else if($scope.matchFixture == 'third place'){
+								$scope.matchFixture = 'final';
+								$scope.nextStatus = false;
+							}
+						}else if($scope.competition.comp_numOfTeam == 8){
+							if($scope.matchFixture == 'play off'){
+								$scope.matchFixture = 'semi final';
+							}else if($scope.matchFixture == 'semi final'){
+								$scope.matchFixture = 'third place';
+							}else if($scope.matchFixture == 'third place'){
+								$scope.matchFixture = 'final';
+								$scope.nextStatus = false;
+							}
 						}
 					}
-
+					
 					CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
 						$scope.matchesArr = data;
 						console.log($scope.matchesArr);
@@ -12494,10 +20067,15 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 						console.log($scope.lastFixture);
 						for(var m = 0; m < $scope.matchesArr.length; m++){
 							if($scope.fixtureNumber === $scope.lastFixture){
-								if($scope.matchesArr[m].fullTime === false){
-									console.log("false");
-									// $scope.knockoutPhase = false;
-									$scope.nextStatus = false;
+								// if($scope.matchesArr[m].fullTime === false){
+								// 	console.log("false");
+								// 	// $scope.knockoutPhase = false;
+								// 	$scope.nextStatus = false;
+								// }
+								if($scope.competition.comp_type == 'Combination'){
+									if($scope.matchesArr[m].match_status !== 'finished'){
+										$scope.nextStatus = false;
+									}
 								}
 							}
 							$scope.matchesArr[m].match_date = new Date($scope.matchesArr[m].match_date);
@@ -12519,7 +20097,9 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 				if($scope.fixtureNumber < $scope.lastFixture){
 					$scope.nextStatus = true;
 				}
+				console.log($scope.fixtureNumber);
 				if($scope.matchFixture == 'play off'){
+					console.log("asasdasda");
 					CompetitionService.getMatchesByFixture($stateParams.competitionId,$scope.fixtureNumber,ls.getItem("token")).success(function(data) {
 						$scope.matchesArr = data;
 						console.log($scope.matches);
@@ -12541,10 +20121,6 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 						CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
 							$scope.matchesArr = data;
 							console.log($scope.matches);
-							// for(var m = 0; m < $scope.matches.length; m++){
-							// 	$scope.matches[m].match_date = new Date($scope.matches[m].match_date);
-							// 	console.log($scope.matches[m].match_date);
-							// }
 							$ionicLoading.hide();
 						}).error(function(data) {
 							console.log("gagal");
@@ -12556,10 +20132,6 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 						CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
 							$scope.matchesArr = data;
 							console.log($scope.matches);
-							// for(var m = 0; m < $scope.matches.length; m++){
-							// 	$scope.matches[m].match_date = new Date($scope.matches[m].match_date);
-							// 	console.log($scope.matches[m].match_date);
-							// }
 							$ionicLoading.hide();
 						}).error(function(data) {
 							console.log("gagal");
@@ -12570,10 +20142,6 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 						CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
 							$scope.matchesArr = data;
 							console.log($scope.matches);
-							// for(var m = 0; m < $scope.matches.length; m++){
-							// 	$scope.matches[m].match_date = new Date($scope.matches[m].match_date);
-							// 	console.log($scope.matches[m].match_date);
-							// }
 							$ionicLoading.hide();
 						}).error(function(data) {
 							console.log("gagal");
@@ -12584,10 +20152,6 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 						CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
 							$scope.matchesArr = data;
 							console.log($scope.matches);
-							// for(var m = 0; m < $scope.matches.length; m++){
-							// 	$scope.matches[m].match_date = new Date($scope.matches[m].match_date);
-							// 	console.log($scope.matches[m].match_date);
-							// }
 							$ionicLoading.hide();
 						}).error(function(data) {
 							console.log("gagal");
@@ -12609,25 +20173,85 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 							console.log("gagal");
 						});
 					}
-				}else
-				if($scope.competition.comp_numOfTeam == 16){
-					if($scope.matchFixture == 'Final'){
-						$scope.matchFixture = 'semi final';
+				}else if($scope.competition.comp_numOfTeam == 16){
+					if($scope.matchFixture == 'final'){
+						$scope.matchFixture = 'third place';
 						$scope.nextStatus = true;
+
+						CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
+							$scope.matchesArr = data;
+							console.log($scope.matches);
+							$ionicLoading.hide();
+						}).error(function(data) {
+							console.log("gagal");
+						});
+
+					}else if($scope.matchFixture == 'third place'){
+						$scope.matchFixture = 'semi final';
+
+						CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
+							$scope.matchesArr = data;
+							console.log($scope.matches);
+							$ionicLoading.hide();
+						}).error(function(data) {
+							console.log("gagal");
+						});
 					}else if($scope.matchFixture == 'semi final'){
 						$scope.matchFixture = 'quarter final';
+
+						CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
+							$scope.matchesArr = data;
+							console.log($scope.matches);
+							$ionicLoading.hide();
+						}).error(function(data) {
+							console.log("gagal");
+						});
 					}else if($scope.matchFixture == 'quarter final'){
-						$scope.matchFixture = 'Play Off';
-						$scope.prevStatus = false;
+						$scope.matchFixture = 'play off';
+						$scope.knockoutStatus = "false";
+						$scope.fixtureNumber = $scope.lastFixture;
+						CompetitionService.getMatchesByFixture($stateParams.competitionId,$scope.fixtureNumber,ls.getItem("token")).success(function(data) {
+							$scope.matchesArr = data;
+							console.log($scope.matches);
+							$ionicLoading.hide();
+						}).error(function(data) {
+							console.log("gagal");
+						});
 					}
-				}
-				if($scope.competition.comp_numOfTeam == 8){
-					if($scope.matchFixture == 'Final'){
-						$scope.matchFixture = 'semi final';
+				}else if($scope.competition.comp_numOfTeam == 8){
+					if($scope.matchFixture == 'final'){
+						$scope.matchFixture = 'third place';
 						$scope.nextStatus = true;
+
+						CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
+							$scope.matchesArr = data;
+							console.log($scope.matches);
+							$ionicLoading.hide();
+						}).error(function(data) {
+							console.log("gagal");
+						});
+
+					}else if($scope.matchFixture == 'third place'){
+						$scope.matchFixture = 'semi final';
+
+						CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
+							$scope.matchesArr = data;
+							console.log($scope.matches);
+							$ionicLoading.hide();
+						}).error(function(data) {
+							console.log("gagal");
+						});
 					}else if($scope.matchFixture == 'semi final'){
-						$scope.matchFixture = 'Play Off';
-						$scope.prevStatus = false;
+						$scope.matchFixture = 'play off';
+						$scope.knockoutStatus = "false";
+						$scope.fixtureNumber = $scope.lastFixture;
+						CompetitionService.getMatchesByFixture($stateParams.competitionId,$scope.fixtureNumber,ls.getItem("token")).success(function(data) {
+							$scope.matchesArr = data;
+							console.log($scope.matches);
+							$ionicLoading.hide();
+						}).error(function(data) {
+							console.log("gagal");
+						});
 					}
 				}
 			};
@@ -12640,33 +20264,267 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 					if($scope.matchFixture == 'play off'){
 						$scope.matchFixture = 'round of 16';
 						$scope.prevStatus = true;
+						$scope.finishedMatchLength = 0;
+						$scope.knockoutRoundCompletedStatus = false;
+						CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
+							$scope.knockoutMatchesArr = data;
+							console.log($scope.knockoutMatchesArr);
+
+							for(var m = 0; m < $scope.knockoutMatchesArr.length; m++){
+								$scope.knockoutMatchesArr[m].match_date = new Date($scope.knockoutMatchesArr[m].match_date);
+								console.log($scope.knockoutMatchesArr[m].match_date);
+
+								if($scope.knockoutMatchesArr[m].match_winner !== ''){
+									console.log($scope.knockoutMatchesArr[m]);
+									$scope.finishedMatchLength++;
+								}
+
+								if($scope.finishedMatchLength == $scope.knockoutMatchesArr.length){
+									console.log("all matches is finished");
+									$scope.knockoutRoundCompletedStatus = true;
+								}else{
+									console.log("the match is not finished yet");
+								}
+							}
+							$ionicLoading.hide();
+						}).error(function(data) {
+							console.log("gagal");
+						});
 					}else if($scope.matchFixture == 'round of 16'){
 						$scope.matchFixture = 'quarter final';
+						$scope.finishedMatchLength = 0;
+						$scope.knockoutRoundCompletedStatus = false;
+						CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
+							$scope.knockoutMatchesArr = data;
+							console.log($scope.knockoutMatchesArr);
+
+							for(var m = 0; m < $scope.knockoutMatchesArr.length; m++){
+								$scope.knockoutMatchesArr[m].match_date = new Date($scope.knockoutMatchesArr[m].match_date);
+								console.log($scope.knockoutMatchesArr[m].match_date);
+
+								if($scope.knockoutMatchesArr[m].match_winner !== ''){
+									console.log($scope.knockoutMatchesArr[m]);
+									$scope.finishedMatchLength++;
+								}
+
+								if($scope.finishedMatchLength == $scope.knockoutMatchesArr.length){
+									console.log("all matches is finished");
+									$scope.knockoutRoundCompletedStatus = true;
+								}else{
+									console.log("the match is not finished yet");
+								}
+							}
+							$ionicLoading.hide();
+						}).error(function(data) {
+							console.log("gagal");
+						});
 					}else if($scope.matchFixture == 'quarter final'){
 						$scope.matchFixture = 'semi final';
+						$scope.finishedMatchLength = 0;
+						$scope.knockoutRoundCompletedStatus = false;
+						CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
+							$scope.knockoutMatchesArr = data;
+							console.log($scope.knockoutMatchesArr);
+
+							for(var m = 0; m < $scope.knockoutMatchesArr.length; m++){
+								$scope.knockoutMatchesArr[m].match_date = new Date($scope.knockoutMatchesArr[m].match_date);
+								console.log($scope.knockoutMatchesArr[m].match_date);
+
+								if($scope.knockoutMatchesArr[m].match_winner !== ''){
+									console.log($scope.knockoutMatchesArr[m]);
+									$scope.finishedMatchLength++;
+								}
+
+								if($scope.finishedMatchLength == $scope.knockoutMatchesArr.length){
+									console.log("all matches is finished");
+									$scope.knockoutRoundCompletedStatus = true;
+								}else{
+									console.log("the match is not finished yet");
+								}
+							}
+							$ionicLoading.hide();
+						}).error(function(data) {
+							console.log("gagal");
+						});
 					}else if($scope.matchFixture == 'semi final'){
 						$scope.matchFixture = 'final';
 						$scope.nextStatus = false;
+						$scope.finishedMatchLength = 0;
+						$scope.knockoutRoundCompletedStatus = false;
+						CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
+							$scope.knockoutMatchesArr = data;
+							console.log($scope.knockoutMatchesArr);
+
+							for(var m = 0; m < $scope.knockoutMatchesArr.length; m++){
+								$scope.knockoutMatchesArr[m].match_date = new Date($scope.knockoutMatchesArr[m].match_date);
+								console.log($scope.knockoutMatchesArr[m].match_date);
+
+								if($scope.knockoutMatchesArr[m].match_winner !== ''){
+									console.log($scope.knockoutMatchesArr[m]);
+									$scope.finishedMatchLength++;
+								}
+
+								if($scope.finishedMatchLength == $scope.knockoutMatchesArr.length){
+									console.log("all matches is finished");
+									$scope.knockoutRoundCompletedStatus = true;
+								}else{
+									console.log("the match is not finished yet");
+								}
+							}
+							$ionicLoading.hide();
+						}).error(function(data) {
+							console.log("gagal");
+						});
 					}
 				}else
 				if($scope.competition.comp_numOfTeam == 16){
 					if($scope.matchFixture == 'play off'){
 						$scope.matchFixture = 'quarter final';
 						$scope.prevStatus = true;
+						$scope.finishedMatchLength = 0;
+						$scope.knockoutRoundCompletedStatus = false;
+						CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
+							$scope.knockoutMatchesArr = data;
+							console.log($scope.knockoutMatchesArr);
+
+							for(var m = 0; m < $scope.knockoutMatchesArr.length; m++){
+								$scope.knockoutMatchesArr[m].match_date = new Date($scope.knockoutMatchesArr[m].match_date);
+								console.log($scope.knockoutMatchesArr[m].match_date);
+
+								if($scope.knockoutMatchesArr[m].match_winner !== ''){
+									console.log($scope.knockoutMatchesArr[m]);
+									$scope.finishedMatchLength++;
+								}
+
+								if($scope.finishedMatchLength == $scope.knockoutMatchesArr.length){
+									console.log("all matches is finished");
+									$scope.knockoutRoundCompletedStatus = true;
+								}else{
+									console.log("the match is not finished yet");
+								}
+							}
+							$ionicLoading.hide();
+						}).error(function(data) {
+							console.log("gagal");
+						});
 					}else if($scope.matchFixture == 'quarter final'){
 						$scope.matchFixture = 'semi final';
+						$scope.finishedMatchLength = 0;
+						$scope.knockoutRoundCompletedStatus = false;
+						CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
+							$scope.knockoutMatchesArr = data;
+							console.log($scope.knockoutMatchesArr);
+
+							for(var m = 0; m < $scope.knockoutMatchesArr.length; m++){
+								$scope.knockoutMatchesArr[m].match_date = new Date($scope.knockoutMatchesArr[m].match_date);
+								console.log($scope.knockoutMatchesArr[m].match_date);
+
+								if($scope.knockoutMatchesArr[m].match_winner !== ''){
+									console.log($scope.knockoutMatchesArr[m]);
+									$scope.finishedMatchLength++;
+								}
+
+								if($scope.finishedMatchLength == $scope.knockoutMatchesArr.length){
+									console.log("all matches is finished");
+									$scope.knockoutRoundCompletedStatus = true;
+								}else{
+									console.log("the match is not finished yet");
+								}
+							}
+							$ionicLoading.hide();
+						}).error(function(data) {
+							console.log("gagal");
+						});
 					}else if($scope.matchFixture == 'semi final'){
 						$scope.matchFixture = 'final';
 						$scope.nextStatus = false;
+						$scope.finishedMatchLength = 0;
+						$scope.knockoutRoundCompletedStatus = false;
+						CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
+							$scope.knockoutMatchesArr = data;
+							console.log($scope.knockoutMatchesArr);
+
+							for(var m = 0; m < $scope.knockoutMatchesArr.length; m++){
+								$scope.knockoutMatchesArr[m].match_date = new Date($scope.knockoutMatchesArr[m].match_date);
+								console.log($scope.knockoutMatchesArr[m].match_date);
+
+								if($scope.knockoutMatchesArr[m].match_winner !== ''){
+									console.log($scope.knockoutMatchesArr[m]);
+									$scope.finishedMatchLength++;
+								}
+
+								if($scope.finishedMatchLength == $scope.knockoutMatchesArr.length){
+									console.log("all matches is finished");
+									$scope.knockoutRoundCompletedStatus = true;
+								}else{
+									console.log("the match is not finished yet");
+								}
+							}
+							$ionicLoading.hide();
+						}).error(function(data) {
+							console.log("gagal");
+						});
 					}
 				}else
 				if($scope.competition.comp_numOfTeam == 8){
 					if($scope.matchFixture == 'play off'){
 						$scope.matchFixture = 'semi final';
 						$scope.prevStatus = true;
+						$scope.finishedMatchLength = 0;
+						$scope.knockoutRoundCompletedStatus = false;
+						CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
+							$scope.knockoutMatchesArr = data;
+							console.log($scope.knockoutMatchesArr);
+
+							for(var m = 0; m < $scope.knockoutMatchesArr.length; m++){
+								$scope.knockoutMatchesArr[m].match_date = new Date($scope.knockoutMatchesArr[m].match_date);
+								console.log($scope.knockoutMatchesArr[m].match_date);
+
+								if($scope.knockoutMatchesArr[m].match_winner !== ''){
+									console.log($scope.knockoutMatchesArr[m]);
+									$scope.finishedMatchLength++;
+								}
+
+								if($scope.finishedMatchLength == $scope.knockoutMatchesArr.length){
+									console.log("all matches is finished");
+									$scope.knockoutRoundCompletedStatus = true;
+								}else{
+									console.log("the match is not finished yet");
+								}
+							}
+							$ionicLoading.hide();
+						}).error(function(data) {
+							console.log("gagal");
+						});
 					}else if($scope.matchFixture == 'semi final'){
 						$scope.matchFixture = 'final'
 						$scope.nextStatus = false;
+						$scope.finishedMatchLength = 0;
+						$scope.knockoutRoundCompletedStatus = false;
+						CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
+							$scope.knockoutMatchesArr = data;
+							console.log($scope.knockoutMatchesArr);
+
+							for(var m = 0; m < $scope.knockoutMatchesArr.length; m++){
+								$scope.knockoutMatchesArr[m].match_date = new Date($scope.knockoutMatchesArr[m].match_date);
+								console.log($scope.knockoutMatchesArr[m].match_date);
+
+								if($scope.knockoutMatchesArr[m].match_winner !== ''){
+									console.log($scope.knockoutMatchesArr[m]);
+									$scope.finishedMatchLength++;
+								}
+
+								if($scope.finishedMatchLength == $scope.knockoutMatchesArr.length){
+									console.log("all matches is finished");
+									$scope.knockoutRoundCompletedStatus = true;
+								}else{
+									console.log("the match is not finished yet");
+								}
+							}
+							$ionicLoading.hide();
+						}).error(function(data) {
+							console.log("gagal");
+						});
 					}
 				}
 				CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
@@ -12688,33 +20546,267 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 					if($scope.matchFixture == 'final'){
 						$scope.matchFixture = 'semi final';
 						$scope.nextStatus = true;
+						$scope.finishedMatchLength = 0;
+						$scope.knockoutRoundCompletedStatus = false;
+						CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
+							$scope.knockoutMatchesArr = data;
+							console.log($scope.knockoutMatchesArr);
+
+							for(var m = 0; m < $scope.knockoutMatchesArr.length; m++){
+								$scope.knockoutMatchesArr[m].match_date = new Date($scope.knockoutMatchesArr[m].match_date);
+								console.log($scope.knockoutMatchesArr[m].match_date);
+
+								if($scope.knockoutMatchesArr[m].match_winner !== ''){
+									console.log($scope.knockoutMatchesArr[m]);
+									$scope.finishedMatchLength++;
+								}
+
+								if($scope.finishedMatchLength == $scope.knockoutMatchesArr.length){
+									console.log("all matches is finished");
+									$scope.knockoutRoundCompletedStatus = true;
+								}else{
+									console.log("the match is not finished yet");
+								}
+							}
+							$ionicLoading.hide();
+						}).error(function(data) {
+							console.log("gagal");
+						});
 					}else if($scope.matchFixture == 'semi final'){
 						$scope.matchFixture = 'quarter final';
+						$scope.finishedMatchLength = 0;
+						$scope.knockoutRoundCompletedStatus = false;
+						CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
+							$scope.knockoutMatchesArr = data;
+							console.log($scope.knockoutMatchesArr);
+
+							for(var m = 0; m < $scope.knockoutMatchesArr.length; m++){
+								$scope.knockoutMatchesArr[m].match_date = new Date($scope.knockoutMatchesArr[m].match_date);
+								console.log($scope.knockoutMatchesArr[m].match_date);
+
+								if($scope.knockoutMatchesArr[m].match_winner !== ''){
+									console.log($scope.knockoutMatchesArr[m]);
+									$scope.finishedMatchLength++;
+								}
+
+								if($scope.finishedMatchLength == $scope.knockoutMatchesArr.length){
+									console.log("all matches is finished");
+									$scope.knockoutRoundCompletedStatus = true;
+								}else{
+									console.log("the match is not finished yet");
+								}
+							}
+							$ionicLoading.hide();
+						}).error(function(data) {
+							console.log("gagal");
+						});
 					}else if($scope.matchFixture == 'quarter final'){
 						$scope.matchFixture = 'round of 16';
+						$scope.finishedMatchLength = 0;
+						$scope.knockoutRoundCompletedStatus = false;
+						CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
+							$scope.knockoutMatchesArr = data;
+							console.log($scope.knockoutMatchesArr);
+
+							for(var m = 0; m < $scope.knockoutMatchesArr.length; m++){
+								$scope.knockoutMatchesArr[m].match_date = new Date($scope.knockoutMatchesArr[m].match_date);
+								console.log($scope.knockoutMatchesArr[m].match_date);
+
+								if($scope.knockoutMatchesArr[m].match_winner !== ''){
+									console.log($scope.knockoutMatchesArr[m]);
+									$scope.finishedMatchLength++;
+								}
+
+								if($scope.finishedMatchLength == $scope.knockoutMatchesArr.length){
+									console.log("all matches is finished");
+									$scope.knockoutRoundCompletedStatus = true;
+								}else{
+									console.log("the match is not finished yet");
+								}
+							}
+							$ionicLoading.hide();
+						}).error(function(data) {
+							console.log("gagal");
+						});
 					}else if($scope.matchFixture == 'round of 16'){
 						$scope.matchFixture = 'play off';
 						$scope.prevStatus = false;
+						$scope.finishedMatchLength = 0;
+						$scope.knockoutRoundCompletedStatus = false;
+						CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
+							$scope.knockoutMatchesArr = data;
+							console.log($scope.knockoutMatchesArr);
+
+							for(var m = 0; m < $scope.knockoutMatchesArr.length; m++){
+								$scope.knockoutMatchesArr[m].match_date = new Date($scope.knockoutMatchesArr[m].match_date);
+								console.log($scope.knockoutMatchesArr[m].match_date);
+
+								if($scope.knockoutMatchesArr[m].match_winner !== ''){
+									console.log($scope.knockoutMatchesArr[m]);
+									$scope.finishedMatchLength++;
+								}
+
+								if($scope.finishedMatchLength == $scope.knockoutMatchesArr.length){
+									console.log("all matches is finished");
+									$scope.knockoutRoundCompletedStatus = true;
+								}else{
+									console.log("the match is not finished yet");
+								}
+							}
+							$ionicLoading.hide();
+						}).error(function(data) {
+							console.log("gagal");
+						});
 					}
 				}else
 				if($scope.competition.comp_numOfTeam == 16){
 					if($scope.matchFixture == 'final'){
 						$scope.matchFixture = 'semi final';
 						$scope.nextStatus = true;
+						$scope.finishedMatchLength = 0;
+						$scope.knockoutRoundCompletedStatus = false;
+						CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
+							$scope.knockoutMatchesArr = data;
+							console.log($scope.knockoutMatchesArr);
+
+							for(var m = 0; m < $scope.knockoutMatchesArr.length; m++){
+								$scope.knockoutMatchesArr[m].match_date = new Date($scope.knockoutMatchesArr[m].match_date);
+								console.log($scope.knockoutMatchesArr[m].match_date);
+
+								if($scope.knockoutMatchesArr[m].match_winner !== ''){
+									console.log($scope.knockoutMatchesArr[m]);
+									$scope.finishedMatchLength++;
+								}
+
+								if($scope.finishedMatchLength == $scope.knockoutMatchesArr.length){
+									console.log("all matches is finished");
+									$scope.knockoutRoundCompletedStatus = true;
+								}else{
+									console.log("the match is not finished yet");
+								}
+							}
+							$ionicLoading.hide();
+						}).error(function(data) {
+							console.log("gagal");
+						});
 					}else if($scope.matchFixture == 'semi final'){
 						$scope.matchFixture = 'quarter final';
+						$scope.finishedMatchLength = 0;
+						$scope.knockoutRoundCompletedStatus = false;
+						CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
+							$scope.knockoutMatchesArr = data;
+							console.log($scope.knockoutMatchesArr);
+
+							for(var m = 0; m < $scope.knockoutMatchesArr.length; m++){
+								$scope.knockoutMatchesArr[m].match_date = new Date($scope.knockoutMatchesArr[m].match_date);
+								console.log($scope.knockoutMatchesArr[m].match_date);
+
+								if($scope.knockoutMatchesArr[m].match_winner !== ''){
+									console.log($scope.knockoutMatchesArr[m]);
+									$scope.finishedMatchLength++;
+								}
+
+								if($scope.finishedMatchLength == $scope.knockoutMatchesArr.length){
+									console.log("all matches is finished");
+									$scope.knockoutRoundCompletedStatus = true;
+								}else{
+									console.log("the match is not finished yet");
+								}
+							}
+							$ionicLoading.hide();
+						}).error(function(data) {
+							console.log("gagal");
+						});
 					}else if($scope.matchFixture == 'quarter final'){
 						$scope.matchFixture = 'play off';
 						$scope.prevStatus = false;
+						$scope.finishedMatchLength = 0;
+						$scope.knockoutRoundCompletedStatus = false;
+						CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
+							$scope.knockoutMatchesArr = data;
+							console.log($scope.knockoutMatchesArr);
+
+							for(var m = 0; m < $scope.knockoutMatchesArr.length; m++){
+								$scope.knockoutMatchesArr[m].match_date = new Date($scope.knockoutMatchesArr[m].match_date);
+								console.log($scope.knockoutMatchesArr[m].match_date);
+
+								if($scope.knockoutMatchesArr[m].match_winner !== ''){
+									console.log($scope.knockoutMatchesArr[m]);
+									$scope.finishedMatchLength++;
+								}
+
+								if($scope.finishedMatchLength == $scope.knockoutMatchesArr.length){
+									console.log("all matches is finished");
+									$scope.knockoutRoundCompletedStatus = true;
+								}else{
+									console.log("the match is not finished yet");
+								}
+							}
+							$ionicLoading.hide();
+						}).error(function(data) {
+							console.log("gagal");
+						});
 					}
 				}
 				if($scope.competition.comp_numOfTeam == 8){
 					if($scope.matchFixture == 'final'){
 						$scope.matchFixture = 'semi final';
 						$scope.nextStatus = true;
+						$scope.finishedMatchLength = 0;
+						$scope.knockoutRoundCompletedStatus = false;
+						CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
+							$scope.knockoutMatchesArr = data;
+							console.log($scope.knockoutMatchesArr);
+
+							for(var m = 0; m < $scope.knockoutMatchesArr.length; m++){
+								$scope.knockoutMatchesArr[m].match_date = new Date($scope.knockoutMatchesArr[m].match_date);
+								console.log($scope.knockoutMatchesArr[m].match_date);
+
+								if($scope.knockoutMatchesArr[m].match_winner !== ''){
+									console.log($scope.knockoutMatchesArr[m]);
+									$scope.finishedMatchLength++;
+								}
+
+								if($scope.finishedMatchLength == $scope.knockoutMatchesArr.length){
+									console.log("all matches is finished");
+									$scope.knockoutRoundCompletedStatus = true;
+								}else{
+									console.log("the match is not finished yet");
+								}
+							}
+							$ionicLoading.hide();
+						}).error(function(data) {
+							console.log("gagal");
+						});
 					}else if($scope.matchFixture == 'semi final'){
 						$scope.matchFixture = 'play off';
 						$scope.prevStatus = false;
+						$scope.finishedMatchLength = 0;
+						$scope.knockoutRoundCompletedStatus = false;
+						CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
+							$scope.knockoutMatchesArr = data;
+							console.log($scope.knockoutMatchesArr);
+
+							for(var m = 0; m < $scope.knockoutMatchesArr.length; m++){
+								$scope.knockoutMatchesArr[m].match_date = new Date($scope.knockoutMatchesArr[m].match_date);
+								console.log($scope.knockoutMatchesArr[m].match_date);
+
+								if($scope.knockoutMatchesArr[m].match_winner !== ''){
+									console.log($scope.knockoutMatchesArr[m]);
+									$scope.finishedMatchLength++;
+								}
+
+								if($scope.finishedMatchLength == $scope.knockoutMatchesArr.length){
+									console.log("all matches is finished");
+									$scope.knockoutRoundCompletedStatus = true;
+								}else{
+									console.log("the match is not finished yet");
+								}
+							}
+							$ionicLoading.hide();
+						}).error(function(data) {
+							console.log("gagal");
+						});
 					}
 				}
 				CompetitionService.getMatchesByMatchFixture($stateParams.competitionId,$scope.matchFixture,ls.getItem("token")).success(function(data) {
@@ -12841,144 +20933,217 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
 	$scope.loserTeamArr = [];
 	$scope.drawTeamArr = [];
 
-	setTimeout(function(){
-		CompetitionService.getCompletedMatchesByCompId($stateParams.competitionId).success(function(data) {
-			$scope.completedMatchesArr = data;
-			console.log($scope.completedMatchesArr);
-
-			$scope.completedMatchesArr.forEach(function(match){
-				console.log(match.match_winner);
-				console.log(match.match_loser);
-				if(match.match_winner !== null){
-					$scope.winnerTeamArr.push(match.match_winner);
-					$scope.loserTeamArr.push(match.match_loser);
-				}else{
-					$scope.drawTeamArr.push(match.match_homeTeam);
-					$scope.drawTeamArr.push(match.match_awayTeam);
-				}
-				
-				// // winner team id
-				// CompetitionService.getClassementByCompIdAndTeam($stateParams.competitionId, match.match_winner).success(function(data) {
-				// 	console.log(data.id);
-				// 	$scope.winnerTeamId.push(data.id);
-				// 	console.log($scope.winnerTeamId);
-				// 	// $ionicLoading.hide();
-				// }).error(function(data) {
-				// 	console.log("gagal");
-				// });
-
-				// // loser team id
-				// CompetitionService.getClassementByCompIdAndTeam($stateParams.competitionId, match.match_loser).success(function(data) {
-				// 	$scope.loserTeamId.push(data.id);
-				// 	console.log($scope.loserTeamId);
-				// 	// $ionicLoading.hide();
-				// }).error(function(data) {
-				// 	console.log("gagal");
-				// });
-			});
-			console.log($scope.winnerTeamArr);
-			console.log($scope.loserTeamArr);
-			console.log($scope.drawTeamArr);
-
-			// $ionicLoading.hide();
-		}).error(function(data) {
-			console.log("gagal");
-		});
-	},20000);
-
-	setTimeout(function(){
-		$scope.arrWinnerTeam = [];
-		$scope.arrLoserTeam = [];
-		$scope.arrDrawTeam = [];
-		// winner team id
-		$scope.winnerTeamArr.forEach(function(team){
-			// console.log(team);
-			// console.log($stateParams.competitionId);
-			CompetitionService.getClassementByCompIdAndTeam($stateParams.competitionId, team).success(function(data) {
-				console.log(data[0].id);
-				$scope.arrWinnerTeam.push(data[0].id);
-				// $scope.winnerTeamId.push(data.id);
-				// console.log($scope.winnerTeamId);
-				// $ionicLoading.hide();
-			}).error(function(data) {
-				console.log("gagal");
-			});
-		})
-
-		// draw team id
-		$scope.drawTeamArr.forEach(function(team){
-			console.log(team);
-			// console.log($stateParams.competitionId);
-			CompetitionService.getClassementByCompIdAndTeam($stateParams.competitionId, team).success(function(data) {
-				console.log(data[0].id);
-				$scope.arrDrawTeam.push(data[0].id);
-			}).error(function(data) {
-				console.log("gagal");
-			});
-		})
-
-		// draw team id
-		$scope.loserTeamArr.forEach(function(team){
-			console.log(team);
-			// console.log($stateParams.competitionId);
-			CompetitionService.getClassementByCompIdAndTeam($stateParams.competitionId, team).success(function(data) {
-				console.log(data[0].id);
-				$scope.arrLoserTeam.push(data[0].id);
-			}).error(function(data) {
-				console.log("gagal");
-			});
-		})
+	$scope.back = function(){
+		if(localStorage.getItem("backStatus") == 'home'){
+			$state.go('app.home');
+		}else{
+			$state.go('app.schedule');
+		}
 		
-	},25000);
-
-	setTimeout(function(){
-		console.log($scope.arrLoserTeam);	
-		console.log($scope.arrWinnerTeam);
-		console.log($scope.arrDrawTeam);
-
-		$scope.loserClassementForm = {};
-		$scope.loserClassementForm.play = 1;
-		$scope.loserClassementForm.lose = 1;
-		$scope.loserClassementForm.draw = 0;
-		$scope.loserClassementForm.points = 0;
-
-		$scope.winnerClassementForm = {};
-		$scope.winnerClassementForm.play = 1;
-		$scope.winnerClassementForm.win = 1;
-		$scope.winnerClassementForm.points = 3;
-
-		$scope.drawClassementForm = {};
-		$scope.drawClassementForm.play = 1;
-		$scope.drawClassementForm.draw = 1;
-		$scope.drawClassementForm.points = 1;
-
-		$scope.arrWinnerTeam.forEach(function(classementId){
-			ClassementService.editClassementById(classementId,$scope.winnerClassementForm).success(function(data) {
-				console.log(data);
-				console.log("berhasil");
-			}).error(function(data) {});
-		})
-
-		$scope.arrDrawTeam.forEach(function(classementId){
-			ClassementService.editClassementById(classementId,$scope.drawClassementForm).success(function(data) {
-				console.log(data);
-				console.log("berhasil");
-			}).error(function(data) {});
-		})
-
-		$scope.arrLoserTeam.forEach(function(classementId){
-			ClassementService.editClassementById(classementId,$scope.loserClassementForm).success(function(data) {
-				console.log(data);
-				console.log("berhasil");
-			}).error(function(data) {});
-		})
-		
-
-	},30000);
-
-	$scope.backToSchedule = function(){
-		$state.go('app.schedule');
 	}
+	$scope.editMatch = function(matchId,compId) { 
+		console.log(matchId);
+		console.log(compId);
+		localStorage.setItem("compIdForEditMatch", compId);
+		$state.go('app.edit_match', {
+			'matchId': matchId
+		});
+	};
+})
+
+.controller('MatchCtrl', function($scope, $rootScope, $state, $stateParams, $ionicPopup, $ionicPlatform, $ionicLoading, CompetitionService, MatchService) {
+	//implement logic here
+	$rootScope.showLoading($ionicLoading);
+	$scope.matchData = {};
+	$scope.currentMatchData = {};
+	var timeArr = ["08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00","22:00"];
+	var fieldArr = [1,2,3];
+
+	// Retrieve the object from storage
+	var avMonRefObj = localStorage.getItem('avMonRef');
+	var avMonRefObjData = JSON.parse(avMonRefObj);
+	var avMonAnalystObj = localStorage.getItem('avMonAnalysts');
+	var avMonAnalystObjData = JSON.parse(avMonAnalystObj);
+
+	var avTueRefObj = localStorage.getItem('avTueRef');
+	var avTueRefObjData = JSON.parse(avTueRefObj);
+	var avTueAnalystObj = localStorage.getItem('avTueAnalysts');
+	var avTueAnalystObjData = JSON.parse(avTueAnalystObj);
+
+	var avWedRefObj = localStorage.getItem('avWedRef');
+	var avWedRefObjData = JSON.parse(avWedRefObj);
+	var avWedAnalystObj = localStorage.getItem('avWedAnalysts');
+	var avWedAnalystObjData = JSON.parse(avWedAnalystObj);
+
+	var avThuRefObj = localStorage.getItem('avThuRef');
+	var avThuRefObjData = JSON.parse(avThuRefObj);
+	var avThuAnalystObj = localStorage.getItem('avThuAnalysts');
+	var avThuAnalystObjData = JSON.parse(avThuAnalystObj);
+
+	var avFriRefObj = localStorage.getItem('avFriRef');
+	var avFriRefObjData = JSON.parse(avFriRefObj);
+	var avFriAnalystObj = localStorage.getItem('avFriAnalysts');
+	var avFriAnalystObjData = JSON.parse(avFriAnalystObj);
+
+	var avSatRefObj = localStorage.getItem('avSatRef');
+	var avSatRefObjData = JSON.parse(avSatRefObj);
+	var avSatAnalystObj = localStorage.getItem('avSatAnalysts');
+	var avSatAnalystObjData = JSON.parse(avSatAnalystObj);
+
+	var avSunRefObj = localStorage.getItem('avSunRef');
+	var avSunRefObjData = JSON.parse(avSunRefObj);
+	var avSunAnalystObj = localStorage.getItem('avSunAnalysts');
+	var avSunAnalystObjData = JSON.parse(avSunAnalystObj);
+
+	MatchService.getMatchById($stateParams.matchId).success(function(data){
+		$scope.currentMatchData = data;
+		console.log($scope.currentMatchData);
+
+		CompetitionService.getCompetitionById(data.competition_id).success(function(comp) {
+			var startDate = moment(comp.comp_start).add(1, 'days').format('YYYY-MM-DD');
+			var counter = moment().diff(startDate, 'days');
+
+			console.log(counter);
+			if(counter > 0){
+				$scope.minDate = moment().format('YYYY-MM-DD');
+			}else{
+				$scope.minDate = moment(comp.comp_start).format('YYYY-MM-DD');
+			}
+
+			$scope.maxDate = moment(comp.comp_finish).add(1, 'days').format('YYYY-MM-DD');
+		}).error(function(data) {
+			$ionicLoading.hide();
+		});
+
+		$scope.availableTimeArr = {};
+		$scope.availableFieldArr = {};
+		var matchDate = moment(data.match_date).toISOString();
+
+		CompetitionService.getMatchesByCompetitionAndDate(data.competition_id, matchDate).success(function(match) {
+			console.log(match);
+			match.forEach(function(m){
+				if(timeArr.indexOf(m.match_time) !== -1){
+					var timeIndex = timeArr.indexOf(m.match_time);
+					timeArr.splice(timeIndex,1);
+				}
+				if(fieldArr.indexOf(m.match_field) !== -1){
+					var fieldIndex = fieldArr.indexOf(m.match_field);
+					fieldArr.splice(fieldIndex,1);
+				}
+			});
+			$ionicLoading.hide();
+			$scope.availableTimeArr = timeArr;
+			$scope.availableFieldArr = fieldArr;
+		}).error(function(data) {
+			$ionicLoading.hide();
+		});
+
+
+		$scope.changeDate = function(date){
+			console.log(date);
+			$scope.availableTimeArr = {};
+			$scope.availableFieldArr = {};
+			var matchDate = moment(date).toISOString();
+			$rootScope.showLoading($ionicLoading);
+
+			CompetitionService.getMatchesByCompetitionAndDate(data.competition_id, matchDate).success(function(match) {
+				console.log(match);
+				match.forEach(function(m){
+					if(timeArr.indexOf(m.match_time) !== -1){
+						var timeIndex = timeArr.indexOf(m.match_time);
+						timeArr.splice(timeIndex,1);
+					}
+					if(fieldArr.indexOf(m.match_field) !== -1){
+						var fieldIndex = fieldArr.indexOf(m.match_field);
+						fieldArr.splice(fieldIndex,1);
+					}
+				});
+				$ionicLoading.hide();
+				$scope.availableTimeArr = timeArr;
+				$scope.availableFieldArr = fieldArr;
+			}).error(function(data) {});
+		}
+		
+	}).error(function(data){
+		$ionicLoading.hide();
+	});
+
+
+	$scope.editMatchById = function() {
+
+		console.log($scope.matchData);
+		console.log($scope.currentMatchData);
+
+		if ($scope.matchData.match_date === undefined && $scope.matchData.match_time === undefined && $scope.matchData.match_field === undefined) {
+			$rootScope.showPopup($ionicPopup,'Edit Match failed!','Please fill all the fields', 'popup-error');
+		} else if ($scope.matchData.match_date === undefined || $scope.matchData.match_date === "" || $scope.matchData.match_date === null) {
+			$rootScope.showPopup($ionicPopup,'Edit Match failed!','Match date is required !', 'popup-error');
+		} else if ($scope.matchData.match_time === undefined || $scope.matchData.match_time === "" || $scope.matchData.match_time === null) {
+			$rootScope.showPopup($ionicPopup,'Edit Match failed!','Match time is required !', 'popup-error');
+		} else if ($scope.matchData.match_field === undefined || $scope.matchData.match_field === "" || $scope.matchData.match_field === null) {
+			$rootScope.showPopup($ionicPopup,'Edit Match failed!','Match field is required !', 'popup-error');
+		} else if ($scope.matchData.match_date !== null && $scope.matchData.match_time !== null && $scope.matchData.match_field !== null) {
+
+
+			var timeIndex = timeArr.indexOf($scope.matchData.match_time);
+			var fieldIndex = fieldArr.indexOf($scope.matchData.match_field);
+
+			if(moment($scope.matchData.match_date).format('dddd') === 'Monday'){	
+				$scope.matchData.match_referee = avMonRefObjData[timeIndex][fieldIndex];
+				$scope.matchData.match_analyst = avMonAnalystObjData[timeIndex][fieldIndex];
+			}else if(moment($scope.matchData.match_date).format('dddd') === 'Tuesday'){
+				$scope.matchData.match_referee = avTueRefObjData[timeIndex][fieldIndex];
+				$scope.matchData.match_analyst = avTueAnalystObjData[timeIndex][fieldIndex];
+			}else if(moment($scope.matchData.match_date).format('dddd') === 'Wednesday'){
+				$scope.matchData.match_referee = avWedRefObjData[timeIndex][fieldIndex];
+				$scope.matchData.match_analyst = avWedAnalystObjData[timeIndex][fieldIndex];
+			}else if(moment($scope.matchData.match_date).format('dddd') === 'Thursday'){
+				$scope.matchData.match_referee = avThuRefObjData[timeIndex][fieldIndex];
+				$scope.matchData.match_analyst = avThuAnalystObjData[timeIndex][fieldIndex];
+			}else if(moment($scope.matchData.match_date).format('dddd') === 'Friday'){
+				$scope.matchData.match_referee = avFriRefObjData[timeIndex][fieldIndex];
+				$scope.matchData.match_analyst = avFriAnalystObjData[timeIndex][fieldIndex];
+			}else if(moment($scope.matchData.match_date).format('dddd') === 'Saturday'){
+				$scope.matchData.match_referee = avSatRefObjData[timeIndex][fieldIndex];
+				$scope.matchData.match_analyst = avSatAnalystObjData[timeIndex][fieldIndex];
+			}else if(moment($scope.matchData.match_date).format('dddd') === 'Sunday'){
+				$scope.matchData.match_referee = avSunRefObjData[timeIndex][fieldIndex];
+				$scope.matchData.match_analyst = avSunAnalystObjData[timeIndex][fieldIndex];
+			}
+
+			$scope.currentMatchData.match_date = moment($scope.matchData.match_date).toISOString();
+			$scope.currentMatchData.match_time = $scope.matchData.match_time;
+			$scope.currentMatchData.match_field = $scope.matchData.match_field;
+			$scope.currentMatchData.match_referee = $scope.matchData.match_referee.username;
+			$scope.currentMatchData.match_analyst = $scope.matchData.match_analyst.username;
+
+
+			console.log($scope.currentMatchData);
+			MatchService.editMatchById($stateParams.matchId,$scope.currentMatchData).success(function(data) {
+				$ionicLoading.hide();
+				console.log(data);
+				var alertPopup = $ionicPopup.alert({
+					title: 'Success!',
+					template: 'Berhasil Edit Jadwal Pertandingan'
+				});
+				$state.go('app.competition_schedule', {
+					'competitionId': localStorage.getItem("compIdForEditMatch")
+				});
+			}).error(function(data) {
+				$ionicLoading.hide();
+				var alertPopup = $ionicPopup.alert({
+					title: 'Failed!',
+					template: 'Gagal Edit Jadwal Pertandingan'
+				});
+			});
+		}
+	};
+
+	$scope.backToCompetitionSchedule = function() { 
+		$state.go('app.competition_schedule', {
+			'competitionId': localStorage.getItem("compIdForEditMatch")
+		});
+	};
 })
 
 .controller('ClassementCtrl', function($scope, $state,  $stateParams, $ionicPopup, $ionicPlatform, $ionicLoading, CompetitionService, MatchService) {
@@ -13053,6 +21218,7 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
     var fixture;
     var numOfDays;
     var counter;
+    var numOfBreak;
    
     days = days || 0;
     teams = teams || 0;
@@ -13060,13 +21226,31 @@ angular.module('starter.controllers', ['ngCordova', 'ionic', 'ngMap', 'luegg.dir
     date = new Date(isoDateString);
 
     fixture = teams - 1;
-    counter = fixture * days;
-    numOfDays = (fixture + counter) - 1;
+    numOfBreak = (teams - 2) * days;
 
+    if(days === 'no break'){
+	 	numOfDays = fixture - 1;
+    }else{
+    	numOfDays = (fixture + numOfBreak) - 1;
+    }
+   
     if (days) {
       date.setDate(date.getDate() + numOfDays);
     }
     
+    return date;
+  };
+}])
+
+.filter('addEndDate', [function() {
+  return function(isoDateString, days) {
+
+  	var date;
+  	var numOfDays = days - 1;
+
+  	date = new Date(isoDateString);
+  	date.setDate(date.getDate() + numOfDays);
+
     return date;
   };
 }]);

@@ -31,18 +31,24 @@
       <span class="input-label">Email</span>
       <input id="title" type="text" placeholder="Email" value="{{profile.email}}" ng-model="profile.email" style="color:black;">
     </label>
-    <label class="item item-input item-floating-label" style="padding:0px">
+   <!--  <label class="item item-input item-floating-label" style="padding:0px">
       <span class="input-label">Age</span>
       <input id="title" type="text" placeholder="Bio" value="{{profile.bio}}" ng-model="profile.bio" style="color:black;">
     </label>
     <label class="item item-input item-floating-label" style="padding:0px">
       <span class="input-label">Position</span>
       <input id="title" type="text" placeholder="link" value="{{profile.link}}" ng-model="profile.link" style="color:black;">
+    </label> -->
+    <!-- Jersey Number -->
+    <label ng-if="menuProfile.role === 'Player'" ng-show="profile.team !== ''" class="item item-input item-select" style="padding: 0px;">
+      <div class="input-label" style="font-weight:unset; padding:0px;">Choose Jersey Number</div>
+      <select style="color:black;border-top: 1px solid #ddd;" ng-model="profile.shirtNumber" ng-options="number for number in availableJerseyNumber">
+      </select>
     </label>
-    <label class="item item-input item-floating-label" style="padding:0px">
+  <!--   <label class="item item-input item-floating-label" style="padding:0px">
       <span class="input-label">Status</span>
       <input id="title" type="text" placeholder="Status" value="{{profile.status}}" ng-model="profile.status" style="color:black;">
-    </label>
+    </label> -->
   </div>
   <input type="submit" value="Save" class="button button-block button-calm-900 text-center"  id="updateprofile" style="margin:0px; background-color:#24afe5;display:none"></input>
 </form>

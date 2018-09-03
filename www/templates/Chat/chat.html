@@ -40,25 +40,24 @@
 </div>
 
 <!-- List of contacts-->
-<div class="list" ng-show="isActive" ng-click="getTeamSquad()">
+<div class="list" ng-show="isActive">
   <!-- White area -->
   <div ng-hide="searchmessage"></div>
-  <!-- Data of chats -->
-  <a class="item item-avatar" style="border-bottom:1px solid #f0efef;" ng-click="goToChatDetail('{{teamManager.username}}')">
+  <a ng-if="teamSquadArr.length != '0'" ng-show="menuProfile.role !== 'Manager' && teamManager.username !== undefined" class="item item-avatar" style="border-bottom:1px solid #f0efef;" ng-click="goToChatDetail(teamManager.username)">
    <img src="img/profile3.png" ng-src={{teamManager.photo}}>
     <div style="padding-top: 3px;height:40px;">
     <h2 style="margin-left: -26px; width:100px;">{{teamManager.username}}</h2>
     <p style="margin-left: -26px; margin-top: -2px;">{{teamManager.role}}</p>
     </div>
   </a>
-  <a class="item item-avatar" style="border-bottom:1px solid #f0efef;" ng-click="goToChatDetail('{{teamCoach.username}}')">
+  <a ng-if="teamSquadArr.length != '0'" ng-show="menuProfile.role !== 'Coach' && teamCoach.username !== undefined" class="item item-avatar" style="border-bottom:1px solid #f0efef;" ng-click="goToChatDetail(teamCoach.username)">
    <img src="img/profile3.png" ng-src={{teamCoach.photo}}>
     <div style="padding-top: 3px;height:40px;">
     <h2 style="margin-left: -26px; width:100px;">{{teamCoach.username}}</h2>
     <p style="margin-left: -26px; margin-top: -2px;">{{teamCoach.role}}</p>
     </div>
   </a>
-  <a ng-if="teamSquadArr.length != '0'" ng-repeat="data in teamSquadArr" class="item item-avatar" style="border-bottom:1px solid #f0efef;" ng-click="goToChatDetail('{{data.username}}')">
+  <a ng-if="teamSquadArr.length != '0'" ng-repeat="data in teamSquadArr" class="item item-avatar" style="border-bottom:1px solid #f0efef;" ng-click="goToChatDetail(data.username)">
    <img src="img/profile3.png" ng-src={{data.photo}}>
     <div style="padding-top: 3px;height:40px;">
     <h2 style="margin-left: -26px; width:100px;">{{data.username}}</h2>
@@ -67,22 +66,22 @@
   </a>
 
   <!-- empty state -->
-  <div ng-if="teamSquadArr.length == '0'" style="margin-top:150px;">
+  <div ng-if="teamSquadArr.length == '0'" ng-hide="teamManager.username !== undefined || teamCoach.username !== undefined" style="margin-top:150px;">
     <p style="text-align:center;font-size:16px;">No Contact Yet</p>
     <p style="text-align:center;font-size:16px;">All of your team members will appear here</p>
 
     <!-- dont have team yet -->
-    <div ng-show="menuProfile.team == ''">
+   <!--  <div ng-show="menuProfile.team == ''">
       <p style="text-align:center;font-size:16px;" ng-click="goToTeam()">Click the button below to create a team</p>
       <center>
         <button class="button button-balanced" style="margin-top:0px;margin-right: 2px;" ng-click="createTeam()">
           Create Team
         </button>
       </center>
-    </div>  
+    </div>   -->
 
     <!-- already have a team -->
-    <div ng-show="menuProfile.team != ''">
+ <!--    <div ng-show="menuProfile.team != ''">
       <p style="text-align:center;font-size:16px;">Click the button below to invite coach or player</p>
       <center>
         <button class="button button-balanced" style="margin-top:0px;margin-right: 2px;" ng-click="searchCoach()">
@@ -92,7 +91,7 @@
           Invite Player
         </button>
       </center>
-    </div> 
+    </div>  -->
 
   </div>
 

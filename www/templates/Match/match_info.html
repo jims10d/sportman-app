@@ -13,6 +13,16 @@
 </div>
 <!-- referee tab -->
 
+<!-- analyst tab -->
+<div ng-show="menuProfile.role == 'Analyst'" class="row" ng-model="showme" ng-init="showme = 1" style="padding:0px;margin-top: 56px;">
+    
+  <a class="col col-50" ng-click="showme=1" ng-class="{'tabActive':showme == 1}" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;z-index: 1;">Match Detail</a>
+
+  <a class="col col-50" ng-click="showme=2" ng-class="{'tabActive':showme == 2}" style="text-align:center;font-size:13px;color:rgba(255, 255, 255, 0.45);padding:0px;padding-top:6px;padding-bottom:6px;background-color:#4DB6AC;border:none;border-bottom:1px solid #e0dfdf;z-index: 1;">Line Ups</a>
+
+</div>
+<!-- analyst tab -->
+
 <ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color: #ececec; z-index:0; margin-top:41px;">
 
 <div ng-show="showme==1">
@@ -65,11 +75,19 @@
         <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 10px;">{{match.match_referee}}</div>
       </div>
     </div>
+   <!--  <div class="item item-text-wrap" style="padding:0px;">
+      <div class="row" style="margin:0px;padding-bottom: 0px;">
+        <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 0px;"><i class="mdi mdi-account" style="font-size:20px;"></i></div>
+      </div>
+      <div class="row" style="margin:0px;">
+        <div class="col" style="text-align:center;margin:0px;font-size:12px;padding-bottom: 10px;">{{match.match_analyst}}</div>
+      </div>
+    </div> -->
   </div>
 </div>
 
 <div ng-show="showme==2">
-  <div class="card" style="margin-bottom:0px;background-color:#26A69A;border-bottom: 0px;box-shadow: none;padding: 0px;">
+  <div ng-hide="(match.match_homeTeamObj.formation === '' || match.match_awayTeamObj.formation === '')" class="card" style="margin-bottom:0px;background-color:#26A69A;border-bottom: 0px;box-shadow: none;padding: 0px;">
     <div class="item item-text-wrap" style="padding:0px;">
       <div class="row" ng-model="activeTeam" ng-init="activeTeam = 1" style="margin:0px;padding:0px;">
         <div class="col" ng-click="activeTeam = 1" ng-class="{'teamActive':activeTeam == 1}" style="padding:5px;text-align:center;color:#585353;background-color: white;">{{match.match_homeTeam}}</div>
@@ -94,21 +112,39 @@
       </div>
       <!-- Line Up -->
       <!-- Goal Keeper -->
-      <div class="item item-text-wrap" style="margin:0px;padding: 5px 0px;border-bottom: 1px solid #ddd;">
+      <div ng-repeat="GK in homeLineupGKArr" class="item item-text-wrap" style="margin:0px;padding: 5px 0px;border-bottom: 1px solid #ddd;">
         <div class="row" style="margin:0px;padding:0px;">
-          <!-- <div class="col col-10" style="text-align: center;font-weight: bold;">{{homeLineupGKObj.shirtNumber}}</div> -->
-          <div class="col col-70">{{homeLineupGKObj.username}}</div>
-          <!-- <div class="col col-20" style="text-align: center;font-weight: bold;">{{homeLineupGKObj.position}}</div> -->
+          <div class="col col-10" style="text-align: center;font-weight: bold;">{{GK.shirtNumber}}</div>
+          <div class="col col-70">{{GK.username}}</div>
+          <div class="col col-20" style="text-align: center;font-weight: bold;">{{GK.position}}</div>
         </div>
       </div>
-      <div ng-repeat="player in homeLineupPlayerArr" class="item item-text-wrap" style="margin:0px;padding: 5px 0px;border-bottom: 1px solid #ddd;">
+      <!-- Defender -->
+      <div ng-repeat="Def in homeLineupDefArr" class="item item-text-wrap" style="margin:0px;padding: 5px 0px;border-bottom: 1px solid #ddd;">
         <div class="row" style="margin:0px;padding:0px;">
-          <div class="col col-10" style="text-align: center;font-weight: bold;">{{player.shirtNumber}}</div>
-          <div class="col col-90">{{player.username}}</div>
+          <div class="col col-10" style="text-align: center;font-weight: bold;">{{Def.shirtNumber}}</div>
+          <div class="col col-70">{{Def.username}}</div>
+          <div class="col col-20" style="text-align: center;font-weight: bold;">{{Def.position}}</div>
+        </div>
+      </div>
+      <!-- Midfielder -->
+      <div ng-repeat="Mid in homeLineupMidArr" class="item item-text-wrap" style="margin:0px;padding: 5px 0px;border-bottom: 1px solid #ddd;">
+        <div class="row" style="margin:0px;padding:0px;">
+          <div class="col col-10" style="text-align: center;font-weight: bold;">{{Mid.shirtNumber}}</div>
+          <div class="col col-70">{{Mid.username}}</div>
+          <div class="col col-20" style="text-align: center;font-weight: bold;">{{Mid.position}}</div>
+        </div>
+      </div>
+      <!-- Attacker -->
+      <div ng-repeat="Att in homeLineupAttArr" class="item item-text-wrap" style="margin:0px;padding: 5px 0px;border-bottom: 1px solid #ddd;">
+        <div class="row" style="margin:0px;padding:0px;">
+          <div class="col col-10" style="text-align: center;font-weight: bold;">{{Att.shirtNumber}}</div>
+          <div class="col col-70">{{Att.username}}</div>
+          <div class="col col-20" style="text-align: center;font-weight: bold;">{{Att.position}}</div>
         </div>
       </div>
   </div>
-
+  <!-- sub -->
   <div ng-if="(match.match_homeTeamObj.formation !== '' && match.match_awayTeamObj.formation !== '')" class="card" ng-show="activeTeam == 1" style="margin-bottom:10px;margin-top:15px;">
       <!-- Substitutes -->
       <div class="item item-text-wrap" style="margin-top:0px;padding:0px;">
@@ -116,46 +152,125 @@
           <div class="col" style="text-align:left;font-size:14px;padding:10px;background-color: #4db6ac;color: white;">Substitutes</div>
         </div>
       </div>
-
-      <div ng-repeat="player in homeSubPlayerArr" class="item item-text-wrap" style="margin:0px;padding:0px;">
+       <!-- Goal Keeper -->
+      <div ng-repeat="GK in homeSubGKArr" class="item item-text-wrap" style="margin:0px;padding: 5px 0px;border-bottom: 1px solid #ddd;">
         <div class="row" style="margin:0px;padding:0px;">
-          <div class="col col-10" style="text-align: center;font-weight: bold;">{{player.shirtNumber}}</div>
-          <div class="col col-90">{{player.username}}</div>
+          <div class="col col-10" style="text-align: center;font-weight: bold;">{{GK.shirtNumber}}</div>
+          <div class="col col-70">{{GK.username}}</div>
+          <div class="col col-20" style="text-align: center;font-weight: bold;">{{GK.position}}</div>
+        </div>
+      </div>
+      <!-- Defender -->
+      <div ng-repeat="Def in homeSubDefArr" class="item item-text-wrap" style="margin:0px;padding: 5px 0px;border-bottom: 1px solid #ddd;">
+        <div class="row" style="margin:0px;padding:0px;">
+          <div class="col col-10" style="text-align: center;font-weight: bold;">{{Def.shirtNumber}}</div>
+          <div class="col col-70">{{Def.username}}</div>
+          <div class="col col-20" style="text-align: center;font-weight: bold;">{{Def.position}}</div>
+        </div>
+      </div>
+      <!-- Midfielder -->
+      <div ng-repeat="Mid in homeSubMidArr" class="item item-text-wrap" style="margin:0px;padding: 5px 0px;border-bottom: 1px solid #ddd;">
+        <div class="row" style="margin:0px;padding:0px;">
+          <div class="col col-10" style="text-align: center;font-weight: bold;">{{Mid.shirtNumber}}</div>
+          <div class="col col-70">{{Mid.username}}</div>
+          <div class="col col-20" style="text-align: center;font-weight: bold;">{{Mid.position}}</div>
+        </div>
+      </div>
+      <!-- Attacker -->
+      <div ng-repeat="Att in homeSubAttArr" class="item item-text-wrap" style="margin:0px;padding: 5px 0px;border-bottom: 1px solid #ddd;">
+        <div class="row" style="margin:0px;padding:0px;">
+          <div class="col col-10" style="text-align: center;font-weight: bold;">{{Att.shirtNumber}}</div>
+          <div class="col col-70">{{Att.username}}</div>
+          <div class="col col-20" style="text-align: center;font-weight: bold;">{{Att.position}}</div>
         </div>
       </div>   
   </div>
 
-  <div ng-if="(match.match_homeTeamObj.formation !== '' && match.match_awayTeamObj.formation !== '')" class="card" ng-show="activeTeam == 2" style="margin-bottom:10px;margin-top:15px;">
-      <!-- Line Up -->
+   <!-- Exist State Line Up -->
+  <div ng-if="(match.match_awayTeamObj.formation !== '' && match.match_awayTeamObj.formation !== '')" class="card" ng-show="activeTeam == 2" style="margin-bottom:10px;margin-top:15px;">
+      <!-- Formation -->
       <div class="item item-text-wrap" style="margin:0px;padding:0px;">
         <div class="row" style="margin:0px;padding:0px;">
           <div class="col" style="text-align:left;font-size:14px;padding:10px;background-color: #4db6ac;color: white;">Line Up ({{match.match_awayTeamObj.formation}})</div>
         </div>
       </div>
-
-      <div ng-repeat="player in awayLineupPlayerArr" class="item item-text-wrap" style="margin:0px;padding: 5px 0px;border-bottom: 1px solid #ddd;">
+      <!-- Line Up -->
+      <!-- Goal Keeper -->
+      <div ng-repeat="GK in awayLineupGKArr" class="item item-text-wrap" style="margin:0px;padding: 5px 0px;border-bottom: 1px solid #ddd;">
         <div class="row" style="margin:0px;padding:0px;">
-          <div class="col col-10" style="text-align: center;font-weight: bold;">{{player.shirtNumber}}</div>
-          <div class="col col-90">{{player.username}}</div>
+          <div class="col col-10" style="text-align: center;font-weight: bold;">{{GK.shirtNumber}}</div>
+          <div class="col col-70">{{GK.username}}</div>
+          <div class="col col-20" style="text-align: center;font-weight: bold;">{{GK.position}}</div>
+        </div>
+      </div>
+      <!-- Defender -->
+      <div ng-repeat="Def in awayLineupDefArr" class="item item-text-wrap" style="margin:0px;padding: 5px 0px;border-bottom: 1px solid #ddd;">
+        <div class="row" style="margin:0px;padding:0px;">
+          <div class="col col-10" style="text-align: center;font-weight: bold;">{{Def.shirtNumber}}</div>
+          <div class="col col-70">{{Def.username}}</div>
+          <div class="col col-20" style="text-align: center;font-weight: bold;">{{Def.position}}</div>
+        </div>
+      </div>
+      <!-- Midfielder -->
+      <div ng-repeat="Mid in awayLineupMidArr" class="item item-text-wrap" style="margin:0px;padding: 5px 0px;border-bottom: 1px solid #ddd;">
+        <div class="row" style="margin:0px;padding:0px;">
+          <div class="col col-10" style="text-align: center;font-weight: bold;">{{Mid.shirtNumber}}</div>
+          <div class="col col-70">{{Mid.username}}</div>
+          <div class="col col-20" style="text-align: center;font-weight: bold;">{{Mid.position}}</div>
+        </div>
+      </div>
+      <!-- Attacker -->
+      <div ng-repeat="Att in awayLineupAttArr" class="item item-text-wrap" style="margin:0px;padding: 5px 0px;border-bottom: 1px solid #ddd;">
+        <div class="row" style="margin:0px;padding:0px;">
+          <div class="col col-10" style="text-align: center;font-weight: bold;">{{Att.shirtNumber}}</div>
+          <div class="col col-70">{{Att.username}}</div>
+          <div class="col col-20" style="text-align: center;font-weight: bold;">{{Att.position}}</div>
         </div>
       </div>
   </div>
-
-  <div ng-if="(match.match_homeTeamObj.formation !== '' && match.match_awayTeamObj.formation !== '')" class="card" ng-show="activeTeam == 2" style="margin-bottom:10px;margin-top:15px;">
+  <!-- sub -->
+  <div ng-if="(match.match_awayTeamObj.formation !== '' && match.match_awayTeamObj.formation !== '')" class="card" ng-show="activeTeam == 2" style="margin-bottom:10px;margin-top:15px;">
       <!-- Substitutes -->
       <div class="item item-text-wrap" style="margin-top:0px;padding:0px;">
         <div class="row" style="margin:0px;padding:0px;">
           <div class="col" style="text-align:left;font-size:14px;padding:10px;background-color: #4db6ac;color: white;">Substitutes</div>
         </div>
       </div>
-
-      <div ng-repeat="player in awaySubPlayerArr" class="item item-text-wrap" style="margin:0px;padding:0px;">
+       <!-- Goal Keeper -->
+      <div ng-repeat="GK in awaySubGKArr" class="item item-text-wrap" style="margin:0px;padding: 5px 0px;border-bottom: 1px solid #ddd;">
         <div class="row" style="margin:0px;padding:0px;">
-          <div class="col col-10" style="text-align: center;font-weight: bold;">{{player.shirtNumber}}</div>
-          <div class="col col-90">{{player.username}}</div>
+          <div class="col col-10" style="text-align: center;font-weight: bold;">{{GK.shirtNumber}}</div>
+          <div class="col col-70">{{GK.username}}</div>
+          <div class="col col-20" style="text-align: center;font-weight: bold;">{{GK.position}}</div>
+        </div>
+      </div>
+      <!-- Defender -->
+      <div ng-repeat="Def in awaySubDefArr" class="item item-text-wrap" style="margin:0px;padding: 5px 0px;border-bottom: 1px solid #ddd;">
+        <div class="row" style="margin:0px;padding:0px;">
+          <div class="col col-10" style="text-align: center;font-weight: bold;">{{Def.shirtNumber}}</div>
+          <div class="col col-70">{{Def.username}}</div>
+          <div class="col col-20" style="text-align: center;font-weight: bold;">{{Def.position}}</div>
+        </div>
+      </div>
+      <!-- Midfielder -->
+      <div ng-repeat="Mid in awaySubMidArr" class="item item-text-wrap" style="margin:0px;padding: 5px 0px;border-bottom: 1px solid #ddd;">
+        <div class="row" style="margin:0px;padding:0px;">
+          <div class="col col-10" style="text-align: center;font-weight: bold;">{{Mid.shirtNumber}}</div>
+          <div class="col col-70">{{Mid.username}}</div>
+          <div class="col col-20" style="text-align: center;font-weight: bold;">{{Mid.position}}</div>
+        </div>
+      </div>
+      <!-- Attacker -->
+      <div ng-repeat="Att in awaySubAttArr" class="item item-text-wrap" style="margin:0px;padding: 5px 0px;border-bottom: 1px solid #ddd;">
+        <div class="row" style="margin:0px;padding:0px;">
+          <div class="col col-10" style="text-align: center;font-weight: bold;">{{Att.shirtNumber}}</div>
+          <div class="col col-70">{{Att.username}}</div>
+          <div class="col col-20" style="text-align: center;font-weight: bold;">{{Att.position}}</div>
         </div>
       </div>   
   </div>
+
+
 <!-- White Space -->
 <div style="height:55px;background:transparent" ng-show="searchbutton"></div>
 <div style="height:200px;background:transparent" ng-show="filterbutton"></div>

@@ -390,7 +390,7 @@ $stateProvider
 	views: {
 		'home': {
 			templateUrl: 'templates/Match/edit_match.html',
-			controller: 'EditMatchCtrl'
+			controller: 'MatchCtrl'
 		}
 	}
 })

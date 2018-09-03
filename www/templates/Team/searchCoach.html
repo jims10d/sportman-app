@@ -15,19 +15,31 @@
     <ion-button type="submit" ng-show="search.nama.length > 0" ng-click="searchData()" class="icon mdi mdi-magnify pull-right" style="font-size: 25px; color:rgb(10, 176, 254);height:50px; width:60px;padding: 13px 0 0 15px;"></ion-button>
 </div>
 <!-- List of Search Data -->
-<p style="text-align:center;margin-top:150px;color: darkgray;" ng-show="coachArr == undefined">You haven't searched anything yet...</p>
+<p style="text-align:center;margin-top:150px;color: darkgray;" ng-show="coachArr == undefined && searchedPlayerStatus === false">You haven't searched anything yet...</p>
 <p style="text-align:center;margin-top:150px;color: darkgray;" ng-show="coachArr.length == 0" ng-hide="coachArr.length != 0">Not Found</p>
 
   <a ng-repeat="data in coachArr" class="item item-avatar" style="margin: 6px; background-color: #ffffff; width: auto; border:1px solid #e6e6e6;">
-    <img ng-src="{{data.photo}}" src="img/profile2.png" ng-click="userDetail('{{data.username}}')">
-    <div class="col" style="margin-top: 3px" ng-click="userDetail('{{data.username}}')">
+    <img ng-src="{{data.photo}}" src="img/profile3.png"  ng-click="userDetail('{{data.photo}}','{{data.username}}','{{data.email}}')">
+    <div class="col" style="margin-top: 3px" ng-click="userDetail('{{data.photo}}','{{data.username}}','{{data.email}}')">
       <h2 style="margin-left: -26px;">{{data.username}}</h2>
       <p style="margin-left: -26px; margin-top: -2px">{{data.email}}
       </p>
     </div>
-    <p ng-show = "inviteStatus == false && joinStatus == false" style="margin-top:-39px; margin-left:170px; border-left:1px solid #e3e3e3; text-align: center; color: #4DB6AC" ng-click="inviteMember()">Invite</p>
-    <p ng-show = "inviteStatus == true && joinStatus == false" style="margin-top:-39px; margin-left:170px; border-left:1px solid #e3e3e3; text-align: center; color: #4DB6AC">Invited</p>
-    <p ng-show = "joinStatus == true" style="margin-top:-39px; margin-left:170px; border-left:1px solid #e3e3e3; text-align: center; color: #4DB6AC">Joined</p>
+     <p ng-show = "inviteStatus == false && joinStatus == false" style="margin-top:-39px; margin-left:170px; border-left:1px solid #e3e3e3; text-align: center; color: #4DB6AC" ng-click="inviteMember()">Invite</p>
+     <p ng-show = "inviteStatus == true && joinStatus == false" style="margin-top:-39px; margin-left:170px; border-left:1px solid #e3e3e3; text-align: center; color: #4DB6AC">Invited</p>
+     <p ng-show = "joinStatus == true" style="margin-top:-39px; margin-left:170px; border-left:1px solid #e3e3e3; text-align: center; color: #4DB6AC">Joined</p>
+  </a>
+
+  <a ng-show="coachArr.length != 0 && searchedPlayerStatus === true" ng-hide="searchedPlayerStatus === false" class="item item-avatar" style="margin: 6px; background-color: #ffffff; width: auto; border:1px solid #e6e6e6;">
+    <img ng-src="{{playerObj.photo}}" src="img/profile3.png" ng-click="userDetail('{{playerObj.photo}}','{{playerObj.username}}','{{playerObj.email}}')">
+    <div class="col" style="margin-top: 3px" ng-click="userDetail('{{playerObj.photo}}','{{playerObj.username}}','{{playerObj.email}}')">
+      <h2 style="margin-left: -26px;">{{playerObj.username}}</h2>
+      <p style="margin-left: -26px; margin-top: -2px">{{playerObj.email}}
+      </p>
+    </div>
+     <p ng-show = "playerObj.inviteStatus == 'false' && playerObj.joinStatus == 'false'" style="margin-top:-39px; margin-left:170px; border-left:1px solid #e3e3e3; text-align: center; color: #4DB6AC" ng-click="inviteMembers()">Invite</p>
+     <p ng-show = "playerObj.inviteStatus == 'true' && playerObj.joinStatus == 'false'" style="margin-top:-39px; margin-left:170px; border-left:1px solid #e3e3e3; text-align: center; color: #4DB6AC">Invited</p>
+     <p ng-show = "playerObj.joinStatus == 'true'" style="margin-top:-39px; margin-left:170px; border-left:1px solid #e3e3e3; text-align: center; color: #4DB6AC">Joined</p>
   </a>
 
 </ion-content>

@@ -8,8 +8,8 @@
 <div class="bar item-input-inset" style="border:none;box-shadow: 0 1px 2px #aaa"></div>
 <ion-content class="hideScroll" overflow-scroll=true scroll-sista="tabs" style="background-color: #ececec;">
 <div style="background-image: url('img/background-leaderboard.png');padding-top:15px;background-repeat:no-repeat;">
-  <img src="img/profile3.png" class="avatar" style="left:0px;right:0px;top:30px;margin:0px auto;width:80px;height:80px;">
-  <img src="img/profile3.png" class="avatar" style="left:0px;right:0px;top:30px;margin:0px auto;width:80px;height:80px;">
+  <img ng-src={{profile.photo}} src="img/profile3.png" class="avatar" style="left:0px;right:0px;top:30px;margin:0px auto;width:80px;height:80px;">
+  <!-- <img src="img/profile3.png" class="avatar" style="left:0px;right:0px;top:30px;margin:0px auto;width:80px;height:80px;"> -->
   <h1 style="color:white; margin-top:100px; text-align:center; font-size:18px;">{{profile.username}}</h1>
   <p style="color:#ececec; text-align:center; font-size:12px;">{{profile.email}}</p>
   <p style="color:#ececec; text-align:center; font-size:12px;">{{profile.role}}</p>  
@@ -42,7 +42,7 @@
       </div>
     </div>
     <div class="row" style="text-align:center;">
-      <div class="col">{{profile.goal}} Gssdoal</div>
+      <div class="col">{{profile.goal}} Goal</div>
       <div class="col">{{profile.assist}} Assist</div>
     </div> 
     <div class="row" style="text-align:center;">
